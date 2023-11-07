@@ -1,20 +1,20 @@
 {
   "canisters": {
-    "neuralarena_backend": {
-      "candid": "src/neuralarena_backend/neuralarena_backend.did",
-      "package": "neuralarena_backend",
+    "main": {
+      "candid": "src/main/main.did",
+      "package": "main",
       "type": "rust"
     },
-    "neuralarena_frontend": {
+    "site": {
       "dependencies": [
-        "neuralarena_backend"
+        "main"
       ],
-      "frontend": {
-        "entrypoint": "src/neuralarena_frontend/src/index.html"
+      "site": {
+        "entrypoint": "src/site/src/index.html"
       },
       "source": [
-        "src/neuralarena_frontend/assets",
-        "dist/neuralarena_frontend/"
+        "src/site/assets",
+        "dist/site/"
       ],
       "type": "assets"
     }

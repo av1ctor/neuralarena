@@ -1,0 +1,36 @@
+type MatchCreateRequest = record { options : MatchOptions };
+type MatchCreateResponse = record { id : text };
+type MatchJoinRequest = record { id : text; name : text };
+type MatchJoinResponse = record { id : text };
+type MatchOptions = record {
+  fov : float32;
+  fps : float32;
+  tps : float32;
+  min_players : nat64;
+  rays : nat64;
+  num_hidden_layers : nat64;
+  max_players : nat64;
+  epsilon : float64;
+  player_radius : float32;
+  map_name : text;
+};
+type MatchRunRequest = record { id : text };
+type MatchStep = record {
+  terminated : bool;
+  winner : opt nat64;
+  entities : vec nat8;
+  timedout : bool;
+};
+type MatchStepsRequest = record { id : text; len : nat64; ofs : nat64 };
+type MatchStepsResponse = record { steps : vec MatchStep };
+type Result = variant { Ok : MatchStepsResponse; Err : text };
+type Result_1 = variant { Ok : MatchCreateResponse; Err : text };
+type Result_2 = variant { Ok : MatchJoinResponse; Err : text };
+type Result_3 = variant { Ok; Err : text };
+service : () -> {
+  get_steps : (MatchStepsRequest) -> (Result) query;
+  match_create : (MatchCreateRequest) -> (Result_1);
+  match_join : (MatchJoinRequest) -> (Result_2);
+  match_run : (MatchRunRequest) -> (Result_3);
+  match_start : (MatchRunRequest) -> (Result_3);
+}
