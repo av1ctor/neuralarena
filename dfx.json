@@ -1,0 +1,30 @@
+{
+  "canisters": {
+    "neuralarena_backend": {
+      "candid": "src/neuralarena_backend/neuralarena_backend.did",
+      "package": "neuralarena_backend",
+      "type": "rust"
+    },
+    "neuralarena_frontend": {
+      "dependencies": [
+        "neuralarena_backend"
+      ],
+      "frontend": {
+        "entrypoint": "src/neuralarena_frontend/src/index.html"
+      },
+      "source": [
+        "src/neuralarena_frontend/assets",
+        "dist/neuralarena_frontend/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
