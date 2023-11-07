@@ -150,6 +150,10 @@ pub fn match_join(
             return Err("Too many players".to_string());
         }
 
+        if m_tch.state.status != MatchStatus::CREATED {
+            return Err("Invalid match state".to_string());
+        }
+
         let caller = &caller();
         
         m_tch.players.insert(caller.to_string());
@@ -174,6 +178,10 @@ pub fn match_start(
 
         if m_tch.players.len() < m_tch.options.min_players {
             return Err("Too few players".to_string());
+        }
+
+        if m_tch.state.status != MatchStatus::CREATED {
+            return Err("Invalid match state".to_string());
         }
 
         let mut map = Map::load_from_string(&MAP.to_string())?;
