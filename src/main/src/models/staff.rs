@@ -1,7 +1,7 @@
 use candid::CandidType;
 use serde::{Deserialize, Serialize};
 
-#[derive(CandidType, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, CandidType, Clone, Serialize, Deserialize)]
 pub enum StaffRole {
     Admin,
     Contributor,

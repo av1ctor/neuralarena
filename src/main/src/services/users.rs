@@ -2,12 +2,12 @@ use candid::Principal;
 use crate::db::DB;
 use crate::db::traits::crud::{Crud, Pagination, CrudSubscribable};
 use crate::models::m4tch::Match;
-use crate::models::user::{User, UserId};
+use crate::models::user::{User, UserId, UserKind};
 
 pub struct UsersService {}
 
 impl UsersService {
-    pub fn create(
+    pub fn create_player(
         user: &User,
         db: &mut DB,
         caller: &Principal
@@ -16,8 +16,30 @@ impl UsersService {
             return Err("Anonymous not allowed".to_string());
         }
 
-        match user.kind.clone() {
-            _ => ()
+        match &user.kind {
+            UserKind::Player(_) => {},
+            _ => {
+                return Err("Invalid user kind".to_string());
+            }
+        }
+        
+        db.users.borrow_mut().insert_and_notify(caller.to_owned(), user.clone())
+    }
+
+    pub fn create_staff(
+        user: &User,
+        db: &mut DB,
+        caller: &Principal
+    ) -> Result<(), String> {
+        if *caller == Principal::anonymous() {
+            return Err("Anonymous not allowed".to_string());
+        }
+
+        match &user.kind {
+            UserKind::Staff(_) => {},
+            _ => {
+                return Err("Invalid user kind".to_string());
+            }
         }
         
         db.users.borrow_mut().insert_and_notify(caller.to_owned(), user.clone())

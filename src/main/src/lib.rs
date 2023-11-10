@@ -4,11 +4,13 @@ use candid::Principal;
 use db::traits::crud::Pagination;
 use ic_cdk::api::stable;
 use ic_cdk::{caller, trap};
+use models::game::{GameRequest, Game, GameResponse, GameId};
 use models::m4tch::{MatchRequest, MatchResponse, MatchStepsRequest, MatchStepsResponse, MatchRunRequest, MatchStartRequest, MatchJoinRequest, Match};
 use models::user::{UserRequest, UserResponse, User, UserId};
 use rand::{SeedableRng, RngCore};
 use rand::rngs::StdRng;
 use serde::{Deserialize, Serialize};
+use services::games::GamesService;
 use services::matches::MatchesService;
 use services::users::UsersService;
 use utils::serdeser;
@@ -128,14 +130,29 @@ fn _gen_id(
  * users facade
  */
 #[ic_cdk::update]
-fn user_create(
+fn user_create_player(
     req: UserRequest
 ) -> Result<UserResponse, String> {
     let caller = caller();
 
     DB.with(|db| {
         let user = User::new(&req, &caller);
-        match UsersService::create(&user, &mut db.borrow_mut(), &caller) {
+        match UsersService::create_player(&user, &mut db.borrow_mut(), &caller) {
+            Ok(()) => Ok(user.into()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+#[ic_cdk::update]
+fn user_create_staff(
+    req: UserRequest
+) -> Result<UserResponse, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        let user = User::new(&req, &caller);
+        match UsersService::create_staff(&user, &mut db.borrow_mut(), &caller) {
             Ok(()) => Ok(user.into()),
             Err(msg) => Err(msg)
         }
@@ -205,6 +222,80 @@ fn user_find_matches(
 
     DB.with(|db| {
         match UsersService::find_matches(&id, pag, &db.borrow(), &caller) {
+            Ok(list) => Ok(list.iter().map(|e| e.clone().into()).collect()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+/*
+ * games facade
+ */
+#[ic_cdk::update]
+fn games_create(
+    req: GameRequest
+) -> Result<GameResponse, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        let id = _gen_id();
+        let game = Game::new(&id, &req, &caller);
+        match GamesService::create(&id, &game, &mut db.borrow_mut(), &caller) {
+            Ok(()) => Ok(game.into()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+#[ic_cdk::update]
+fn game_update(
+    id: GameId,
+    req: GameRequest
+) -> Result<GameResponse, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        let game = Game::new(&id, &req, &caller);
+        match GamesService::update(&id, &game, &mut db.borrow_mut(), &caller) {
+            Ok(()) => Ok(game.into()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+#[ic_cdk::update]
+fn game_delete(
+    id: GameId
+) -> Result<(), String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        GamesService::delete(&id, &mut db.borrow_mut(), &caller)
+    })
+}
+
+#[ic_cdk::query]
+fn game_find_by_id(
+    id: GameId
+) -> Result<GameResponse, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        match GamesService::find_by_id(&id, &db.borrow(), &caller) {
+            Ok(game) => Ok(game.into()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+#[ic_cdk::query]
+fn game_find_active(
+    pag: Pagination
+) -> Result<Vec<GameResponse>, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        match GamesService::find_active(pag, &db.borrow(), &caller) {
             Ok(list) => Ok(list.iter().map(|e| e.clone().into()).collect()),
             Err(msg) => Err(msg)
         }

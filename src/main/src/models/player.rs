@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(CandidType, Clone, Serialize, Deserialize)]
 pub struct Player {
+    pub credits: u128,
 }
 
 #[derive(CandidType, Deserialize, Clone)]
@@ -18,6 +19,7 @@ impl Player {
         _e: &PlayerRequest
     ) -> Self {
         Self {
+            credits: 0,
         }
     }
 
@@ -42,6 +44,7 @@ impl From<PlayerRequest> for Player {
         _e: PlayerRequest
     ) -> Self {
         Self {
+            credits: 0,
         }
     }
 }

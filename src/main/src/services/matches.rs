@@ -15,6 +15,9 @@ use crate::db::traits::crud::{CrudSubscribable, Crud, Pagination};
 use crate::dqn::dqn::DqnOptions;
 use crate::models::m4tch::{Match, MatchId, MatchStatus, MatchStep};
 use crate::db::DB;
+use crate::models::user::UserKind;
+
+use super::users::UsersService;
 
 const TENSORS: &[u8] = include_bytes!("../../tensors/15rays-32hidden-60fps-30tps-0.05epsilon.safetensors");
 const MAP: &str = include_str!("../../maps/map.yaml");
@@ -28,9 +31,7 @@ impl MatchesService {
         db: &mut DB,
         caller: &Principal
     ) -> Result<(), String> {
-        if *caller == Principal::anonymous() {
-            return Err("Anonymous not allowed".to_string());
-        }
+        Self::authorize(caller, db)?;
 
         db.matches.borrow_mut().insert_and_notify(id.clone(), m4tch.clone())
     }
@@ -40,6 +41,8 @@ impl MatchesService {
         db: &mut DB,
         caller: &Principal
     ) -> Result<(), String> {
+        Self::authorize(caller, db)?;
+        
         let mut matches = db.matches.borrow_mut();
 
         let mut m4tch = match matches.find_by_id(id) {
@@ -55,6 +58,10 @@ impl MatchesService {
             return Err("Invalid match state".to_string());
         }
 
+        if m4tch.players.contains(caller) {
+            return Err("Already part of the match".to_string());
+        }
+
         m4tch.players.insert(caller.clone());
 
         matches.update_and_notify(id.to_owned(), m4tch.to_owned())
@@ -64,8 +71,10 @@ impl MatchesService {
         id: &MatchId,
         db: &mut DB,
         rng: &mut StdRng,
-        _caller: &Principal
+        caller: &Principal
     ) -> Result<(), String> {
+        Self::authorize(caller, db)?;
+        
         let mut matches = db.matches.borrow_mut();
 
         let mut m4tch = match matches.find_by_id(id) {
@@ -137,8 +146,10 @@ impl MatchesService {
         id: &MatchId,
         db: &mut DB,
         rng: &mut StdRng,
-        _caller: &Principal
+        caller: &Principal
     ) -> Result<(), String> {
+        Self::authorize(caller, db)?;
+        
         let mut matches = db.matches.borrow_mut();
 
         let mut m4tch = match matches.find_by_id(id) {
@@ -243,6 +254,8 @@ impl MatchesService {
         db: &mut DB,
         caller: &Principal
     ) -> Result<(), String> {
+        Self::authorize(caller, db)?;
+        
         let mut matches = db.matches.borrow_mut();
 
         let m4tch = match matches.find_by_id(id) {
@@ -283,5 +296,27 @@ impl MatchesService {
             .take(pag.limit as usize)
             .cloned()
             .collect())
+    }
+
+    fn authorize(
+        caller: &Principal, 
+        db: &mut DB
+    ) -> Result<(), String> {
+        if *caller == Principal::anonymous() {
+            return Err("Anonymous not allowed".to_string());
+        }
+        
+        let user = match UsersService::find_by_id(caller, db, caller) {
+            Ok(e) => e,
+            Err(msg) => return Err(msg),
+        };
+    
+        if let UserKind::Player(_player) = user.kind {
+        }
+        else {
+            return Err("Forbidden".to_string());
+        }
+
+        Ok(())
     }
 }

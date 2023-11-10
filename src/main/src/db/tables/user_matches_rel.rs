@@ -62,37 +62,29 @@ impl TableSubscriber<TableName> for UserMatchesRelTable {
     ) {
         match event.table_name {
             TableName::Matches => {
-                if let (
-                        TableEventKey::Text(m4tch_key), 
-                        TableEventKey::Principal(doctor_key),
-                        TableEventKey::Principal(patient_key)
-                    ) = (event.pkey.clone(), event.keys[0].clone(), event.keys[1].clone()) {
+                if let TableEventKey::Text(m4tch_key) = event.pkey.clone() {
                     match event.kind {
                         TableEventKind::Create => {
-                            // doctor
-                            if !self.data.0.contains_key(&doctor_key) {
-                                self.data.0.insert(doctor_key.clone(), BTreeSet::new());
+                            for fkey in &event.keys {
+                                if let TableEventKey::Principal(fkey) = fkey {
+                                    if !self.data.0.contains_key(fkey) {
+                                        self.data.0.insert(fkey.clone(), BTreeSet::default());
+                                    }
+
+                                    self.data.0.get_mut(fkey).unwrap().insert(m4tch_key.clone());
+                                }
                             }
-
-                            self.data.0.get_mut(&doctor_key).unwrap()
-                                .insert(m4tch_key.clone());
-
-                            // patient
-                            if !self.data.0.contains_key(&patient_key) {
-                                self.data.0.insert(patient_key.clone(), BTreeSet::new());
-                            }
-
-                            self.data.0.get_mut(&patient_key).unwrap()
-                                .insert(m4tch_key.clone());
                         },
                         TableEventKind::Update => {
-                            // assuming user_key won't be updated
+                            //WARNING: assuming users can't leave matches
                         },
                         TableEventKind::Delete => {
-                            self.data.0.get_mut(&doctor_key).unwrap()
-                                .remove(&m4tch_key);
-                            self.data.0.get_mut(&patient_key).unwrap()
-                                .remove(&m4tch_key);
+                            for fkey in &event.keys {
+                                if let TableEventKey::Principal(fkey) = fkey {
+                                    self.data.0.get_mut(fkey).unwrap()
+                                        .remove(&m4tch_key);
+                                }
+                            }
                         },
                     }
                 }

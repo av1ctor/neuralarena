@@ -1,3 +1,5 @@
+type GameRequest = record { name : text; canister_id : principal };
+type GameResponse = record { id : text; name : text; canister_id : principal };
 type MatchJoinRequest = record { id : text; name : text };
 type MatchOptions = record {
   fov : float32;
@@ -22,11 +24,13 @@ type MatchStep = record {
 type MatchStepsRequest = record { id : text; pag : Pagination };
 type MatchStepsResponse = record { steps : vec MatchStep };
 type Pagination = record { offset : nat32; limit : nat32 };
-type Result = variant { Ok : MatchResponse; Err : text };
-type Result_1 = variant { Ok : MatchStepsResponse; Err : text };
-type Result_2 = variant { Ok; Err : text };
-type Result_3 = variant { Ok : UserResponse; Err : text };
-type Result_4 = variant { Ok : vec MatchResponse; Err : text };
+type Result = variant { Ok; Err : text };
+type Result_1 = variant { Ok : vec GameResponse; Err : text };
+type Result_2 = variant { Ok : GameResponse; Err : text };
+type Result_3 = variant { Ok : MatchResponse; Err : text };
+type Result_4 = variant { Ok : MatchStepsResponse; Err : text };
+type Result_5 = variant { Ok : UserResponse; Err : text };
+type Result_6 = variant { Ok : vec MatchResponse; Err : text };
 type StaffRequest = record { role : StaffRole };
 type StaffRole = variant { Member; Admin; Contributor };
 type UserKindRequest = variant { Staff : StaffRequest; Player : record {} };
@@ -42,15 +46,21 @@ type UserResponse = record {
   email : text;
 };
 service : () -> {
-  match_create : (MatchRequest) -> (Result);
-  match_get_steps : (MatchStepsRequest) -> (Result_1) query;
-  match_join : (MatchJoinRequest) -> (Result_2);
-  match_run : (MatchResponse) -> (Result_2);
-  match_start : (MatchResponse) -> (Result_2);
-  user_create : (UserRequest) -> (Result_3);
-  user_delete : (principal) -> (Result_2);
-  user_find_by_id : (principal) -> (Result_3) query;
-  user_find_matches : (principal, Pagination) -> (Result_4) query;
-  user_find_me : () -> (Result_3) query;
-  user_update : (principal, UserRequest) -> (Result_3);
+  game_delete : (text) -> (Result);
+  game_find_active : (Pagination) -> (Result_1) query;
+  game_find_by_id : (text) -> (Result_2) query;
+  game_update : (text, GameRequest) -> (Result_2);
+  games_create : (GameRequest) -> (Result_2);
+  match_create : (MatchRequest) -> (Result_3);
+  match_get_steps : (MatchStepsRequest) -> (Result_4) query;
+  match_join : (MatchJoinRequest) -> (Result);
+  match_run : (MatchResponse) -> (Result);
+  match_start : (MatchResponse) -> (Result);
+  user_create_player : (UserRequest) -> (Result_5);
+  user_create_staff : (UserRequest) -> (Result_5);
+  user_delete : (principal) -> (Result);
+  user_find_by_id : (principal) -> (Result_5) query;
+  user_find_matches : (principal, Pagination) -> (Result_6) query;
+  user_find_me : () -> (Result_5) query;
+  user_update : (principal, UserRequest) -> (Result_5);
 }
