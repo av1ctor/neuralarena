@@ -2,7 +2,7 @@ import { UseQueryResult, useMutation, useQuery, useQueryClient } from "react-que
 import { Principal } from "@dfinity/principal";
 import { UserRequest, UserResponse } from "../../../declarations/main/main.did";
 import { useActors } from "./actors";
-import { userCreate, userDelete, userFindById, userFindMe, userUpdate } from "../libs/users";
+import { userCreatePlayer, userDelete, userFindById, userFindMe, userUpdate } from "../libs/users";
 
 interface UserMethods {
     create: (req: UserRequest) => Promise<UserResponse>;
@@ -17,7 +17,7 @@ export const useUser = (
 
     const createMut = useMutation(
         async (options: {req: UserRequest}) => {
-            return userCreate(main, options.req);
+            return userCreatePlayer(main, options.req);
         },
         {
             onSuccess: () => {

@@ -59,11 +59,22 @@ export const userGetName = (
     return 'Unknown';
 };
 
-export const userCreate = async (
+export const userCreatePlayer = async (
     main: Main,
     req: UserRequest
 ): Promise<UserResponse> => {
-    const res = await main.user_create(req);
+    const res = await main.user_create_player(req);
+    if('Err' in res) {
+        throw new Error(res.Err);
+    }
+    return res.Ok; 
+};
+
+export const userCreateStaff = async (
+    main: Main,
+    req: UserRequest
+): Promise<UserResponse> => {
+    const res = await main.user_create_staff(req);
     if('Err' in res) {
         throw new Error(res.Err);
     }

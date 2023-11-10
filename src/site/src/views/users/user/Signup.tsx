@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState, useCallback } from "react";
 import * as yup from 'yup';
 import { Box, Button, Center, Container, SegmentedControl, Space, Stepper, TextInput } from "@mantine/core";
 import { useForm, yupResolver } from "@mantine/form";
-import { IconUser } from "@tabler/icons-react";
+import { IconUser, IconUserCog } from "@tabler/icons-react";
 import { useAuth } from "../../../hooks/auth";
 import { useUI } from "../../../hooks/ui";
 import { useBrowser } from "../../../hooks/browser";
@@ -113,6 +113,15 @@ const Signup = (props: Props) => {
                     <Center>
                         <IconUser />
                         <Box ml={10}>Player</Box>
+                    </Center>
+                ),
+            },
+            {
+                value: UserKind[UserKind.Staff],
+                label: (
+                    <Center>
+                        <IconUserCog />
+                        <Box ml={10}>Staff</Box>
                     </Center>
                 ),
             },

@@ -66,7 +66,7 @@ const AppFooter = (props: Props) => {
             </Grid>
             <Space />
             <Center>
-                © 2023-{year} neuralarena
+                © {year} neuralarena
             </Center>
             <Center>
                 <Text color='pink' size="xs">Notice: this is a demo site</Text>

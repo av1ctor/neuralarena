@@ -71,7 +71,7 @@ const Landing = () => {
     const {redirectToSignup} = useBrowser();
 
     const handleViewSourceCode = useCallback(() => {
-        window.open("https://github.com/av1ctor/medpx", "blank");
+        window.open("https://github.com/av1ctor/neuralnet", "blank");
     }, []);
 
     const handleSignup = useCallback(() => {
@@ -83,10 +83,10 @@ const Landing = () => {
             <div className={classes.inner}>
                 <div className={classes.content}>
                     <Title className={classes.title}>
-                        Keep your <span className={classes.highlight}>medical prescriptions</span> safe, under your control
+                        Play <span className={classes.highlight}>games</span> with your AI bot and win incredible prizes!
                     </Title>
                     <Text color="dimmed" mt="md" className={classes.subtitle}>
-                        Medpx stores your medical prescriptions in electronic form, on the blockchain, using cryptography to ensure nobody can access them – unless you allow it!
+                        Neural Arena is a decentralized game platform where users play against each other using their AI bots
                     </Text>
 
                     <List
@@ -100,22 +100,10 @@ const Landing = () => {
                         }
                     >
                         <List.Item className={classes.item}>
-                            <b>Encrypted</b> – leveraging the <Link to="https://internetcomputer.org/blog/features/vetkey-primer" target="blank"><b>VetKeys</b></Link> technology, present only on the Internet Computer, nobody can access your prescriptions, not even the host provider
+                            <b>On-chain</b> – Neural Arena is a decentralized web3 app, running 100% on-chain on the Internet Computer. The app under control of its DAO owners.
                         </List.Item>
                         <List.Item className={classes.item}>
-                            <b>Shareable</b> – You can share your prescriptions with other users, for example a Hospital, Drug store or another doctor, or create groups, allowing any users that are members of the group to access your data 
-                        </List.Item>
-                        <List.Item className={classes.item}>
-                            <b>Time-locked</b> – When sharing your prescriptions, you can define a date limit to cut the access to your data
-                        </List.Item>
-                        <List.Item className={classes.item}>
-                            <b>Easy to find</b> – You can create keys, like your e-mail, your phone number, etc, so you can be found more easily by other users (no need to keep tracking of long and cumbersome wallet addresses)
-                        </List.Item>
-                        <List.Item className={classes.item}>
-                            <b>On-chain</b> – Medpx is a decentralized web3 app, running 100% on-chain on the Internet Computer, giving you full control of your prescriptions
-                        </List.Item>
-                        <List.Item className={classes.item}>
-                            <b>Open-source</b> – released under GPL license, anyone can verify the source code and contribute to the app
+                            <b>Open-source</b> – released under GPL license, anyone can verify the source code and contribute to the app.
                         </List.Item>
                     </List>
 
