@@ -109,6 +109,7 @@ const Landing = () => {
 
                     <Group mt={30}>
                         <Button 
+                            variant="gradient"
                             radius="xl" 
                             size="md" 
                             className={classes.control}

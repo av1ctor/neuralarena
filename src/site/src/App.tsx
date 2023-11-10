@@ -26,6 +26,10 @@ const authProvider = new IcProviderBuider()
     .withPlug()
     .build();
 
+const colors = {
+    'magenta': ["#ffe9f6", "#ffd1e6", "#faa1c9", "#f66eab", "#f24391", "#f02881", "#f01879", "#d60867", "#c0005c", "#a9004f"],
+};
+
 export const App = () => {
     const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
         key: 'mantine-color-scheme',
@@ -45,7 +49,16 @@ export const App = () => {
                         <ActorContextProvider>
                             <UIContextProvider>
                                 <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-                                    <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
+                                    <MantineProvider 
+                                        theme={{ 
+                                            colorScheme, 
+                                            primaryColor: 'magenta',
+                                            colors: colors as any, 
+                                            defaultGradient: {from: '#ff6600', to: '#ff00ff', deg: 135.0}
+                                        }} 
+                                        withGlobalStyles 
+                                        withNormalizeCSS
+                                    >
                                         <GlobalStyles />
                                         <Notifications position="bottom-right" />
                                         <Router> 

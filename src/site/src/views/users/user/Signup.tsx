@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState, useCallback } from "react";
 import * as yup from 'yup';
 import { Box, Button, Center, Container, SegmentedControl, Space, Stepper, TextInput } from "@mantine/core";
 import { useForm, yupResolver } from "@mantine/form";
-import { IconUser, IconUserCog } from "@tabler/icons-react";
+import { IconUserCog, IconUserShield } from "@tabler/icons-react";
 import { useAuth } from "../../../hooks/auth";
 import { useUI } from "../../../hooks/ui";
 import { useBrowser } from "../../../hooks/browser";
@@ -111,7 +111,7 @@ const Signup = (props: Props) => {
                 value: UserKind[UserKind.Player],
                 label: (
                     <Center>
-                        <IconUser />
+                        <IconUserShield />
                         <Box ml={10}>Player</Box>
                     </Center>
                 ),
@@ -156,7 +156,7 @@ const Signup = (props: Props) => {
                         size="md"
                         orientation={isMobile? "vertical": "horizontal"}
                         fullWidth
-                        color="blue"
+                        color="magenta"
                         value={UserKind[kind]}
                         data={kinds}
                         onChange={handleChangeKind}
@@ -186,8 +186,8 @@ const Signup = (props: Props) => {
                     }
                     <Space h="lg"/>
                     <Button
-                        color="red"
                         fullWidth
+                        variant="gradient"
                         type="submit"
                     >
                         Submit

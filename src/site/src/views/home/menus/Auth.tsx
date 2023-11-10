@@ -49,6 +49,7 @@ export const AuthMenu = (props: Props) => {
             </Button>
             <Button 
                 leftIcon={<IconUserPlus/>}
+                variant="gradient"
                 onClick={handleRedirectToSignup}
             >
                 Sign up
