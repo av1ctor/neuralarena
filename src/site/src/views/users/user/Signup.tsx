@@ -1,0 +1,192 @@
+import React, { useEffect, useMemo, useState, useCallback } from "react";
+import * as yup from 'yup';
+import { Box, Button, Center, Container, SegmentedControl, Space, Stepper, TextInput } from "@mantine/core";
+import { useForm, yupResolver } from "@mantine/form";
+import { IconUser } from "@tabler/icons-react";
+import { useAuth } from "../../../hooks/auth";
+import { useUI } from "../../../hooks/ui";
+import { useBrowser } from "../../../hooks/browser";
+import { useUser } from "../../../hooks/users";
+import { useActors } from "../../../hooks/actors";
+import { UserKind, userStringToKind } from "../../../libs/users";
+import Login from "./Login";
+
+const schema = {
+    name: yup.string().min(3).max(64),
+    email: yup.string().email().min(3).max(128),
+};
+
+const playerSchema = {
+};
+
+interface Props {
+}
+
+const Signup = (props: Props) => {
+    const {isAuthenticated, isLogged} = useAuth();
+    const {showSuccess, showError, toggleLoading} = useUI();
+    const {main} = useActors();
+    const {isMobile, returnToLastPage} = useBrowser();
+    const [active, setActive] = useState(0);
+    const [kind, setKind] = useState(UserKind.Player);
+    const [options, setOptions] = useState({
+        initialValues: {
+            name: '',
+            email: '',
+            kind: '',
+        }
+    });
+    const {update} = useAuth();
+    const {create} = useUser();
+    const form = useForm(options);
+
+    const handleChangeKind = useCallback((value: string) => {
+        setKind(userStringToKind(value));
+    }, [setKind]);
+
+    const handleAuthenticated = useCallback(() => {
+        setActive(1);
+    }, []);
+
+    const handleCreate = useCallback(async (values: any) => {
+        try {
+            toggleLoading(true);
+
+            const user = await create(values);
+            showSuccess('User registered!');
+            returnToLastPage();
+
+            await update(main, user);
+        }
+        catch(e: any) {
+            showError(e);
+        }
+        finally {
+            toggleLoading(false);
+        }
+    }, [main, kind]);
+
+    useEffect(() => {
+        setOptions({
+            ...options,
+        
+            validate: yupResolver(
+                yup.object().shape({...(
+                    kind === UserKind.Player? 
+                        playerSchema
+                    :   
+                        {}), 
+                    ...schema
+                })),
+    
+            transformValues: (values: any) => ({
+                name: values.name,
+                email: values.email,
+                kind: 
+                    kind === UserKind.Player? 
+                        {Player: {
+                        }}
+                    :   
+                        {Staff: {
+                            kind: {[values.kind]: null},
+                        }},
+            }),
+        } as any);
+    }, [kind]);
+
+    useEffect(() => {
+        if(isLogged) {
+            returnToLastPage();
+        }
+        else if(isAuthenticated) {
+            if(active === 0) {
+                setActive(1);
+            }
+        }
+    }, [isAuthenticated, isLogged, active, setActive]);
+
+    const kinds = useMemo(() => {
+        return [
+            {
+                value: UserKind[UserKind.Player],
+                label: (
+                    <Center>
+                        <IconUser />
+                        <Box ml={10}>Player</Box>
+                    </Center>
+                ),
+            },
+        ];
+    }, []);
+
+    return (
+        <Stepper 
+            active={active} 
+            breakpoint="sm"
+            color="green"
+            onStepClick={setActive}
+        >
+            <Stepper.Step 
+                label="Authentication" 
+                description="Authenticate with your provider"
+                allowStepSelect={false}
+            >
+                <Login 
+                    authenticateOnly={true}
+                    onAuthenticated={handleAuthenticated} 
+                />
+            </Stepper.Step>
+            <Stepper.Step 
+                label="Registration" 
+                description="Create a new account"
+                allowStepSelect={false}
+            >
+                <Space h="md" />
+                <Container>
+                    <SegmentedControl
+                        size="md"
+                        orientation={isMobile? "vertical": "horizontal"}
+                        fullWidth
+                        color="blue"
+                        value={UserKind[kind]}
+                        data={kinds}
+                        onChange={handleChangeKind}
+                    />
+                </Container>
+                <Space h="md" />
+
+                <form onSubmit={form.onSubmit(handleCreate)}>
+                    <TextInput
+                        label="Name"
+                        placeholder="Your name"
+                        {...form.getInputProps('name')}
+                    />
+                    <TextInput
+                        label="Email"
+                        placeholder="Your e-mail"
+                        {...form.getInputProps('email')}
+                    />
+
+                    {kind === UserKind.Player && 
+                        <>
+                        </>
+                    }
+                    {kind === UserKind.Staff && 
+                        <>
+                        </>
+                    }
+                    <Space h="lg"/>
+                    <Button
+                        color="red"
+                        fullWidth
+                        type="submit"
+                    >
+                        Submit
+                    </Button>
+                </form>                
+            </Stepper.Step>
+        </Stepper>
+   );
+};
+
+export default Signup;

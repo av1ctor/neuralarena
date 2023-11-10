@@ -1,10 +1,12 @@
+use serde::{Deserialize, Serialize};
+
 use super::layer::Layer;
 use super::tensor::Tensor; 
 use super::linear::Linear;
 use super::safetensors::SafeTensor; 
 use super::activation::{Activation, ActivationFnType};
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Sequential<L> 
     where L: Layer {
     pub layers: Vec<L>,

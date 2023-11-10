@@ -1,15 +1,15 @@
 use rand::{rngs::StdRng, Rng};
+use serde::{Deserialize, Serialize};
 use crate::nn::tensor::Tensor;
 use crate::dqn::dqn::{DqnOptions, DeepQNetwork};
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct BaseAgentOptions {
     pub dqn: DqnOptions,
-    pub rng: StdRng,
     pub epsilon: f64,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct BaseAgent {
     pub options: BaseAgentOptions,
     pub q_eval: DeepQNetwork,
@@ -29,9 +29,10 @@ impl BaseAgent {
 
     pub fn choose_action(
         &mut self, 
-        obs: Tensor
+        obs: Tensor,
+        rng: &mut StdRng
     ) -> Option<usize> {
-        if self.options.rng.gen::<f64>() > self.options.epsilon {
+        if rng.gen::<f64>() > self.options.epsilon {
             let actions = &self.q_eval.forward(obs);
             Some(actions.argmax())
         }

@@ -1,37 +1,36 @@
+use std::cell::RefCell;
+use crate::db::DB;
+use candid::Principal;
+use db::traits::crud::Pagination;
+use ic_cdk::api::stable;
+use ic_cdk::{caller, trap};
+use models::m4tch::{MatchRequest, MatchResponse, MatchStepsRequest, MatchStepsResponse, MatchRunRequest, MatchStartRequest, MatchJoinRequest, Match};
+use models::user::{UserRequest, UserResponse, User, UserId};
+use rand::{SeedableRng, RngCore};
+use rand::rngs::StdRng;
+use serde::{Deserialize, Serialize};
+use services::matches::MatchesService;
+use services::users::UsersService;
+use utils::serdeser;
+
 mod nn;
 mod dqn;
 mod agent;
-pub mod types;
+mod models;
+mod db;
+mod services;
+mod utils;
 
-use std::cell::RefCell;
-use std::collections::{HashSet, HashMap};
-use crate::agent::agent::Agent;
-use agent::baseagent::BaseAgentOptions;
-use bot_engine::line::Line;
-use bot_engine::vector2d::Vector2d;
-use bot_engine::env::Env;
-use bot_engine::game::{Game, GameOptions, ObjectFOV};
-use bot_engine::map::Map;
-use candid::{Principal, CandidType};
-use dqn::dqn::DqnOptions;
-use agent::dqnagent::DqnAgent;
-use ic_cdk::{caller, trap};
-use rand::{SeedableRng, Rng, RngCore};
-use rand::rngs::StdRng;
-use serde::Deserialize;
-use types::*;
+const STATE_VERSION: f32 = 0.1;
 
-const TENSORS: &[u8] = include_bytes!("../tensors/15rays-32hidden-60fps-30tps-0.05epsilon.safetensors");
-const MAP: &str = include_str!("../maps/map.yaml");
-
-#[derive(Default, Deserialize, CandidType)]
+#[derive(Default, Serialize, Deserialize)]
 struct State {
     owner: Option<Principal>,
 }
 
 thread_local! {
     static STATE: RefCell<State> = RefCell::default();
-    static MATCHES: RefCell<HashMap<String, Match>> = RefCell::new(HashMap::default());
+    static DB: RefCell<DB> = RefCell::new(DB::new());    
     static RNG: RefCell<Option<StdRng>> = RefCell::default();
 }
 
@@ -57,34 +56,61 @@ fn _init_rng() {
 
 #[ic_cdk::pre_upgrade]
 fn pre_upgrade() {
+    let mut writter = stable::StableWriter::default();
+    
     STATE.with(|cell| {
-        if let Err(err) = ic_cdk::storage::stable_save::<(&State,)>((
-            &cell.borrow(),
-        )) {
+        if let Err(err) = serdeser::serialize(
+            cell.to_owned(),
+            STATE_VERSION,
+            &mut writter
+        ) {
             trap(&format!(
-                "An error occurred when saving to stable memory (pre_upgrade): {:?}",
+                "An error occurred when saving state to stable memory (pre_upgrade): {:?}",
                 err
             ));
         };
+    });
+
+    DB.with(|db| {
+        if let Err(err) = db.borrow().serialize(&mut writter) {
+            trap(&format!(
+                "An error occurred when saving DB to stable memory (pre_upgrade): {:?}",
+                err
+            ));
+        }
     });
 }
 
 #[ic_cdk::post_upgrade]
 fn post_upgrade() {
+    let mut reader = stable::StableReader::default();
+
     STATE.with(|cell| {
-        match ic_cdk::storage::stable_restore::<(State, )>() {
-            Ok((s_, )) => {
+        match serdeser::deserialize::<State>(
+            STATE_VERSION, 
+            &mut reader
+        ) {
+            Ok(s_) => {
                 cell.replace(s_);
             }
             Err(err) => {
                 trap(&format!(
-                    "An error occurred when loading from stable memory (post_upgrade): {:?}",
+                    "An error occurred when restoring state from stable memory (post_upgrade): {:?}",
                     err
                 ));
             }
         }
     });
 
+    DB.with(|db| {
+        if let Err(err) = db.borrow_mut().deserialize(&mut reader) {
+            trap(&format!(
+                "An error occurred when restoring DB from stable memory (post_upgrade): {:?}",
+                err
+            ));
+        }
+    });
+    
     _init_rng();
 }
 
@@ -98,69 +124,118 @@ fn _gen_id(
     ulid::Ulid::from_parts(ic_cdk::api::time() / 1000000, (msu64 as u128) << 64 | (lsu64 as u128)).to_string()
 }
 
+/*
+ * users facade
+ */
+#[ic_cdk::update]
+fn user_create(
+    req: UserRequest
+) -> Result<UserResponse, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        let user = User::new(&req, &caller);
+        match UsersService::create(&user, &mut db.borrow_mut(), &caller) {
+            Ok(()) => Ok(user.into()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+#[ic_cdk::update]
+fn user_update(
+    id: UserId,
+    req: UserRequest
+) -> Result<UserResponse, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        let user = User::new(&req, &caller);
+        match UsersService::update(&id, &user, &mut db.borrow_mut(), &caller) {
+            Ok(()) => Ok(user.into()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+#[ic_cdk::update]
+fn user_delete(
+    id: UserId
+) -> Result<(), String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        UsersService::delete(&id, &mut db.borrow_mut(), &caller)
+    })
+}
+
+ #[ic_cdk::query]
+fn user_find_me(
+) -> Result<UserResponse, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        match UsersService::find_by_id(&caller, &db.borrow(), &caller) {
+            Ok(user) => Ok(user.into()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+#[ic_cdk::query]
+fn user_find_by_id(
+    id: UserId
+) -> Result<UserResponse, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        match UsersService::find_by_id(&id, &db.borrow(), &caller) {
+            Ok(user) => Ok(user.into()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+#[ic_cdk::query]
+fn user_find_matches(
+    id: UserId,
+    pag: Pagination
+) -> Result<Vec<MatchResponse>, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        match UsersService::find_matches(&id, pag, &db.borrow(), &caller) {
+            Ok(list) => Ok(list.iter().map(|e| e.clone().into()).collect()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+/*
+ * matches facade
+ */
 #[ic_cdk::update]
 pub fn match_create(
-    req: MatchCreateRequest
-) -> Result<MatchCreateResponse, String> {
-    
-    let caller = &caller();
-    
-    let id = _gen_id();
+    req: MatchRequest
+) -> Result<MatchResponse, String> {
+    let caller = caller();
 
-    MATCHES.with(|r| {
-        r.borrow_mut().insert(
-            id.clone(), 
-            Match { 
-                options: req.options, 
-                state: MatchState { 
-                    status: MatchStatus::CREATED,
-                    created_at: 0,
-                    created_by: caller.to_string(),
-                    started_at: None,
-                    started_by: None,
-                    won_at: None,
-                    won_by: None,
-                    steps: vec![],
-                },
-                players: HashSet::default(),
-                game: None,
-                agent: None,
-            }
-        );
-    });
-
-    Ok(MatchCreateResponse{
-        id
+    DB.with(|db| {
+        let id = _gen_id();
+        let m4tch = Match::new(&id, &req, &caller);
+        match MatchesService::create(&id, &m4tch, &mut db.borrow_mut(), &caller) {
+            Ok(()) => Ok(m4tch.into()),
+            Err(msg) => Err(msg)
+        }
     })
 }
 
 #[ic_cdk::update]
 pub fn match_join(
     req: MatchJoinRequest
-) -> Result<MatchJoinResponse, String> {
-    MATCHES.with(|r| {
-        let mut matches = r.borrow_mut();
-        
-        let m_tch = match matches.get_mut(&req.id) {
-            None => return Err("Unknown match".to_string()),
-            Some(m) => m
-        };
-
-        if m_tch.players.len() >= m_tch.options.max_players {
-            return Err("Too many players".to_string());
-        }
-
-        if m_tch.state.status != MatchStatus::CREATED {
-            return Err("Invalid match state".to_string());
-        }
-
-        let caller = &caller();
-        
-        m_tch.players.insert(caller.to_string());
-
-        Ok(MatchJoinResponse { 
-            id: caller.to_string()
-        })
+) -> Result<(), String> {
+    DB.with(|db| {
+        MatchesService::join(&req.id, &mut db.borrow_mut(), &caller())
     })
 }
 
@@ -168,73 +243,15 @@ pub fn match_join(
 pub fn match_start(
     req: MatchStartRequest
 ) -> Result<(), String> {     
-    MATCHES.with(|r| {
-        let mut matches = r.borrow_mut();
-        
-        let m_tch = match matches.get_mut(&req.id) {
-            None => return Err("Unknown match".to_string()),
-            Some(m) => m
-        };
-
-        if m_tch.players.len() < m_tch.options.min_players {
-            return Err("Too few players".to_string());
-        }
-
-        if m_tch.state.status != MatchStatus::CREATED {
-            return Err("Invalid match state".to_string());
-        }
-
-        let mut map = Map::load_from_string(&MAP.to_string())?;
-        map.prepare();
-        
-        let mut rng = StdRng::seed_from_u64(ic_cdk::api::time());
-
-        let game = Game::new(
-            map, 
-            GameOptions {
-                fps: m_tch.options.fps as f32,
-                fov: ObjectFOV { 
-                    rays: m_tch.options.rays, 
-                    angle: m_tch.options.fov, 
-                    max_dist: m_tch.options.player_radius * 2.0,
-                },
-                num_players: m_tch.players.len(),
-                min_keys: 4,
-                player_radius: m_tch.options.player_radius,
-                debug: false,
-                training: false,
-            },
-            &mut rng
-        );
-
-        let options = BaseAgentOptions { 
-            dqn: DqnOptions {
-                n_actions: game.get_num_actions(),
-                n_obs: game.get_num_obs(),
-                n_hidden: m_tch.options.num_hidden_layers
-            },
-            epsilon: m_tch.options.epsilon,
-            rng,
-        };
-        
-        let mut agent = DqnAgent::new(&options);
-
-        /*let tensors_path = format!(
-            "./weights/{}rays-{}hidden-{}fps-{}tps-{}epsilon.safetensors", 
-            m_tch.options.rays, 
-            m_tch.options.num_hidden_layers, 
-            m_tch.options.fps, 
-            m_tch.options.tps, 
-            m_tch.options.epsilon
-        );*/
-    
-        agent.load(&TENSORS.to_vec())?;
-
-        m_tch.game = Some(game);
-        m_tch.agent = Some(agent);
-        m_tch.state.status = MatchStatus::STARTED;
-
-        Ok(())
+    DB.with(|db| {
+        RNG.with(|rng| {
+            MatchesService::start(
+                &req.id, 
+                &mut db.borrow_mut(), 
+                &mut rng.borrow_mut().as_mut().unwrap(), 
+                &caller()
+            )
+        })
     })
 }
 
@@ -242,127 +259,30 @@ pub fn match_start(
 pub fn match_run(
     req: MatchRunRequest
 ) -> Result<(), String> {
-    
-    MATCHES.with(|r| {
-        let mut matches = r.borrow_mut();
-        
-        let m_tch = match matches.get_mut(&req.id) {
-            None => return Err("Unknown match".to_string()),
-            Some(m) => m
-        };
-
-        if m_tch.state.status != MatchStatus::STARTED {
-            return Err("Invalid match state".to_string());
-        }
-
-        m_tch.state.status = MatchStatus::RUNNING;
-
-        let game = m_tch.game.as_mut().unwrap();
-        let agent = m_tch.agent.as_mut().unwrap();
-        
-        let mut num_steps = 1;
-        let mut running = true;
-        let mut last_thought_step = 0;
-        let steps_between_thoughts = (m_tch.options.fps / m_tch.options.tps) as u32;
-
-        let mut obs_vec = vec![]; 
-
-        let obs = &game.reset();
-        for i in 0..game.options.num_players {
-            obs_vec.push(obs[i].clone());
-        }
-
-        let pre = ic_cdk::api::performance_counter(0);
-
-        while running {
-            let do_think = num_steps - last_thought_step >= steps_between_thoughts;
-
-            let actions = if do_think  { 
-                last_thought_step = num_steps;
-                
-                let mut actions = vec![0usize; game.options.num_players];
-
-                let players_idx = gen_players_idx(game);
-                
-                for i in 0..game.options.num_players {
-                    let p = players_idx[i];
-                    let action = agent.choose_action(obs_vec[p].clone().into())
-                        .unwrap_or(game.random_action());
-
-                    actions[p] = action;
-                }
-
-                actions.iter()
-                    .map(|v| Some(v.clone() as usize))
-                    .collect::<Vec<Option<usize>>>()
-            } else {
-                vec![None; game.options.num_players]
-            };
-
-            let step = game.step(&actions, 1.0);
-            num_steps += 1;
-
-            m_tch.state.steps.push(MatchStep {
-                terminated: step.terminated,
-                timedout: step.timedout,
-                winner: step.winner,
-                entities: game.serialize_entities()?,
-            });
-
-            running = !step.terminated && !step.timedout;
-
-            for p in 0..step.players.len() {
-                obs_vec[p] = step.players[p].obs.clone();
-            }
-        }
-
-        m_tch.state.status = MatchStatus::FINISHED;
-
-        let post = ic_cdk::api::performance_counter(0);
-        ic_cdk::print((post - pre).to_string());
-
-        Ok(())
-    })
-}
-
-#[ic_cdk::query]
-pub fn get_steps(
-    req: MatchStepsRequest
-) -> Result<MatchStepsResponse, String> {
-    MATCHES.with(|r| {
-        let matches = r.borrow();
-        
-        let m_tch = match matches.get(&req.id) {
-            None => return Err("Unknown match".to_string()),
-            Some(m) => m
-        };
-
-        if ![MatchStatus::STARTED, MatchStatus::FINISHED].contains(&m_tch.state.status) {
-            return Err("Invalid match state".to_string());
-        }
-
-        let steps = m_tch.state.steps.iter()
-            .skip(req.ofs)
-            .take(req.len)
-            .cloned()
-            .collect();
-        
-        Ok(MatchStepsResponse { 
-            steps
+    DB.with(|db| {
+        RNG.with(|rng| {
+            MatchesService::run(
+                &req.id, 
+                &mut db.borrow_mut(), 
+                &mut rng.borrow_mut().as_mut().unwrap(), 
+                &caller()
+            )
         })
     })
 }
 
-fn gen_players_idx(
-    game: &mut Game<Vector2d, Line<Vector2d>>
-) -> Vec<usize> {
-    let mut indexes = HashSet::new();
-
-    while indexes.len() < game.options.num_players {
-        indexes.insert(game.rng.gen_range(0..game.options.num_players));
-    }
-
-    indexes.into_iter().collect()
+#[ic_cdk::query]
+pub fn match_get_steps(
+    req: MatchStepsRequest
+) -> Result<MatchStepsResponse, String> {
+    DB.with(|db| {
+        match MatchesService::steps(&req.id, req.pag, &mut db.borrow_mut(), &caller()) {
+            Ok(steps) => Ok(MatchStepsResponse{
+                steps
+            }),
+            Err(msg) => Err(msg),
+        }
+    })
 }
 
 #[cfg(target_arch = "wasm32")]

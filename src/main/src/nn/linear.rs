@@ -1,6 +1,8 @@
+use serde::{Deserialize, Serialize};
+
 use super::layer::Layer;
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Linear {
     pub name: String,
     pub in_dim: usize,

@@ -1,3 +1,5 @@
+use rand::rngs::StdRng;
+
 use crate::nn::tensor::Tensor;
 use super::baseagent::BaseAgentOptions;
 
@@ -8,7 +10,8 @@ pub trait Agent {
 
     fn choose_action(
         &mut self, 
-        obs: Tensor
+        obs: Tensor,
+        rng: &mut StdRng
     ) -> Option<usize>;
 
     fn load(

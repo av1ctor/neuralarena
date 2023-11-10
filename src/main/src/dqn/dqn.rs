@@ -1,13 +1,15 @@
+use serde::{Deserialize, Serialize};
+
 use crate::nn::{sequential::{Sequential, seq}, tensor::Tensor, linear::{linear, Linear}, activation::ActivationFnType};
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct DqnOptions {
     pub n_obs: usize,
     pub n_hidden: usize,
     pub n_actions: usize,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct DeepQNetwork {
     pub options: DqnOptions,
     pub network: Sequential<Linear>,

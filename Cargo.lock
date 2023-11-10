@@ -416,6 +416,7 @@ dependencies = [
  "ic-cdk",
  "ic-cdk-timers",
  "rand",
+ "rmp-serde",
  "serde",
  "serde_json",
  "ulid",
