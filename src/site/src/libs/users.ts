@@ -49,11 +49,11 @@ export const userGetPrincipal = (
     return Principal.anonymous();
 };
 
-export const userGetName = (
+export const userGetNick = (
     user: UserResponse | undefined
 ): string => {
     if (user !== undefined) {
-        return user.name;
+        return user.nick;
     }
 
     return 'Unknown';

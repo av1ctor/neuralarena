@@ -1,31 +1,28 @@
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
 use candid::{CandidType, Principal};
 use serde::{Serialize, Deserialize};
 use bot_engine::line::Line;
 use bot_engine::game::Game;
 use bot_engine::vector2d::Vector2d;
 use crate::agent::dqnagent::DqnAgent;
-use crate::db::traits::crud::Pagination;
-
+use super::game::GameId;
 use super::user::UserId;
 
 pub type MatchId = String;
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
 pub struct MatchOptions {
-    pub map_name: String,
+    pub game_id: GameId,
     pub min_players: usize,
     pub max_players: usize,
     pub fps: f32,
     pub tps: f32,
-    pub rays: usize,
-    pub fov: f32,
-    pub player_radius: f32,
     pub epsilon: f64,
     pub num_hidden_layers: usize,
+    pub game_options: HashMap<String, String>,
 }
 
-#[derive(PartialEq, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Clone, Serialize, Deserialize, CandidType)]
 pub enum MatchStatus {
     CREATED,
     STARTED,
@@ -44,7 +41,6 @@ pub struct MatchStep {
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct MatchState {
-    pub status: MatchStatus,
     pub steps: Vec<MatchStep>,
 }
 
@@ -52,6 +48,7 @@ pub struct MatchState {
 pub struct Match {
     pub id: String,
     pub options: MatchOptions,
+    pub status: MatchStatus,
     pub players: HashSet<UserId>,
     pub state: MatchState,
     pub game: Option<Game<Vector2d, Line<Vector2d>>>,
@@ -72,28 +69,15 @@ pub struct MatchRequest {
 #[derive(Clone, Serialize, Deserialize, CandidType)]
 pub struct MatchResponse {
     pub id: String,
-}
-
-#[derive(Clone, Serialize, Deserialize, CandidType)]
-pub struct MatchStartRequest {
-    pub id: String,
-}
-
-#[derive(Clone, Serialize, Deserialize, CandidType)]
-pub struct MatchRunRequest {
-    pub id: String,
-}
-
-#[derive(Clone, Serialize, Deserialize, CandidType)]
-pub struct MatchJoinRequest {
-    pub id: String,
-    pub name: String,
-}
-
-#[derive(Clone, Serialize, Deserialize, CandidType)]
-pub struct MatchStepsRequest {
-    pub id: MatchId,
-    pub pag: Pagination,
+    pub options: MatchOptions,
+    pub status: MatchStatus,
+    pub players: HashSet<UserId>,
+    pub created_at: u64,
+    pub created_by: UserId,
+    pub started_at: Option<u64>,
+    pub started_by: Option<UserId>,
+    pub won_at: Option<u64>,
+    pub won_by: Option<UserId>,
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
@@ -110,8 +94,8 @@ impl Match {
         Self {
             id: id.clone(),
             options: req.options.clone(), 
+            status: MatchStatus::CREATED,
             state: MatchState { 
-                status: MatchStatus::CREATED,
                 steps: vec![],
             },
             players: HashSet::default(),
@@ -133,6 +117,16 @@ impl From<Match> for MatchResponse {
     ) -> Self {
         Self { 
             id: e.id,
+            options: e.options,
+            status: e.status,
+            players: e.players,
+            created_at: e.created_at,
+            created_by: e.created_by,
+            started_at: e.started_at,
+            started_by: e.started_by,
+            won_at: e.won_at,
+            won_by: e.won_by,
+            
         }
     }
 }

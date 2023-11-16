@@ -5,7 +5,7 @@ use db::traits::crud::Pagination;
 use ic_cdk::api::stable;
 use ic_cdk::{caller, trap};
 use models::game::{GameRequest, Game, GameResponse, GameId};
-use models::m4tch::{MatchRequest, MatchResponse, MatchStepsRequest, MatchStepsResponse, MatchRunRequest, MatchStartRequest, MatchJoinRequest, Match};
+use models::m4tch::{MatchRequest, MatchResponse, MatchStepsResponse, Match, MatchId};
 use models::user::{UserRequest, UserResponse, User, UserId};
 use rand::{SeedableRng, RngCore};
 use rand::rngs::StdRng;
@@ -232,7 +232,7 @@ fn user_find_matches(
  * games facade
  */
 #[ic_cdk::update]
-fn games_create(
+fn game_create(
     req: GameRequest
 ) -> Result<GameResponse, String> {
     let caller = caller();
@@ -323,21 +323,21 @@ pub fn match_create(
 
 #[ic_cdk::update]
 pub fn match_join(
-    req: MatchJoinRequest
+    id: MatchId
 ) -> Result<(), String> {
     DB.with(|db| {
-        MatchesService::join(&req.id, &mut db.borrow_mut(), &caller())
+        MatchesService::join(&id, &mut db.borrow_mut(), &caller())
     })
 }
 
 #[ic_cdk::update]        
 pub fn match_start(
-    req: MatchStartRequest
+    id: MatchId
 ) -> Result<(), String> {     
     DB.with(|db| {
         RNG.with(|rng| {
             MatchesService::start(
-                &req.id, 
+                &id, 
                 &mut db.borrow_mut(), 
                 &mut rng.borrow_mut().as_mut().unwrap(), 
                 &caller()
@@ -348,12 +348,12 @@ pub fn match_start(
 
 #[ic_cdk::update]
 pub fn match_run(
-    req: MatchRunRequest
+    id: MatchId
 ) -> Result<(), String> {
     DB.with(|db| {
         RNG.with(|rng| {
             MatchesService::run(
-                &req.id, 
+                &id, 
                 &mut db.borrow_mut(), 
                 &mut rng.borrow_mut().as_mut().unwrap(), 
                 &caller()
@@ -364,14 +364,58 @@ pub fn match_run(
 
 #[ic_cdk::query]
 pub fn match_get_steps(
-    req: MatchStepsRequest
+    id: MatchId,
+    pag: Pagination
 ) -> Result<MatchStepsResponse, String> {
     DB.with(|db| {
-        match MatchesService::steps(&req.id, req.pag, &mut db.borrow_mut(), &caller()) {
+        match MatchesService::steps(&id, pag, &mut db.borrow_mut(), &caller()) {
             Ok(steps) => Ok(MatchStepsResponse{
                 steps
             }),
             Err(msg) => Err(msg),
+        }
+    })
+}
+
+#[ic_cdk::query]
+fn match_find_by_id(
+    id: MatchId
+) -> Result<MatchResponse, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        match MatchesService::find_by_id(&id, &db.borrow(), &caller) {
+            Ok(m) => Ok(m.into()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+#[ic_cdk::query]
+pub fn match_find_open(
+    pag: Pagination
+) -> Result<Vec<MatchResponse>, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        match MatchesService::find_open(pag, &db.borrow(), &caller) {
+            Ok(list) => Ok(list.iter().map(|e| e.clone().into()).collect()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+#[ic_cdk::query]
+fn match_find_by_game(
+    game_id: GameId,
+    pag: Pagination
+) -> Result<Vec<MatchResponse>, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        match MatchesService::find_by_game(game_id, pag, &db.borrow(), &caller) {
+            Ok(list) => Ok(list.iter().map(|e| e.clone().into()).collect()),
+            Err(msg) => Err(msg)
         }
     })
 }

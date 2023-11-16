@@ -15,6 +15,9 @@ pub struct Game {
     pub id: GameId,
     pub canister_id: Principal,
     pub name: String,
+    pub description: String,
+    pub category: String,
+    pub image: String,
     pub status: GameStatus,
     pub created_at: u64,
     pub created_by: UserId,
@@ -26,6 +29,9 @@ pub struct Game {
 pub struct GameRequest {
     pub canister_id: Principal,
     pub name: String,
+    pub description: String,
+    pub category: String,
+    pub image: String,
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
@@ -33,6 +39,9 @@ pub struct GameResponse {
     pub id: GameId,
     pub canister_id: Principal,
     pub name: String,
+    pub description: String,
+    pub category: String,
+    pub image: String,
 }
 
 impl Game {
@@ -45,6 +54,9 @@ impl Game {
             id: id.clone(),
             canister_id: req.canister_id.clone(),
             name: req.name.clone(),
+            description: req.description.clone(),
+            category: req.category.clone(),
+            image: req.image.clone(),
             status: GameStatus::ACTIVE,
             created_at: ic_cdk::api::time(),
             created_by: caller.clone(),
@@ -62,6 +74,9 @@ impl From<Game> for GameResponse {
             id: e.id,
             canister_id: e.canister_id,
             name: e.name,
+            description: e.description,
+            category: e.category,
+            image: e.image,
         }
     }
 }

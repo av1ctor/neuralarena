@@ -8,7 +8,8 @@
     },
     "site": {
       "dependencies": [
-        "main"
+        "main",
+        "internet_identity"
       ],
       "site": {
         "entrypoint": "src/site/src/index.html"

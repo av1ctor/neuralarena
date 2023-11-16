@@ -1,5 +1,7 @@
 use candid::{Principal, CandidType};
 use serde::{Deserialize, Serialize};
+use super::developer::{Developer, DeveloperRequest, DeveloperResponse};
+use super::moderator::{Moderator, ModeratorRequest, ModeratorResponse};
 use super::player::{PlayerResponse, PlayerRequest, Player};
 use super::staff::{StaffResponse, StaffRequest, Staff};
 
@@ -8,14 +10,17 @@ pub type UserId = Principal;
 #[derive(Clone, Serialize, Deserialize)]
 pub enum UserKind {
     Player(Player),
+    Developer(Developer),
+    Moderator(Moderator),
     Staff(Staff),
 }
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct User {
     pub id: UserId,
-    pub name: String,
-    pub email: String,
+    pub nick: String,
+    pub name: Option<String>,
+    pub email: Option<String>,
     pub credits: u128,
     pub active: bool,
     pub banned: bool,
@@ -31,27 +36,33 @@ pub struct User {
 #[derive(CandidType, Deserialize, Clone)]
 pub enum UserKindRequest {
     Player(PlayerRequest),
+    Developer(DeveloperRequest),
+    Moderator(ModeratorRequest),
     Staff(StaffRequest),
 }
 
 #[derive(CandidType, Deserialize, Clone)]
 pub struct UserRequest {
-    name: String,
-    email: String,
+    nick: String,
+    name: Option<String>,
+    email: Option<String>,
     kind: UserKindRequest,
 }
 
 #[derive(CandidType)]
 pub enum UserKindResponse {
     Player(PlayerResponse),
+    Developer(DeveloperResponse),
+    Moderator(ModeratorResponse),
     Staff(StaffResponse),
 }
 
 #[derive(CandidType)]
 pub struct UserResponse {
     id: UserId,
-    name: String,
-    email: String,
+    nick: String,
+    name: Option<String>,
+    email: Option<String>,
     active: bool,
     banned: bool,
     kind: UserKindResponse,
@@ -66,6 +77,7 @@ impl User {
     ) -> Self {
         Self {
             id: caller.clone(),
+            nick: e.nick.clone(),
             name: e.name.clone(),
             email: e.email.clone(),
             active: true,
@@ -99,7 +111,8 @@ impl From<User> for UserResponse {
     ) -> Self {
         Self { 
             id: e.id,
-            name: e.name, 
+            nick: e.nick,
+            name: e.name,
             email: e.email,
             active: e.active,
             banned: e.banned,
@@ -117,6 +130,8 @@ impl From<UserKindRequest> for UserKind {
         match value {
             UserKindRequest::Player(k) => UserKind::Player(k.into()),
             UserKindRequest::Staff(k) => UserKind::Staff(k.into()),
+            UserKindRequest::Developer(k) => UserKind::Developer(k.into()),
+            UserKindRequest::Moderator(k) => UserKind::Moderator(k.into()),
         }
     }
 }
@@ -128,6 +143,8 @@ impl From<UserKind> for UserKindResponse {
         match value {
             UserKind::Player(k) => UserKindResponse::Player(k.into()),
             UserKind::Staff(k) => UserKindResponse::Staff(k.into()),
+            UserKind::Developer(k) => UserKindResponse::Developer(k.into()),
+            UserKind::Moderator(k) => UserKindResponse::Moderator(k.into()),
         }
     }
 }

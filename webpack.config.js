@@ -44,21 +44,28 @@ module.exports = {
   module: {
     rules: [
       { 
-		test: /\.(js|ts)x?$/, 
-        loader: "ts-loader",
-        options: {
-          getCustomTransformers() {
-            return {
-              before: [
-                transform({
-                  overrideIdFn: '[sha512:contenthash:base64:6]',
-                }),
-              ],
-            }
-          },
-        },
-        exclude: '/node_modules/', 
+        test: /\.(js|ts)x?$/, 
+            loader: "ts-loader",
+            options: {
+              getCustomTransformers() {
+                return {
+                  before: [
+                    transform({
+                      overrideIdFn: '[sha512:contenthash:base64:6]',
+                    }),
+                  ],
+                }
+              },
+            },
+            exclude: '/node_modules/', 
       },
+      {
+        test: /\.css$/,
+        use: [
+          { loader: 'style-loader' },
+          { loader: 'css-loader' }
+        ],
+      }
     ]
   },
   plugins: [

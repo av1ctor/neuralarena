@@ -10,8 +10,9 @@ import { useUser } from "../../../hooks/users";
 import { userGetPrincipal } from "../../../libs/users";
 
 const schema = {
-    name: yup.string().min(3).max(64),
-    email: yup.string().email().min(3).max(128),
+    nick: yup.string().min(3).max(64),
+    name: yup.string().optional().max(64),
+    email: yup.string().email().optional().max(128),
 };
 
 const playerSchema = {
@@ -30,6 +31,7 @@ const UserEdit = (props: Props) => {
 
     const form = useForm({
         initialValues: {
+            nick: '',
             name: '',
             email: '',
             kind: '',
@@ -45,8 +47,9 @@ const UserEdit = (props: Props) => {
             })),
 
         transformValues: (values: any) => ({
-            name: values.name,
-            email: values.email,
+            nick: values.nick,
+            name: values.name? [values.name]: [],
+            email: values.email? [values.email]: [],
             kind: 
                 kind === UserKind.Player? 
                     {Player: {
@@ -103,12 +106,17 @@ const UserEdit = (props: Props) => {
     return (
         <form onSubmit={form.onSubmit(handleUpdate)}>
             <TextInput
-                label="Name"
+                label="Nick"
+                placeholder="Your nick"
+                {...form.getInputProps('nick')}
+            />
+            <TextInput
+                label="Name (optional)"
                 placeholder="Your name"
                 {...form.getInputProps('name')}
             />
             <TextInput
-                label="Email"
+                label="Email (optional)"
                 placeholder="Your e-mail"
                 {...form.getInputProps('email')}
             />

@@ -1,10 +1,12 @@
 import { _SERVICE as Main, GameRequest, GameResponse, Pagination } from "../../../declarations/main/main.did";
 
+export type GameId = string;
+
 export const gameCreate = async (
     main: Main,
     req: GameRequest
 ): Promise<GameResponse> => {
-    const res = await main.games_create(req);
+    const res = await main.game_create(req);
     if('Err' in res) {
         throw new Error(res.Err);
     }
@@ -13,7 +15,7 @@ export const gameCreate = async (
 
 export const gameUpdate = async (
     main: Main,
-    id: string,
+    id: GameId,
     req: GameRequest
 ): Promise<GameResponse> => {
     const res = await main.game_update(id, req);
@@ -25,7 +27,7 @@ export const gameUpdate = async (
 
 export const gameDelete = async (
     main: Main,
-    id: string
+    id: GameId
 ): Promise<void> => {
     const res = await main.game_delete(id);
     if('Err' in res) {
@@ -36,8 +38,12 @@ export const gameDelete = async (
 
 export const gameFindById = async (
     main: Main,
-    id: string
-): Promise<GameResponse> => {
+    id?: GameId
+): Promise<GameResponse|undefined> => {
+    if(!id) {
+        return undefined;
+    }
+    
     const res = await main.game_find_by_id(id);
     if('Err' in res) {
         throw new Error(res.Err);

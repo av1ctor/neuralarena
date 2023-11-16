@@ -5,6 +5,7 @@ pub mod migrations;
 use std::cell::RefCell;
 use std::rc::Rc;
 use ic_cdk::api::stable::{StableWriter, StableReader};
+use self::tables::game_matches_rel::GameMatchesRelTable;
 use self::tables::games::GamesTable;
 use self::tables::user_matches_rel::UserMatchesRelTable;
 use self::tables::users::UsersTable;
@@ -17,6 +18,7 @@ pub enum TableName {
     Matches,
     Games,
     UserMatchesRel,
+    GameMatchesRel,
 }
 
 pub struct DB {
@@ -24,6 +26,7 @@ pub struct DB {
     pub matches: Rc<RefCell<MatchesTable>>,
     pub games: Rc<RefCell<GamesTable>>,
     pub user_matches_rel: Rc<RefCell<UserMatchesRelTable>>,
+    pub game_matches_rel: Rc<RefCell<GameMatchesRelTable>>,
 }
 
 impl DB {
@@ -33,15 +36,18 @@ impl DB {
         let matches = Rc::new(RefCell::new(MatchesTable::new()));
         let games = Rc::new(RefCell::new(GamesTable::new()));
         let user_matches_rel = Rc::new(RefCell::new(UserMatchesRelTable::new()));
+        let game_matches_rel = Rc::new(RefCell::new(GameMatchesRelTable::new()));
 
         //
         matches.borrow_mut().subscribe(user_matches_rel.clone());
+        matches.borrow_mut().subscribe(game_matches_rel.clone());
 
         Self {
             users,
             matches,
             games,
             user_matches_rel,
+            game_matches_rel,
         }
     }
 
@@ -53,6 +59,7 @@ impl DB {
         self.matches.borrow().serialize(writer)?;
         self.games.borrow().serialize(writer)?;
         self.user_matches_rel.borrow().serialize(writer)?;
+        self.game_matches_rel.borrow().serialize(writer)?;
         Ok(())
     }
 
@@ -64,6 +71,7 @@ impl DB {
         self.matches.borrow_mut().deserialize(reader, true)?;
         self.games.borrow_mut().deserialize(reader, true)?;
         self.user_matches_rel.borrow_mut().deserialize(reader, true)?;
+        self.game_matches_rel.borrow_mut().deserialize(reader, true)?;
         Ok(())
     }
 }

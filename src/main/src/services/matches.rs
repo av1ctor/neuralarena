@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashSet, BTreeSet};
 
 use bot_engine::env::Env;
 use bot_engine::game::{Game, GameOptions, ObjectFOV};
@@ -13,6 +13,7 @@ use crate::agent::baseagent::BaseAgentOptions;
 use crate::agent::dqnagent::DqnAgent;
 use crate::db::traits::crud::{CrudSubscribable, Crud, Pagination};
 use crate::dqn::dqn::DqnOptions;
+use crate::models::game::GameId;
 use crate::models::m4tch::{Match, MatchId, MatchStatus, MatchStep};
 use crate::db::DB;
 use crate::models::user::UserKind;
@@ -36,6 +37,66 @@ impl MatchesService {
         db.matches.borrow_mut().insert_and_notify(id.clone(), m4tch.clone())
     }
 
+    pub fn find_by_id(
+        id: &MatchId,
+        db: &DB,
+        _caller: &Principal
+    ) -> Result<Match, String> {
+        let matches = db.matches.borrow();
+
+        let m4tch = match matches.find_by_id(id) {
+            None => return Err("Not found".to_string()),
+            Some(e) => e
+        };
+
+        Ok((*m4tch).clone())
+    }
+
+    pub fn find_open(
+        pag: Pagination,
+        db: &DB,
+        _caller: &Principal
+    ) -> Result<Vec<Match>, String> {
+        let matches = db.matches.borrow();
+        
+        let mut arr = matches.data.0.iter()
+            .map(|v| v.1)
+            .filter(|m| m.status == MatchStatus::CREATED)
+            .cloned()
+            .collect::<Vec<_>>();
+
+        arr.sort_by(|a, b| b.created_at.cmp(&a.created_at));
+        
+        Ok(arr.iter()
+            .skip(pag.offset as usize)
+            .take(pag.limit as usize)
+            .cloned()
+            .collect())
+    }    
+
+    pub fn find_by_game(
+        game_id: GameId,
+        pag: Pagination,
+        db: &DB,
+        _caller: &Principal
+    ) -> Result<Vec<Match>, String> {
+        let matches_rel = db.game_matches_rel.borrow();
+        
+        let ids = matches_rel.data.0.get(&game_id).cloned().unwrap_or(BTreeSet::new());
+
+        let mut arr = ids.iter()
+            .map(|id| db.matches.borrow().data.0[id].clone())
+            .collect::<Vec<_>>();
+
+        arr.sort_by(|a, b| b.created_at.cmp(&a.created_at));
+        
+        Ok(arr.iter()
+            .skip(pag.offset as usize)
+            .take(pag.limit as usize)
+            .cloned()
+            .collect())
+    }
+
     pub fn join(
         id: &MatchId,
         db: &mut DB,
@@ -54,7 +115,7 @@ impl MatchesService {
             return Err("Too many players".to_string());
         }
 
-        if m4tch.state.status != MatchStatus::CREATED {
+        if m4tch.status != MatchStatus::CREATED {
             return Err("Invalid match state".to_string());
         }
 
@@ -86,25 +147,32 @@ impl MatchesService {
             return Err("Too few players".to_string());
         }
 
-        if m4tch.state.status != MatchStatus::CREATED {
+        if m4tch.status != MatchStatus::CREATED {
             return Err("Invalid match state".to_string());
         }
 
         let mut map = Map::load_from_string(&MAP.to_string())?;
         map.prepare();
+
+        let rays = m4tch.options.game_options["rays"].parse::<usize>()
+            .map_err(|err| err.to_string())?;
+        let angle = m4tch.options.game_options["fov"].parse::<f32>()
+            .map_err(|err| err.to_string())?;
+        let player_radius = m4tch.options.game_options["player_radius"].parse::<f32>()
+            .map_err(|err| err.to_string())?;
         
         let game = Game::new(
             map, 
             GameOptions {
                 fps: m4tch.options.fps as f32,
                 fov: ObjectFOV { 
-                    rays: m4tch.options.rays, 
-                    angle: m4tch.options.fov, 
-                    max_dist: m4tch.options.player_radius * 2.0,
+                    rays, 
+                    angle, 
+                    max_dist: player_radius * 2.0,
                 },
                 num_players: m4tch.players.len(),
                 min_keys: 4,
-                player_radius: m4tch.options.player_radius,
+                player_radius,
                 debug: false,
                 training: false,
             },
@@ -135,7 +203,7 @@ impl MatchesService {
 
         m4tch.game = Some(game);
         m4tch.agent = Some(agent);
-        m4tch.state.status = MatchStatus::STARTED;
+        m4tch.status = MatchStatus::STARTED;
 
         matches.update_and_notify(id.to_owned(), m4tch.to_owned())?;
 
@@ -161,11 +229,11 @@ impl MatchesService {
             return Err("Too few players".to_string());
         }
 
-        if m4tch.state.status != MatchStatus::STARTED {
+        if m4tch.status != MatchStatus::STARTED {
             return Err("Invalid match state".to_string());
         }
 
-        m4tch.state.status = MatchStatus::RUNNING;
+        m4tch.status = MatchStatus::RUNNING;
 
         let game = m4tch.game.as_mut().unwrap();
         let agent = m4tch.agent.as_mut().unwrap();
@@ -226,7 +294,7 @@ impl MatchesService {
             }
         }
 
-        m4tch.state.status = MatchStatus::FINISHED;
+        m4tch.status = MatchStatus::FINISHED;
 
         let post = ic_cdk::api::performance_counter(0);
         ic_cdk::print((post - pre).to_string());
@@ -267,7 +335,7 @@ impl MatchesService {
             return Err("Forbidden".to_string());
         }
 
-        if m4tch.state.status != MatchStatus::CREATED {
+        if m4tch.status != MatchStatus::CREATED {
             return Err("Invalid match state".to_string());
         }
         
@@ -287,7 +355,8 @@ impl MatchesService {
             Some(e) => e
         };
 
-        if ![MatchStatus::STARTED, MatchStatus::FINISHED].contains(&m4tch.state.status) {
+        if ![MatchStatus::STARTED, MatchStatus::FINISHED]
+            .contains(&m4tch.status) {
             return Err("Invalid match state".to_string());
         }
 
@@ -302,19 +371,22 @@ impl MatchesService {
         caller: &Principal, 
         db: &mut DB
     ) -> Result<(), String> {
-        if *caller == Principal::anonymous() {
-            return Err("Anonymous not allowed".to_string());
-        }
+        //FIXME: remove this by-pass when the UI is done
+        if false {
+            if *caller == Principal::anonymous() {
+                return Err("Anonymous not allowed".to_string());
+            }
+            
+            let user = match UsersService::find_by_id(caller, db, caller) {
+                Ok(e) => e,
+                Err(msg) => return Err(msg),
+            };
         
-        let user = match UsersService::find_by_id(caller, db, caller) {
-            Ok(e) => e,
-            Err(msg) => return Err(msg),
-        };
-    
-        if let UserKind::Player(_player) = user.kind {
-        }
-        else {
-            return Err("Forbidden".to_string());
+            if let UserKind::Player(_player) = user.kind {
+            }
+            else {
+                return Err("Forbidden".to_string());
+            }
         }
 
         Ok(())

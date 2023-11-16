@@ -62,11 +62,11 @@ impl TableSubscriber<TableName> for UserMatchesRelTable {
     ) {
         match event.table_name {
             TableName::Matches => {
-                if let TableEventKey::Text(m4tch_key) = event.pkey.clone() {
+                if let TableEventKey::Text(m4tch_key) = &event.pkey {
                     match event.kind {
                         TableEventKind::Create => {
                             for fkey in &event.keys {
-                                if let TableEventKey::Principal(fkey) = fkey {
+                                if let TableEventKey::Principal(fkey) = &fkey {
                                     if !self.data.0.contains_key(fkey) {
                                         self.data.0.insert(fkey.clone(), BTreeSet::default());
                                     }
@@ -80,9 +80,9 @@ impl TableSubscriber<TableName> for UserMatchesRelTable {
                         },
                         TableEventKind::Delete => {
                             for fkey in &event.keys {
-                                if let TableEventKey::Principal(fkey) = fkey {
+                                if let TableEventKey::Principal(fkey) = &fkey {
                                     self.data.0.get_mut(fkey).unwrap()
-                                        .remove(&m4tch_key);
+                                        .remove(m4tch_key);
                                 }
                             }
                         },

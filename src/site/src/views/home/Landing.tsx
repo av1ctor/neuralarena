@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
-import { createStyles, Image, Container, Title, Button, Group, Text, List, ThemeIcon, rem, Flex } from '@mantine/core';
+import { createStyles, Image, Container, Title, Button, Group, Text, List, ThemeIcon, rem, Space } from '@mantine/core';
 import { IconBrandGithub, IconCheck, IconUserPlus } from '@tabler/icons-react';
-import { Link } from "react-router-dom";
 import { useBrowser } from "../../hooks/browser";
+import { Top } from "../games/Top";
   
 const useStyles = createStyles((theme) => ({
     inner: {
@@ -131,6 +131,12 @@ const Landing = () => {
                 <div className={classes.imageContainer}>
                     <Image src="logo.svg" className={classes.image} />
                 </div>
+            </div>
+
+            <Space h="4rem" />
+
+            <div>
+                <Top/>
             </div>
         </Container>
     );

@@ -12,8 +12,9 @@ import { UserKind, userStringToKind } from "../../../libs/users";
 import Login from "./Login";
 
 const schema = {
-    name: yup.string().min(3).max(64),
-    email: yup.string().email().min(3).max(128),
+    nick: yup.string().min(3).max(64),
+    name: yup.string().optional().max(64),
+    email: yup.string().email().optional().max(128),
 };
 
 const playerSchema = {
@@ -31,6 +32,7 @@ const Signup = (props: Props) => {
     const [kind, setKind] = useState(UserKind.Player);
     const [options, setOptions] = useState({
         initialValues: {
+            nick: '',
             name: '',
             email: '',
             kind: '',
@@ -80,8 +82,9 @@ const Signup = (props: Props) => {
                 })),
     
             transformValues: (values: any) => ({
-                name: values.name,
-                email: values.email,
+                nick: values.nick,
+                name: values.name? [values.name]: [],
+                email: values.email? [values.email]: [],
                 kind: 
                     kind === UserKind.Player? 
                         {Player: {
@@ -151,27 +154,30 @@ const Signup = (props: Props) => {
                 allowStepSelect={false}
             >
                 <Space h="md" />
-                <Container>
-                    <SegmentedControl
-                        size="md"
-                        orientation={isMobile? "vertical": "horizontal"}
-                        fullWidth
-                        color="magenta"
-                        value={UserKind[kind]}
-                        data={kinds}
-                        onChange={handleChangeKind}
-                    />
-                </Container>
+                <SegmentedControl
+                    size="md"
+                    orientation={isMobile? "vertical": "horizontal"}
+                    fullWidth
+                    color="magenta"
+                    value={UserKind[kind]}
+                    data={kinds}
+                    onChange={handleChangeKind}
+                />
                 <Space h="md" />
 
                 <form onSubmit={form.onSubmit(handleCreate)}>
                     <TextInput
-                        label="Name"
+                        label="Nick"
+                        placeholder="Your nick"
+                        {...form.getInputProps('nick')}
+                    />
+                    <TextInput
+                        label="Name (optional)"
                         placeholder="Your name"
                         {...form.getInputProps('name')}
                     />
                     <TextInput
-                        label="Email"
+                        label="Email (optional)"
                         placeholder="Your e-mail"
                         {...form.getInputProps('email')}
                     />
