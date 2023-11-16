@@ -1,4 +1,4 @@
-use std::collections::{HashSet, HashMap};
+use std::collections::HashMap;
 use candid::{CandidType, Principal};
 use serde::{Serialize, Deserialize};
 use bot_engine::line::Line;
@@ -35,7 +35,6 @@ pub enum MatchStatus {
 pub struct MatchStep {
     pub terminated: bool,
     pub timedout: bool,
-    pub winner: Option<usize>,
     pub entities: Vec<u8>,
 }
 
@@ -49,7 +48,7 @@ pub struct Match {
     pub id: String,
     pub options: MatchOptions,
     pub status: MatchStatus,
-    pub players: HashSet<UserId>,
+    pub players: HashMap<UserId, usize>,
     pub state: MatchState,
     pub game: Option<Game<Vector2d, Line<Vector2d>>>,
     pub agent: Option<DqnAgent>,
@@ -71,7 +70,7 @@ pub struct MatchResponse {
     pub id: String,
     pub options: MatchOptions,
     pub status: MatchStatus,
-    pub players: HashSet<UserId>,
+    pub players: HashMap<UserId, usize>,
     pub created_at: u64,
     pub created_by: UserId,
     pub started_at: Option<u64>,
@@ -98,7 +97,7 @@ impl Match {
             state: MatchState { 
                 steps: vec![],
             },
-            players: HashSet::default(),
+            players: HashMap::default(),
             game: None,
             agent: None,
             created_at: ic_cdk::api::time(),

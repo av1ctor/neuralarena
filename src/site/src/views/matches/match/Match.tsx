@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Button, Space, Stack, Title } from "@mantine/core";
+import { Button, Avatar as Avatar_, Space, Stack, Title, Tooltip } from "@mantine/core";
 import { useMatchFindById, useMatch } from "../../../hooks/matches";
 import { useGameFindById } from "../../../hooks/games";
 import { Banner } from "../../games/game/Banner";
 import { matchStatusToString } from "../../../libs/matches";
 import { useUI } from "../../../hooks/ui";
 import { Watch } from "./Watch";
+import { Avatar } from "../../users/user/Avatar";
 
 interface Props {
 }
@@ -17,7 +18,6 @@ export const Match = (props: Props) => {
     const {toggleLoading, showError, showSuccess} = useUI();
     const match = useMatchFindById(id);
     const game = useGameFindById(match?.data?.options.game_id);
-    const status = matchStatusToString(match.data?.status);
 
     const handleJoin = useCallback(async () => {
         if(id) {
@@ -85,6 +85,11 @@ export const Match = (props: Props) => {
         return () => clearInterval(t);
     }, [updateStatus]);
 
+    const status = matchStatusToString(match.data?.status);
+    const winner = match.data && match.data.won_by.length > 0?
+        match.data.won_by[0]:
+        undefined;
+
     return (
         <>
             <div>
@@ -98,9 +103,20 @@ export const Match = (props: Props) => {
             <div>
                 <div>
                     <div>Players:</div>
-                    {match.data?.players.map(player => 
-                        <div key={player.toString()}>{player.toString()}</div>
-                    )}
+                    <Tooltip.Group 
+                        openDelay={300} 
+                        closeDelay={100}
+                    >
+                        <Avatar_.Group spacing="xs">
+                            {match.data?.players.map(player => 
+                                <Avatar 
+                                    key={player.toString()} 
+                                    id={player[0]}
+                                    isWinner={winner? player[0].compareTo(winner) === 'eq': false}
+                                />
+                            )}
+                        </Avatar_.Group>
+                    </Tooltip.Group>
                 </div>
                 <Space h="xl" />
                 <Stack spacing="xl">

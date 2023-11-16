@@ -87,7 +87,7 @@ export const useUserFindMe = (
 }; 
 
 export const useUserFindById = (
-    id: Principal
+    id: Principal|undefined
 ): UseQueryResult<UserResponse, Error> => {
     const {main} = useActors();
     

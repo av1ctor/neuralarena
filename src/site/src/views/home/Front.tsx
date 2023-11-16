@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth } from "../../hooks/auth";
-import { Card } from "@mantine/core";
 import Landing from "./Landing";
+import { Top } from "../games/Top";
 
 export const Front = () => {
     const {isLogged} = useAuth();
@@ -11,8 +11,6 @@ export const Front = () => {
     }
 
     return (
-        <Card withBorder radius="md" p="xl" className="main-card card">
-            Hey
-        </Card>
+        <Top/>
     );
 }

@@ -116,8 +116,24 @@ export const userFindMe = async (
 
 export const userFindById = async (
     main: Main,
-    id: Principal
+    id: Principal|undefined
 ): Promise<UserResponse> => {
+    if(!id || id.isAnonymous()) {
+        return {
+            id: Principal.anonymous(),
+            nick: 'anonymous',
+            name: [],
+            email: [],
+            active: false,
+            banned: false,
+            kind: {
+                'Player': {}
+            },
+            created_at: 0n,
+            updated_at: [],
+        };
+    }
+
     const res = await main.user_find_by_id(id);
     if('Err' in res) {
         throw new Error(res.Err);

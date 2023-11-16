@@ -87,12 +87,8 @@ impl UsersService {
     pub fn find_by_id(
         id: &UserId,
         db: &DB,
-        caller: &Principal
+        _caller: &Principal
     ) -> Result<User, String> {
-        if *caller == Principal::anonymous() {
-            return Err("Forbidden".to_string());
-        }
-        
         let users = db.users.borrow();
 
         let user = match users.find_by_id(id) {

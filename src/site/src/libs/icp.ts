@@ -21,6 +21,9 @@ export const principalToString = (
         return '';
     }
     const s = principal.toString();
+    if(s.length <= 9) {
+        return s;
+    }
     return `${s.substr(0, 5)}...${s.substr(60, 3)}`
 };
 

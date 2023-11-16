@@ -30,7 +30,7 @@ type MatchResponse = record {
   status : MatchStatus;
   created_at : nat64;
   created_by : principal;
-  players : vec principal;
+  players : vec record { principal; nat64 };
   won_at : opt nat64;
   won_by : opt principal;
   options : MatchOptions;
@@ -40,7 +40,6 @@ type MatchResponse = record {
 type MatchStatus = variant { CANCELLED; RUNNING; CREATED; STARTED; FINISHED };
 type MatchStep = record {
   terminated : bool;
-  winner : opt nat64;
   entities : vec nat8;
   timedout : bool;
 };

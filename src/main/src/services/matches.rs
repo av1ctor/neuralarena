@@ -101,7 +101,7 @@ impl MatchesService {
         id: &MatchId,
         db: &mut DB,
         caller: &Principal
-    ) -> Result<(), String> {
+    ) -> Result<bool, String> {
         Self::authorize(caller, db)?;
         
         let mut matches = db.matches.borrow_mut();
@@ -111,7 +111,8 @@ impl MatchesService {
             Some(e) => e.clone()
         };
 
-        if m4tch.players.len() >= m4tch.options.max_players {
+        let num_players = m4tch.players.len();
+        if  num_players >= m4tch.options.max_players {
             return Err("Too many players".to_string());
         }
 
@@ -119,13 +120,15 @@ impl MatchesService {
             return Err("Invalid match state".to_string());
         }
 
-        if m4tch.players.contains(caller) {
+        if m4tch.players.contains_key(caller) {
             return Err("Already part of the match".to_string());
         }
 
-        m4tch.players.insert(caller.clone());
+        m4tch.players.insert(caller.clone(), num_players);
 
-        matches.update_and_notify(id.to_owned(), m4tch.to_owned())
+        matches.update_and_notify(id.to_owned(), m4tch.to_owned())?;
+
+        Ok(m4tch.players.len() == m4tch.options.max_players)
     }
 
     pub fn start(
@@ -260,7 +263,7 @@ impl MatchesService {
                 
                 let mut actions = vec![0usize; game.options.num_players];
 
-                let players_idx = Self::gen_players_idx(game, rng);
+                let players_idx = Self::shuffle_players_idx(game, rng);
                 
                 for i in 0..game.options.num_players {
                     let p = players_idx[i];
@@ -283,11 +286,15 @@ impl MatchesService {
             m4tch.state.steps.push(MatchStep {
                 terminated: step.terminated,
                 timedout: step.timedout,
-                winner: step.winner,
                 entities: game.serialize_entities()?,
             });
 
             running = !step.terminated && !step.timedout;
+
+            if let Some(winner) = step.winner {
+                m4tch.won_by = Some(m4tch.players.iter().find(|p| *p.1 == winner).unwrap().0.clone());
+                m4tch.won_at = Some(ic_cdk::api::time());
+            }
 
             for p in 0..step.players.len() {
                 obs_vec[p] = step.players[p].obs.clone();
@@ -304,7 +311,7 @@ impl MatchesService {
         Ok(())
     }
 
-    fn gen_players_idx(
+    fn shuffle_players_idx(
         game: &mut Game<Vector2d, Line<Vector2d>>,
         rng: &mut StdRng
     ) -> Vec<usize> {

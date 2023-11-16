@@ -326,7 +326,39 @@ pub fn match_join(
     id: MatchId
 ) -> Result<(), String> {
     DB.with(|db| {
-        MatchesService::join(&id, &mut db.borrow_mut(), &caller())
+        match MatchesService::join(&id, &mut db.borrow_mut(), &caller()) {
+            Ok(start) => {
+                if start {
+                    _ = RNG.with(|rng| {
+                        match MatchesService::start(
+                            &id, 
+                            &mut db.borrow_mut(), 
+                            &mut rng.borrow_mut().as_mut().unwrap(), 
+                            &caller()
+                        ) {
+                            Ok(_) => {
+                                //FIXME: method should be async so this could return immediately
+                                match MatchesService::run(
+                                    &id, 
+                                    &mut db.borrow_mut(), 
+                                    &mut rng.borrow_mut().as_mut().unwrap(), 
+                                    &caller()
+                                ) {
+                                    Ok(_) => {},
+                                    Err(msg) => return Err(msg),
+                                };
+
+                                Ok(())
+                            },
+                            Err(msg) => return Err(msg),
+                        }
+                    });
+                }
+
+                Ok(())
+            },
+            Err(msg) => Err(msg),
+        }
     })
 }
 
