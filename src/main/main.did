@@ -30,7 +30,7 @@ type MatchResponse = record {
   status : MatchStatus;
   created_at : nat64;
   created_by : principal;
-  players : vec record { principal; nat64 };
+  players : vec principal;
   won_at : opt nat64;
   won_by : opt principal;
   options : MatchOptions;

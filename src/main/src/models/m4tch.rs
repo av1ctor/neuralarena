@@ -70,7 +70,7 @@ pub struct MatchResponse {
     pub id: String,
     pub options: MatchOptions,
     pub status: MatchStatus,
-    pub players: HashMap<UserId, usize>,
+    pub players: Vec<UserId>,
     pub created_at: u64,
     pub created_by: UserId,
     pub started_at: Option<u64>,
@@ -114,11 +114,14 @@ impl From<Match> for MatchResponse {
     fn from(
         e: Match
     ) -> Self {
+        let mut players = e.players.iter().collect::<Vec<_>>();
+        players.sort_by(|a, b| a.1.cmp(b.1));
+        
         Self { 
             id: e.id,
             options: e.options,
             status: e.status,
-            players: e.players,
+            players: players.iter().map(|e| e.0).cloned().collect(),
             created_at: e.created_at,
             created_by: e.created_by,
             started_at: e.started_at,

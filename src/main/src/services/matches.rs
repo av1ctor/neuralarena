@@ -174,6 +174,7 @@ impl MatchesService {
                     max_dist: player_radius * 2.0,
                 },
                 num_players: m4tch.players.len(),
+                player_ids: m4tch.players.iter().map(|p| p.0.to_string()).collect(),
                 min_keys: 4,
                 player_radius,
                 debug: false,
@@ -292,7 +293,7 @@ impl MatchesService {
             running = !step.terminated && !step.timedout;
 
             if let Some(winner) = step.winner {
-                m4tch.won_by = Some(m4tch.players.iter().find(|p| *p.1 == winner).unwrap().0.clone());
+                m4tch.won_by = Some(Principal::from_text(winner).unwrap());
                 m4tch.won_at = Some(ic_cdk::api::time());
             }
 

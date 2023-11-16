@@ -87,7 +87,7 @@ export const Match = (props: Props) => {
 
     const status = matchStatusToString(match.data?.status);
     const winner = match.data && match.data.won_by.length > 0?
-        match.data.won_by[0]:
+        match.data.won_by[0]?.toString():
         undefined;
 
     return (
@@ -111,8 +111,8 @@ export const Match = (props: Props) => {
                             {match.data?.players.map(player => 
                                 <Avatar 
                                     key={player.toString()} 
-                                    id={player[0]}
-                                    isWinner={winner? player[0].compareTo(winner) === 'eq': false}
+                                    id={player}
+                                    isWinner={winner? player.toString() === winner: false}
                                 />
                             )}
                         </Avatar_.Group>
