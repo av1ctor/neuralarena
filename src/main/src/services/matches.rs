@@ -3,7 +3,6 @@ use std::collections::{HashSet, BTreeSet};
 use bot_engine::env::Env;
 use bot_engine::game::{Game, GameOptions, ObjectFOV};
 use bot_engine::line::Line;
-use bot_engine::map::Map;
 use bot_engine::vector2d::Vector2d;
 use candid::Principal;
 use rand::Rng;
@@ -154,9 +153,6 @@ impl MatchesService {
             return Err("Invalid match state".to_string());
         }
 
-        let mut map = Map::load_from_string(&MAP.to_string())?;
-        map.prepare();
-
         let rays = m4tch.options.game_options["rays"].parse::<usize>()
             .map_err(|err| err.to_string())?;
         let angle = m4tch.options.game_options["fov"].parse::<f32>()
@@ -164,8 +160,7 @@ impl MatchesService {
         let player_radius = m4tch.options.game_options["player_radius"].parse::<f32>()
             .map_err(|err| err.to_string())?;
         
-        let game = Game::new(
-            map, 
+        let mut game = Game::new(
             GameOptions {
                 fps: m4tch.options.fps as f32,
                 fov: ObjectFOV { 
@@ -174,14 +169,15 @@ impl MatchesService {
                     max_dist: player_radius * 2.0,
                 },
                 num_players: m4tch.players.len(),
-                player_ids: m4tch.players.iter().map(|p| p.0.to_string()).collect(),
                 min_keys: 4,
                 player_radius,
                 debug: false,
                 training: false,
             },
-            rng
+            MAP.to_string()
         );
+
+        game.spawn_entities(rng);
 
         let options = BaseAgentOptions { 
             dqn: DqnOptions {
@@ -293,7 +289,9 @@ impl MatchesService {
             running = !step.terminated && !step.timedout;
 
             if let Some(winner) = step.winner {
-                m4tch.won_by = Some(Principal::from_text(winner).unwrap());
+                let player_ids = m4tch.players.iter().map(|p| p.0).collect::<Vec<_>>();
+
+                m4tch.won_by = Some(player_ids[winner].clone());
                 m4tch.won_at = Some(ic_cdk::api::time());
             }
 
