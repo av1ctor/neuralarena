@@ -70,7 +70,7 @@ const AppHeader = (props: Props) => {
 
     return (
         <Box>
-            <Header height={60} px="md">
+            <Header height={60} px="md" zIndex={101}>
                 <Group position="apart" sx={{ height: '100%' }}>
                     <Group sx={{ height: '100%' }} spacing={0} className={classes.hiddenMobile}>
                         <img src="/neuralarena-logo.svg" />
