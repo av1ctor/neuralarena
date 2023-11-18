@@ -50,8 +50,9 @@ type Result_1 = variant { Ok; Err : text };
 type Result_2 = variant { Ok : vec GameResponse; Err : text };
 type Result_3 = variant { Ok : MatchResponse; Err : text };
 type Result_4 = variant { Ok : vec MatchResponse; Err : text };
-type Result_5 = variant { Ok : MatchStepsResponse; Err : text };
-type Result_6 = variant { Ok : UserResponse; Err : text };
+type Result_5 = variant { Ok : text; Err : text };
+type Result_6 = variant { Ok : MatchStepsResponse; Err : text };
+type Result_7 = variant { Ok : UserResponse; Err : text };
 type StaffRequest = record { role : StaffRole };
 type StaffRole = variant { Member; Admin; Contributor };
 type UserKindRequest = variant {
@@ -87,15 +88,16 @@ service : () -> {
   match_find_by_game : (text, Pagination) -> (Result_4) query;
   match_find_by_id : (text) -> (Result_3) query;
   match_find_open : (Pagination) -> (Result_4) query;
-  match_get_steps : (text, Pagination) -> (Result_5) query;
+  match_get_map : (text) -> (Result_5) query;
+  match_get_steps : (text, Pagination) -> (Result_6) query;
   match_join : (text) -> (Result_1);
   match_run : (text) -> (Result_1);
   match_start : (text) -> (Result_1);
-  user_create_player : (UserRequest) -> (Result_6);
-  user_create_staff : (UserRequest) -> (Result_6);
+  user_create_player : (UserRequest) -> (Result_7);
+  user_create_staff : (UserRequest) -> (Result_7);
   user_delete : (principal) -> (Result_1);
-  user_find_by_id : (principal) -> (Result_6) query;
+  user_find_by_id : (principal) -> (Result_7) query;
   user_find_matches : (principal, Pagination) -> (Result_4) query;
-  user_find_me : () -> (Result_6) query;
-  user_update : (principal, UserRequest) -> (Result_6);
+  user_find_me : () -> (Result_7) query;
+  user_update : (principal, UserRequest) -> (Result_7);
 }

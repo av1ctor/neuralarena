@@ -25,6 +25,12 @@ const MAP: &str = include_str!("../../maps/map.yaml");
 pub struct MatchesService {}
 
 impl MatchesService {
+    pub fn get_map_yaml(
+        _id: MatchId
+    ) -> Result<String, String> {
+        Ok(MAP.to_string())
+    }
+
     pub fn create(
         id: &MatchId,
         m4tch: &Match,

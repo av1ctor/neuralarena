@@ -126,3 +126,14 @@ export const matchGetSteps = async (
     }
     return res.Ok; 
 };
+
+export const matchGetMap = async (
+    main: Main,
+    id: MatchId
+): Promise<string> => {
+    const res = await main.match_get_map(id);
+    if('Err' in res) {
+        throw new Error(res.Err);
+    }
+    return res.Ok; 
+};

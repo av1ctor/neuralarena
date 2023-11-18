@@ -395,6 +395,13 @@ pub fn match_run(
 }
 
 #[ic_cdk::query]
+pub fn match_get_map(
+    id: MatchId
+) -> Result<String, String> {
+    MatchesService::get_map_yaml(id)
+}
+
+#[ic_cdk::query]
 pub fn match_get_steps(
     id: MatchId,
     pag: Pagination

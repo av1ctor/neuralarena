@@ -1,4 +1,5 @@
     interface Window {
+      browser: any,
       routes: any;
       routeMaker: any;
       store: any;
