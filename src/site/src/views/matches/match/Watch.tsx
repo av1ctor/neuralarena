@@ -17,6 +17,12 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
+enum WatchState {
+    IDLE,
+    RUNNING,
+    FINISHED,
+}
+
 interface Props {
     match: MatchResponse
 }
@@ -28,7 +34,9 @@ export const Watch = (props: Props) => {
     const { classes } = useStyles();
     const canvas = useRef<HTMLCanvasElement|null>(null);
     const [gameEngine, setGameEngine] = useState<GameWrapper>();
+    const [renderer, setRenderer] = useState<Canvas2dRenderer>();
     const [map, setMap] = useState<string>();
+    const [state, setState] = useState<WatchState>(WatchState.IDLE);
 
     const steps = useMatchGetSteps(props.match.id, STEPS_PER_CALL)
     const step = useRef(0);
@@ -60,9 +68,13 @@ export const Watch = (props: Props) => {
     }, [steps.data?.pages.length]);
 
     useEffect(() => {
-        if(canvas.current && map) {
+        if(state === WatchState.IDLE && canvas.current && map) {
             const {options} = props.match;
             const game_options = new Map(options.game_options);
+            
+            const renderer = new Canvas2dRenderer(canvas.current);
+            setRenderer(renderer);
+
             setGameEngine(new GameWrapper(
                 new GameOptionsWrapper(
                     false, 
@@ -78,21 +90,33 @@ export const Watch = (props: Props) => {
                     false
                 ), 
                 map, 
-                new Canvas2dRenderer(canvas.current))
-            );
+                renderer
+            ));
+            setState(WatchState.RUNNING);
         }
-    }, [props.match.options, canvas.current, map]);
+    }, [props.match.options, state, canvas.current, map]);
 
     useLayoutEffect(() => {
         if(gameEngine && frames.length > 0) {
             let timerId: number = 0;
 
             const animate = () => {
-                gameEngine.deserialize_entities(frames[step.current].entities as Uint8Array)
-                step.current = (step.current + 1) % frames.length;
-                gameEngine.render(0, 0.5, 800, 600);
-
-                timerId = requestAnimationFrame(animate)
+                switch(state) {
+                    case WatchState.RUNNING:
+                        if(step.current < frames.length) {
+                            gameEngine.deserialize_entities(frames[step.current].entities as Uint8Array)
+                            gameEngine.render(0, 1, 800, 600);
+                            timerId = requestAnimationFrame(animate)
+                            ++step.current;
+                            if(step.current >= frames.length) {
+                                setState(WatchState.FINISHED);
+                            }
+                        }
+                        break;
+                    case WatchState.FINISHED:
+                        renderer?.show_winner(props.match.won_by as any);
+                        break;
+                }
             }
             timerId = requestAnimationFrame(animate)
             return () => cancelAnimationFrame(timerId)
@@ -100,7 +124,7 @@ export const Watch = (props: Props) => {
         else {
             return () => {};
         }
-    }, [gameEngine, steps]);
+    }, [gameEngine, steps, state, renderer, props.match]);
 
     return (
         <Center>

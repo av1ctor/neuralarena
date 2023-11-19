@@ -145,16 +145,6 @@ export const Match = (props: Props) => {
                                     match={match.data}
                                 />
                             }
-                            <div>
-                                <Button
-                                    variant="gradient"
-                                    fullWidth
-                                    disabled={status !== 'FINISHED'}
-                                    onClick={handleWatch}
-                                >
-                                    Watch
-                                </Button>
-                            </div>
                         </Stack>
                     }
                     {status === 'RUNNING' &&
