@@ -14,8 +14,6 @@ const useStyles = createStyles((theme) => ({
         display: 'block',
         border: '2px solid #fff',
         borderRadius: '1rem',
-        width: '800px',
-        height: "600px"
     },
 }));
 
@@ -91,7 +89,8 @@ export const Watch = (props: Props) => {
 
             const animate = () => {
                 gameEngine.deserialize_entities(frames[step.current].entities as Uint8Array)
-                gameEngine.render(0, 1.0, 800, 600);        
+                step.current = (step.current + 1) % frames.length;
+                gameEngine.render(0, 0.5, 800, 600);
 
                 timerId = requestAnimationFrame(animate)
             }
@@ -108,6 +107,8 @@ export const Watch = (props: Props) => {
             <canvas 
                 ref={canvas}
                 className={classes.canvas}
+                width={800}
+                height={600}
             >
             </canvas>
         </Center>
