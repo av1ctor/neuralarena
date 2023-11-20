@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Avatar as Avatar_, Space, Stack, Title, Tooltip } from "@mantine/core";
 import { useMatchFindById, useMatch } from "../../../hooks/matches";
@@ -16,6 +16,7 @@ export const Match = (props: Props) => {
     const {id} = useParams();
     const {join, start, run} = useMatch()
     const {toggleLoading, showError, showSuccess} = useUI();
+    const [pov, setPov] = useState(0);
     const match = useMatchFindById(id);
     const game = useGameFindById(match?.data?.options.game_id);
 
@@ -66,6 +67,10 @@ export const Match = (props: Props) => {
         }
     }, [join, id]);
 
+    const handleChangePov = useCallback(async (pov: number) => {
+        setPov(pov);
+    }, []);
+
     const updateStatus = useCallback(async () => {
         try {
             if(match.data && !('FINISHED' in match.data.status || 'CANCELLED' in match.data.status)) {
@@ -108,11 +113,12 @@ export const Match = (props: Props) => {
                         closeDelay={100}
                     >
                         <Avatar_.Group spacing="xs">
-                            {match.data?.players.map(player => 
+                            {match.data?.players.map((player, index) => 
                                 <Avatar 
                                     key={player.toString()} 
                                     id={player}
                                     isWinner={winner? player.toString() === winner: false}
+                                    onClick={() => handleChangePov(index)}
                                 />
                             )}
                         </Avatar_.Group>
@@ -143,6 +149,7 @@ export const Match = (props: Props) => {
                             {match.data &&
                                 <Watch 
                                     match={match.data}
+                                    pov={pov}
                                 />
                             }
                         </Stack>

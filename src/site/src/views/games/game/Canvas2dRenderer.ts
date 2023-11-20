@@ -14,6 +14,9 @@ export class Canvas2dRenderer {
             throw 'Canvas context 2d unsupported';
         }
         this.ctx = ctx;
+        this.ctx.lineWidth = 2;
+        this.ctx.lineJoin = "round";
+        this.ctx.lineCap = "round";
         this.width = canvas.width;
         this.height = canvas.height;
     }
@@ -85,6 +88,9 @@ export class Canvas2dRenderer {
     show_winner(
         principal: Principal
     ) {
+        this.ctx.save();
+        this.ctx.lineWidth = 2;
+        
         const s = `${principalToString(principal)} won!`;
         this.set_font_size(32);
         const m = this.ctx.measureText(s);
@@ -98,5 +104,7 @@ export class Canvas2dRenderer {
         this.ctx.strokeStyle = 'rgb(255, 255, 255)';
         this.ctx.setLineDash([3, 3]);
         this.draw_rect(this.width/2 - m.width/2 - 32, this.height/2 - 48, m.width + 64, 56);
+
+        this.ctx.restore();
     }
 };
