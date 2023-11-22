@@ -27,7 +27,7 @@ export const Avatar = (props: Props) => {
                 inline 
                 label="🏆" 
                 size="xl"
-                offset={7} 
+                offset={12} 
                 position="bottom-end"
                 withBorder
                 disabled={!props.isWinner}
@@ -38,7 +38,6 @@ export const Avatar = (props: Props) => {
                     size="lg"
                     onClick={props.onClick}
                 >
-
                     {profile.data?.nick.substring(0, 2).toLocaleUpperCase()}
                 </Avatar_>
             </Indicator>
