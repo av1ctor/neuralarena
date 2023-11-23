@@ -3,10 +3,10 @@ import { ActionIcon, Center, Group, createStyles } from "@mantine/core";
 import { MatchResponse, MatchStep } from "../../../../../declarations/main/main.did";
 import { useMatchGetSteps } from "../../../hooks/matches";
 import GameEngineInit, {GameWrapper, GameOptionsWrapper, ObjectFOVWrapper} from 'bot-engine';
-import { Canvas2dRenderer } from "../../games/game/Canvas2dRenderer";
+import { Canvas2dRenderer } from "../../../renderers/Canvas2dRenderer";
 import { matchGetMap } from "../../../libs/matches";
 import { useActors } from "../../../hooks/actors";
-import { IconPlayerPause, IconPlayerPlay, IconQuestionMark, IconRefresh, IconZoomIn, IconZoomOut } from "@tabler/icons-react";
+import { IconPlayerPause, IconPlayerPlay, IconQuestionMark, IconRefresh, IconWindowMaximize, IconWindowMinimize, IconZoomIn, IconZoomOut } from "@tabler/icons-react";
 
 GameEngineInit();
 
@@ -14,6 +14,7 @@ const useStyles = createStyles((theme) => ({
     container: {
         position: 'relative',
         margin: 'auto',
+        display: 'flex',
     },
     controls: {
         position: 'absolute',
@@ -38,6 +39,7 @@ const useStyles = createStyles((theme) => ({
         display: 'block',
         border: '2px solid #fff',
         borderRadius: '1rem',
+        flex: '1 1 auto'
     },
 }));
 
@@ -58,6 +60,7 @@ export const Watch = (props: Props) => {
     const { main } = useActors();
     const { classes } = useStyles();
     const canvas = useRef<HTMLCanvasElement|null>(null);
+    const canvasContainer = useRef<HTMLDivElement|null>(null);
     const [gameEngine, setGameEngine] = useState<GameWrapper>();
     const [renderer, setRenderer] = useState<Canvas2dRenderer>();
     const [map, setMap] = useState<string>();
@@ -104,6 +107,19 @@ export const Watch = (props: Props) => {
             return Math.max(zoom - 0.25, 0.25);
         });
     }, []);
+
+    const handleToggleFullscreen = useCallback(() => {
+        if(!document.fullscreenElement) {
+            if(canvasContainer.current?.requestFullscreen) {
+                canvasContainer.current?.requestFullscreen();
+            }
+        } 
+        else {
+            if(document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    }, [canvasContainer])
 
     const loadMap = useCallback(async () => {
         setMap(await matchGetMap(main, props.match.id));
@@ -183,7 +199,9 @@ export const Watch = (props: Props) => {
 
     return (
         <Center>
-            <div className={classes.container}>
+            <div
+                ref={canvasContainer} 
+                className={classes.container}>
                 <canvas 
                     ref={canvas}
                     className={classes.canvas}
@@ -228,6 +246,17 @@ export const Watch = (props: Props) => {
                             onClick={handleZoomOut}
                         >
                             <IconZoomOut />
+                        </ActionIcon>
+                        <ActionIcon>
+                            {!document.fullscreenElement?
+                                <IconWindowMaximize 
+                                    onClick={handleToggleFullscreen}
+                                />
+                            :
+                                <IconWindowMinimize
+                                    onClick={handleToggleFullscreen}
+                                />
+                            }
                         </ActionIcon>
                     </Group>
                 </Group>

@@ -1,5 +1,5 @@
 import { Principal } from "@dfinity/principal";
-import { principalToString } from "../../../libs/icp";
+import { principalToString } from "../libs/icp";
 
 export class Canvas2dRenderer {
     ctx: CanvasRenderingContext2D;
