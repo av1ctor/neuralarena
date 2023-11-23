@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { ActionIcon, Center, Group, createStyles } from "@mantine/core";
+import { ActionIcon, Center, Grid, Group, createStyles } from "@mantine/core";
 import { MatchResponse, MatchStep } from "../../../../../declarations/main/main.did";
 import { useMatchGetSteps } from "../../../hooks/matches";
 import GameEngineInit, {GameWrapper, GameOptionsWrapper, ObjectFOVWrapper} from 'bot-engine';
@@ -18,10 +18,10 @@ const useStyles = createStyles((theme) => ({
     },
     controls: {
         position: 'absolute',
-        paddingBottom: '16px',
         bottom: 0,
         left: 2,
         right: 2,
+        margin: 0,
         borderTop: '2px solid #f00',
     },
     progress_container: {
@@ -209,57 +209,64 @@ export const Watch = (props: Props) => {
                     height={600}
                 >
                 </canvas>
-                <Group className={classes.controls} position="apart">
+                <Grid className={classes.controls}>
                     <div className={classes.progress_container}>
                         <div 
                             className={classes.progress} 
                             style={{width:`${progress}%`}}
                         />
                     </div>
-                    <Group pl={16}>
-                        <ActionIcon>
-                            <IconQuestionMark />
-                        </ActionIcon>
-                    </Group>
-                    <Group>
-                        <ActionIcon
-                            variant="outline"
-                            onClick={handleTogglePlay}
-                        >
-                            {state === WatchState.PAUSED?
-                                <IconPlayerPlay />
-                            :
-                                state === WatchState.FINISHED?
-                                    <IconRefresh />
+                    <Grid.Col span={3}>
+                        <Group position="left">
+                            <ActionIcon>
+                                <IconQuestionMark />
+                            </ActionIcon>
+                        </Group>
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                        <Group position="center">
+                            <ActionIcon
+                                variant="outline"
+                                onClick={handleTogglePlay}
+                            >
+                                {state === WatchState.PAUSED?
+                                    <IconPlayerPlay />
                                 :
-                                    <IconPlayerPause />
-                            }
-                        </ActionIcon>
-                    </Group>
-                    <Group pr={16}>
-                        <ActionIcon
-                            onClick={handleZoomIn}
-                        >
-                            <IconZoomIn />
-                        </ActionIcon>
-                        <ActionIcon
-                            onClick={handleZoomOut}
-                        >
-                            <IconZoomOut />
-                        </ActionIcon>
-                        <ActionIcon>
-                            {!document.fullscreenElement?
-                                <IconWindowMaximize 
-                                    onClick={handleToggleFullscreen}
-                                />
-                            :
-                                <IconWindowMinimize
-                                    onClick={handleToggleFullscreen}
-                                />
-                            }
-                        </ActionIcon>
-                    </Group>
-                </Group>
+                                    state === WatchState.FINISHED?
+                                        <IconRefresh />
+                                    :
+                                        <IconPlayerPause />
+                                }
+                            </ActionIcon>
+                        </Group>
+                    </Grid.Col>
+                    <Grid.Col span={3}>
+                        <Group position="right">
+                            <ActionIcon
+                                onClick={handleZoomIn}
+                            >
+                                <IconZoomIn />
+                            </ActionIcon>
+                            <ActionIcon
+                                onClick={handleZoomOut}
+                            >
+                                <IconZoomOut />
+                            </ActionIcon>
+                            <ActionIcon
+                            >
+                                {!document.fullscreenElement?
+                                    <IconWindowMaximize 
+                                        onClick={handleToggleFullscreen}
+                                    />
+                                :
+                                    <IconWindowMinimize
+                                        onClick={handleToggleFullscreen}
+                                    />
+                                }
+                            </ActionIcon>
+                        </Group>
+                    </Grid.Col>
+                </Grid>
             </div>
         </Center>
     );
