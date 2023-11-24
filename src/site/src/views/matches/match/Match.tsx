@@ -101,6 +101,7 @@ export const Match = (props: Props) => {
                 {match && match.data && game && game.data &&
                     <Banner 
                         game={game.data}
+                        isHalf
                     />
                 }
             </div>

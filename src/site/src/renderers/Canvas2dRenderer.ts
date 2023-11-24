@@ -21,6 +21,11 @@ export class Canvas2dRenderer {
         this.height = canvas.height;
     }
 
+    changeDim(dim: {w: number, h: number}) {
+        this.width = dim.w;
+        this.height = dim.h;
+    }
+
     clear() {
         this.ctx.fillStyle = `rgb(0, 0, 0)`;
         this.ctx.fillRect(0, 0, this.width, this.height);

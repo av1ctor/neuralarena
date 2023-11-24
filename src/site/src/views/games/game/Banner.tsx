@@ -4,7 +4,6 @@ import { GameResponse } from "../../../../../declarations/main/main.did";
 
 const useStyles = createStyles((theme) => ({
     card: {
-        height: rem(220),
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -23,6 +22,7 @@ const useStyles = createStyles((theme) => ({
 
 interface Props {
     game: GameResponse;
+    isHalf?: boolean;
 }
   
 export const Banner = (props: Props) => {
@@ -31,9 +31,11 @@ export const Banner = (props: Props) => {
     return (
         <Paper
             shadow="md"
-            p="xl"
             radius="md"
-            style={{ backgroundImage: `url(${props.game.image})` }}
+            style={{ 
+                backgroundImage: `url(${props.game.image})`,
+                height: props.isHalf? rem(110): rem(220),
+            }}
             className={classes.card}
         >
             <Container/>
