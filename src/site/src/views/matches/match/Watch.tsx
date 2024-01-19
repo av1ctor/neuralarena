@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 import { ActionIcon, Center, Grid, Group, createStyles } from "@mantine/core";
 import { MatchResponse, MatchStep } from "../../../../../declarations/main/main.did";
 import { useMatchGetSteps } from "../../../hooks/matches";
-import GameEngineInit, {GameWrapper, GameOptionsWrapper, ObjectFOVWrapper} from 'bot-engine';
+import GameEngineInit, {GameWrapper, GameOptionsWrapper, ObjectFOVWrapper} from 'bot-engine-gltf';
 import { Canvas2dRenderer } from "../../../renderers/Canvas2dRenderer";
-import { matchGetMap } from "../../../libs/matches";
+import { matchGetMapName } from "../../../libs/matches";
 import { useActors } from "../../../hooks/actors";
 import { IconPlayerPause, IconPlayerPlay, IconQuestionMark, IconRefresh, IconWindowMaximize, IconWindowMinimize, IconZoomIn, IconZoomOut } from "@tabler/icons-react";
 
@@ -157,7 +157,7 @@ export const Watch = (props: Props) => {
     }, [canvasDim, renderer]);
 
     const loadMap = useCallback(async () => {
-        setMap(await matchGetMap(main, props.match.id));
+        setMap(await matchGetMapName(main, props.match.id));
     }, [props.match.id]);
 
     useEffect(() => {
@@ -182,20 +182,18 @@ export const Watch = (props: Props) => {
 
             setGameEngine(new GameWrapper(
                 new GameOptionsWrapper(
-                    false, 
                     new ObjectFOVWrapper(
                         15.0, 
                         180.0*(Math.PI/180.0), 
                         40.0
                     ), 
-                    FPS, 
                     props.match.players.length, 
                     4, 
                     20.0, 
-                    false
-                ), 
-                map, 
-                renderer
+                    false,
+                    false,
+                    20000
+                )
             ));
             setState(WatchState.PLAYING);
         }
@@ -210,7 +208,7 @@ export const Watch = (props: Props) => {
                     case WatchState.PLAYING:
                         if(step.current < frames.length) {
                             gameEngine.deserialize_entities(frames[step.current].entities as Uint8Array)
-                            gameEngine.render(props.pov, zoom, canvasDim.w, canvasDim.h);
+                            //gameEngine.render(props.pov, zoom, canvasDim.w, canvasDim.h);
                             timerId = requestAnimationFrame(animate)
                             ++step.current;
                             setProgress(step.current / frames.length * 100.0);
@@ -220,10 +218,10 @@ export const Watch = (props: Props) => {
                         }
                         break;
                     case WatchState.PAUSED:
-                        gameEngine.render(props.pov, zoom, canvasDim.w, canvasDim.h);
+                        //gameEngine.render(props.pov, zoom, canvasDim.w, canvasDim.h);
                         break;
                     case WatchState.FINISHED:
-                        gameEngine.render(props.pov, zoom, canvasDim.w, canvasDim.h);
+                        //gameEngine.render(props.pov, zoom, canvasDim.w, canvasDim.h);
                         renderer?.show_winner(props.match.won_by as any);
                         break;
                 }

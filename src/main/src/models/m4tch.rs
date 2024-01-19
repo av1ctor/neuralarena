@@ -13,8 +13,6 @@ pub struct MatchOptions {
     pub game_id: GameId,
     pub min_players: usize,
     pub max_players: usize,
-    pub fps: f32,
-    pub tps: f32,
     pub epsilon: f64,
     pub num_hidden_layers: usize,
     pub game_options: HashMap<String, String>,

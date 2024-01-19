@@ -7,7 +7,7 @@ use bot_engine_gltf::{
 use candid::Principal;
 use rand::Rng;
 use rand::rngs::StdRng;
-use crate::{agent::agent::Agent, utils::null_renderer::NullRenderer};
+use crate::{agent::agent::Agent, utils::null_renderer::NullRenderer, nn::tensor::Tensor};
 use crate::agent::baseagent::BaseAgentOptions;
 use crate::agent::dqnagent::DqnAgent;
 use crate::db::traits::crud::{CrudSubscribable, Crud, Pagination};
@@ -23,6 +23,11 @@ const TENSORS: &[u8] = include_bytes!("../../tensors/15rays-32hidden-0.05epsilon
 const MAP: &[u8] = include_bytes!("../../maps/map-no-tex.glb");
 const NAVMESH: &[u8] = include_bytes!("../../maps/navmesh.bin");
 
+struct Player {
+    last_thought: u32,
+    steps_per_thought: u32,
+    obs: Tensor,
+}
 pub struct MatchesService {}
 
 impl MatchesService {
@@ -248,47 +253,44 @@ impl MatchesService {
         let mut renderer = NullRenderer::new();
         let agent = m4tch.agent.as_mut().unwrap();
         
-        let mut num_steps = 1;
+        let mut steps = 0;
         let mut running = true;
-        let mut last_thought_step = 0;
-        let steps_between_thoughts = (m4tch.options.fps / m4tch.options.tps) as u32;
 
-        let mut obs_vec = vec![]; 
-
+        let mut players = vec![];
         let obs = &game.reset(&mut renderer, rng);
         for i in 0..game.options.num_players {
-            obs_vec.push(obs[i].clone());
+            players.push(Player {
+                last_thought: 0,
+                steps_per_thought:rng.gen_range(1000..10000),
+                obs: obs[i].to_owned().into(),
+            });
         }
 
         let pre = ic_cdk::api::performance_counter(0);
 
-        while running {
-            let do_think = num_steps - last_thought_step >= steps_between_thoughts;
+        while running && steps < game.options.max_steps {
 
-            let actions = if do_think  { 
-                last_thought_step = num_steps;
+            let mut actions = vec![None; game.options.num_players];
+
+            let players_idx = Self::shuffle_players_idx(game, rng);
+            
+            for i in 0..game.options.num_players {
+                let p = players_idx[i];
+                let player = &mut players[p];
                 
-                let mut actions = vec![0usize; game.options.num_players];
+                player.last_thought += 1000;
+                if player.last_thought >= player.steps_per_thought {
+                    player.last_thought = 0;
 
-                let players_idx = Self::shuffle_players_idx(game, rng);
-                
-                for i in 0..game.options.num_players {
-                    let p = players_idx[i];
-                    let action = agent.choose_action(obs_vec[p].clone().into(), rng)
-                        .unwrap_or(game.random_action(rng));
+                    let action = agent.choose_action(player.obs.clone(), rng)
+                        .unwrap();
 
-                    actions[p] = action;
+                    actions[p] = Some(action);
                 }
-
-                actions.iter()
-                    .map(|v| Some(v.clone() as usize))
-                    .collect::<Vec<Option<usize>>>()
-            } else {
-                vec![None; game.options.num_players]
-            };
+            }
 
             let step = game.step(&actions, 1.0, &mut renderer);
-            num_steps += 1;
+            steps += 1;
 
             m4tch.state.steps.push(MatchStep {
                 terminated: step.terminated,
@@ -305,8 +307,8 @@ impl MatchesService {
                 m4tch.won_at = Some(ic_cdk::api::time());
             }
 
-            for p in 0..step.players.len() {
-                obs_vec[p] = step.players[p].obs.clone();
+            for i in 0..step.players.len() {
+                players[i].obs = step.players[i].obs.to_owned().into();
             }
         }
 
