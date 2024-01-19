@@ -1,13 +1,13 @@
 use std::collections::{HashSet, BTreeSet};
 
-use bot_engine::env::Env;
-use bot_engine::game::{Game, GameOptions, ObjectFOV};
-use bot_engine::line::Line;
-use bot_engine::vector2d::Vector2d;
+use bot_engine_gltf::{
+    env::Env,
+    game::{Game, GameOptions, ObjectFOV}
+};
 use candid::Principal;
 use rand::Rng;
 use rand::rngs::StdRng;
-use crate::agent::agent::Agent;
+use crate::{agent::agent::Agent, utils::null_renderer::NullRenderer};
 use crate::agent::baseagent::BaseAgentOptions;
 use crate::agent::dqnagent::DqnAgent;
 use crate::db::traits::crud::{CrudSubscribable, Crud, Pagination};
@@ -19,16 +19,20 @@ use crate::models::user::UserKind;
 
 use super::users::UsersService;
 
-const TENSORS: &[u8] = include_bytes!("../../tensors/15rays-32hidden-60fps-30tps-0.05epsilon.safetensors");
-const MAP: &str = include_str!("../../maps/map.yaml");
+const TENSORS: &[u8] = include_bytes!("../../tensors/15rays-32hidden-0.05epsilon.safetensors");
+const MAP: &[u8] = include_bytes!("../../maps/map-no-tex.glb");
+const NAVMESH: &[u8] = include_bytes!("../../maps/navmesh.bin");
 
 pub struct MatchesService {}
 
 impl MatchesService {
-    pub fn get_map_yaml(
+    pub fn get_map_name(
         _id: MatchId
-    ) -> Result<String, String> {
-        Ok(MAP.to_string())
+    ) -> Result<(String, String), String> {
+        Ok((
+            "map.glb".to_string(),
+            "navmesh.bin".to_string()
+        ))
     }
 
     pub fn create(
@@ -139,7 +143,7 @@ impl MatchesService {
     pub fn start(
         id: &MatchId,
         db: &mut DB,
-        rng: &mut StdRng,
+        _rng: &mut StdRng,
         caller: &Principal
     ) -> Result<(), String> {
         Self::authorize(caller, db)?;
@@ -166,9 +170,10 @@ impl MatchesService {
         let player_radius = m4tch.options.game_options["player_radius"].parse::<f32>()
             .map_err(|err| err.to_string())?;
         
-        let mut game = Game::new(
+        let game = Game::new(
+            MAP,
+            NAVMESH,
             GameOptions {
-                fps: m4tch.options.fps as f32,
                 fov: ObjectFOV { 
                     rays, 
                     angle, 
@@ -176,14 +181,12 @@ impl MatchesService {
                 },
                 num_players: m4tch.players.len(),
                 min_keys: 4,
+                max_steps: 10000,
                 player_radius,
                 debug: false,
                 training: false,
-            },
-            MAP.to_string()
+            }
         );
-
-        game.spawn_entities(rng);
 
         let options = BaseAgentOptions { 
             dqn: DqnOptions {
@@ -197,7 +200,7 @@ impl MatchesService {
         let mut agent = DqnAgent::new(&options);
 
         /*let tensors_path = format!(
-            "./weights/{}rays-{}hidden-{}fps-{}tps-{}epsilon.safetensors", 
+            "./weights/{}rays-{}hidden-{}epsilon.safetensors", 
             m4tch.options.rays, 
             m4tch.options.num_hidden_layers, 
             m4tch.options.fps, 
@@ -242,6 +245,7 @@ impl MatchesService {
         m4tch.status = MatchStatus::RUNNING;
 
         let game = m4tch.game.as_mut().unwrap();
+        let mut renderer = NullRenderer::new();
         let agent = m4tch.agent.as_mut().unwrap();
         
         let mut num_steps = 1;
@@ -251,7 +255,7 @@ impl MatchesService {
 
         let mut obs_vec = vec![]; 
 
-        let obs = &game.reset(rng);
+        let obs = &game.reset(&mut renderer, rng);
         for i in 0..game.options.num_players {
             obs_vec.push(obs[i].clone());
         }
@@ -283,7 +287,7 @@ impl MatchesService {
                 vec![None; game.options.num_players]
             };
 
-            let step = game.step(&actions, 1.0);
+            let step = game.step(&actions, 1.0, &mut renderer);
             num_steps += 1;
 
             m4tch.state.steps.push(MatchStep {
@@ -317,7 +321,7 @@ impl MatchesService {
     }
 
     fn shuffle_players_idx(
-        game: &mut Game<Vector2d, Line<Vector2d>>,
+        game: &mut Game,
         rng: &mut StdRng
     ) -> Vec<usize> {
         let mut indexes = HashSet::new();

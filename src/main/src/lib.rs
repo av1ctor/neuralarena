@@ -395,10 +395,10 @@ pub fn match_run(
 }
 
 #[ic_cdk::query]
-pub fn match_get_map(
+pub fn match_get_map_name(
     id: MatchId
-) -> Result<String, String> {
-    MatchesService::get_map_yaml(id)
+) -> Result<(String, String), String> {
+    MatchesService::get_map_name(id)
 }
 
 #[ic_cdk::query]

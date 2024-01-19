@@ -13,6 +13,7 @@
     "generate": "dfx generate main"
   },
   "dependencies": {
+    "bot-engine": "file:../bot-engine-gltf/pkg",
     "@dfinity/agent": "^0.19.3",
     "@dfinity/auth-client": "^0.19.3",
     "@dfinity/candid": "^0.19.3",
@@ -42,7 +43,6 @@
     "@formatjs/ts-transformer": "^3.13.3",
     "@types/react": "^18.2.19",
     "assert": "2.0.0",
-    "bot-engine": "file:../bot-engine/pkg",
     "buffer": "6.0.3",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.8.1",

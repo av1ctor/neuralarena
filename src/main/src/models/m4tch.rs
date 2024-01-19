@@ -1,9 +1,7 @@
 use std::collections::HashMap;
 use candid::{CandidType, Principal};
 use serde::{Serialize, Deserialize};
-use bot_engine::line::Line;
-use bot_engine::game::Game;
-use bot_engine::vector2d::Vector2d;
+use bot_engine_gltf::game::Game;
 use crate::agent::dqnagent::DqnAgent;
 use super::game::GameId;
 use super::user::UserId;
@@ -50,7 +48,7 @@ pub struct Match {
     pub status: MatchStatus,
     pub players: HashMap<UserId, usize>,
     pub state: MatchState,
-    pub game: Option<Game<Vector2d, Line<Vector2d>>>,
+    pub game: Option<Game>,
     pub agent: Option<DqnAgent>,
     pub created_at: u64,
     pub created_by: UserId,

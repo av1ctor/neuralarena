@@ -85,7 +85,7 @@ const AppHeader = (props: Props) => {
                                     <a href="#" className={classes.link}>
                                         <Center inline>
                                             <Avatar color="cyan" radius="xl" size="sm">
-                                                {user.nick.substr(0, 1).toUpperCase()}
+                                                {user.nick.substr(0, 2).toUpperCase()}
                                             </Avatar>
                                             &nbsp;<Text fw={500} size="xs">{user.name}</Text>&nbsp;
                                             <IconChevronDown size={16} color={theme.fn.primaryColor()} />
@@ -130,7 +130,7 @@ const AppHeader = (props: Props) => {
                             <UnstyledButton className={classes.link} onClick={toggleLinks}>
                                 <Center inline>
                                     <Avatar color="cyan" radius="xl" size="sm">
-                                        {user.nick.substr(0, 1).toUpperCase()}
+                                        {user.nick.substr(0, 2).toUpperCase()}
                                     </Avatar>
                                     &nbsp;<Text fw={500} size="xs">{user.name}</Text>&nbsp;
                                     <IconChevronDown size={16} color={theme.fn.primaryColor()} />
