@@ -50,7 +50,7 @@ type Result_1 = variant { Ok; Err : text };
 type Result_2 = variant { Ok : vec GameResponse; Err : text };
 type Result_3 = variant { Ok : MatchResponse; Err : text };
 type Result_4 = variant { Ok : vec MatchResponse; Err : text };
-type Result_5 = variant { Ok : text; Err : text };
+type Result_5 = variant { Ok : record { text; text }; Err : text };
 type Result_6 = variant { Ok : MatchStepsResponse; Err : text };
 type Result_7 = variant { Ok : UserResponse; Err : text };
 type StaffRequest = record { role : StaffRole };
@@ -88,7 +88,7 @@ service : () -> {
   match_find_by_game : (text, Pagination) -> (Result_4) query;
   match_find_by_id : (text) -> (Result_3) query;
   match_find_open : (Pagination) -> (Result_4) query;
-  match_get_map : (text) -> (Result_5) query;
+  match_get_map_name : (text) -> (Result_5) query;
   match_get_steps : (text, Pagination) -> (Result_6) query;
   match_join : (text) -> (Result_1);
   match_run : (text) -> (Result_1);

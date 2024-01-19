@@ -214,7 +214,7 @@ impl MatchesService {
         m4tch.agent = Some(agent);
         m4tch.status = MatchStatus::STARTED;
 
-        matches.update_and_notify(id.to_owned(), m4tch.to_owned())?;
+        matches.update_and_notify(id.clone(), m4tch)?;
 
         Ok(())
     }
@@ -315,7 +315,7 @@ impl MatchesService {
         let post = ic_cdk::api::performance_counter(0);
         ic_cdk::print((post - pre).to_string());
 
-        matches.update_and_notify(id.to_owned(), m4tch.to_owned())?;
+        matches.update_and_notify(id.to_owned(), m4tch)?;
 
         Ok(())
     }
