@@ -15,8 +15,6 @@ type GameResponse = record {
   image : text;
 };
 type MatchOptions = record {
-  fps : float32;
-  tps : float32;
   min_players : nat64;
   num_hidden_layers : nat64;
   max_players : nat64;

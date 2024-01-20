@@ -282,10 +282,7 @@ impl MatchesService {
                 if player.last_thought >= player.steps_per_thought {
                     player.last_thought = 0;
 
-                    let action = agent.choose_action(player.obs.clone(), rng)
-                        .unwrap();
-
-                    actions[p] = Some(action);
+                    actions[p] = agent.choose_action(player.obs.clone(), rng);
                 }
             }
 
