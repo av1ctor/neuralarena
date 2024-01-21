@@ -1,4 +1,4 @@
-use bot_engine_gltf::renderer::{
+use brains_engine::renderer::{
     ModelRef, 
     Renderer
 };

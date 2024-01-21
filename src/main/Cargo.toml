@@ -17,7 +17,7 @@ rand = "0.8.5"
 ulid = {version = "1.0.0", features = [], default-features = false}
 three-rs = {version = "0.1.0", path = "../../../three-rs", features = []}
 gltf = {version = "1.4.0", features = ["import"]}
-brains-game-engine = {version = "0.1.0", path = "../../../brains-game-engine", features = ["navigation"], default-features = false}
+brains-engine = {version = "0.1.0", path = "../../../brains-engine", features = ["navigation"], default-features = false}
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 getrandom = { version = "0.2", features = ["custom"] }

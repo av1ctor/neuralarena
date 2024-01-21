@@ -1,6 +1,6 @@
 use std::collections::{HashSet, BTreeSet};
 
-use bot_engine_gltf::{
+use brains_engine::{
     env::Env,
     game::{Game, GameOptions, ObjectFOV}
 };

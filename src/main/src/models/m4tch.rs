@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use candid::{CandidType, Principal};
 use serde::{Serialize, Deserialize};
-use bot_engine_gltf::game::Game;
+use brains_engine::game::Game;
 use crate::agent::dqnagent::DqnAgent;
 use super::game::GameId;
 use super::user::UserId;
