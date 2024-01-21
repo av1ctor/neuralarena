@@ -27,7 +27,7 @@
     "@mantine/notifications": "^6.0.18",
     "@mantine/nprogress": "^6.0.18",
     "@tabler/icons-react": "^2.40.0",
-    "bot-engine-gltf": "file:../bot-engine-gltf/pkg",
+    "brains-engine": "file:../brains-engine/pkg",
     "crc": "^4.3.2",
     "dayjs": "^1.11.9",
     "ic-stoic-identity": "^2.0.0",
