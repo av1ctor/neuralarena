@@ -261,7 +261,7 @@ impl MatchesService {
         for i in 0..game.options.num_players {
             players.push(Player {
                 last_thought: 0,
-                steps_per_thought:rng.gen_range(1000..10000),
+                steps_per_thought: rng.gen_range(1000..10000),
                 obs: obs[i].to_owned().into(),
             });
         }
@@ -282,7 +282,10 @@ impl MatchesService {
                 if player.last_thought >= player.steps_per_thought {
                     player.last_thought = 0;
 
-                    actions[p] = agent.choose_action(player.obs.clone(), rng);
+                    actions[p] = match agent.choose_action(player.obs.clone(), rng) {
+                        Some(action) => Some(action),
+                        None => Some(game.random_action(rng)),
+                    };
                 }
             }
 
