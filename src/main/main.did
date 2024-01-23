@@ -39,6 +39,7 @@ type MatchStatus = variant { CANCELLED; RUNNING; CREATED; STARTED; FINISHED };
 type MatchStep = record {
   terminated : bool;
   entities : vec nat8;
+  events : vec nat8;
   timedout : bool;
 };
 type MatchStepsResponse = record { steps : vec MatchStep };

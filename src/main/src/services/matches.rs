@@ -2,7 +2,7 @@ use std::collections::{HashSet, BTreeSet};
 
 use brains_engine::{
     env::Env,
-    game::{Game, GameOptions, ObjectFOV}
+    game::{Game, GameOptions, ObjectFOV, LevelOptions}
 };
 use candid::Principal;
 use rand::Rng;
@@ -179,6 +179,9 @@ impl MatchesService {
             MAP,
             NAVMESH,
             GameOptions {
+                level: LevelOptions {
+                    name: "maps/level-0/map.glb".to_string()
+                },
                 fov: ObjectFOV { 
                     rays, 
                     angle, 
@@ -296,6 +299,7 @@ impl MatchesService {
                 terminated: step.terminated,
                 timedout: step.timedout,
                 entities: game.serialize_entities()?,
+                events: game.serialize_events()?,
             });
 
             running = !step.terminated && !step.timedout;

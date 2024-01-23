@@ -32,6 +32,7 @@ pub struct MatchStep {
     pub terminated: bool,
     pub timedout: bool,
     pub entities: Vec<u8>,
+    pub events: Vec<u8>,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
