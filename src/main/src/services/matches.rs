@@ -180,16 +180,16 @@ impl MatchesService {
             NAVMESH,
             GameOptions {
                 level: LevelOptions {
-                    name: "maps/level-0/map.glb".to_string()
+                    name: "/maps/level-0/map.glb".to_string()
                 },
                 fov: ObjectFOV { 
                     rays, 
                     angle, 
-                    max_dist: player_radius * 2.0,
+                    max_dist: 2.5,
                 },
                 num_players: m4tch.players.len(),
                 min_keys: 4,
-                max_steps: 10000,
+                max_steps: 60 * 30,
                 player_radius,
                 debug: false,
                 training: false,
@@ -262,9 +262,10 @@ impl MatchesService {
         let mut players = vec![];
         let obs = &game.reset(&mut renderer, rng);
         for i in 0..game.options.num_players {
+            let steps_per_thought = rng.gen_range(1000..10000);
             players.push(Player {
                 last_thought: 0,
-                steps_per_thought: rng.gen_range(1000..10000),
+                steps_per_thought,
                 obs: obs[i].to_owned().into(),
             });
         }
@@ -314,6 +315,8 @@ impl MatchesService {
             for i in 0..step.players.len() {
                 players[i].obs = step.players[i].obs.to_owned().into();
             }
+
+            game.clear_events();
         }
 
         m4tch.status = MatchStatus::FINISHED;

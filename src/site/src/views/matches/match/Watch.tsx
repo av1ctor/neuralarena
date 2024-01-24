@@ -2,11 +2,15 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 import { ActionIcon, Center, Grid, Group, createStyles } from "@mantine/core";
 import { MatchResponse, MatchStep } from "../../../../../declarations/main/main.did";
 import { useMatchGetSteps } from "../../../hooks/matches";
-import GameEngineInit, {GameWrapper, GameOptionsWrapper, ObjectFOVWrapper} from 'bot-engine-gltf';
-import { Canvas2dRenderer } from "../../../renderers/Canvas2dRenderer";
+import { ThreeRenderer } from "../../../renderers/ThreeRenderer";
 import { matchGetMapName } from "../../../libs/matches";
 import { useActors } from "../../../hooks/actors";
-import { IconPlayerPause, IconPlayerPlay, IconQuestionMark, IconRefresh, IconWindowMaximize, IconWindowMinimize, IconZoomIn, IconZoomOut } from "@tabler/icons-react";
+import { 
+    IconPlayerPause, IconPlayerPlay, IconQuestionMark, 
+    IconRefresh, IconWindowMaximize, IconWindowMinimize, 
+    IconZoomIn, IconZoomOut 
+} from "@tabler/icons-react";
+import GameEngineInit, {GameWrapper, GameOptionsWrapper, ObjectFOVWrapper} from "brains-engine";
 
 GameEngineInit();
 
@@ -63,8 +67,8 @@ export const Watch = (props: Props) => {
     const canvas = useRef<HTMLCanvasElement|null>(null);
     const fullscreenContainer = useRef<HTMLDivElement|null>(null);
     const [gameEngine, setGameEngine] = useState<GameWrapper>();
-    const [renderer, setRenderer] = useState<Canvas2dRenderer>();
-    const [map, setMap] = useState<string>();
+    const [renderer, setRenderer] = useState<ThreeRenderer>();
+    const [map, setMap] = useState<string[]>([]);
     const [state, setState] = useState<WatchState>(WatchState.PAUSED);
     const [zoom, setZoom] = useState(1.0);
     const [progress, setProgress] = useState(0.0);
@@ -92,11 +96,12 @@ export const Watch = (props: Props) => {
             if(newState === WatchState.PLAYING &&
                 step.current >= frames.length) {
                 step.current = 0;
+                renderer?.reset();
             }
 
             return newState;
         });
-    }, [step, frames]);
+    }, [step, frames, renderer]);
 
     const handleZoomIn = useCallback(() => {
         setZoom(zoom => {
@@ -153,7 +158,7 @@ export const Watch = (props: Props) => {
 
     useEffect(() => {
         changeCanvasDim(canvasDim);
-        renderer?.changeDim(canvasDim);
+        renderer?.resize_canvas(canvasDim);
     }, [canvasDim, renderer]);
 
     const loadMap = useCallback(async () => {
@@ -177,7 +182,7 @@ export const Watch = (props: Props) => {
             const {options} = props.match;
             const game_options = new Map(options.game_options);
             
-            const renderer = new Canvas2dRenderer(canvas.current);
+            const renderer = new ThreeRenderer(canvas.current);
             setRenderer(renderer);
 
             setGameEngine(new GameWrapper(
@@ -203,35 +208,43 @@ export const Watch = (props: Props) => {
         if(gameEngine && frames.length > 0) {
             let timerId: number = 0;
 
-            const animate = () => {
+            const animate = async () => {
                 switch(state) {
                     case WatchState.PLAYING:
                         if(step.current < frames.length) {
-                            gameEngine.deserialize_entities(frames[step.current].entities as Uint8Array)
-                            //gameEngine.render(props.pov, zoom, canvasDim.w, canvasDim.h);
-                            timerId = requestAnimationFrame(animate)
-                            ++step.current;
+                            const frame = frames[step.current];
+                            try {
+                                gameEngine.deserialize_entities(frame.entities as Uint8Array);
+                                gameEngine.deserialize_events(frame.events as Uint8Array);
+                                await gameEngine.render(renderer);
+                            }
+                            catch(e) {
+                                console.error(e);
+                            }
                             setProgress(step.current / frames.length * 100.0);
+                            ++step.current;
                             if(step.current >= frames.length) {
                                 setState(WatchState.FINISHED);
                             }
                         }
                         break;
                     case WatchState.PAUSED:
-                        //gameEngine.render(props.pov, zoom, canvasDim.w, canvasDim.h);
+                        await gameEngine.render(renderer);
                         break;
                     case WatchState.FINISHED:
-                        //gameEngine.render(props.pov, zoom, canvasDim.w, canvasDim.h);
-                        renderer?.show_winner(props.match.won_by as any);
+                        await gameEngine.render(renderer);
+                        //renderer?.show_winner(props.match.won_by as any);
                         break;
                 }
+
+                timerId = requestAnimationFrame(animate);
             }
             timerId = requestAnimationFrame(animate)
             return () => cancelAnimationFrame(timerId)
         }
         else {
             return () => {};
-        }
+        };
     }, [gameEngine, steps, frames, zoom, state, renderer, props.match, props.pov, canvasDim]);
 
     return (

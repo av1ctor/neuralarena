@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import * as yup from 'yup';
-import { Box, Button, Center, Container, SegmentedControl, Space, Stepper, TextInput } from "@mantine/core";
+import { Box, Button, Center, SegmentedControl, Space, Stepper, TextInput } from "@mantine/core";
 import { useForm, yupResolver } from "@mantine/form";
 import { IconUserCog, IconUserShield } from "@tabler/icons-react";
 import { useAuth } from "../../../hooks/auth";
