@@ -124,7 +124,8 @@ export class ThreeRenderer {
             }
 
             obj.userData.actions = actions;
-            obj.userData.activeAction = undefined;
+            obj.userData.activeAction = 'Walking';
+            (obj.userData.actions as any)[obj.userData.activeAction].play();
 
             this.objects[rf] = obj;
             this.scene.add(obj);
@@ -177,6 +178,7 @@ export class ThreeRenderer {
         obj.position.x = pos[0];
         obj.position.y = pos[1];
         obj.position.z = pos[2];
+        obj
     }
 
     set_rotation(
@@ -213,6 +215,11 @@ export class ThreeRenderer {
     render(
     ) {
         this.controls?.update();
+        for(const obj of this.objects) {
+            if(obj.userData.anim){
+                obj.userData.anim.update(1.0 / 60.0 / 2.0);
+            }
+        }
         this.renderer.render(this.scene, this.camera);
     }
 };
