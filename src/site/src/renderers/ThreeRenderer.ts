@@ -191,17 +191,6 @@ export class ThreeRenderer {
         );
     }
 
-    set_rotation_from_euler(
-        model_ref: number,
-        vector: Float32Array,
-        order: number
-    ) {
-        const obj = this.objects[model_ref];
-        obj.setRotationFromEuler(
-            new THREE.Euler(vector[0], vector[1], vector[2], 'XYZ')
-        );
-    }
-
     set_scale(
         model_ref: number,
         scale: Float32Array

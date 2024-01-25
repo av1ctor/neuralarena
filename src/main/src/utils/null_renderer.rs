@@ -3,7 +3,7 @@ use brains_engine::renderer::{
     Renderer
 };
 use three_rs::math::{
-    Vector3, Quaternion, Euler
+    Vector3, Quaternion
 };
 
 struct Object {
@@ -78,13 +78,6 @@ impl Renderer for NullRenderer {
         &mut self,
         _model_ref: ModelRef,
         _q: &Quaternion
-    ) {
-    }
-
-    fn set_rotation_from_euler(
-        &mut self,
-        _model_ref: ModelRef,
-        _euler: &Euler
     ) {
     }
 
