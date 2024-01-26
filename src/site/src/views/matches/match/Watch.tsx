@@ -3,7 +3,7 @@ import { ActionIcon, Center, Grid, Group, createStyles } from "@mantine/core";
 import { MatchResponse, MatchStep } from "../../../../../declarations/main/main.did";
 import { useMatchGetSteps } from "../../../hooks/matches";
 import { ThreeRenderer } from "../../../renderers/ThreeRenderer";
-import { matchGetMapName } from "../../../libs/matches";
+import { matchGetAssets } from "../../../libs/matches";
 import { useActors } from "../../../hooks/actors";
 import { 
     IconPlayerPause, IconPlayerPlay, IconQuestionMark, 
@@ -65,11 +65,12 @@ export const Watch = (props: Props) => {
     const { classes } = useStyles();
     const canvas = useRef<HTMLCanvasElement|null>(null);
     const fullscreenContainer = useRef<HTMLDivElement|null>(null);
+    const [assets, setAssets] = useState<Map<number, string>|undefined>();
     const [gameEngine, setGameEngine] = useState<GameWrapper>();
     const [renderer, setRenderer] = useState<ThreeRenderer>();
-    const [map, setMap] = useState<string[]>([]);
     const [state, setState] = useState<WatchState>(WatchState.PAUSED);
-    const [progress, setProgress] = useState(0.0);
+    const [loadingProgress, setLoadingProgress] = useState(0);
+    const [gameProgress, setGameProgress] = useState(0.0);
     const [canvasDim, setCanvasDim] = useState(CANVAS_DIM);
 
     const steps = useMatchGetSteps(props.match.id, STEPS_PER_CALL)
@@ -147,13 +148,32 @@ export const Watch = (props: Props) => {
         renderer?.resize_canvas(canvasDim);
     }, [canvasDim, renderer]);
 
-    const loadMap = useCallback(async () => {
-        setMap(await matchGetMapName(main, props.match.id));
-    }, [props.match.id]);
+    useEffect(() => {
+        if(canvas.current && !renderer) {
+            const renderer = new ThreeRenderer(canvas.current);
+            setRenderer(renderer);
+        }
+    }, [canvas.current, renderer]);
+
+    const loadAssets = useCallback(async () => {
+        if(renderer && loadingProgress === 0) {
+            try {
+                setLoadingProgress(5);
+                const assets = await matchGetAssets(main, props.match.id);
+                for(const asset of assets) {
+                    await renderer.load_asset(asset[0], asset[1]);
+                }
+                setAssets(assets);
+            }
+            finally {
+                setLoadingProgress(100);
+            }
+        }
+    }, [props.match.id, renderer, loadingProgress]);
 
     useEffect(() => {
-        loadMap();
-    }, [loadMap]);
+        loadAssets();
+    }, [loadAssets]);
 
     useEffect(() => {
         renderer?.change_pov(props.pov);
@@ -168,13 +188,10 @@ export const Watch = (props: Props) => {
     }, [steps.data?.pages.length]);
 
     useEffect(() => {
-        if(!gameEngine && state === WatchState.PAUSED && canvas.current && map) {
+        if(assets && !gameEngine && state === WatchState.PAUSED) {
             const {options} = props.match;
             const game_options = new Map(options.game_options);
             
-            const renderer = new ThreeRenderer(canvas.current);
-            setRenderer(renderer);
-
             setGameEngine(new GameWrapper(
                 new GameOptionsWrapper(
                     new ObjectFOVWrapper(
@@ -192,26 +209,28 @@ export const Watch = (props: Props) => {
             ));
             setState(WatchState.PLAYING);
         }
-    }, [props.match.options, state, canvas.current, map, gameEngine]);
+    }, [props.match.options, state, gameEngine, assets]);
 
     useLayoutEffect(() => {
         if(gameEngine && frames.length > 0) {
             let timerId: number = 0;
 
-            const animate = async () => {
+            const animate = () => {
                 switch(state) {
                     case WatchState.PLAYING:
                         if(step.current < frames.length) {
                             const frame = frames[step.current];
                             try {
-                                gameEngine.deserialize_entities(frame.entities as Uint8Array);
-                                gameEngine.deserialize_events(frame.events as Uint8Array);
-                                await gameEngine.render(renderer);
+                                gameEngine.render(
+                                    frame.entities as Uint8Array, 
+                                    frame.events as Uint8Array, 
+                                    renderer
+                                );
                             }
                             catch(e) {
                                 console.error(e);
                             }
-                            setProgress(step.current / frames.length * 100.0);
+                            setGameProgress(step.current / frames.length * 100.0);
                             ++step.current;
                             if(step.current >= frames.length) {
                                 setState(WatchState.FINISHED);
@@ -219,10 +238,8 @@ export const Watch = (props: Props) => {
                         }
                         break;
                     case WatchState.PAUSED:
-                        await gameEngine.render(renderer);
                         break;
                     case WatchState.FINISHED:
-                        await gameEngine.render(renderer);
                         //renderer?.show_winner(props.match.won_by as any);
                         break;
                 }
@@ -236,7 +253,7 @@ export const Watch = (props: Props) => {
         else {
             return () => {};
         };
-    }, [gameEngine, steps, frames, state, renderer, props.match, canvasDim]);
+    }, [gameEngine, steps, frames, state, renderer, props.match]);
 
     return (
         <Center                 
@@ -255,7 +272,7 @@ export const Watch = (props: Props) => {
                     <div className={classes.progress_container}>
                         <div 
                             className={classes.progress} 
-                            style={{width:`${progress}%`}}
+                            style={{width:`${gameProgress}%`}}
                         />
                     </div>
                     <Grid.Col span={3}>

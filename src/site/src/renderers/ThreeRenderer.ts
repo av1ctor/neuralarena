@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { clone } from 'three/addons/utils/SkeletonUtils.js';
+import { GameAssetId } from "brains-engine";
 
 const loader = new GLTFLoader();
 
@@ -12,6 +14,7 @@ export class ThreeRenderer {
     clock: THREE.Clock;
     width: number;
     height: number;
+    assets: Map<GameAssetId, THREE.Object3D>;
     objects: THREE.Object3D[];
     pov?: THREE.Vector3;
 
@@ -62,9 +65,10 @@ export class ThreeRenderer {
 
         this.clock = new THREE.Clock();
 
-        this.pov = undefined;
-
+        this.assets = new Map();
         this.objects = [];
+
+        this.pov = undefined;
     }
 
     change_pov(
@@ -95,13 +99,12 @@ export class ThreeRenderer {
         this.objects = [];
     }
 
-    async add_model(
-        id: string,
-        rf: number
-    ): Promise<number> {
-
-        if (id.startsWith("/maps")) {
-            const gltf = await loader.loadAsync(id);
+    async load_asset(
+        id: GameAssetId,
+        asset: string
+    ): Promise<void> {
+        if (id === GameAssetId.Level0) {
+            const gltf = await loader.loadAsync("/maps/level-0/map.glb");
             const obj = gltf.scene;
             obj.traverse(child => {
                 if((child as any).isMesh) {
@@ -114,10 +117,9 @@ export class ThreeRenderer {
                 }
             });
 
-            this.objects[rf] = obj;
-            this.scene.add(obj);
+            this.assets.set(id, obj);
         }
-        else if (id.startsWith("player-")) {
+        else if (id === GameAssetId.Player) {
             const gltf = await loader.loadAsync("/models/zombie/default.gltf");
             const obj = gltf.scene;
             obj.traverse(child => {
@@ -127,28 +129,14 @@ export class ThreeRenderer {
                 }
             });
             obj.visible = false;
-
             obj.scale.multiplyScalar(0.01);
-            
-            const anim = new THREE.AnimationMixer(obj);
-            obj.userData.anim = anim;
 
-            let actions = Object.assign({});
-            for(let clip of gltf.animations) {
-                const action = anim.clipAction(clip);
-                actions[clip.name] = action;
-            }
-
-            obj.userData.actions = actions;
-            obj.userData.activeAction = 'Walking';
-            (obj.userData.actions as any)[obj.userData.activeAction].play();
-
+            obj.userData.animations = gltf.animations;
             obj.userData.isPlayer = true;
 
-            this.objects[rf] = obj;
-            this.scene.add(obj);
+            this.assets.set(id, obj);
         }
-        else if (id.startsWith("key-")) {
+        else if (id === GameAssetId.Key) {
             const geometry = new THREE.BoxGeometry(1.0, 1.0, 1.0);
             const material = new THREE.MeshBasicMaterial({
                 color: 0xff0000
@@ -156,9 +144,9 @@ export class ThreeRenderer {
             const obj = new THREE.Mesh(geometry, material);
             
             this.scene.add(obj);
-            this.objects[rf] = obj;
+            this.assets.set(id, obj);
         }
-        else if (id.startsWith("exit-")) {
+        else if (id === GameAssetId.Exit) {
             const geometry = new THREE.BoxGeometry(2.0, 2.0, 2.0);
             const material = new THREE.MeshBasicMaterial({
                 color: 0x0000ff
@@ -166,14 +154,42 @@ export class ThreeRenderer {
             const obj = new THREE.Mesh(geometry, material);
             
             this.scene.add(obj);
-            this.objects[rf] = obj;
+            this.assets.set(id, obj);
         }
         else {
-            console.error("Unknown model:" + id);
-            throw new Error("Unknown model");
+            console.error("Unknown asset:" + id);
+            throw new Error("Unknown asset: " + id);
+        }
+    }
+
+    add_model(
+        id: number,
+        model_ref: number
+    ): number {
+        const obj = this.assets.get(id);
+        if(!obj) {
+            throw new Error("Unknown asset: " + id);
+        }
+        
+        const cloned = clone(obj);
+        if(cloned.userData.isPlayer) {
+            const anim = new THREE.AnimationMixer(cloned);
+            cloned.userData.anim = anim;
+
+            let actions = Object.assign({});
+            for(const clip of obj.userData.animations) {
+                const action = anim.clipAction(clip);
+                actions[clip.name] = action;
+            }
+
+            cloned.userData.actions = actions;
+            cloned.userData.activeAction = 'Walking';
+            (cloned.userData.actions as any)[cloned.userData.activeAction].play();
         }
 
-        return rf;
+        this.objects[model_ref] = cloned;
+        this.scene.add(cloned)
+        return model_ref;
     }
 
     show_model(
@@ -196,7 +212,6 @@ export class ThreeRenderer {
         obj.position.x = pos[0];
         obj.position.y = pos[1];
         obj.position.z = pos[2];
-        obj
     }
 
     set_rotation(
@@ -228,7 +243,7 @@ export class ThreeRenderer {
 
         for(const obj of this.objects) {
             if(obj.userData.anim){
-                obj.userData.anim.update(1.0 / 60.0 / 2.0);
+                obj.userData.anim.update(1.0 / 60.0);
             }
         }
         this.renderer.render(this.scene, this.camera);

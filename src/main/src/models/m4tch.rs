@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use brains_engine::env::AssetId;
 use candid::{CandidType, Principal};
 use serde::{Serialize, Deserialize};
 use brains_engine::game::Game;
@@ -74,6 +75,11 @@ pub struct MatchResponse {
     pub started_by: Option<UserId>,
     pub won_at: Option<u64>,
     pub won_by: Option<UserId>,
+}
+
+#[derive(Clone, Serialize, Deserialize, CandidType)]
+pub struct MatchAssetsResponse {
+    pub assets: HashMap<AssetId, Option<String>>,
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]

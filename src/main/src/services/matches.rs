@@ -1,8 +1,9 @@
-use std::collections::{HashSet, BTreeSet};
-
+use std::collections::{BTreeSet, HashMap, HashSet};
 use brains_engine::{
-    env::Env,
-    game::{Game, GameOptions, ObjectFOV, LevelOptions}
+    asset::GameAsset, 
+    env::{Env, AssetId}, 
+    game::{Game, GameOptions, ObjectFOV, LevelOptions}, 
+    map::Map
 };
 use candid::Principal;
 use rand::Rng;
@@ -16,7 +17,6 @@ use crate::models::game::GameId;
 use crate::models::m4tch::{Match, MatchId, MatchStatus, MatchStep};
 use crate::db::DB;
 use crate::models::user::UserKind;
-
 use super::users::UsersService;
 
 const TENSORS: &[u8] = include_bytes!("../../tensors/15rays-32hidden-0.05epsilon.safetensors");
@@ -31,23 +31,60 @@ struct Player {
 pub struct MatchesService {}
 
 impl MatchesService {
-    pub fn get_map_name(
-        _id: MatchId
-    ) -> Result<(String, String), String> {
-        Ok((
-            "map.glb".to_string(),
-            "navmesh.bin".to_string()
-        ))
+    pub fn get_assets(
+        db: &DB,
+        id: MatchId
+    ) -> Result<HashMap<AssetId, GameAsset>, String> {
+        let matches = db.matches.borrow_mut();
+
+        let m4tch = match matches.find_by_id(&id) {
+            None => return Err("Not found".to_string()),
+            Some(e) => e.clone()
+        };
+
+        let game = m4tch.game.as_ref().unwrap();
+
+        let assets = game.get_assets();
+        Ok(assets)
     }
 
     pub fn create(
         id: &MatchId,
-        m4tch: &Match,
+        m4tch: &mut Match,
         db: &mut DB,
         caller: &Principal
     ) -> Result<(), String> {
         Self::authorize(caller, db)?;
 
+        let rays = m4tch.options.game_options["rays"].parse::<usize>()
+            .map_err(|err| err.to_string())?;
+        let angle = m4tch.options.game_options["fov"].parse::<f32>()
+            .map_err(|err| err.to_string())?;
+        let player_radius = m4tch.options.game_options["player_radius"].parse::<f32>()
+            .map_err(|err| err.to_string())?;
+        
+        let game = Game::new(
+            Map::new(MAP, NAVMESH),
+            GameOptions {
+                level: LevelOptions {
+                    num: 0
+                },
+                fov: ObjectFOV { 
+                    rays, 
+                    angle, 
+                    max_dist: 2.5,
+                },
+                num_players: 0,
+                min_keys: 4,
+                max_steps: 60 * 30,
+                player_radius,
+                debug: false,
+                training: false,
+            }
+        );
+
+        m4tch.game = Some(game);
+    
         db.matches.borrow_mut().insert_and_notify(id.clone(), m4tch.clone())
     }
 
@@ -140,9 +177,11 @@ impl MatchesService {
 
         m4tch.players.insert(caller.clone(), num_players);
 
-        matches.update_and_notify(id.to_owned(), m4tch.to_owned())?;
+        let ok_to_run = m4tch.players.len() == m4tch.options.max_players;
+        
+        matches.update_and_notify(id.to_owned(), m4tch)?;
 
-        Ok(m4tch.players.len() == m4tch.options.max_players)
+        Ok(ok_to_run)
     }
 
     pub fn start(
@@ -168,34 +207,12 @@ impl MatchesService {
             return Err("Invalid match state".to_string());
         }
 
-        let rays = m4tch.options.game_options["rays"].parse::<usize>()
-            .map_err(|err| err.to_string())?;
-        let angle = m4tch.options.game_options["fov"].parse::<f32>()
-            .map_err(|err| err.to_string())?;
-        let player_radius = m4tch.options.game_options["player_radius"].parse::<f32>()
-            .map_err(|err| err.to_string())?;
-        
-        let game = Game::new(
-            MAP,
-            NAVMESH,
-            GameOptions {
-                level: LevelOptions {
-                    name: "/maps/level-0/map.glb".to_string()
-                },
-                fov: ObjectFOV { 
-                    rays, 
-                    angle, 
-                    max_dist: 2.5,
-                },
-                num_players: m4tch.players.len(),
-                min_keys: 4,
-                max_steps: 60 * 30,
-                player_radius,
-                debug: false,
-                training: false,
-            }
-        );
+        // update game
+        let game = m4tch.game.as_mut().unwrap();
 
+        game.options.num_players = m4tch.players.len();
+
+        // create the agent
         let options = BaseAgentOptions { 
             dqn: DqnOptions {
                 n_actions: game.get_num_actions(),
@@ -218,13 +235,12 @@ impl MatchesService {
     
         agent.load(&TENSORS.to_vec())?;
 
-        m4tch.game = Some(game);
         m4tch.agent = Some(agent);
+
+        // start match
         m4tch.status = MatchStatus::STARTED;
 
-        matches.update_and_notify(id.clone(), m4tch)?;
-
-        Ok(())
+        matches.update_and_notify(id.clone(), m4tch)
     }
 
     pub fn run(
@@ -296,11 +312,14 @@ impl MatchesService {
             let step = game.step(&actions, 1.0, &mut renderer);
             steps += 1;
 
+            let entities = game.serialize_entities()?;
+            let events = game.serialize_events()?;
+
             m4tch.state.steps.push(MatchStep {
                 terminated: step.terminated,
                 timedout: step.timedout,
-                entities: game.serialize_entities()?,
-                events: game.serialize_events()?,
+                entities,
+                events,
             });
 
             running = !step.terminated && !step.timedout;
@@ -324,9 +343,7 @@ impl MatchesService {
         let post = ic_cdk::api::performance_counter(0);
         ic_cdk::print((post - pre).to_string());
 
-        matches.update_and_notify(id.to_owned(), m4tch)?;
-
-        Ok(())
+        matches.update_and_notify(id.to_owned(), m4tch)
     }
 
     fn shuffle_players_idx(

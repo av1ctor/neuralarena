@@ -6,7 +6,12 @@ use db::traits::crud::Pagination;
 use ic_cdk::api::stable;
 use ic_cdk::{caller, trap};
 use models::game::{GameRequest, Game, GameResponse, GameId};
-use models::m4tch::{MatchRequest, MatchResponse, MatchStepsResponse, Match, MatchId};
+use models::m4tch::{
+    Match, MatchId, 
+    MatchAssetsResponse, 
+    MatchRequest, MatchResponse, 
+    MatchStepsResponse
+};
 use models::user::{UserRequest, UserResponse, User, UserId};
 use rand::{SeedableRng, RngCore};
 use rand::rngs::StdRng;
@@ -314,8 +319,8 @@ pub fn match_create(
 
     DB.with(|db| {
         let id = _gen_id();
-        let m4tch = Match::new(&id, &req, &caller);
-        match MatchesService::create(&id, &m4tch, &mut db.borrow_mut(), &caller) {
+        let mut m4tch = Match::new(&id, &req, &caller);
+        match MatchesService::create(&id, &mut m4tch, &mut db.borrow_mut(), &caller) {
             Ok(()) => Ok(m4tch.into()),
             Err(msg) => Err(msg)
         }
@@ -396,10 +401,19 @@ pub fn match_run(
 }
 
 #[ic_cdk::query]
-pub fn match_get_map_name(
+pub fn match_get_assets(
     id: MatchId
-) -> Result<(String, String), String> {
-    MatchesService::get_map_name(id)
+) -> Result<MatchAssetsResponse, String> {
+    DB.with(|db| {
+        match MatchesService::get_assets(&db.borrow(), id) {
+            Ok(assets) => {
+                Ok(MatchAssetsResponse{
+                    assets: assets.iter().map(|e| (*e.0, e.1.path.clone())).collect()
+                })
+            },
+            Err(err) => Err(err),
+        }
+    })
 }
 
 #[ic_cdk::query]

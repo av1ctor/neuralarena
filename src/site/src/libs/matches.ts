@@ -1,4 +1,11 @@
-import { _SERVICE as Main, MatchRequest, MatchResponse, MatchStatus, MatchStepsResponse, Pagination } from "../../../declarations/main/main.did";
+import { 
+    _SERVICE as Main, 
+    MatchAssetsResponse, 
+    MatchRequest, MatchResponse, 
+    MatchStatus, 
+    MatchStepsResponse, 
+    Pagination 
+} from "../../../declarations/main/main.did";
 import { GameId } from "./games";
 
 export type MatchId = string;
@@ -127,13 +134,22 @@ export const matchGetSteps = async (
     return res.Ok; 
 };
 
-export const matchGetMapName = async (
+export const matchGetAssets = async (
     main: Main,
     id: MatchId
-): Promise<string[]> => {
-    const res = await main.match_get_map_name(id);
+): Promise<Map<number, string>> => {
+    const res = await main.match_get_assets(id);
     if('Err' in res) {
         throw new Error(res.Err);
     }
-    return res.Ok; 
+    
+    const map = new Map<number, string>();
+    for(const entry of res.Ok.assets) {
+        map.set(
+            Number(entry[0]), 
+            entry[1].length === 0? "": entry[1][0]
+        );
+    }
+    
+    return map; 
 };
