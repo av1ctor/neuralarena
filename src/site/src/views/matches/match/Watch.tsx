@@ -8,7 +8,6 @@ import { useActors } from "../../../hooks/actors";
 import { 
     IconPlayerPause, IconPlayerPlay, IconQuestionMark, 
     IconRefresh, IconWindowMaximize, IconWindowMinimize, 
-    IconZoomIn, IconZoomOut 
 } from "@tabler/icons-react";
 import GameEngineInit, {GameWrapper, GameOptionsWrapper, ObjectFOVWrapper} from "brains-engine";
 
@@ -70,7 +69,6 @@ export const Watch = (props: Props) => {
     const [renderer, setRenderer] = useState<ThreeRenderer>();
     const [map, setMap] = useState<string[]>([]);
     const [state, setState] = useState<WatchState>(WatchState.PAUSED);
-    const [zoom, setZoom] = useState(1.0);
     const [progress, setProgress] = useState(0.0);
     const [canvasDim, setCanvasDim] = useState(CANVAS_DIM);
 
@@ -102,18 +100,6 @@ export const Watch = (props: Props) => {
             return newState;
         });
     }, [step, frames, renderer]);
-
-    const handleZoomIn = useCallback(() => {
-        setZoom(zoom => {
-            return Math.min(zoom + 0.25, 4.0);
-        });
-    }, []);
-
-    const handleZoomOut = useCallback(() => {
-        setZoom(zoom => {
-            return Math.max(zoom - 0.25, 0.25);
-        });
-    }, []);
 
     const handleToggleFullscreen = useCallback(() => {
         if(!document.fullscreenElement) {
@@ -168,6 +154,10 @@ export const Watch = (props: Props) => {
     useEffect(() => {
         loadMap();
     }, [loadMap]);
+
+    useEffect(() => {
+        renderer?.change_pov(props.pov);
+    }, [props.pov, renderer]);
 
     useEffect(() => {
         if(steps.data?.pages.length) {
@@ -239,13 +229,14 @@ export const Watch = (props: Props) => {
 
                 timerId = requestAnimationFrame(animate);
             }
+
             timerId = requestAnimationFrame(animate)
             return () => cancelAnimationFrame(timerId)
         }
         else {
             return () => {};
         };
-    }, [gameEngine, steps, frames, zoom, state, renderer, props.match, props.pov, canvasDim]);
+    }, [gameEngine, steps, frames, state, renderer, props.match, canvasDim]);
 
     return (
         <Center                 
@@ -293,16 +284,6 @@ export const Watch = (props: Props) => {
                     </Grid.Col>
                     <Grid.Col span={3}>
                         <Group position="right">
-                            <ActionIcon
-                                onClick={handleZoomIn}
-                            >
-                                <IconZoomIn />
-                            </ActionIcon>
-                            <ActionIcon
-                                onClick={handleZoomOut}
-                            >
-                                <IconZoomOut />
-                            </ActionIcon>
                             <ActionIcon
                             >
                                 {!document.fullscreenElement?

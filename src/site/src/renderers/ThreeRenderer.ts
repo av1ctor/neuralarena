@@ -7,12 +7,13 @@ const loader = new GLTFLoader();
 export class ThreeRenderer {
     renderer: THREE.WebGLRenderer;
     scene: THREE.Scene;
-    camera: THREE.Camera;
-    controls: OrbitControls | undefined;
+    camera: THREE.PerspectiveCamera;
+    controls?: OrbitControls;
     clock: THREE.Clock;
     width: number;
     height: number;
     objects: THREE.Object3D[];
+    pov?: THREE.Vector3;
 
     constructor(
         canvas: HTMLCanvasElement
@@ -25,9 +26,9 @@ export class ThreeRenderer {
         this.scene.fog = new THREE.Fog(0x88ccee, 0, 100)
 
         this.camera = new THREE.PerspectiveCamera(75.0, this.width / this.height, 0.1, 1000.0);
-        this.camera.position.x = 28.0;
-        this.camera.position.y = 28.0;
-        this.camera.position.z = 28.0;
+        this.camera.position.x = 30.0;
+        this.camera.position.y = 10.0;
+        this.camera.position.z = 30.0;
 
         this.renderer = new THREE.WebGLRenderer(canvas? {canvas, antialias: true}: {antialias: true});
         this.renderer.shadowMap.enabled = true;
@@ -37,22 +38,22 @@ export class ThreeRenderer {
         this.renderer.setSize(this.width, this.height);
 
         const fillLight1 = new THREE.HemisphereLight(0x8dc1de, 0x00668d, 1.5);
-        fillLight1.position.set(2, 1, 1);
+        fillLight1.position.set(20, 20, -20);
         this.scene.add(fillLight1);
 
         const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
-        directionalLight.position.set(-5, 25,-1);
+        directionalLight.position.set(15, 25, 10);
         directionalLight.castShadow = true;
         directionalLight.shadow.camera.near = 0.01;
-        directionalLight.shadow.camera.far = 500;
-        directionalLight.shadow.camera.right = 30;
-        directionalLight.shadow.camera.left = -30;
-        directionalLight.shadow.camera.top= 30;
-        directionalLight.shadow.camera.bottom = -30;
+        directionalLight.shadow.camera.far = 500.0;
+        directionalLight.shadow.camera.right = 60.0;
+        directionalLight.shadow.camera.left = -60.0;
+        directionalLight.shadow.camera.top = 60.0;
+        directionalLight.shadow.camera.bottom = -60.0;
         directionalLight.shadow.mapSize.width = 1024;
         directionalLight.shadow.mapSize.height = 1024;
         directionalLight.shadow.radius = 4;
-        directionalLight.shadow.bias = - 0.00006;
+        directionalLight.shadow.bias = -0.00006;
         this.scene.add(directionalLight);
 
         this.controls = this.renderer.domElement?
@@ -61,7 +62,19 @@ export class ThreeRenderer {
 
         this.clock = new THREE.Clock();
 
+        this.pov = undefined;
+
         this.objects = [];
+    }
+
+    change_pov(
+        pov: number
+    ) {
+        const players = this.objects.filter(o => o.userData.isPlayer);
+        if(pov >= 0 && pov < players.length) {
+            const player = players[pov];
+            this.pov = player.position;
+        }
     }
 
     resize_canvas(
@@ -69,6 +82,9 @@ export class ThreeRenderer {
     ) {
         this.width = dim.w;
         this.height = dim.h;
+        this.renderer.setSize(dim.w, dim.h);
+        this.camera.aspect = dim.w / dim.h;
+        this.camera.updateProjectionMatrix();
     }
 
     reset(
@@ -126,6 +142,8 @@ export class ThreeRenderer {
             obj.userData.actions = actions;
             obj.userData.activeAction = 'Walking';
             (obj.userData.actions as any)[obj.userData.activeAction].play();
+
+            obj.userData.isPlayer = true;
 
             this.objects[rf] = obj;
             this.scene.add(obj);
@@ -204,6 +222,10 @@ export class ThreeRenderer {
     render(
     ) {
         this.controls?.update();
+        if(this.pov) {
+            this.camera.lookAt(this.pov);
+        }
+
         for(const obj of this.objects) {
             if(obj.userData.anim){
                 obj.userData.anim.update(1.0 / 60.0 / 2.0);

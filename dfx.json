@@ -4,7 +4,7 @@
       "candid": "src/main/main.did",
       "package": "main",
       "type": "rust",
-      "optimize": "size"
+      "optimize": "O4"
     },
     "site": {
       "dependencies": [
