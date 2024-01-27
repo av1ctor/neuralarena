@@ -36,16 +36,16 @@ export class ThreeRenderer {
         this.renderer = new THREE.WebGLRenderer(canvas? {canvas, antialias: true}: {antialias: true});
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.VSMShadowMap;
-        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;    
+        this.renderer.toneMapping = THREE.LinearToneMapping;    
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(this.width, this.height);
 
-        const fillLight1 = new THREE.HemisphereLight(0x8dc1de, 0x00668d, 1.5);
-        fillLight1.position.set(20, 20, -20);
+        const fillLight1 = new THREE.HemisphereLight(0xffffff, 0x444444, 6.0);
+        fillLight1.position.set(0, 300, 0);
         this.scene.add(fillLight1);
 
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
-        directionalLight.position.set(15, 25, 10);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 3.0);
+        directionalLight.position.set(15, 30, 10);
         directionalLight.castShadow = true;
         directionalLight.shadow.camera.near = 0.01;
         directionalLight.shadow.camera.far = 500.0;
@@ -126,6 +126,10 @@ export class ThreeRenderer {
                 if((child as any).isMesh) {
                     child.castShadow = true;
                     child.receiveShadow = true;
+
+                    if((child as any).material.map) {
+                        (child as any).material.map.anisotropy = 4;
+                    }
                 }
             });
             obj.visible = false;
@@ -142,6 +146,7 @@ export class ThreeRenderer {
                 color: 0xff0000
             });
             const obj = new THREE.Mesh(geometry, material);
+            obj.visible = false;
             
             this.scene.add(obj);
             this.assets.set(id, obj);
@@ -152,6 +157,7 @@ export class ThreeRenderer {
                 color: 0x0000ff
             });
             const obj = new THREE.Mesh(geometry, material);
+            obj.visible = false;
             
             this.scene.add(obj);
             this.assets.set(id, obj);
@@ -236,10 +242,10 @@ export class ThreeRenderer {
 
     render(
     ) {
-        this.controls?.update();
         if(this.pov) {
-            this.camera.lookAt(this.pov);
+            this.controls?.target.set(this.pov.x, this.pov.y, this.pov.z);
         }
+        this.controls?.update();
 
         for(const obj of this.objects) {
             if(obj.userData.anim){

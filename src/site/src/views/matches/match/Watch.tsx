@@ -66,7 +66,7 @@ export const Watch = (props: Props) => {
     const canvas = useRef<HTMLCanvasElement|null>(null);
     const fullscreenContainer = useRef<HTMLDivElement|null>(null);
     const [assets, setAssets] = useState<Map<number, string>|undefined>();
-    const [gameEngine, setGameEngine] = useState<GameWrapper>();
+    const [engine, setEngine] = useState<GameWrapper>();
     const [renderer, setRenderer] = useState<ThreeRenderer>();
     const [state, setState] = useState<WatchState>(WatchState.PAUSED);
     const [loadingProgress, setLoadingProgress] = useState(0);
@@ -188,11 +188,11 @@ export const Watch = (props: Props) => {
     }, [steps.data?.pages.length]);
 
     useEffect(() => {
-        if(assets && !gameEngine && state === WatchState.PAUSED) {
+        if(assets && !engine && state === WatchState.PAUSED) {
             const {options} = props.match;
             const game_options = new Map(options.game_options);
             
-            setGameEngine(new GameWrapper(
+            setEngine(new GameWrapper(
                 new GameOptionsWrapper(
                     new ObjectFOVWrapper(
                         15.0, 
@@ -209,10 +209,10 @@ export const Watch = (props: Props) => {
             ));
             setState(WatchState.PLAYING);
         }
-    }, [props.match.options, state, gameEngine, assets]);
+    }, [props.match.options, state, engine, assets]);
 
     useLayoutEffect(() => {
-        if(gameEngine && frames.length > 0) {
+        if(engine && frames.length > 0) {
             let timerId: number = 0;
 
             const animate = () => {
@@ -221,7 +221,7 @@ export const Watch = (props: Props) => {
                         if(step.current < frames.length) {
                             const frame = frames[step.current];
                             try {
-                                gameEngine.render(
+                                engine.render(
                                     frame.entities as Uint8Array, 
                                     frame.events as Uint8Array, 
                                     renderer
@@ -253,7 +253,7 @@ export const Watch = (props: Props) => {
         else {
             return () => {};
         };
-    }, [gameEngine, steps, frames, state, renderer, props.match]);
+    }, [engine, steps, frames, state, renderer, props.match]);
 
     return (
         <Center                 
