@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ActionIcon, Center, Grid, Group, createStyles } from "@mantine/core";
-import { MatchResponse, MatchStep } from "../../../../../declarations/main/main.did";
+import { Asset, MatchResponse, MatchStep } from "../../../../../declarations/main/main.did";
 import { useMatchGetSteps } from "../../../hooks/matches";
 import { ThreeRenderer } from "../../../renderers/ThreeRenderer";
 import { matchGetAssets } from "../../../libs/matches";
@@ -65,7 +65,7 @@ export const Watch = (props: Props) => {
     const { classes } = useStyles();
     const canvas = useRef<HTMLCanvasElement|null>(null);
     const fullscreenContainer = useRef<HTMLDivElement|null>(null);
-    const [assets, setAssets] = useState<Map<number, string>|undefined>();
+    const [assets, setAssets] = useState<Array<Asset>|undefined>();
     const [engine, setEngine] = useState<GameWrapper>();
     const [renderer, setRenderer] = useState<ThreeRenderer>();
     const [state, setState] = useState<WatchState>(WatchState.PAUSED);
@@ -160,8 +160,8 @@ export const Watch = (props: Props) => {
             try {
                 setLoadingProgress(5);
                 const assets = await matchGetAssets(main, props.match.id);
-                for(const asset of assets) {
-                    await renderer.load_asset(asset[0], asset[1]);
+                for(let i = 0; i < assets.length; i++) {
+                    await renderer.load_asset(i, assets[i]);
                 }
                 setAssets(assets);
             }
@@ -238,6 +238,11 @@ export const Watch = (props: Props) => {
                         }
                         break;
                     case WatchState.PAUSED:
+                        engine.render(
+                            Uint8Array.from([]), 
+                            Uint8Array.from([]), 
+                            renderer
+                        );
                         break;
                     case WatchState.FINISHED:
                         //renderer?.show_winner(props.match.won_by as any);

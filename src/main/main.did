@@ -1,3 +1,11 @@
+type Asset = record { typ : nat64; data : vec record { text; AssetValue } };
+type AssetValue = variant {
+  F32 : float32;
+  U32 : nat32;
+  Bool : bool;
+  None;
+  Text : text;
+};
 type DeveloperRequest = record { url : opt text };
 type GameRequest = record {
   name : text;
@@ -14,7 +22,7 @@ type GameResponse = record {
   category : text;
   image : text;
 };
-type MatchAssetsResponse = record { assets : vec record { nat64; opt text } };
+type MatchAssetsResponse = record { assets : vec Asset };
 type MatchOptions = record {
   min_players : nat64;
   num_hidden_layers : nat64;

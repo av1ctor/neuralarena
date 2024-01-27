@@ -1,6 +1,6 @@
 import { 
+    Asset,
     _SERVICE as Main, 
-    MatchAssetsResponse, 
     MatchRequest, MatchResponse, 
     MatchStatus, 
     MatchStepsResponse, 
@@ -137,19 +137,11 @@ export const matchGetSteps = async (
 export const matchGetAssets = async (
     main: Main,
     id: MatchId
-): Promise<Map<number, string>> => {
+): Promise<Array<Asset>> => {
     const res = await main.match_get_assets(id);
     if('Err' in res) {
         throw new Error(res.Err);
     }
     
-    const map = new Map<number, string>();
-    for(const entry of res.Ok.assets) {
-        map.set(
-            Number(entry[0]), 
-            entry[1].length === 0? "": entry[1][0]
-        );
-    }
-    
-    return map; 
+    return res.Ok.assets; 
 };

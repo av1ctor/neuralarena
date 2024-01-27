@@ -1,7 +1,6 @@
 use brains_engine::{
     renderer::{ModelRef, Renderer},
-    env::AssetId,
-    asset::GameAsset
+    env::{Asset, AssetRef},
 };
 use three_rs::math::{
     Vector3, Quaternion
@@ -23,7 +22,7 @@ impl NullRenderer {
     }
 }
 
-impl Renderer<GameAsset> for NullRenderer {
+impl Renderer for NullRenderer {
     fn reset(
         &mut self
     ) {
@@ -31,15 +30,14 @@ impl Renderer<GameAsset> for NullRenderer {
 
     fn load_asset(
         &mut self,
-        _id: AssetId,
-        _asset: &GameAsset
+        _asset: &Asset
     ) -> Result<(), String> {
         Ok(())
     }
 
     fn add_model(
         &mut self,
-        _id: AssetId
+        _asset_ref: AssetRef
     ) -> Result<ModelRef, String> {
         let model_ref = self.objects.len();
         self.objects.push(Object{});

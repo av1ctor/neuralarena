@@ -408,7 +408,7 @@ pub fn match_get_assets(
         match MatchesService::get_assets(&db.borrow(), id) {
             Ok(assets) => {
                 Ok(MatchAssetsResponse{
-                    assets: assets.iter().map(|e| (*e.0, e.1.path.clone())).collect()
+                    assets
                 })
             },
             Err(err) => Err(err),

@@ -112,6 +112,7 @@ dependencies = [
 name = "brains-engine"
 version = "0.1.0"
 dependencies = [
+ "candid",
  "circular-buffer",
  "gltf",
  "navmesh-rs",

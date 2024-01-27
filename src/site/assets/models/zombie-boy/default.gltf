@@ -1,0 +1,6740 @@
+{
+  "asset": {
+    "generator": "glTF-Transform v3.5.1",
+    "version": "2.0"
+  },
+  "accessors": [
+    {
+      "type": "VEC3",
+      "componentType": 5126,
+      "count": 2951,
+      "max": [
+        114.55309295654297,
+        217.1659698486328,
+        43.236690521240234
+      ],
+      "min": [
+        -114.55307006835938,
+        -0.8696521520614624,
+        -25.293716430664062
+      ],
+      "bufferView": 0,
+      "byteOffset": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5126,
+      "count": 2951,
+      "bufferView": 0,
+      "byteOffset": 12
+    },
+    {
+      "type": "VEC2",
+      "componentType": 5126,
+      "count": 2951,
+      "bufferView": 0,
+      "byteOffset": 24
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5123,
+      "count": 2951,
+      "bufferView": 0,
+      "byteOffset": 32
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 2951,
+      "bufferView": 0,
+      "byteOffset": 40
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5126,
+      "count": 132,
+      "max": [
+        37.00614547729492,
+        236.41610717773438,
+        28.879791259765625
+      ],
+      "min": [
+        2.908679962158203,
+        204.05044555664062,
+        0.7033381462097168
+      ],
+      "bufferView": 1,
+      "byteOffset": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5126,
+      "count": 132,
+      "bufferView": 1,
+      "byteOffset": 12
+    },
+    {
+      "type": "VEC2",
+      "componentType": 5126,
+      "count": 132,
+      "bufferView": 1,
+      "byteOffset": 24
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5123,
+      "count": 132,
+      "bufferView": 1,
+      "byteOffset": 32
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 132,
+      "bufferView": 1,
+      "byteOffset": 40
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 13152,
+      "bufferView": 2,
+      "byteOffset": 0
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 492,
+      "bufferView": 2,
+      "byteOffset": 26304
+    },
+    {
+      "type": "MAT4",
+      "componentType": 5126,
+      "count": 59,
+      "bufferView": 3,
+      "byteOffset": 0
+    },
+    {
+      "type": "MAT4",
+      "componentType": 5126,
+      "count": 59,
+      "bufferView": 3,
+      "byteOffset": 3776
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 452
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 1808
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 2260
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 4068
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 4520
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 6328
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 6780
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 8588
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 9040
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 10848
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 11300
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 13108
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 13560
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 15368
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 15820
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 17628
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 18080
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 19888
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 20340
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 22148
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 22600
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 1,
+      "max": [
+        0
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 24408
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 1,
+      "bufferView": 4,
+      "byteOffset": 24412
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 1,
+      "max": [
+        0
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 24428
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 1,
+      "bufferView": 4,
+      "byteOffset": 24432
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 1,
+      "max": [
+        0
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 24448
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 1,
+      "bufferView": 4,
+      "byteOffset": 24452
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 24468
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 24920
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 26728
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 27180
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 28988
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 29440
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 31248
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 31700
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 33508
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 33960
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 35768
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 36220
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 38028
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 38480
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 40288
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 40740
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 42548
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 43000
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 44808
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 45260
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 47068
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 47520
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 49328
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 49780
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 1,
+      "max": [
+        0
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 51588
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 1,
+      "bufferView": 4,
+      "byteOffset": 51592
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 1,
+      "max": [
+        0
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 51608
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 1,
+      "bufferView": 4,
+      "byteOffset": 51612
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 1,
+      "max": [
+        0
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 51628
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 1,
+      "bufferView": 4,
+      "byteOffset": 51632
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 51648
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 52100
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 53908
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 54360
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 56168
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 56620
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 58428
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 58880
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 60688
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 61140
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 62948
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 63400
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 65208
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 65660
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 67468
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 67920
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 69728
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 70180
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 71988
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 72440
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 74248
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 74700
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 76508
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 76960
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 78768
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 79220
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 81028
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 81480
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 83288
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 83740
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5126,
+      "count": 113,
+      "max": [
+        1.8666666746139526
+      ],
+      "min": [
+        0
+      ],
+      "bufferView": 4,
+      "byteOffset": 85548
+    },
+    {
+      "type": "VEC4",
+      "componentType": 5126,
+      "count": 113,
+      "bufferView": 4,
+      "byteOffset": 86000
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 165256,
+      "byteStride": 56,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 165256,
+      "byteLength": 7392,
+      "byteStride": 56,
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 172648,
+      "byteLength": 27288,
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 199936,
+      "byteLength": 7552
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 207488,
+      "byteLength": 87808
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "textures": [
+    {
+      "source": 0,
+      "sampler": 0
+    },
+    {
+      "source": 1,
+      "sampler": 0
+    },
+    {
+      "source": 2,
+      "sampler": 0
+    }
+  ],
+  "images": [
+    {
+      "mimeType": "image/png",
+      "uri": "baseColor_1.png"
+    },
+    {
+      "mimeType": "image/png",
+      "uri": "normal_1.png"
+    },
+    {
+      "mimeType": "image/png",
+      "uri": "baseColor_2.png"
+    }
+  ],
+  "buffers": [
+    {
+      "uri": "default.bin",
+      "byteLength": 295296
+    }
+  ],
+  "materials": [
+    {
+      "name": "emireh_body_material",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.7991027380100881,
+          0.7991027380100881,
+          0.7991027380100881,
+          1
+        ],
+        "roughnessFactor": 0.98046875,
+        "metallicFactor": 0.25,
+        "baseColorTexture": {
+          "index": 0
+        }
+      },
+      "normalTexture": {
+        "index": 1
+      }
+    },
+    {
+      "name": "emireh_shoe_material",
+      "pbrMetallicRoughness": {
+        "roughnessFactor": 0.99609375,
+        "metallicFactor": 0.25,
+        "baseColorTexture": {
+          "index": 2
+        }
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0,
+            "NORMAL": 1,
+            "TEXCOORD_0": 2,
+            "JOINTS_0": 3,
+            "WEIGHTS_0": 4
+          },
+          "mode": 4,
+          "material": 0,
+          "indices": 10
+        }
+      ]
+    },
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 5,
+            "NORMAL": 6,
+            "TEXCOORD_0": 7,
+            "JOINTS_0": 8,
+            "WEIGHTS_0": 9
+          },
+          "mode": 4,
+          "material": 1,
+          "indices": 11
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "mixamorigHips"
+    },
+    {
+      "name": "mixamorigSpine"
+    },
+    {
+      "name": "mixamorigSpine1"
+    },
+    {
+      "name": "mixamorigSpine2"
+    },
+    {
+      "name": "mixamorigNeck"
+    },
+    {
+      "name": "mixamorigHead"
+    },
+    {
+      "name": "mixamorigHeadTop_End"
+    },
+    {
+      "name": "mixamorigHeadTop_End",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            6.938893903907228e-18,
+            34.67057061841035,
+            5.038283830687832
+          ],
+          "rotation": [
+            -4.969616689786745e-17,
+            0,
+            -1.3154465848356958e-39
+          ],
+          "parentMatrix": {
+            "elements": [
+              1,
+              -1.3416594723146124e-23,
+              5.818520458392364e-42,
+              0,
+              1.3416594723146124e-23,
+              1,
+              -8.673617379757822e-19,
+              0,
+              5.818520458392359e-42,
+              8.673617379757815e-19,
+              0.9999999999999992,
+              0,
+              -4.163336342344337e-17,
+              20.418104968257012,
+              4.833795463219136,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.999999999999987,
+              1.0429442011613443e-7,
+              -1.236026644199517e-7,
+              0,
+              -1.0429442011616045e-7,
+              0.9999999999999946,
+              -2.028342771520641e-13,
+              0,
+              1.236026644199297e-7,
+              2.157232725785718e-13,
+              0.999999999999992,
+              0,
+              -0.03265396769134324,
+              175.13676594004917,
+              4.832069545978732,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        0,
+        34.67057061841038,
+        5.03828383068783
+      ],
+      "children": [
+        6
+      ]
+    },
+    {
+      "name": "mixamorigLeftEye"
+    },
+    {
+      "name": "mixamorigLeftEye",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            11.872902870178223,
+            14.026504502953202,
+            16.444420173826092
+          ],
+          "rotation": [
+            -4.969616689786745e-17,
+            0,
+            -1.3154465848356958e-39
+          ],
+          "parentMatrix": {
+            "elements": [
+              1,
+              -1.3416594723146124e-23,
+              5.818520458392364e-42,
+              0,
+              1.3416594723146124e-23,
+              1,
+              -8.673617379757822e-19,
+              0,
+              5.818520458392359e-42,
+              8.673617379757815e-19,
+              0.9999999999999992,
+              0,
+              -4.163336342344337e-17,
+              20.418104968257012,
+              4.833795463219136,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.999999999999987,
+              1.0429442011613443e-7,
+              -1.236026644199517e-7,
+              0,
+              -1.0429442011616045e-7,
+              0.9999999999999946,
+              -2.028342771520641e-13,
+              0,
+              1.236026644199297e-7,
+              2.157232725785718e-13,
+              0.999999999999992,
+              0,
+              -0.03265396769134324,
+              175.13676594004917,
+              4.832069545978732,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        11.87290287017822,
+        14.02650450295323,
+        16.444420173826096
+      ],
+      "children": [
+        8
+      ]
+    },
+    {
+      "name": "mixamorigRightEye"
+    },
+    {
+      "name": "mixamorigRightEye",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -11.492392539978027,
+            16.415084063241636,
+            16.446441183596182
+          ],
+          "rotation": [
+            -4.969616689786745e-17,
+            0,
+            -1.3154465848356958e-39
+          ],
+          "parentMatrix": {
+            "elements": [
+              1,
+              -1.3416594723146124e-23,
+              5.818520458392364e-42,
+              0,
+              1.3416594723146124e-23,
+              1,
+              -8.673617379757822e-19,
+              0,
+              5.818520458392359e-42,
+              8.673617379757815e-19,
+              0.9999999999999992,
+              0,
+              -4.163336342344337e-17,
+              20.418104968257012,
+              4.833795463219136,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.999999999999987,
+              1.0429442011613443e-7,
+              -1.236026644199517e-7,
+              0,
+              -1.0429442011616045e-7,
+              0.9999999999999946,
+              -2.028342771520641e-13,
+              0,
+              1.236026644199297e-7,
+              2.157232725785718e-13,
+              0.999999999999992,
+              0,
+              -0.03265396769134324,
+              175.13676594004917,
+              4.832069545978732,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -11.492392539978027,
+        16.415084063241636,
+        16.446441183596182
+      ],
+      "children": [
+        10
+      ]
+    },
+    {
+      "name": "mixamorigHead",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -4.85722573273506e-17,
+            20.418104968256984,
+            4.833795463219135
+          ],
+          "rotation": [
+            -4.969616689786745e-17,
+            0,
+            -1.3154465848356958e-39
+          ],
+          "parentMatrix": {
+            "elements": [
+              1,
+              -1.817049223021946e-25,
+              1.3234889800848443e-23,
+              0,
+              1.817049223021946e-25,
+              1,
+              -8.673617379631596e-19,
+              0,
+              -1.3234889800848455e-23,
+              8.673617379631604e-19,
+              1.0000000000000009,
+              0,
+              -5.551115123125783e-17,
+              21.24246851425957,
+              -0.8425337613313467,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.999999999999987,
+              1.0429442011613445e-7,
+              -1.236026644199517e-7,
+              0,
+              -1.0429442011616047e-7,
+              0.9999999999999946,
+              -2.0283340979032613e-13,
+              0,
+              1.2360266441992982e-7,
+              2.15722405216834e-13,
+              0.9999999999999928,
+              0,
+              -0.032652435666924176,
+              154.71866097179122,
+              -0.0017259172362276143,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -4.163336342344337e-17,
+        20.418104968257012,
+        4.833795463219136
+      ],
+      "children": [
+        5,
+        7,
+        9,
+        11
+      ]
+    },
+    {
+      "name": "mixamorigNeck",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -4.85722573273506e-17,
+            21.24246851425957,
+            -0.8425337613313468
+          ],
+          "rotation": [
+            -4.969616689786745e-17,
+            0,
+            -1.3154465848356958e-39
+          ],
+          "parentMatrix": {
+            "elements": [
+              1.0000000000000002,
+              5.9576828163779606e-24,
+              1.3222321942078495e-23,
+              0,
+              -5.90158009664809e-24,
+              0.9999910154728582,
+              -0.004238982609289883,
+              0,
+              -1.3247457659618406e-23,
+              0.0042389826092898795,
+              0.9999910154728574,
+              0,
+              4.85722573273506e-17,
+              8.651117324829059,
+              -3.216473198897063e-10,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.999999999999987,
+              1.0429442011613445e-7,
+              -1.236026644199517e-7,
+              0,
+              -1.0429442011616047e-7,
+              0.9999999999999946,
+              -2.0283254242858817e-13,
+              0,
+              1.2360266441992974e-7,
+              2.1572153785509585e-13,
+              0.9999999999999919,
+              0,
+              -0.032650116056570824,
+              133.47619245753197,
+              0.8408078440994209,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -5.551115123125783e-17,
+        21.24246851425957,
+        -0.8425337613313467
+      ],
+      "children": [
+        4,
+        12
+      ]
+    },
+    {
+      "name": "mixamorigLeftShoulder"
+    },
+    {
+      "name": "mixamorigLeftArm"
+    },
+    {
+      "name": "mixamorigLeftForeArm"
+    },
+    {
+      "name": "mixamorigLeftHand"
+    },
+    {
+      "name": "mixamorigLeftHandThumb1"
+    },
+    {
+      "name": "mixamorigLeftHandThumb2"
+    },
+    {
+      "name": "mixamorigLeftHandThumb3"
+    },
+    {
+      "name": "mixamorigLeftHandThumb4"
+    },
+    {
+      "name": "mixamorigLeftHandThumb4",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -8.43414227347239e-12,
+            5.742961406707762,
+            -2.4300561562995426e-11
+          ],
+          "preRotation": [
+            -6.361109362927035e-15,
+            -2.0588764769495757e-7,
+            -1.5902773407317584e-14
+          ],
+          "scale": [
+            0.9999999999999999,
+            1,
+            1
+          ],
+          "parentMatrix": {
+            "elements": [
+              1.0000000000000002,
+              -2.7755575615628914e-17,
+              -4.163336342344335e-17,
+              0,
+              2.7755575615628914e-17,
+              1.0000000000000002,
+              2.7755575615628883e-17,
+              0,
+              4.163336342344337e-17,
+              -2.7755575615628895e-17,
+              1.0000000000000007,
+              0,
+              -8.689937658346025e-12,
+              5.989933490753151,
+              -2.5295321393059567e-11,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.525890506928502,
+              0.02267162577878631,
+              -0.8502500644557629,
+              0,
+              0.7666597240717127,
+              -0.4455373374512236,
+              0.4623087154955672,
+              0,
+              -0.3683368596933653,
+              -0.8949762445570403,
+              -0.2516852786116205,
+              0,
+              86.48716034489928,
+              140.93316465629863,
+              13.556366908080157,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -8.43414227347239e-12,
+        5.742961406707757,
+        -2.4300561562995426e-11
+      ],
+      "children": [
+        21
+      ]
+    },
+    {
+      "name": "mixamorigLeftHandThumb3",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -8.697043085703626e-12,
+            5.989933490753145,
+            -2.532374310248997e-11
+          ],
+          "rotation": [
+            -2.3854160110976376e-15,
+            1.5902773407317584e-15,
+            3.1805546814635168e-15
+          ],
+          "scale": [
+            0.9999999999999999,
+            1,
+            1
+          ],
+          "parentMatrix": {
+            "elements": [
+              1,
+              -1.1102230246251565e-16,
+              4.1633363423443376e-17,
+              0,
+              1.1102230246251565e-16,
+              1,
+              -4.163336342344337e-17,
+              0,
+              -4.163336342344337e-17,
+              4.1633363423443364e-17,
+              0.9999999999999999,
+              0,
+              -9.2157392828085e-12,
+              6.332264423370301,
+              -2.6773250283440575e-11,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.5258905069285019,
+              0.022671625778786255,
+              -0.8502500644557627,
+              0,
+              0.7666597240717125,
+              -0.4455373374512235,
+              0.46230871549556707,
+              0,
+              -0.3683368596933651,
+              -0.8949762445570397,
+              -0.25168527861162027,
+              0,
+              81.89491958766581,
+              143.60190367525627,
+              10.787168450052434,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -8.689937658346025e-12,
+        5.989933490753151,
+        -2.5295321393059567e-11
+      ],
+      "children": [
+        20,
+        22
+      ]
+    },
+    {
+      "name": "mixamorigLeftHandThumb2",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -9.2228447101661e-12,
+            6.332264423370307,
+            -2.6773250283440575e-11
+          ],
+          "rotation": [
+            -2.3854160110976376e-15,
+            1.5902773407317584e-15,
+            3.1805546814635168e-15
+          ],
+          "scale": [
+            0.9999999999999999,
+            1,
+            1
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.859298559145917,
+              0.5109716097055448,
+              -0.02267157525790568,
+              0,
+              -0.44885834283192083,
+              0.7746112595730924,
+              0.4455374110136764,
+              0,
+              0.24521862555673168,
+              -0.3726733296300016,
+              0.8949762092159523,
+              0,
+              -9.223839759880757,
+              10.76646900172554,
+              2.386220216742629,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.525890506928502,
+              0.022671625778786245,
+              -0.8502500644557627,
+              0,
+              0.7666597240717123,
+              -0.44553733745122354,
+              0.4623087154955672,
+              0,
+              -0.36833685969336516,
+              -0.8949762445570398,
+              -0.2516852786116204,
+              0,
+              77.0402274920906,
+              146.42316390645803,
+              7.859707418291258,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -9.2157392828085e-12,
+        6.332264423370301,
+        -2.6773250283440575e-11
+      ],
+      "children": [
+        19,
+        23
+      ]
+    },
+    {
+      "name": "mixamorigLeftHandThumb1",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -9.223839759880756,
+            10.766469001725554,
+            2.3862202167426005
+          ],
+          "preRotation": [
+            26.465058420747546,
+            1.2990968853431162,
+            30.737326658237947
+          ],
+          "rotation": [
+            -1.5216059846042792e-9,
+            -2.4416088585017287e-9,
+            8.627937398802964e-10
+          ],
+          "scale": [
+            0.9999999999999999,
+            1,
+            1
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999999998,
+              7.7037196806911876e-34,
+              -8.724170523020214e-26,
+              0,
+              -7.703719874406697e-34,
+              1,
+              -2.2204461399579576e-16,
+              0,
+              8.724170523020214e-26,
+              2.220446139957957e-16,
+              0.9999999999999998,
+              0,
+              6.732493229577585e-9,
+              29.508832931518597,
+              -4.2518877307884395e-11,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.01745228313348198,
+              1.7271062924381052e-9,
+              -0.999847697308659,
+              0,
+              0.9998476973086551,
+              9.596772067741867e-8,
+              0.017452283133482217,
+              0,
+              9.598324640000234e-8,
+              -0.9999999999999957,
+              -5.198755364895905e-11,
+              0,
+              66.43637508660045,
+              148.80938310589772,
+              -1.5506269912114912,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -9.223839759880757,
+        10.76646900172554,
+        2.386220216742629
+      ],
+      "rotation": [
+        0.21777918309429448,
+        0.07130303501819352,
+        0.2554732816249787,
+        0.9392664728306553
+      ],
+      "children": [
+        18,
+        24
+      ]
+    },
+    {
+      "name": "mixamorigLeftHandIndex1"
+    },
+    {
+      "name": "mixamorigLeftHandIndex2"
+    },
+    {
+      "name": "mixamorigLeftHandIndex3"
+    },
+    {
+      "name": "mixamorigLeftHandIndex3",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            1.8681944879972434e-11,
+            10.075157165582738,
+            -1.7053025658242404e-13
+          ],
+          "preRotation": [
+            -1.6472532684456363e-12,
+            3.4450410830680036e-9,
+            8.622226719084421e-14
+          ],
+          "rotation": [
+            1.6472532822371005e-12,
+            -3.4450410830680036e-9,
+            -8.622225515703587e-14
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999999964,
+              8.480131419259333e-8,
+              4.4077709700277563e-13,
+              0,
+              -8.480131419335199e-8,
+              0.9999999999976268,
+              0.0000021770810212356327,
+              0,
+              -2.5615776529719446e-13,
+              -0.0000021770810212356606,
+              0.9999999999976295,
+              0,
+              1.63122848562125e-11,
+              8.792877197393551,
+              9.935308753483696e-8,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017453777134220277,
+              1.7878175236523393e-9,
+              -0.9998476712298469,
+              0,
+              0.9998476712250008,
+              0.000003113661188336965,
+              0.017453777134141393,
+              0,
+              0.000003113218092242798,
+              -0.9999999999951525,
+              5.2557603128021654e-8,
+              0,
+              101.60643113783811,
+              148.98043230116937,
+              5.468043091258869,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        1.8682833058392134e-11,
+        10.075157165582738,
+        -1.9895196601282805e-13
+      ],
+      "children": [
+        28
+      ]
+    },
+    {
+      "name": "mixamorigLeftHandIndex2",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            1.63113966777928e-11,
+            8.792877197393537,
+            9.935305911312753e-8
+          ],
+          "preRotation": [
+            0.00012473755416966825,
+            7.231744078725378e-28,
+            0.000004858757404217761
+          ],
+          "rotation": [
+            5.2631346755272746e-15,
+            -2.5254667372571547e-11,
+            -3.8082221459400664e-15
+          ],
+          "scale": [
+            1,
+            1,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999990068,
+              0.0000014094270185876244,
+              -6.056808692208024e-11,
+              0,
+              -0.0000014094270188832446,
+              0.9999999999855138,
+              -0.000005194774491464519,
+              0,
+              5.3246431397462984e-11,
+              0.00000519477449154473,
+              0.9999999999865076,
+              0,
+              -6.403790950902732,
+              26.494314193694578,
+              -0.17100024223930177,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.0174536923458237,
+              1.787809638856905e-9,
+              -0.9998476727099465,
+              0,
+              0.9998476726959531,
+              0.000005290742209706294,
+              0.017453692345589026,
+              0,
+              0.000005289967489079241,
+              -0.9999999999860048,
+              9.055544936555883e-8,
+              0,
+              92.81489333572205,
+              148.98038587967594,
+              5.314574917839318,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        1.63122848562125e-11,
+        8.792877197393551,
+        9.935308753483696e-8
+      ],
+      "children": [
+        27,
+        29
+      ]
+    },
+    {
+      "name": "mixamorigLeftHandIndex1",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -6.403790950902733,
+            26.494314193694592,
+            -0.1710002422393302
+          ],
+          "preRotation": [
+            -0.00029828605347052085,
+            3.4702957506957153e-9,
+            0.00008075449593493151
+          ],
+          "rotation": [
+            6.473995860465887e-7,
+            1.4412364616609162e-15,
+            -2.762379575978712e-10
+          ],
+          "scale": [
+            1,
+            1,
+            1.0000000000000002
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999999998,
+              7.7037196806911876e-34,
+              -8.724170523020214e-26,
+              0,
+              -7.703719874406697e-34,
+              1,
+              -2.2204461399579576e-16,
+              0,
+              8.724170523020214e-26,
+              2.220446139957957e-16,
+              0.9999999999999998,
+              0,
+              6.732493229577585e-9,
+              29.508832931518597,
+              -4.2518877307884395e-11,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.01745228313348198,
+              1.7271062924381052e-9,
+              -0.999847697308659,
+              0,
+              0.9998476973086551,
+              9.596772067741867e-8,
+              0.017452283133482217,
+              0,
+              9.598324640000234e-8,
+              -0.9999999999999957,
+              -5.198755364895905e-11,
+              0,
+              66.43637508660045,
+              148.80938310589772,
+              -1.5506269912114912,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -6.403790950902732,
+        26.494314193694578,
+        -0.17100024223930177
+      ],
+      "children": [
+        26,
+        30
+      ]
+    },
+    {
+      "name": "mixamorigLeftHandMiddle1"
+    },
+    {
+      "name": "mixamorigLeftHandMiddle2"
+    },
+    {
+      "name": "mixamorigLeftHandMiddle3"
+    },
+    {
+      "name": "mixamorigLeftHandMiddle3",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            1.9968915410117916e-11,
+            10.77190399173486,
+            1.7053025658242404e-13
+          ],
+          "preRotation": [
+            2.7977202225794003e-13,
+            4.141169565311226e-9,
+            3.401020757806571e-14
+          ],
+          "rotation": [
+            -8.996081934007918e-12,
+            -4.141169565307006e-9,
+            -3.4010207557844616e-14
+          ],
+          "scale": [
+            0.9999999999999999,
+            0.9999999999999999,
+            1
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999971181,
+              0.000002400736752261482,
+              1.22243400485986e-23,
+              0,
+              -0.0000024007367522471473,
+              0.9999999999911472,
+              -0.0000034557206381537953,
+              0,
+              -8.29627554157654e-12,
+              0.0000034557206381438363,
+              0.9999999999940289,
+              0,
+              1.7430501486614958e-11,
+              9.394020080678189,
+              1.0614684242682415e-7,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.01745493671291698,
+              1.7761937267011695e-9,
+              -0.9998476509870623,
+              0,
+              0.9998476509861751,
+              -0.000001332537371730007,
+              0.017454936712899265,
+              0,
+              -0.0000013323033577109301,
+              -0.9999999999991124,
+              -2.503527875356751e-8,
+              0,
+              101.61616048364279,
+              148.79265762691395,
+              -0.9380823725860983,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        1.9968915410117916e-11,
+        10.771903991734874,
+        1.9895196601282805e-13
+      ],
+      "children": [
+        34
+      ]
+    },
+    {
+      "name": "mixamorigLeftHandMiddle2",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            1.7430945575824808e-11,
+            9.394020080678175,
+            1.0614689927024301e-7
+          ],
+          "preRotation": [
+            -0.0001980365787979067,
+            -4.6283162103842454e-26,
+            0.00013755208354203322
+          ],
+          "rotation": [
+            3.837105504459982e-8,
+            -2.926475288428285e-19,
+            8.465213038624873e-14
+          ],
+          "scale": [
+            0.9999999999999997,
+            0.9999999999999997,
+            0.9999999999999999
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999999678,
+              2.5324695310442014e-7,
+              -6.055847770876822e-11,
+              0,
+              -2.532469528056181e-7,
+              0.9999999999880397,
+              0.000004884225725833714,
+              0,
+              6.179539299138558e-11,
+              -0.000004884225725818224,
+              0.9999999999880722,
+              0,
+              0.0015186278535557207,
+              25.79109764099114,
+              0.01668286696056498,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017452536341864323,
+              1.7876890736796754e-9,
+              -0.9998476928888892,
+              0,
+              0.9998476928774278,
+              -0.0000047882580055948064,
+              0.01745253634165584,
+              0,
+              -0.0000047874975202254935,
+              -0.9999999999885366,
+              -8.535466378985241e-8,
+              0,
+              92.22357117913268,
+              148.79270271405264,
+              -1.1020318494209422,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        1.7430501486614958e-11,
+        9.394020080678189,
+        1.0614684242682415e-7
+      ],
+      "children": [
+        33,
+        35
+      ]
+    },
+    {
+      "name": "mixamorigLeftHandMiddle1",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            0.0015186278535552766,
+            25.791097640991154,
+            0.016682866960536558
+          ],
+          "preRotation": [
+            0.0002791981096903893,
+            3.469745183328474e-9,
+            0.000014510257845701936
+          ],
+          "rotation": [
+            6.474105902164881e-7,
+            -1.3430654080152431e-15,
+            -2.76258432440121e-10
+          ],
+          "scale": [
+            0.9999999999999998,
+            0.9999999999999998,
+            1
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999999998,
+              7.7037196806911876e-34,
+              -8.724170523020214e-26,
+              0,
+              -7.703719874406697e-34,
+              1,
+              -2.2204461399579576e-16,
+              0,
+              8.724170523020214e-26,
+              2.220446139957957e-16,
+              0.9999999999999998,
+              0,
+              6.732493229577585e-9,
+              29.508832931518597,
+              -4.2518877307884395e-11,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.01745228313348198,
+              1.7271062924381052e-9,
+              -0.999847697308659,
+              0,
+              0.9998476973086551,
+              9.596772067741867e-8,
+              0.017452283133482217,
+              0,
+              9.598324640000234e-8,
+              -0.9999999999999957,
+              -5.198755364895905e-11,
+              0,
+              66.43637508660045,
+              148.80938310589772,
+              -1.5506269912114912,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        0.0015186278535557207,
+        25.79109764099114,
+        0.01668286696056498
+      ],
+      "children": [
+        32,
+        36
+      ]
+    },
+    {
+      "name": "mixamorigLeftHandRing1"
+    },
+    {
+      "name": "mixamorigLeftHandRing2"
+    },
+    {
+      "name": "mixamorigLeftHandRing3"
+    },
+    {
+      "name": "mixamorigLeftHandRing3",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            1.8420820424580597e-11,
+            9.928527832045091,
+            2.5579538487363607e-13
+          ],
+          "preRotation": [
+            -7.072445280791946e-13,
+            3.1485577583135815e-9,
+            5.705309232385832e-14
+          ],
+          "rotation": [
+            -7.0548989681350794e-12,
+            -3.1485577583088392e-9,
+            -5.705309236272331e-14
+          ],
+          "scale": [
+            1,
+            0.9999999999999999,
+            0.9999999999999997
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999993332,
+              0.0000011550201571092877,
+              1.397482870817127e-25,
+              0,
+              -0.000001155020157085562,
+              0.9999999999787921,
+              0.000006409577706793606,
+              0,
+              7.403191449904794e-12,
+              -0.000006409577706789328,
+              0.9999999999794587,
+              0,
+              1.7408297026122455e-11,
+              9.393806457646804,
+              1.0614195389280212e-7,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017455264537032597,
+              1.7935794158782585e-9,
+              -0.9998476452639878,
+              0,
+              0.9998476452629347,
+              -0.0000014518721027189982,
+              0.017455264537011742,
+              0,
+              -0.0000014516195958081777,
+              -0.9999999999989464,
+              -2.7136117919540556e-8,
+              0,
+              100.62128411251955,
+              148.93728033821063,
+              -7.182187783198466,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        1.8419044067741197e-11,
+        9.928527832045077,
+        2.2737367544323206e-13
+      ],
+      "children": [
+        40
+      ]
+    },
+    {
+      "name": "mixamorigLeftHandRing2",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            1.7408297026122455e-11,
+            9.39380645764679,
+            1.0614192547109269e-7
+          ],
+          "preRotation": [
+            0.0003672602338814978,
+            -4.628316210384244e-26,
+            0.00006617778030323645
+          ],
+          "rotation": [
+            -1.8482818569167957e-8,
+            -3.102707793640937e-19,
+            -4.840247715425035e-14
+          ],
+          "scale": [
+            1.0000000000000002,
+            1,
+            0.9999999999999999
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999983312,
+              0.0000018268376160829054,
+              -6.057155609402955e-11,
+              0,
+              -0.0000018268376163557974,
+              0.9999999999865126,
+              -0.00000486173788864503,
+              0,
+              5.16899504387004e-11,
+              0.000004861737888747574,
+              0.9999999999881818,
+              0,
+              6.227324962497061,
+              24.687612533599264,
+              -0.12784838675878518,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017454109692836648,
+              1.7878531659713155e-9,
+              -0.9998476654245031,
+              0,
+              0.9998476654122158,
+              0.00000495770560616599,
+              0.017454109692631153,
+              0,
+              0.000004956981581489023,
+              -0.9999999999877109,
+              8.474475652363226e-8,
+              0,
+              91.22890865650636,
+              148.93723387262565,
+              -7.346148311524184,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        1.7408297026122455e-11,
+        9.393806457646804,
+        1.0614195389280212e-7
+      ],
+      "children": [
+        39,
+        41
+      ]
+    },
+    {
+      "name": "mixamorigLeftHandRing1",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            6.227324962497061,
+            24.687612533599278,
+            -0.1278483867588136
+          ],
+          "preRotation": [
+            -0.00027920445732883747,
+            3.470494519606705e-9,
+            0.0001046703615006896
+          ],
+          "rotation": [
+            6.4739520953601e-7,
+            1.3492643126784121e-15,
+            -2.7624312599946107e-10
+          ],
+          "scale": [
+            0.9999999999999998,
+            0.9999999999999996,
+            0.9999999999999999
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999999998,
+              7.7037196806911876e-34,
+              -8.724170523020214e-26,
+              0,
+              -7.703719874406697e-34,
+              1,
+              -2.2204461399579576e-16,
+              0,
+              8.724170523020214e-26,
+              2.220446139957957e-16,
+              0.9999999999999998,
+              0,
+              6.732493229577585e-9,
+              29.508832931518597,
+              -4.2518877307884395e-11,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.01745228313348198,
+              1.7271062924381052e-9,
+              -0.999847697308659,
+              0,
+              0.9998476973086551,
+              9.596772067741867e-8,
+              0.017452283133482217,
+              0,
+              9.598324640000234e-8,
+              -0.9999999999999957,
+              -5.198755364895905e-11,
+              0,
+              66.43637508660045,
+              148.80938310589772,
+              -1.5506269912114912,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        6.227324962497061,
+        24.687612533599264,
+        -0.12784838675878518
+      ],
+      "children": [
+        38,
+        42
+      ]
+    },
+    {
+      "name": "mixamorigLeftHandPinky1"
+    },
+    {
+      "name": "mixamorigLeftHandPinky2"
+    },
+    {
+      "name": "mixamorigLeftHandPinky3"
+    },
+    {
+      "name": "mixamorigLeftHandPinky3",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            1.510436220542033e-11,
+            8.146980285726485,
+            2.842170943040401e-14
+          ],
+          "preRotation": [
+            -9.248328948960057e-13,
+            3.537329343268447e-9,
+            7.18333584145116e-14
+          ],
+          "rotation": [
+            9.24832878733864e-13,
+            -3.537329343268447e-9,
+            -7.183335847160898e-14
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999997908,
+              -6.471176052826039e-7,
+              -1.1666230258016552e-12,
+              0,
+              6.471176052791355e-7,
+              0.9999999999979192,
+              -0.0000019347657531634857,
+              0,
+              2.418644006769175e-12,
+              0.000001934765753162325,
+              0.9999999999981284,
+              0,
+              1.56070711909706e-11,
+              8.425102233914245,
+              9.519689569970069e-8,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017453446397640102,
+              1.787791299646906e-9,
+              -0.9998476770032744,
+              0,
+              0.9998476769959395,
+              0.000003830544544301218,
+              0.01745344639751905,
+              0,
+              0.000003829992267313465,
+              -0.9999999999926642,
+              6.506868476274438e-8,
+              0,
+              98.76231595130615,
+              148.91809987670786,
+              -13.805312306536367,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        1.510436220542033e-11,
+        8.1469802857265,
+        2.842170943040401e-14
+      ],
+      "children": [
+        46
+      ]
+    },
+    {
+      "name": "mixamorigLeftHandPinky2",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            1.56070711909706e-11,
+            8.425102233914274,
+            9.519689569970069e-8
+          ],
+          "preRotation": [
+            -0.00011085391199664208,
+            0,
+            -0.00003707710766434813
+          ],
+          "rotation": [
+            -6.144780589541053e-15,
+            6.684257559654516e-11,
+            3.34305368919855e-14
+          ],
+          "scale": [
+            1,
+            1,
+            1.0000000000000004
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.999999999998361,
+              0.0000018105589704692631,
+              -6.0571420799381e-11,
+              0,
+              -0.0000018105589705753475,
+              0.9999999999967412,
+              -0.0000017998110724381319,
+              0,
+              5.7312756716830875e-11,
+              0.000001799811072544851,
+              0.9999999999983807,
+              0,
+              12.816995620613456,
+              23.682043075623298,
+              -0.10869859902891221,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017454093416670834,
+              1.7878514684522031e-9,
+              -0.9998476657086324,
+              0,
+              0.9998476657068361,
+              0.0000018957787899882022,
+              0.01745409341664301,
+              0,
+              0.0000018955212031128945,
+              -0.9999999999982037,
+              3.1301520843350436e-8,
+              0,
+              90.33849714938509,
+              148.91808399977464,
+              -13.952364827956272,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        1.56070711909706e-11,
+        8.425102233914245,
+        9.519689569970069e-8
+      ],
+      "children": [
+        45,
+        47
+      ]
+    },
+    {
+      "name": "mixamorigLeftHandPinky1",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            12.816995620613456,
+            23.682043075623298,
+            -0.10869859902894063
+          ],
+          "preRotation": [
+            -0.00010376897396935872,
+            3.4704867677941566e-9,
+            0.00010373766379582113
+          ],
+          "rotation": [
+            6.473955976836048e-7,
+            5.034009110430294e-16,
+            -2.762282171508124e-10
+          ],
+          "scale": [
+            1,
+            1,
+            1.0000000000000002
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999999998,
+              7.7037196806911876e-34,
+              -8.724170523020214e-26,
+              0,
+              -7.703719874406697e-34,
+              1,
+              -2.2204461399579576e-16,
+              0,
+              8.724170523020214e-26,
+              2.220446139957957e-16,
+              0.9999999999999998,
+              0,
+              6.732493229577585e-9,
+              29.508832931518597,
+              -4.2518877307884395e-11,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.01745228313348198,
+              1.7271062924381052e-9,
+              -0.999847697308659,
+              0,
+              0.9998476973086551,
+              9.596772067741867e-8,
+              0.017452283133482217,
+              0,
+              9.598324640000234e-8,
+              -0.9999999999999957,
+              -5.198755364895905e-11,
+              0,
+              66.43637508660045,
+              148.80938310589772,
+              -1.5506269912114912,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        12.816995620613456,
+        23.682043075623298,
+        -0.10869859902891221
+      ],
+      "children": [
+        44,
+        48
+      ]
+    },
+    {
+      "name": "mixamorigLeftHand",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            6.732493229577585e-9,
+            29.50883293151861,
+            -4.2518877307884395e-11
+          ],
+          "rotation": [
+            -1.2722218725891398e-14,
+            0,
+            0
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9998476951563899,
+              0.01745240643736932,
+              -5.2183250374671474e-11,
+              0,
+              -0.017452406437369318,
+              0.9998476951563897,
+              9.110841018723384e-13,
+              0,
+              5.2191203222928587e-11,
+              -2.2204458891567358e-16,
+              1.0000000000000002,
+              0,
+              -2.7190694140699634e-10,
+              18.469623565673785,
+              4.263256414560601e-13,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017452283133481985,
+              1.7271062924381056e-9,
+              -0.9998476973086592,
+              0,
+              0.9998476973086551,
+              9.596772045537405e-8,
+              0.017452283133482217,
+              0,
+              9.598324617799157e-8,
+              -0.9999999999999959,
+              -5.198755752414445e-11,
+              0,
+              36.93203642963827,
+              148.80938027395976,
+              -2.06562349173951,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        6.732493229577585e-9,
+        29.508832931518597,
+        -4.2518877307884395e-11
+      ],
+      "children": [
+        17,
+        25,
+        31,
+        37,
+        43,
+        49
+      ]
+    },
+    {
+      "name": "mixamorigLeftForeArm",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -2.719073854962062e-10,
+            18.469623565673782,
+            3.979039320256561e-13
+          ],
+          "preRotation": [
+            1.2722233433739635e-14,
+            2.990335672383415e-9,
+            2.811598162801703e-10
+          ],
+          "rotation": [
+            0,
+            0,
+            0.9999999997237571
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999289807211228,
+              0.011917781421716662,
+              -5.219113054059919e-11,
+              0,
+              -0.011708908792759471,
+              0.9824040910364059,
+              -0.18640038457528993,
+              0,
+              -0.0022214789890194512,
+              0.18638714655500607,
+              0.9824738656219734,
+              0,
+              4.440892098500626e-15,
+              12.138422966003429,
+              -2.5579538487363607e-13,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              -1.2332266976547724e-7,
+              -2.156196936201838e-13,
+              -0.9999999999999919,
+              0,
+              0.999999999999988,
+              9.598324648973922e-8,
+              -1.2332266959929203e-7,
+              0,
+              9.598324640647249e-8,
+              -0.9999999999999957,
+              2.0364569875633818e-13,
+              0,
+              18.46241286396471,
+              148.80937850118576,
+              -2.0656212142881323,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -2.7190694140699634e-10,
+        18.469623565673785,
+        4.263256414560601e-13
+      ],
+      "rotation": [
+        2.278352118820559e-13,
+        2.6094607002076315e-11,
+        0.008726535498416843,
+        0.9999619230641709
+      ],
+      "children": [
+        16,
+        50
+      ]
+    },
+    {
+      "name": "mixamorigLeftArm",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            4.884981308350689e-15,
+            12.138422966003427,
+            -2.8421709430404007e-13
+          ],
+          "preRotation": [
+            -10.742788826124649,
+            0,
+            0.6828547422652788
+          ],
+          "rotation": [
+            3.29187409531474e-13,
+            2.9903327348074314e-9,
+            2.811569361385762e-10
+          ],
+          "parentMatrix": {
+            "elements": [
+              -0.011708908494321603,
+              0.0022214790863342997,
+              -0.9999289807244018,
+              0,
+              0.982404089490647,
+              -0.18638715471993716,
+              -0.011917781146648654,
+              0,
+              -0.18640039274080092,
+              -0.9824738640727683,
+              -2.220446049250314e-16,
+              0,
+              6.570228576660156,
+              17.595630234142703,
+              -2.7617637039708742,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              -0.011709032319895573,
+              0.0022214778649447594,
+              -0.9999289792771419,
+              0,
+              0.9824041074567048,
+              -0.1863870522606739,
+              -0.01191790257437375,
+              0,
+              -0.18640029027425656,
+              -0.9824738835132838,
+              2.3039784247315532e-8,
+              0,
+              6.537576284116096,
+              151.07182337691216,
+              -1.9209566719727582,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        4.440892098500626e-15,
+        12.138422966003429,
+        -2.5579538487363607e-13
+      ],
+      "rotation": [
+        -0.09360959360923368,
+        -0.0005578291201356967,
+        0.005932829519813916,
+        0.9955911481852757
+      ],
+      "children": [
+        15,
+        51
+      ]
+    },
+    {
+      "name": "mixamorigLeftShoulder",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            6.570228576660156,
+            17.595630234142646,
+            -2.761763703970874
+          ],
+          "preRotation": [
+            -89.99999999999946,
+            89.31714527377724,
+            169.2572106976807
+          ],
+          "rotation": [
+            -3.292635159747317e-13,
+            2.4098105684747263e-15,
+            0
+          ],
+          "parentMatrix": {
+            "elements": [
+              1.0000000000000002,
+              5.9576828163779606e-24,
+              1.3222321942078495e-23,
+              0,
+              -5.90158009664809e-24,
+              0.9999910154728582,
+              -0.004238982609289883,
+              0,
+              -1.3247457659618406e-23,
+              0.0042389826092898795,
+              0.9999910154728574,
+              0,
+              4.85722573273506e-17,
+              8.651117324829059,
+              -3.216473198897063e-10,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.999999999999987,
+              1.0429442011613445e-7,
+              -1.236026644199517e-7,
+              0,
+              -1.0429442011616047e-7,
+              0.9999999999999946,
+              -2.0283254242858817e-13,
+              0,
+              1.2360266441992974e-7,
+              2.1572153785509585e-13,
+              0.9999999999999919,
+              0,
+              -0.032650116056570824,
+              133.47619245753197,
+              0.8408078440994209,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        6.570228576660156,
+        17.595630234142703,
+        -2.7617637039708742
+      ],
+      "rotation": [
+        -0.5419128726616521,
+        -0.4542361042933467,
+        0.5472878728818725,
+        -0.4477454457573358
+      ],
+      "children": [
+        14,
+        52
+      ]
+    },
+    {
+      "name": "mixamorigRightShoulder"
+    },
+    {
+      "name": "mixamorigRightArm"
+    },
+    {
+      "name": "mixamorigRightForeArm"
+    },
+    {
+      "name": "mixamorigRightHand"
+    },
+    {
+      "name": "mixamorigRightHandThumb1"
+    },
+    {
+      "name": "mixamorigRightHandThumb2"
+    },
+    {
+      "name": "mixamorigRightHandThumb3"
+    },
+    {
+      "name": "mixamorigRightHandThumb4"
+    },
+    {
+      "name": "mixamorigRightHandThumb4",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            1.7195134205394424e-12,
+            5.7430553508680795,
+            1.0516032489249483e-12
+          ],
+          "preRotation": [
+            4.611804288122098e-14,
+            -8.921455881505164e-13,
+            -9.54166404439055e-15
+          ],
+          "rotation": [
+            -5.1684013573782035e-14,
+            8.905553108097847e-13,
+            6.361109362926317e-15
+          ],
+          "scale": [
+            1,
+            0.9999999999999996,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999998662574,
+              -0.000016354710205400054,
+              1.0019085647649708e-7,
+              0,
+              0.00001635470911308842,
+              0.9999999998069369,
+              0.000010892625384076275,
+              0,
+              -1.0036900218868646e-7,
+              -0.000010892623744027149,
+              0.9999999999406706,
+              0,
+              -7.105427357601002e-15,
+              5.99005890344281,
+              2.3021584638627246e-12,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.5236651453053315,
+              -0.01726364058240999,
+              0.8517492484917062,
+              0,
+              -0.7666359987807612,
+              -0.44558170718862994,
+              0.4623052969546096,
+              0,
+              0.3715428117535992,
+              -0.8950748063333626,
+              -0.24657053778081975,
+              0,
+              -86.55250936610912,
+              140.93299114393903,
+              13.556347364796922,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        1.7337242752546445e-12,
+        5.743055350868083,
+        1.0800249583553523e-12
+      ],
+      "children": [
+        61
+      ]
+    },
+    {
+      "name": "mixamorigRightHandThumb3",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -7.105427357601002e-15,
+            5.990058903442816,
+            2.3305801732931286e-12
+          ],
+          "preRotation": [
+            0.0006241014623290337,
+            -0.0000057405132295783625,
+            -0.0009370558699757808
+          ],
+          "rotation": [
+            1.351706620774203e-14,
+            6.319031111261343e-15,
+            5.579510413998519e-15
+          ],
+          "scale": [
+            1.0000000000000002,
+            1,
+            1
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999999712,
+              -2.3826949180656622e-7,
+              -7.200441408410681e-17,
+              0,
+              2.3826949107878882e-7,
+              0.9999999969455179,
+              0.00007815950284986137,
+              0,
+              -1.8622953019476463e-11,
+              -0.0000781595028498591,
+              0.9999999969455458,
+              0,
+              -6.394884621840902e-14,
+              6.332187657752202,
+              -5.684341886080802e-14,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.5236525698351574,
+              -0.017270838101543066,
+              0.8517568339944818,
+              0,
+              -0.7666486101005018,
+              -0.4455716750476778,
+              0.46229405255332334,
+              0,
+              0.37153451351927436,
+              -0.8950796615645311,
+              -0.24656541671029122,
+              0,
+              -81.96023903336541,
+              143.60199172318235,
+              10.787178759291804,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -7.105427357601002e-15,
+        5.99005890344281,
+        2.3021584638627246e-12
+      ],
+      "children": [
+        60,
+        62
+      ]
+    },
+    {
+      "name": "mixamorigRightHandThumb2",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -7.105427357601002e-14,
+            6.332187657752197,
+            0
+          ],
+          "preRotation": [
+            0.004478209646690458,
+            -9.256632420768489e-26,
+            -0.000013651836271157275
+          ],
+          "rotation": [
+            3.1797781788557376e-15,
+            1.5903483892293935e-15,
+            9.08957033131194e-16
+          ],
+          "scale": [
+            0.9999999999999993,
+            0.9999999999999999,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.860766274580151,
+              -0.508707315795248,
+              0.017270998865172724,
+              0,
+              0.44886223846499346,
+              0.7746295811457771,
+              0.44550163063013876,
+              0,
+              -0.24000856531716208,
+              -0.37572047970573963,
+              0.8951145232338075,
+              0,
+              9.22383975982666,
+              10.766400337219167,
+              2.385999917984151,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.5236523871592496,
+              -0.01727094425100981,
+              0.8517569441496183,
+              0,
+              -0.7666777714820869,
+              -0.44550171059021415,
+              0.4623131196239763,
+              0,
+              0.3714745915102134,
+              -0.8951144844911575,
+              -0.24652928328385063,
+              0,
+              -77.10549151131352,
+              146.42299215648916,
+              7.859725329191984,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -6.394884621840902e-14,
+        6.332187657752202,
+        -5.684341886080802e-14
+      ],
+      "rotation": [
+        0.000039079751454772224,
+        -4.6557202573208e-12,
+        -1.191347458123125e-7,
+        0.9999999992363795
+      ],
+      "children": [
+        59,
+        63
+      ]
+    },
+    {
+      "name": "mixamorigRightHandThumb1",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            9.223839759826664,
+            10.766400337219167,
+            2.3859999179841793
+          ],
+          "preRotation": [
+            26.45969068063931,
+            -0.9896045448696297,
+            -30.58281346410735
+          ],
+          "rotation": [
+            2.5444437451708128e-14,
+            5.963540027744093e-15,
+            -6.112628528437695e-15
+          ],
+          "scale": [
+            0.9999999999999996,
+            0.9999999999999999,
+            0.9999999999999996
+          ],
+          "parentMatrix": {
+            "elements": [
+              1,
+              4.4530354140689585e-49,
+              -1.2196420683441024e-25,
+              0,
+              4.453035414068959e-49,
+              1.0000000000000002,
+              7.30220042362889e-24,
+              0,
+              1.2196420683441015e-25,
+              -7.302200423628883e-24,
+              0.9999999999999993,
+              0,
+              2.304822999121825e-13,
+              29.508899688720668,
+              -5.684341886080802e-14,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017452530021123003,
+              1.8204032953012653e-9,
+              0.9998476929992192,
+              0,
+              -0.9998476929992143,
+              -1.0427847094816552e-7,
+              0.01745253002112335,
+              0,
+              1.0429435952770114e-7,
+              -0.9999999999999942,
+              2.0284444570832383e-13,
+              0,
+              -66.5017105614037,
+              148.80899318038595,
+              -1.5506105003704063,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        9.22383975982666,
+        10.766400337219167,
+        2.385999917984151
+      ],
+      "rotation": [
+        0.21853041561792186,
+        -0.06846309833008289,
+        -0.25481300374386245,
+        0.9394826207758896
+      ],
+      "children": [
+        58,
+        64
+      ]
+    },
+    {
+      "name": "mixamorigRightHandIndex1"
+    },
+    {
+      "name": "mixamorigRightHandIndex2"
+    },
+    {
+      "name": "mixamorigRightHandIndex3"
+    },
+    {
+      "name": "mixamorigRightHandIndex3",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            7.993605777301127e-15,
+            10.076000213628078,
+            3.410605131648481e-13
+          ],
+          "preRotation": [
+            -9.342878742447773e-15,
+            -4.925080908484274e-16,
+            1.4026791638336077e-16
+          ],
+          "rotation": [
+            9.342878742448442e-15,
+            4.925080908484274e-16,
+            -1.402679163833607e-16
+          ],
+          "scale": [
+            0.9999999999999996,
+            0.9999999999999999,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999999899,
+              -1.4487570653906598e-7,
+              -8.758570562139792e-21,
+              0,
+              1.4487570653906603e-7,
+              0.9999999999999901,
+              -1.919126454019835e-23,
+              0,
+              8.75857056492004e-21,
+              1.9189995636099665e-23,
+              0.9999999999999994,
+              0,
+              -9.325873406851315e-15,
+              8.792499542242126,
+              -1.4210854715202004e-13,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017453812034505845,
+              1.8205370021385577e-9,
+              0.9998476706206114,
+              0,
+              -0.9998476706206066,
+              -1.0427846861394287e-7,
+              0.017453812034506192,
+              0,
+              1.0429435952770248e-7,
+              -0.9999999999999941,
+              2.0284452321556524e-13,
+              0,
+              -101.67137402532697,
+              148.9799895162045,
+              5.468058096219182,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        7.549516567451064e-15,
+        10.076000213628078,
+        3.694822225952521e-13
+      ],
+      "children": [
+        68
+      ]
+    },
+    {
+      "name": "mixamorigRightHandIndex2",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -9.769962616701378e-15,
+            8.792499542242112,
+            -1.1368683772161603e-13
+          ],
+          "preRotation": [
+            0,
+            0,
+            -0.000008300766542190034
+          ],
+          "rotation": [
+            -3.533393846238931e-26,
+            5.018424714201377e-19,
+            3.3269132901766446e-15
+          ],
+          "scale": [
+            0.9999999999999996,
+            0.9999999999999999,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999993525,
+              -0.0000011373329800168364,
+              -6.876049694995293e-20,
+              0,
+              0.0000011373329800168364,
+              0.9999999999993524,
+              2.0213123069762967e-23,
+              0,
+              6.876049692691949e-20,
+              -2.0291326650653448e-23,
+              1.0000000000000004,
+              0,
+              6.403789997100836,
+              26.494300842285057,
+              -0.17100000381452674,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017453667180867945,
+              1.820521894712962e-9,
+              0.9998476731492338,
+              0,
+              -0.9998476731492288,
+              -1.0427846887769331e-7,
+              0.017453667180868288,
+              0,
+              1.042943595277024e-7,
+              -0.9999999999999947,
+              2.0284451445799402e-13,
+              0,
+              -92.88021381685051,
+              148.97999043307277,
+              5.3145967355209605,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -9.325873406851315e-15,
+        8.792499542242126,
+        -1.4210854715202004e-13
+      ],
+      "children": [
+        67,
+        69
+      ]
+    },
+    {
+      "name": "mixamorigRightHandIndex1",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            6.403789997100837,
+            26.494300842285085,
+            -0.17100000381452674
+          ],
+          "preRotation": [
+            7.635319087817997e-13,
+            -4.930112969842649e-16,
+            -0.00006516437966009065
+          ],
+          "rotation": [
+            -7.635319087840401e-13,
+            4.969509636623321e-16,
+            4.0891112639781416e-15
+          ],
+          "scale": [
+            0.9999999999999994,
+            0.9999999999999996,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              1,
+              4.4530354140689585e-49,
+              -1.2196420683441024e-25,
+              0,
+              4.453035414068959e-49,
+              1.0000000000000002,
+              7.30220042362889e-24,
+              0,
+              1.2196420683441015e-25,
+              -7.302200423628883e-24,
+              0.9999999999999993,
+              0,
+              2.304822999121825e-13,
+              29.508899688720668,
+              -5.684341886080802e-14,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017452530021123003,
+              1.8204032953012653e-9,
+              0.9998476929992192,
+              0,
+              -0.9998476929992143,
+              -1.0427847094816552e-7,
+              0.01745253002112335,
+              0,
+              1.0429435952770114e-7,
+              -0.9999999999999942,
+              2.0284444570832383e-13,
+              0,
+              -66.5017105614037,
+              148.80899318038595,
+              -1.5506105003704063,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        6.403789997100836,
+        26.494300842285057,
+        -0.17100000381452674
+      ],
+      "children": [
+        66,
+        70
+      ]
+    },
+    {
+      "name": "mixamorigRightHandMiddle1"
+    },
+    {
+      "name": "mixamorigRightHandMiddle2"
+    },
+    {
+      "name": "mixamorigRightHandMiddle3"
+    },
+    {
+      "name": "mixamorigRightHandMiddle3",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -4.440892098500626e-16,
+            10.772000312823707,
+            3.979039320256561e-13
+          ],
+          "preRotation": [
+            -1.888454250448312e-14,
+            -4.905127935450833e-16,
+            1.3648125288511256e-14
+          ],
+          "rotation": [
+            1.888454250448302e-14,
+            4.905127935450877e-16,
+            -1.3648125288511256e-14
+          ],
+          "scale": [
+            0.9999999999999998,
+            1,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999982762,
+              -0.0000018566653281516796,
+              -1.1224914254503388e-19,
+              0,
+              0.00000185666532815168,
+              0.9999999999982764,
+              2.225831651895658e-23,
+              0,
+              1.122491425035141e-19,
+              -2.2466725609996324e-23,
+              0.9999999999999993,
+              0,
+              -1.199040866595169e-14,
+              9.393699645996136,
+              -2.842170943040401e-14,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017454386403637938,
+              1.8205969056318585e-9,
+              0.9998476605939879,
+              0,
+              -0.9998476605939832,
+              -1.0427846756810613e-7,
+              0.017454386403638292,
+              0,
+              1.0429435952770313e-7,
+              -0.999999999999994,
+              2.028445579397359e-13,
+              0,
+              -101.6811773906789,
+              148.79298951060613,
+              -0.9380665046863228,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -8.881784197001252e-16,
+        10.772000312823735,
+        3.694822225952521e-13
+      ],
+      "children": [
+        74
+      ]
+    },
+    {
+      "name": "mixamorigRightHandMiddle2",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -1.199040866595169e-14,
+            9.393699645996122,
+            2.842170943040401e-14
+          ],
+          "preRotation": [
+            0,
+            0,
+            -0.00010637908727622663
+          ],
+          "rotation": [
+            -5.970527903861577e-24,
+            6.431399294704279e-18,
+            5.06211756293844e-15
+          ],
+          "scale": [
+            0.9999999999999998,
+            1,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999999998,
+              -1.734723475976807e-18,
+              -1.1646111315958848e-25,
+              0,
+              1.734723475976807e-18,
+              0.9999999999999998,
+              2.0537186859938222e-23,
+              0,
+              1.164611131595885e-25,
+              -2.0537186859938236e-23,
+              1.0000000000000004,
+              0,
+              -0.0015200000489015153,
+              25.79109954833983,
+              0.016000000760016064,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017452530021123,
+              1.8204032953012653e-9,
+              0.9998476929992189,
+              0,
+              -0.999847692999214,
+              -1.0427847094816552e-7,
+              0.017452530021123347,
+              0,
+              1.0429435952770121e-7,
+              -0.9999999999999947,
+              2.0284444570808195e-13,
+              0,
+              -92.28890847090213,
+              148.79299049016674,
+              -1.1020103297674742,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -1.199040866595169e-14,
+        9.393699645996136,
+        -2.842170943040401e-14
+      ],
+      "children": [
+        73,
+        75
+      ]
+    },
+    {
+      "name": "mixamorigRightHandMiddle1",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -0.0015200000489019594,
+            25.79109954833983,
+            0.016000000760044486
+          ],
+          "preRotation": [
+            6.712958224563941e-13,
+            -4.969616689614785e-16,
+            -2.839638976544145e-13
+          ],
+          "rotation": [
+            -6.712958224563941e-13,
+            4.969616689648055e-16,
+            2.839638976544145e-13
+          ],
+          "scale": [
+            0.9999999999999998,
+            1,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              1,
+              4.4530354140689585e-49,
+              -1.2196420683441024e-25,
+              0,
+              4.453035414068959e-49,
+              1.0000000000000002,
+              7.30220042362889e-24,
+              0,
+              1.2196420683441015e-25,
+              -7.302200423628883e-24,
+              0.9999999999999993,
+              0,
+              2.304822999121825e-13,
+              29.508899688720668,
+              -5.684341886080802e-14,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017452530021123003,
+              1.8204032953012653e-9,
+              0.9998476929992192,
+              0,
+              -0.9998476929992143,
+              -1.0427847094816552e-7,
+              0.01745253002112335,
+              0,
+              1.0429435952770114e-7,
+              -0.9999999999999942,
+              2.0284444570832383e-13,
+              0,
+              -66.5017105614037,
+              148.80899318038595,
+              -1.5506105003704063,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -0.0015200000489015153,
+        25.79109954833983,
+        0.016000000760016064
+      ],
+      "children": [
+        72,
+        76
+      ]
+    },
+    {
+      "name": "mixamorigRightHandRing1"
+    },
+    {
+      "name": "mixamorigRightHandRing2"
+    },
+    {
+      "name": "mixamorigRightHandRing3"
+    },
+    {
+      "name": "mixamorigRightHandRing3",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -1.0658141036401503e-14,
+            9.928000450139166,
+            8.526512829121202e-14
+          ],
+          "preRotation": [
+            -9.342877779680766e-15,
+            -4.856708238857753e-16,
+            4.0320067768879304e-14
+          ],
+          "rotation": [
+            -1.4748430844210412e-11,
+            4.856708238857853e-16,
+            -4.0320067768879304e-14
+          ],
+          "scale": [
+            0.9999999999999996,
+            0.9999999999999999,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999993713,
+              -0.0000011217209245923533,
+              7.082388384165548e-17,
+              0,
+              0.000001121720924592354,
+              0.9999999999993717,
+              -2.204479478948423e-11,
+              0,
+              -4.609577624790194e-17,
+              2.2044794789549773e-11,
+              0.9999999999999994,
+              0,
+              -1.0658141036401503e-14,
+              9.394200325033637,
+              1.1368683772161603e-13,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017455780219916655,
+              1.8207424223029561e-9,
+              0.9998476362611016,
+              0,
+              -0.9998476362610971,
+              -1.0431916562310679e-7,
+              0.017455780219917005,
+              0,
+              1.0433505392208448e-7,
+              -0.9999999999999941,
+              -5.074665718898927e-13,
+              0,
+              -100.68700132882087,
+              148.93698962054182,
+              -7.182148604127523,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -8.881784197001252e-15,
+        9.928000450139166,
+        5.684341886080802e-14
+      ],
+      "children": [
+        80
+      ]
+    },
+    {
+      "name": "mixamorigRightHandRing2",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -1.0658141036401503e-14,
+            9.394200325033651,
+            1.7053025658242404e-13
+          ],
+          "preRotation": [
+            0,
+            0,
+            -0.00006426987476976372
+          ],
+          "rotation": [
+            -1.2630737016695036e-9,
+            -4.057909617891088e-15,
+            -7.9123189162049e-16
+          ],
+          "scale": [
+            0.9999999999999996,
+            0.9999999999999999,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999977329,
+              -0.0000021289730647335026,
+              -1.5005365202973457e-16,
+              0,
+              0.0000021289730647335026,
+              0.9999999999977328,
+              6.274538785597707e-11,
+              0,
+              1.6470411347762588e-17,
+              -6.274538785615442e-11,
+              1.0000000000000004,
+              0,
+              -6.227320194244373,
+              24.687599182128864,
+              -0.12800000607956008,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.01745465866989067,
+              1.8206254514066706e-9,
+              0.9998476558409861,
+              0,
+              -0.9998476558409811,
+              -1.043412124601955e-7,
+              0.017454658669891012,
+              0,
+              1.0435709535928295e-7,
+              -0.9999999999999947,
+              -8.922048516354507e-13,
+              0,
+              -91.29423215533541,
+              148.9369906007442,
+              -7.3461211642775535,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -1.0658141036401503e-14,
+        9.394200325033637,
+        1.1368683772161603e-13
+      ],
+      "children": [
+        79,
+        81
+      ]
+    },
+    {
+      "name": "mixamorigRightHandRing1",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -6.227320194244374,
+            24.687599182128864,
+            -0.12800000607953166
+          ],
+          "preRotation": [
+            8.907540965275227e-13,
+            -4.89566969519588e-16,
+            -0.00012198117131023033
+          ],
+          "rotation": [
+            3.5941551539617923e-9,
+            9.087007926361508e-15,
+            4.167198307472802e-15
+          ],
+          "scale": [
+            0.9999999999999994,
+            0.9999999999999996,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              1,
+              4.4530354140689585e-49,
+              -1.2196420683441024e-25,
+              0,
+              4.453035414068959e-49,
+              1.0000000000000002,
+              7.30220042362889e-24,
+              0,
+              1.2196420683441015e-25,
+              -7.302200423628883e-24,
+              0.9999999999999993,
+              0,
+              2.304822999121825e-13,
+              29.508899688720668,
+              -5.684341886080802e-14,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017452530021123003,
+              1.8204032953012653e-9,
+              0.9998476929992192,
+              0,
+              -0.9998476929992143,
+              -1.0427847094816552e-7,
+              0.01745253002112335,
+              0,
+              1.0429435952770114e-7,
+              -0.9999999999999942,
+              2.0284444570832383e-13,
+              0,
+              -66.5017105614037,
+              148.80899318038595,
+              -1.5506105003704063,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -6.227320194244373,
+        24.687599182128864,
+        -0.12800000607956008
+      ],
+      "children": [
+        78,
+        82
+      ]
+    },
+    {
+      "name": "mixamorigRightHandPinky1"
+    },
+    {
+      "name": "mixamorigRightHandPinky2"
+    },
+    {
+      "name": "mixamorigRightHandPinky3"
+    },
+    {
+      "name": "mixamorigRightHandPinky3",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            8.881784197001252e-15,
+            8.14669990539548,
+            -8.526512829121202e-14
+          ],
+          "preRotation": [
+            -9.34287937679908e-15,
+            -4.969616689784458e-16,
+            -4.075085685625063e-15
+          ],
+          "rotation": [
+            9.34287937679908e-15,
+            4.969616689784451e-16,
+            4.075085685625063e-15
+          ],
+          "scale": [
+            0.9999999999999998,
+            1,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              1,
+              -3.469446951953614e-18,
+              -1.8466918246861805e-25,
+              0,
+              3.469446951953615e-18,
+              1.0000000000000002,
+              2.053960609911932e-23,
+              0,
+              1.8466918246861784e-25,
+              -2.05396060991193e-23,
+              0.9999999999999993,
+              0,
+              -3.552713678800501e-15,
+              8.4251003265381,
+              0,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017452530021123003,
+              1.820403295301266e-9,
+              0.9998476929992189,
+              0,
+              -0.9998476929992143,
+              -1.0427847094816557e-7,
+              0.017452530021123354,
+              0,
+              1.0429435952770117e-7,
+              -0.999999999999994,
+              2.02844445707908e-13,
+              0,
+              -98.82760870436593,
+              148.91798980635193,
+              -13.805288627978609,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        8.881784197001252e-15,
+        8.146699905395465,
+        -8.526512829121202e-14
+      ],
+      "children": [
+        86
+      ]
+    },
+    {
+      "name": "mixamorigRightHandPinky2",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -1.7763568394002505e-15,
+            8.4251003265381,
+            0
+          ],
+          "preRotation": [
+            -9.34287937679908e-15,
+            -4.969616689784458e-16,
+            -4.075085685625063e-15
+          ],
+          "rotation": [
+            9.34287937679908e-15,
+            4.969616689784451e-16,
+            4.075085685625063e-15
+          ],
+          "scale": [
+            0.9999999999999998,
+            1,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999999998,
+              -1.734723475976807e-18,
+              -1.1646111315958848e-25,
+              0,
+              1.734723475976807e-18,
+              0.9999999999999998,
+              2.0537186859938222e-23,
+              0,
+              1.164611131595885e-25,
+              -2.0537186859938236e-23,
+              1.0000000000000004,
+              0,
+              -12.816980361938466,
+              23.681999206542983,
+              -0.10899999737731036,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017452530021123,
+              1.8204032953012653e-9,
+              0.9998476929992189,
+              0,
+              -0.999847692999214,
+              -1.0427847094816552e-7,
+              0.017452530021123347,
+              0,
+              1.0429435952770121e-7,
+              -0.9999999999999947,
+              2.0284444570808195e-13,
+              0,
+              -90.40379157958988,
+              148.91799068490852,
+              -13.952327944358487,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -3.552713678800501e-15,
+        8.4251003265381,
+        0
+      ],
+      "children": [
+        85,
+        87
+      ]
+    },
+    {
+      "name": "mixamorigRightHandPinky1",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -12.816980361938468,
+            23.681999206542997,
+            -0.10899999737728194
+          ],
+          "preRotation": [
+            1.5014205943183714e-12,
+            -4.96961668963985e-16,
+            -2.426166867953888e-13
+          ],
+          "rotation": [
+            -1.5014205943183714e-12,
+            4.969616689703428e-16,
+            2.426166867953888e-13
+          ],
+          "scale": [
+            0.9999999999999998,
+            1,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              1,
+              4.4530354140689585e-49,
+              -1.2196420683441024e-25,
+              0,
+              4.453035414068959e-49,
+              1.0000000000000002,
+              7.30220042362889e-24,
+              0,
+              1.2196420683441015e-25,
+              -7.302200423628883e-24,
+              0.9999999999999993,
+              0,
+              2.304822999121825e-13,
+              29.508899688720668,
+              -5.684341886080802e-14,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017452530021123003,
+              1.8204032953012653e-9,
+              0.9998476929992192,
+              0,
+              -0.9998476929992143,
+              -1.0427847094816552e-7,
+              0.01745253002112335,
+              0,
+              1.0429435952770114e-7,
+              -0.9999999999999942,
+              2.0284444570832383e-13,
+              0,
+              -66.5017105614037,
+              148.80899318038595,
+              -1.5506105003704063,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -12.816980361938466,
+        23.681999206542983,
+        -0.10899999737731036
+      ],
+      "children": [
+        84,
+        88
+      ]
+    },
+    {
+      "name": "mixamorigRightHand",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            2.304822999121825e-13,
+            29.50889968872066,
+            0
+          ],
+          "rotation": [
+            4.75360769382154e-42,
+            0,
+            0
+          ],
+          "scale": [
+            0.9999999999999998,
+            1,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9998476951563912,
+              -0.017452406437283092,
+              -2.1109443796116504e-16,
+              0,
+              0.017452406437283092,
+              0.9998476951563912,
+              -4.021379634338697e-16,
+              0,
+              2.1808056243751402e-16,
+              3.98392609946292e-16,
+              1.0000000000000007,
+              0,
+              -2.6645352591003757e-15,
+              18.469600677490234,
+              5.684341886080802e-14,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.017452530021123003,
+              1.8204032953012651e-9,
+              0.9998476929992192,
+              0,
+              -0.999847692999214,
+              -1.0427847094816548e-7,
+              0.017452530021123347,
+              0,
+              1.042943595277012e-7,
+              -0.9999999999999949,
+              2.0284444570832946e-13,
+              0,
+              -36.997305284691116,
+              148.80899625752883,
+              -2.0656154580783515,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        2.304822999121825e-13,
+        29.508899688720668,
+        -5.684341886080802e-14
+      ],
+      "children": [
+        57,
+        65,
+        71,
+        77,
+        83,
+        89
+      ]
+    },
+    {
+      "name": "mixamorigRightForeArm",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -2.6645352591003757e-15,
+            18.469600677490234,
+            5.684341886080802e-14
+          ],
+          "preRotation": [
+            -6.361109362927035e-15,
+            1.0933156717533132e-15,
+            -3.776908684237858e-15
+          ],
+          "rotation": [
+            -1.6661586098034042e-14,
+            1.1112687894534423e-14,
+            -0.9999999999999721
+          ],
+          "scale": [
+            0.9999999999999998,
+            1,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999289847568184,
+              -0.011917442812875514,
+              -7.155734338404328e-18,
+              0,
+              0.011708475926301512,
+              0.9823956892318771,
+              -0.1864446871597795,
+              0,
+              0.002221943896991143,
+              0.1864314467449808,
+              0.9824654592553828,
+              0,
+              0,
+              12.138509762706274,
+              7.389644451905042e-13,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              1.2360266542435305e-7,
+              2.15563335705693e-13,
+              0.999999999999992,
+              0,
+              -0.9999999999999869,
+              -1.0429435964853795e-7,
+              1.2360266568016452e-7,
+              0,
+              1.042943599260937e-7,
+              -0.9999999999999942,
+              2.0262636509664943e-13,
+              0,
+              -18.527704607201123,
+              148.80899818380408,
+              -2.0656177409702265,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -2.6645352591003757e-15,
+        18.469600677490234,
+        5.684341886080802e-14
+      ],
+      "rotation": [
+        -2.0014026407303222e-16,
+        1.0729783567247319e-16,
+        -0.008726535498373727,
+        0.9999619230641713
+      ],
+      "children": [
+        56,
+        90
+      ]
+    },
+    {
+      "name": "mixamorigRightArm",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            0,
+            12.138509762706281,
+            7.958078640513122e-13
+          ],
+          "preRotation": [
+            -10.745372469375809,
+            0,
+            -0.682835339748706
+          ],
+          "rotation": [
+            8.285344945212461e-13,
+            1.370185724558464e-15,
+            -5.305212816552083e-15
+          ],
+          "scale": [
+            1.0000000000000002,
+            1.0000000000000002,
+            1
+          ],
+          "parentMatrix": {
+            "elements": [
+              -0.011708475926300645,
+              -0.0022219438969905973,
+              0.9999289847568189,
+              0,
+              -0.9823956892318885,
+              -0.1864314467449217,
+              -0.01191744281287432,
+              0,
+              0.18644468715972037,
+              -0.9824654592553955,
+              -4.440892098500628e-16,
+              0,
+              -6.570232868194581,
+              17.595807591593,
+              -2.761767875173764,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              -0.011708352100677395,
+              -0.002221945117903586,
+              0.99992898620401,
+              0,
+              -0.9823956712611438,
+              -0.186431549203312,
+              -0.011917321386111705,
+              0,
+              0.18644478962538333,
+              -0.9824654398102497,
+              -2.3044861268008058e-8,
+              0,
+              -6.602885160757483,
+              151.07199936388565,
+              -1.9209592189796014,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        0,
+        12.138509762706274,
+        7.389644451905042e-13
+      ],
+      "rotation": [
+        -0.09363204081610846,
+        0.0005579470573123814,
+        -0.005932648369149064,
+        0.995589038364234
+      ],
+      "children": [
+        55,
+        91
+      ]
+    },
+    {
+      "name": "mixamorigRightShoulder",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -6.57023286819458,
+            17.595807591592944,
+            -2.7617678751737635
+          ],
+          "preRotation": [
+            -90.00000000000107,
+            -89.31716466025135,
+            -169.2546275306266
+          ],
+          "rotation": [
+            -8.140709743917691e-13,
+            9.714700686261839e-15,
+            -9.939233379573487e-17
+          ],
+          "scale": [
+            1,
+            0.9999999999999998,
+            0.9999999999999999
+          ],
+          "parentMatrix": {
+            "elements": [
+              1.0000000000000002,
+              5.9576828163779606e-24,
+              1.3222321942078495e-23,
+              0,
+              -5.90158009664809e-24,
+              0.9999910154728582,
+              -0.004238982609289883,
+              0,
+              -1.3247457659618406e-23,
+              0.0042389826092898795,
+              0.9999910154728574,
+              0,
+              4.85722573273506e-17,
+              8.651117324829059,
+              -3.216473198897063e-10,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.999999999999987,
+              1.0429442011613445e-7,
+              -1.236026644199517e-7,
+              0,
+              -1.0429442011616047e-7,
+              0.9999999999999946,
+              -2.0283254242858817e-13,
+              0,
+              1.2360266441992974e-7,
+              2.1572153785509585e-13,
+              0.9999999999999919,
+              0,
+              -0.032650116056570824,
+              133.47619245753197,
+              0.8408078440994209,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -6.570232868194581,
+        17.595807591593,
+        -2.761767875173764
+      ],
+      "rotation": [
+        0.5419231889342395,
+        -0.45422379648730954,
+        0.5472978902460757,
+        0.44773320106084874
+      ],
+      "children": [
+        54,
+        92
+      ]
+    },
+    {
+      "name": "mixamorigSpine2",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            5.551115123125783e-17,
+            8.651117324829045,
+            -3.2164737540085753e-10
+          ],
+          "preRotation": [
+            -0.24287654031905537,
+            8.254961786335275e-23,
+            1.9473747312187994e-20
+          ],
+          "rotation": [
+            -4.969616689786745e-17,
+            6.506005291633967e-39,
+            -1.9473922276171246e-20
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999999998,
+              -2.5022058889805793e-24,
+              1.3240830043470288e-23,
+              0,
+              2.5642753629067137e-24,
+              0.9999890027756183,
+              -0.004689811064855955,
+              0,
+              -1.3228949558226623e-23,
+              0.004689811064855958,
+              0.999989002775619,
+              0,
+              -4.85722573273506e-17,
+              8.792658805847182,
+              -5.621125787058645e-10,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.9999999999999868,
+              1.0429442011613442e-7,
+              -1.2360266441995168e-7,
+              0,
+              -1.0376953353517422e-7,
+              0.9999910154728536,
+              0.004238982609087022,
+              0,
+              1.2404365614155495e-7,
+              -0.00423898260907414,
+              0.9999910154728517,
+              0,
+              -0.03264921833416148,
+              124.82515285889998,
+              0.8041359085319435,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        4.85722573273506e-17,
+        8.651117324829059,
+        -3.216473198897063e-10
+      ],
+      "rotation": [
+        -0.0021194960653177696,
+        -6.617459764127636e-24,
+        2.9648223876457946e-24,
+        0.9999977538656919
+      ],
+      "children": [
+        3,
+        13,
+        53,
+        93
+      ]
+    },
+    {
+      "name": "mixamorigSpine1",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -4.85722573273506e-17,
+            8.792658805847168,
+            -5.621125787058645e-10
+          ],
+          "preRotation": [
+            -0.2687073657424543,
+            -4.2784427319824693e-23,
+            -4.79159320835827e-21
+          ],
+          "rotation": [
+            1.4908850069360235e-16,
+            2.0312289963030162e-23,
+            4.79174116501326e-21
+          ],
+          "scale": [
+            1,
+            1,
+            1.0000000000000002
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999986461,
+              -0.000001641034831877446,
+              -1.236026644199517e-7,
+              0,
+              0.0000016420730291897665,
+              0.9999601383183906,
+              0.008928704921165242,
+              0,
+              1.089454216307087e-7,
+              -0.008928704921356114,
+              0.9999601383197307,
+              0,
+              -0.002426329567056556,
+              12.777534488862244,
+              0.3152516189236341,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.999999999999987,
+              1.0429442011613445e-7,
+              -1.2360266441995173e-7,
+              0,
+              -1.0318665104723213e-7,
+              0.9999601383197334,
+              0.008928704921165242,
+              0,
+              1.2452895151220341e-7,
+              -0.008928704921152369,
+              0.9999601383197307,
+              0,
+              -0.03264831104914538,
+              116.03284454320179,
+              0.725628853144139,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -4.85722573273506e-17,
+        8.792658805847182,
+        -5.621125787058645e-10
+      ],
+      "rotation": [
+        -0.0023449119793176377,
+        -6.617463093880856e-24,
+        -1.2666237953131314e-24,
+        0.9999972506901255
+      ],
+      "children": [
+        2,
+        94
+      ]
+    },
+    {
+      "name": "mixamorigSpine",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -0.0024263295670565524,
+            12.777534488862244,
+            0.31525161892363407
+          ],
+          "preRotation": [
+            0.5115839060498881,
+            0.000007081911007835075,
+            -0.00009402436990058117
+          ],
+          "rotation": [
+            0,
+            0,
+            9.70391289934002e-21
+          ],
+          "scale": [
+            1,
+            1,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999984768,
+              0.0000017453292519934438,
+              -2.6469779601696886e-23,
+              0,
+              -0.0000017453292519934438,
+              0.9999999999984768,
+              1.2621774483536103e-29,
+              0,
+              2.6469779601678604e-23,
+              3.357670614914408e-29,
+              1,
+              0,
+              -0.030199680477380756,
+              103.25531005859375,
+              0.4103772342205049,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.9999999999984768,
+              0.0000017453292519934438,
+              -2.6469779601696886e-23,
+              0,
+              -0.0000017453292519934438,
+              0.9999999999984768,
+              1.2621774483536103e-29,
+              0,
+              2.6469779601678604e-23,
+              3.357670614914408e-29,
+              1,
+              0,
+              -0.030199680477380756,
+              103.25531005859375,
+              0.4103772342205049,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -0.002426329567056556,
+        12.777534488862244,
+        0.3152516189236341
+      ],
+      "rotation": [
+        0.0044643969504444825,
+        5.813760088118601e-8,
+        -8.207851447765884e-7,
+        0.9999900345299405
+      ],
+      "children": [
+        1,
+        95
+      ]
+    },
+    {
+      "name": "mixamorigLeftUpLeg"
+    },
+    {
+      "name": "mixamorigLeftLeg"
+    },
+    {
+      "name": "mixamorigLeftFoot"
+    },
+    {
+      "name": "mixamorigLeftToeBase"
+    },
+    {
+      "name": "mixamorigLeftToe_End"
+    },
+    {
+      "name": "mixamorigLeftToe_End",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            4.121147867408581e-13,
+            23.512253140540356,
+            4.247010729208078e-12
+          ],
+          "rotation": [
+            3.8825130388958945e-19,
+            -1.9412565194479472e-19,
+            3.1805546814635168e-15
+          ],
+          "scale": [
+            0.9999999999999997,
+            0.9999999999999999,
+            0.9999999999999999
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9943045533117287,
+              -0.054264051487462606,
+              0.09172713873072995,
+              0,
+              -0.008059027222239248,
+              0.8199268274173669,
+              0.5724116086886437,
+              0,
+              -0.1062709148534622,
+              -0.5698907003956604,
+              0.8148196624154034,
+              0,
+              2.4868995751603507e-14,
+              29.00000000000005,
+              -5.607958541986591e-12,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              -0.9811834061005713,
+              -0.0000016990887307249958,
+              0.19307802461697499,
+              0,
+              0.19307802447509656,
+              -0.00004796745554525028,
+              0.9811834049574606,
+              0,
+              0.0000075943438966608046,
+              0.9999999988481183,
+              0.000047392928108680454,
+              0,
+              17.49879458572653,
+              0.006763159405025476,
+              20.21416796373825,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        4.121147867408581e-13,
+        23.512253140540356,
+        4.247010729208078e-12
+      ],
+      "children": [
+        101
+      ]
+    },
+    {
+      "name": "mixamorigLeftToeBase",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            2.4868995751603507e-14,
+            29.000000000000046,
+            -5.60440582830779e-12
+          ],
+          "preRotation": [
+            35.0880786602065,
+            -5.262975917525016,
+            -3.1238114015108107
+          ],
+          "rotation": [
+            6.3611093629270335e-15,
+            7.951386703658792e-15,
+            2.385416011097637e-15
+          ],
+          "scale": [
+            0.9999999999999998,
+            0.9999999999999997,
+            0.9999999999999999
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9771519972813936,
+              0.08068186937238964,
+              0.19663267826982037,
+              0,
+              -0.21154831744532204,
+              0.4585398045369128,
+              0.8631271963281564,
+              0,
+              -0.020525194153507856,
+              -0.8850037760426939,
+              0.46513119955033566,
+              0,
+              4.430864741777896e-8,
+              48.64799999999995,
+              -1.2967404927621828e-13,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              -0.9771519564328466,
+              -0.10627221757168209,
+              0.1840659387607036,
+              0,
+              0.2115485109732021,
+              -0.5699299373434198,
+              0.7939943916834348,
+              0,
+              0.020525144201268174,
+              0.8147920484958864,
+              0.5793898826898809,
+              0,
+              11.363887767503797,
+              16.5347313423688,
+              -2.811669395078147,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        2.4868995751603507e-14,
+        29.00000000000005,
+        -5.607958541986591e-12
+      ],
+      "rotation": [
+        0.2998158032354863,
+        -0.051967806597532085,
+        -0.01212725944211561,
+        0.9525034177293672
+      ],
+      "children": [
+        100,
+        102
+      ]
+    },
+    {
+      "name": "mixamorigLeftFoot",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            4.430864564142212e-8,
+            48.647999999999925,
+            -1.2967404927621828e-13
+          ],
+          "preRotation": [
+            61.68014030002955,
+            -11.340120458821284,
+            4.720125254560152
+          ],
+          "rotation": [
+            0.000043774297139467746,
+            -0.000008157592277214322,
+            -0.000009554198424327894
+          ],
+          "scale": [
+            0.9999999999999999,
+            0.9999999999999997,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999999896,
+              1.267827876450659e-7,
+              4.365251657141971e-8,
+              0,
+              -1.121675536558517e-7,
+              0.9693345442576032,
+              -0.24574487036129777,
+              0,
+              -7.347011197033546e-8,
+              0.24574487036129095,
+              0.9693345442576099,
+              0,
+              0,
+              32.5337874381582,
+              -1.6264323221548693e-11,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              -0.9999999999999788,
+              -1.5533908592146166e-7,
+              1.3223705525004485e-7,
+              0,
+              1.3624389416337299e-7,
+              -0.9910038428536403,
+              -0.13383341678855376,
+              0,
+              1.5183699055012392e-7,
+              -0.13383341678853344,
+              0.991003842853641,
+              0,
+              11.363881183819482,
+              64.74508628951264,
+              3.6990586648515325,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        4.430864741777896e-8,
+        48.64799999999995,
+        -1.2967404927621828e-13
+      ],
+      "rotation": [
+        0.5131961109542199,
+        -0.06375070137885676,
+        0.08578956482584398,
+        0.8515901304865858
+      ],
+      "children": [
+        99,
+        103
+      ]
+    },
+    {
+      "name": "mixamorigLeftLeg",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            1.7763568394002505e-15,
+            32.53378743815817,
+            -1.6264323221548693e-11
+          ],
+          "preRotation": [
+            -14.225745573600141,
+            0,
+            -0.000001853865923881341
+          ],
+          "rotation": [
+            -0.00011194029275022492,
+            -0.000004665089310428956,
+            0.000008223752817552878
+          ],
+          "scale": [
+            0.9999999999999997,
+            0.9999999999999999,
+            1.0000000000000002
+          ],
+          "parentMatrix": {
+            "elements": [
+              -0.9999999999985347,
+              0.0000017109813989052992,
+              7.443965891113029e-8,
+              0,
+              -0.0000016913937947972233,
+              -0.9935031340273555,
+              0.11380475682045485,
+              0,
+              2.6867385645087404e-7,
+              0.11380475682016196,
+              0.9935031340287913,
+              0,
+              11.394068678705658,
+              -6.187823873853247,
+              -0.4138183372007763,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              -0.9999999999999978,
+              -3.434785308819337e-8,
+              7.443965891113031e-8,
+              0,
+              4.2596286970459516e-8,
+              -0.9935031340287942,
+              0.11380475682045485,
+              0,
+              7.004708535623576e-8,
+              0.11380475682045754,
+              0.9935031340287913,
+              0,
+              11.363879798000935,
+              97.06750607115129,
+              -0.0034411029802713933,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        0,
+        32.5337874381582,
+        -1.6264323221548693e-11
+      ],
+      "rotation": [
+        -0.12382539267530918,
+        -2.9507748114996754e-8,
+        6.02008900490676e-8,
+        0.9923040220259117
+      ],
+      "children": [
+        98,
+        104
+      ]
+    },
+    {
+      "name": "mixamorigLeftUpLeg",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            11.394068678705656,
+            -6.187823873853247,
+            -0.4138183372007763
+          ],
+          "preRotation": [
+            6.53462281827324,
+            0,
+            179.99990678684725
+          ],
+          "rotation": [
+            0.00006724348299450517,
+            -0.000004785772809534361,
+            -0.000004302172160588873
+          ],
+          "scale": [
+            1.0000000000000004,
+            1,
+            0.9999999999999994
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999984768,
+              0.0000017453292519934438,
+              -2.6469779601696886e-23,
+              0,
+              -0.0000017453292519934438,
+              0.9999999999984768,
+              1.2621774483536103e-29,
+              0,
+              2.6469779601678604e-23,
+              3.357670614914408e-29,
+              1,
+              0,
+              -0.030199680477380756,
+              103.25531005859375,
+              0.4103772342205049,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.9999999999984768,
+              0.0000017453292519934438,
+              -2.6469779601696886e-23,
+              0,
+              -0.0000017453292519934438,
+              0.9999999999984768,
+              1.2621774483536103e-29,
+              0,
+              2.6469779601678604e-23,
+              3.357670614914408e-29,
+              1,
+              0,
+              -0.030199680477380756,
+              103.25531005859375,
+              0.4103772342205049,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        11.394068678705658,
+        -6.187823873853247,
+        -0.4138183372007763
+      ],
+      "rotation": [
+        8.59180418548884e-8,
+        0.056995025972418664,
+        0.9983744623204613,
+        8.519787219403093e-7
+      ],
+      "children": [
+        97,
+        105
+      ]
+    },
+    {
+      "name": "mixamorigRightUpLeg"
+    },
+    {
+      "name": "mixamorigRightLeg"
+    },
+    {
+      "name": "mixamorigRightFoot"
+    },
+    {
+      "name": "mixamorigRightToeBase"
+    },
+    {
+      "name": "mixamorigRightToe_End"
+    },
+    {
+      "name": "mixamorigRightToe_End",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            1.9539925233402755e-14,
+            23.512000000000008,
+            -2.326437653632496e-14
+          ],
+          "rotation": [
+            1.2722218725854067e-14,
+            9.706282597239736e-20,
+            -1.5902773407317584e-15
+          ],
+          "scale": [
+            0.9999999999999999,
+            1,
+            1
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9943044665504542,
+              0.05426798911206029,
+              -0.09172574968648409,
+              0,
+              0.00805496398677005,
+              0.8199269479047512,
+              0.5724114932937423,
+              0,
+              0.10627203467039727,
+              -0.5698901520971686,
+              0.8148198998488452,
+              0,
+              3.552713678800501e-15,
+              28.999999999999993,
+              5.684341886080802e-14,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              -0.9811839370169084,
+              -0.0000017124296226994629,
+              -0.19307532658800902,
+              0,
+              -0.19307532635475727,
+              -0.0000412459860391623,
+              0.981183936197374,
+              0,
+              -0.000009643790662976215,
+              0.9999999991479198,
+              0.00004013927106000237,
+              0,
+              -17.559213697123266,
+              0.006910399030108039,
+              20.214287234458244,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        2.3092638912203256e-14,
+        23.512000000000004,
+        -2.326437653632496e-14
+      ],
+      "children": [
+        111
+      ]
+    },
+    {
+      "name": "mixamorigRightToeBase",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            5.329070518200751e-15,
+            28.99999999999999,
+            5.3290705182007514e-14
+          ],
+          "preRotation": [
+            35.08806537407566,
+            5.262895994214962,
+            3.1240379012960084
+          ],
+          "rotation": [
+            2.2263882770244617e-14,
+            -2.623957612207402e-14,
+            -3.1805546814635176e-15
+          ],
+          "scale": [
+            0.9999999999999999,
+            1,
+            1.0000000000000007
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9771502677182976,
+              -0.08068243440740316,
+              -0.19664104117949704,
+              0,
+              0.21155612720615438,
+              0.4585328885972957,
+              0.8631289562493847,
+              0,
+              0.020527039231093207,
+              -0.8850073077962208,
+              0.4651243982072863,
+              0,
+              4.19726422506983e-8,
+              48.648039553882484,
+              -1.7763568394002505e-14,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              -0.9771518107492512,
+              0.10626999966849009,
+              -0.18406799265467264,
+              0,
+              -0.21154904636340421,
+              -0.5699240632371337,
+              0.7939984654431074,
+              0,
+              -0.020526561626233213,
+              0.8147964465519814,
+              0.5793836474686436,
+              0,
+              -11.424291352584541,
+              16.534708232906937,
+              -2.8116682633918986,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        3.552713678800501e-15,
+        28.999999999999993,
+        5.684341886080802e-14
+      ],
+      "rotation": [
+        0.29981561783738864,
+        0.05196773399295745,
+        0.012129358944705178,
+        0.9525034533144815
+      ],
+      "children": [
+        110,
+        112
+      ]
+    },
+    {
+      "name": "mixamorigRightFoot",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            4.197264402705514e-8,
+            48.648039553882455,
+            -1.9539925233402755e-14
+          ],
+          "preRotation": [
+            61.680571554018286,
+            11.340222415550784,
+            -4.7199932706476915
+          ],
+          "rotation": [
+            0.00004524667625439076,
+            0.00004212336065105845,
+            -0.000411466087221895
+          ],
+          "scale": [
+            0.9999999999999999,
+            0.9999999999999991,
+            1.0000000000000007
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999625907,
+              0.000008649521324372168,
+              -4.237894302750052e-8,
+              0,
+              -0.00000839469446881619,
+              0.9693345736882342,
+              -0.2457447541295221,
+              0,
+              -0.000002084495116522979,
+              0.24574475412068505,
+              0.9693345737245834,
+              0,
+              0,
+              32.53376322401198,
+              6.157787613148002e-7,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              -0.9999999999736261,
+              -0.0000038103698274679246,
+              0.000006182917333739038,
+              0,
+              0.0000029486109823074952,
+              -0.9910038588398552,
+              -0.13383329838206756,
+              0,
+              0.000006637249298688758,
+              -0.13383329836030705,
+              0.9910038588249535,
+              0,
+              -11.424434754755595,
+              64.74510315579855,
+              3.6990593299252392,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        4.19726422506983e-8,
+        48.648039553882484,
+        -1.7763568394002505e-14
+      ],
+      "rotation": [
+        0.5131990308139996,
+        0.06375386786641478,
+        -0.08579225182336382,
+        0.8515878631302349
+      ],
+      "children": [
+        109,
+        113
+      ]
+    },
+    {
+      "name": "mixamorigRightLeg",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            0,
+            32.53376322401197,
+            6.157787613148002e-7
+          ],
+          "preRotation": [
+            -14.22573874724256,
+            2.335665246360162e-16,
+            -0.0000017561274149175086
+          ],
+          "rotation": [
+            -0.00011189689555920842,
+            -0.00011986338903177854,
+            0.0004826830724801503
+          ],
+          "scale": [
+            1,
+            1.0000000000000004,
+            1
+          ],
+          "parentMatrix": {
+            "elements": [
+              -0.9999999999649283,
+              0.000006533108893855439,
+              0.000005240664279003081,
+              0,
+              -0.000005894251639514661,
+              -0.9935031340548228,
+              0.11380475644059573,
+              0,
+              0.000005950115252183816,
+              0.11380475640571441,
+              0.9935031340584848,
+              0,
+              -11.394110525067909,
+              -6.187791360469902,
+              -0.4138155158780883,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              -0.9999999999748075,
+              0.000004787779641913255,
+              0.000005240664279003081,
+              0,
+              -0.000004160261557692636,
+              -0.9935031340635969,
+              0.11380475644059573,
+              0,
+              0.0000057514884818038715,
+              0.11380475641592598,
+              0.9935031340584848,
+              0,
+              -11.424299405794669,
+              97.06749881165888,
+              -0.003438281657583364,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        0,
+        32.53376322401198,
+        6.157787613148002e-7
+      ],
+      "rotation": [
+        -0.12382533318123481,
+        -5.144885319691041e-7,
+        0.000004294101224903462,
+        0.9923040294404999
+      ],
+      "children": [
+        108,
+        114
+      ]
+    },
+    {
+      "name": "mixamorigRightUpLeg",
+      "extras": {
+        "transformData": {
+          "inheritType": 2,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -11.394110525067903,
+            -6.187791360469916,
+            -0.4138155158780883
+          ],
+          "preRotation": [
+            6.534622818776264,
+            0,
+            179.99990678684742
+          ],
+          "rotation": [
+            0.00006722113336032669,
+            -0.0003303081038798572,
+            -0.0002451085706420673
+          ],
+          "scale": [
+            1.0000000000000009,
+            1,
+            0.9999999999999998
+          ],
+          "parentMatrix": {
+            "elements": [
+              0.9999999999984768,
+              0.0000017453292519934438,
+              -2.6469779601696886e-23,
+              0,
+              -0.0000017453292519934438,
+              0.9999999999984768,
+              1.2621774483536103e-29,
+              0,
+              2.6469779601678604e-23,
+              3.357670614914408e-29,
+              1,
+              0,
+              -0.030199680477380756,
+              103.25531005859375,
+              0.4103772342205049,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              0.9999999999984768,
+              0.0000017453292519934438,
+              -2.6469779601696886e-23,
+              0,
+              -0.0000017453292519934438,
+              0.9999999999984768,
+              1.2621774483536103e-29,
+              0,
+              2.6469779601678604e-23,
+              3.357670614914408e-29,
+              1,
+              0,
+              -0.030199680477380756,
+              103.25531005859375,
+              0.4103772342205049,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -11.394110525067909,
+        -6.187791360469902,
+        -0.4138155158780883
+      ],
+      "rotation": [
+        0.0000028022500458254376,
+        0.05699502577335032,
+        0.9983744623234103,
+        0.0000031118986418305466
+      ],
+      "children": [
+        107,
+        115
+      ]
+    },
+    {
+      "name": "mixamorigHips",
+      "extras": {
+        "transformData": {
+          "inheritType": 1,
+          "eulerOrder": "ZYX",
+          "translation": [
+            -0.030199680477380756,
+            103.25531005859375,
+            0.4103772342205049
+          ],
+          "preRotation": [
+            0,
+            0,
+            0.00010000000000000002
+          ],
+          "rotation": [
+            7.231744078725324e-28,
+            1.5166066558187088e-21,
+            -1.2132853246550028e-20
+          ],
+          "parentMatrix": {
+            "elements": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "translation": [
+        -0.030199680477380756,
+        103.25531005859375,
+        0.4103772342205049
+      ],
+      "children": [
+        0,
+        96,
+        106,
+        116
+      ]
+    },
+    {
+      "name": "mremireh_body",
+      "extras": {
+        "transformData": {
+          "inheritType": 1,
+          "eulerOrder": "ZYX",
+          "parentMatrix": {
+            "elements": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "mesh": 0,
+      "skin": 0
+    },
+    {
+      "name": "mremireh_shoe",
+      "extras": {
+        "transformData": {
+          "inheritType": 1,
+          "eulerOrder": "ZYX",
+          "parentMatrix": {
+            "elements": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          "parentMatrixWorld": {
+            "elements": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ]
+          }
+        }
+      },
+      "mesh": 1,
+      "skin": 1
+    },
+    {
+      "name": "walk.fbx",
+      "children": [
+        117,
+        118,
+        119
+      ]
+    }
+  ],
+  "skins": [
+    {
+      "inverseBindMatrices": 12,
+      "skeleton": 117,
+      "joints": [
+        117,
+        96,
+        95,
+        94,
+        13,
+        12,
+        7,
+        9,
+        11,
+        53,
+        52,
+        51,
+        50,
+        25,
+        24,
+        23,
+        22,
+        31,
+        30,
+        29,
+        37,
+        36,
+        35,
+        43,
+        42,
+        41,
+        49,
+        48,
+        47,
+        93,
+        92,
+        91,
+        90,
+        65,
+        64,
+        63,
+        62,
+        71,
+        70,
+        69,
+        77,
+        76,
+        75,
+        83,
+        82,
+        81,
+        89,
+        88,
+        87,
+        106,
+        105,
+        104,
+        103,
+        102,
+        116,
+        115,
+        114,
+        113,
+        112
+      ]
+    },
+    {
+      "inverseBindMatrices": 13,
+      "skeleton": 0,
+      "joints": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        8,
+        10,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        26,
+        27,
+        28,
+        32,
+        33,
+        34,
+        38,
+        39,
+        40,
+        44,
+        45,
+        46,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        66,
+        67,
+        68,
+        72,
+        73,
+        74,
+        78,
+        79,
+        80,
+        84,
+        85,
+        86,
+        97,
+        98,
+        99,
+        100,
+        101,
+        107,
+        108,
+        109,
+        110,
+        111
+      ]
+    }
+  ],
+  "animations": [
+    {
+      "name": "Walking",
+      "samplers": [
+        {
+          "input": 14,
+          "output": 15,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 16,
+          "output": 17,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 18,
+          "output": 19,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 20,
+          "output": 21,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 22,
+          "output": 23,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 24,
+          "output": 25,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 26,
+          "output": 27,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 28,
+          "output": 29,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 30,
+          "output": 31,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 32,
+          "output": 33,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 34,
+          "output": 35,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 36,
+          "output": 37,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 38,
+          "output": 39,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 40,
+          "output": 41,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 42,
+          "output": 43,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 44,
+          "output": 45,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 46,
+          "output": 47,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 48,
+          "output": 49,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 50,
+          "output": 51,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 52,
+          "output": 53,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 54,
+          "output": 55,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 56,
+          "output": 57,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 58,
+          "output": 59,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 60,
+          "output": 61,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 62,
+          "output": 63,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 64,
+          "output": 65,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 66,
+          "output": 67,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 68,
+          "output": 69,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 70,
+          "output": 71,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 72,
+          "output": 73,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 74,
+          "output": 75,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 76,
+          "output": 77,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 78,
+          "output": 79,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 80,
+          "output": 81,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 82,
+          "output": 83,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 84,
+          "output": 85,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 86,
+          "output": 87,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 88,
+          "output": 89,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 90,
+          "output": 91,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 92,
+          "output": 93,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 94,
+          "output": 95,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 96,
+          "output": 97,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 98,
+          "output": 99,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 100,
+          "output": 101,
+          "interpolation": "LINEAR"
+        },
+        {
+          "input": 102,
+          "output": 103,
+          "interpolation": "LINEAR"
+        }
+      ],
+      "channels": [
+        {
+          "sampler": 0,
+          "target": {
+            "node": 117,
+            "path": "translation"
+          }
+        },
+        {
+          "sampler": 1,
+          "target": {
+            "node": 117,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 2,
+          "target": {
+            "node": 96,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 3,
+          "target": {
+            "node": 95,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 4,
+          "target": {
+            "node": 94,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 5,
+          "target": {
+            "node": 13,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 6,
+          "target": {
+            "node": 12,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 7,
+          "target": {
+            "node": 53,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 8,
+          "target": {
+            "node": 52,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 9,
+          "target": {
+            "node": 51,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 10,
+          "target": {
+            "node": 50,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 11,
+          "target": {
+            "node": 25,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 12,
+          "target": {
+            "node": 24,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 13,
+          "target": {
+            "node": 23,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 14,
+          "target": {
+            "node": 31,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 15,
+          "target": {
+            "node": 30,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 16,
+          "target": {
+            "node": 37,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 17,
+          "target": {
+            "node": 36,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 18,
+          "target": {
+            "node": 43,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 19,
+          "target": {
+            "node": 42,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 20,
+          "target": {
+            "node": 49,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 21,
+          "target": {
+            "node": 48,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 22,
+          "target": {
+            "node": 93,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 23,
+          "target": {
+            "node": 92,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 24,
+          "target": {
+            "node": 91,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 25,
+          "target": {
+            "node": 90,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 26,
+          "target": {
+            "node": 65,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 27,
+          "target": {
+            "node": 64,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 28,
+          "target": {
+            "node": 63,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 29,
+          "target": {
+            "node": 71,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 30,
+          "target": {
+            "node": 70,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 31,
+          "target": {
+            "node": 77,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 32,
+          "target": {
+            "node": 76,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 33,
+          "target": {
+            "node": 83,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 34,
+          "target": {
+            "node": 82,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 35,
+          "target": {
+            "node": 89,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 36,
+          "target": {
+            "node": 88,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 37,
+          "target": {
+            "node": 106,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 38,
+          "target": {
+            "node": 105,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 39,
+          "target": {
+            "node": 104,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 40,
+          "target": {
+            "node": 103,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 41,
+          "target": {
+            "node": 116,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 42,
+          "target": {
+            "node": 115,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 43,
+          "target": {
+            "node": 114,
+            "path": "rotation"
+          }
+        },
+        {
+          "sampler": 44,
+          "target": {
+            "node": 113,
+            "path": "rotation"
+          }
+        }
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "name": "AuxScene",
+      "nodes": [
+        120
+      ]
+    }
+  ],
+  "scene": 0
+}
