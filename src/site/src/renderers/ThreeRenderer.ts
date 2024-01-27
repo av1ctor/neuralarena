@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
 import { GameAssetType } from "brains-engine";
 import { Asset } from '../../../declarations/main/main.did';
+import { gameAssetDataU32Value } from '../libs/games';
 
 const loader = new GLTFLoader();
 
@@ -123,7 +124,10 @@ export class ThreeRenderer {
                 break;
             }
             case GameAssetType.Player: {
-                const gltf = await loader.loadAsync(`/models/zombie-${asset_ref % 2 === 0? 'girl': 'boy'}/default.gltf`);
+                const zombies = ['man', 'girl', 'woman', 'boy'];
+                const gltf = await loader.loadAsync(
+                    `/models/zombie-${zombies[gameAssetDataU32Value(asset, 'num') || 0]}/default.gltf`
+                );
                 const obj = gltf.scene;
                 obj.traverse(child => {
                     if((child as any).isMesh) {
