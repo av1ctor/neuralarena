@@ -4,7 +4,8 @@
       "candid": "src/main/main.did",
       "package": "main",
       "type": "rust",
-      "optimize": "O4"
+      "optimize": "O4",
+      "gzip": true
     },
     "site": {
       "dependencies": [
@@ -18,7 +19,8 @@
         "src/site/assets",
         "dist/site/"
       ],
-      "type": "assets"
+      "type": "assets",
+      "gzip": true
     },
     "internet_identity": {
       "type": "custom",
