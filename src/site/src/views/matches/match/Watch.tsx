@@ -102,6 +102,11 @@ export const Watch = (props: Props) => {
         });
     }, [step, frames, renderer]);
 
+    const handleRestart = useCallback(() => {
+        step.current = 0;
+        renderer?.reset();
+    }, [step, frames, renderer]);
+
     const handleToggleFullscreen = useCallback(() => {
         if(!document.fullscreenElement) {
             if(fullscreenContainer.current?.requestFullscreen) {
@@ -289,6 +294,12 @@ export const Watch = (props: Props) => {
                     </Grid.Col>
                     <Grid.Col span={6}>
                         <Group position="center">
+                            <ActionIcon
+                                variant="outline"
+                                onClick={handleRestart}
+                            >
+                                <IconRefresh />
+                            </ActionIcon>
                             <ActionIcon
                                 variant="outline"
                                 onClick={handleTogglePlay}

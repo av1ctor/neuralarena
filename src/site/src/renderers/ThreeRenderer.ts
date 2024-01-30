@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
-import { GameAssetType } from "brains-engine";
+import { GameAssetType, ObjectState } from "brains-engine";
 import { Asset } from '../../../declarations/main/main.did';
 import { gameAssetDataU32Value } from '../libs/games';
 
@@ -192,11 +192,11 @@ export class ThreeRenderer {
             let actions = Object.assign({});
             for(const clip of obj.userData.animations) {
                 const action = anim.clipAction(clip);
-                actions["Walking"] = action;
+                actions[clip.name] = action;
             }
 
             cloned.userData.actions = actions;
-            cloned.userData.activeAction = 'Walking';
+            cloned.userData.activeAction = 'Idle';
             (cloned.userData.actions as any)[cloned.userData.activeAction]?.play();
         }
 
@@ -217,13 +217,48 @@ export class ThreeRenderer {
         this.objects[model_ref].visible = false;
     }
 
+    change_state(
+        model_ref: number,
+        _from: ObjectState,
+        to: ObjectState
+    ) {
+        const obj = this.objects[model_ref];
+        let toAction = undefined;
+        switch(to) {
+            case ObjectState.MOVING:
+                toAction = 'Walking';
+                break;
+            case ObjectState.EATING:
+                toAction = 'Eating';
+                break;
+        }
+
+        if(obj.userData.actions && toAction) {
+            const from = (obj.userData.actions as any)[obj.userData.activeAction];
+            const to = (obj.userData.actions as any)[toAction];
+            if(from) {
+                to?.crossFadeFrom(from, 0.5, false);
+            }
+            if(to) {
+                to.play();
+                to.enabled = true;
+            }
+            obj.userData.activeAction = toAction;
+        }
+    }
+
     set_position(
         model_ref: number,
         pos: Float32Array
     ) {
         const obj = this.objects[model_ref];
         obj.position.x = pos[0];
-        obj.position.y = pos[1];
+        if(obj.userData.isPlayer) {
+            obj.position.y = 0.9 + pos[1];    
+        }
+        else {
+            obj.position.y = pos[1];
+        }
         obj.position.z = pos[2];
     }
 

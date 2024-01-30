@@ -4708,7 +4708,7 @@
   ],
   "animations": [
     {
-      "name": "mixamo.com",
+      "name": "Walking",
       "samplers": [
         {
           "input": 15,
