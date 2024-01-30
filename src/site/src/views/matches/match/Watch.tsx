@@ -252,6 +252,11 @@ export const Watch = (props: Props) => {
                         break;
                     case WatchState.FINISHED:
                         //renderer?.show_winner(props.match.won_by as any);
+                        engine.render(
+                            Uint8Array.from([]), 
+                            Uint8Array.from([]), 
+                            renderer
+                        );
                         break;
                 }
 

@@ -233,6 +233,9 @@ export class ThreeRenderer {
             case ObjectState.EATING:
                 toAction = 'Eating';
                 break;
+            case ObjectState.CELEBRATING:
+                toAction = 'Celebrating';
+                break;
         }
 
         if(obj.userData.actions && toAction) {
