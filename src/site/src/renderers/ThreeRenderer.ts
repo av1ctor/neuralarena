@@ -140,6 +140,8 @@ export class ThreeRenderer {
 
                 obj.userData.animations = gltf.animations;
                 obj.userData.isPlayer = true;
+                const bb = new THREE.Box3().setFromObject(obj);
+                obj.userData.height = (bb.max.y - bb.min.y) * 100.0;
 
                 this.assets[asset_ref] = obj;
                 break;
@@ -254,7 +256,7 @@ export class ThreeRenderer {
         const obj = this.objects[model_ref];
         obj.position.x = pos[0];
         if(obj.userData.isPlayer) {
-            obj.position.y = 0.9 + pos[1];    
+            obj.position.y = pos[1] + obj.userData.height * 0.5; 
         }
         else {
             obj.position.y = pos[1];

@@ -105,6 +105,7 @@ export const Watch = (props: Props) => {
     const handleRestart = useCallback(() => {
         step.current = 0;
         renderer?.reset();
+        setState(WatchState.PLAYING);
     }, [step, frames, renderer]);
 
     const handleToggleFullscreen = useCallback(() => {
@@ -304,13 +305,10 @@ export const Watch = (props: Props) => {
                                 variant="outline"
                                 onClick={handleTogglePlay}
                             >
-                                {state === WatchState.PAUSED?
+                                {state === WatchState.PAUSED || state === WatchState.FINISHED?
                                     <IconPlayerPlay />
                                 :
-                                    state === WatchState.FINISHED?
-                                        <IconRefresh />
-                                    :
-                                        <IconPlayerPause />
+                                    <IconPlayerPause />
                                 }
                             </ActionIcon>
                         </Group>
