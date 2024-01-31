@@ -126,7 +126,7 @@ export class ThreeRenderer {
             case GameAssetType.Player: {
                 const zombies = ['man', 'girl', 'woman', 'boy'];
                 const gltf = await loader.loadAsync(
-                    `/models/zombie-${zombies[gameAssetDataU32Value(asset, 'num') || 0]}/default.gltf`
+                    `/models/zombies/${zombies[gameAssetDataU32Value(asset, 'num') || 0]}/default.gltf`
                 );
                 const obj = gltf.scene;
                 obj.traverse(child => {
@@ -136,25 +136,38 @@ export class ThreeRenderer {
                     }
                 });
                 obj.visible = false;
-                obj.scale.multiplyScalar(0.01);
 
                 obj.userData.animations = gltf.animations;
                 obj.userData.isPlayer = true;
                 const bb = new THREE.Box3().setFromObject(obj);
-                obj.userData.height = (bb.max.y - bb.min.y) * 100.0;
+                obj.userData.height = (bb.max.y - bb.min.y) * 0.01;
+
+                obj.scale.multiplyScalar(0.01);
 
                 this.assets[asset_ref] = obj;
                 break;
             }
             case GameAssetType.Key: {
-                const geometry = new THREE.BoxGeometry(1.0, 1.0, 1.0);
-                const material = new THREE.MeshBasicMaterial({
-                    color: 0xff0000
+                const npcs = ['man'];
+                const gltf = await loader.loadAsync(
+                    `/models/npcs/${npcs[0]}/default.gltf`
+                );
+                const obj = gltf.scene;
+                obj.traverse(child => {
+                    if((child as any).isMesh) {
+                        child.castShadow = true;
+                        child.receiveShadow = true;
+                    }
                 });
-                const obj = new THREE.Mesh(geometry, material);
                 obj.visible = false;
-                
-                this.scene.add(obj);
+
+                obj.userData.animations = gltf.animations;
+                obj.userData.isNpc = true;
+                const bb = new THREE.Box3().setFromObject(obj);
+                obj.userData.height = (bb.max.y - bb.min.y) * 0.05;
+
+                obj.scale.multiplyScalar(0.01);
+
                 this.assets[asset_ref] = obj;
                 break;
             }
@@ -187,7 +200,7 @@ export class ThreeRenderer {
         }
         
         const cloned = cloneSkeleton(obj);
-        if(cloned.userData.isPlayer) {
+        if(cloned.userData.isPlayer || cloned.userData.isNpc) {
             const anim = new THREE.AnimationMixer(cloned);
             cloned.userData.anim = anim;
 
@@ -258,7 +271,7 @@ export class ThreeRenderer {
     ) {
         const obj = this.objects[model_ref];
         obj.position.x = pos[0];
-        if(obj.userData.isPlayer) {
+        if(obj.userData.height) {
             obj.position.y = pos[1] + obj.userData.height * 0.5; 
         }
         else {
