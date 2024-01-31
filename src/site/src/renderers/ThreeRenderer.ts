@@ -107,7 +107,7 @@ export class ThreeRenderer {
     ): Promise<void> {
         switch (Number(asset.typ)) {
             case GameAssetType.Level: {
-                const gltf = await loader.loadAsync("/maps/level-0/map.glb");
+                const gltf = await loader.loadAsync("/maps/level-0/map.gltf");
                 const obj = gltf.scene;
                 obj.traverse(child => {
                     if((child as any).isMesh) {
