@@ -334,7 +334,7 @@ impl MatchesService {
                 players[i].obs = step.players[i].obs.to_owned().into();
             }
 
-            game.clear_events();
+            game.render(&mut renderer, true);
         }
 
         m4tch.status = MatchStatus::FINISHED;

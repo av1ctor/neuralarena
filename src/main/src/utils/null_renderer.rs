@@ -44,24 +44,6 @@ impl Renderer for NullRenderer {
         Ok(model_ref)
     }
 
-    #[cfg(not(target_arch = "wasm32"))]
-    fn add_from_lines(
-        &mut self,
-        _color: three_rs::core::RGB,
-        _vertices: Vec<Vector3>
-    ) -> Result<ModelRef, String> {
-        unimplemented!()
-    }
-
-    #[cfg(not(target_arch = "wasm32"))]
-    fn add_from_linestrips(
-        &mut self,
-        _color: three_rs::core::RGB,
-        _vertices: Vec<Vector3>
-    ) -> Result<ModelRef, String> {
-        unimplemented!()
-    }
-
     fn show_model(
         &mut self,
         _model_ref: ModelRef
@@ -95,13 +77,12 @@ impl Renderer for NullRenderer {
     ) {
     }
 
-    #[cfg(not(target_arch = "wasm32"))]
-    fn set_vertices(
+    fn change_state(
         &mut self,
         _model_ref: ModelRef,
-        _vertices: Vec<Vector3>
+        _from: brains_engine::object::ObjectState,
+        _to: brains_engine::object::ObjectState
     ) {
-        unimplemented!()
     }
 
     fn render(

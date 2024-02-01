@@ -147,7 +147,7 @@ export class ThreeRenderer {
                 this.assets[asset_ref] = obj;
                 break;
             }
-            case GameAssetType.Key: {
+            case GameAssetType.Brain: {
                 const npcs = ['man'];
                 const gltf = await loader.loadAsync(
                     `/models/npcs/${npcs[0]}/default.gltf`
