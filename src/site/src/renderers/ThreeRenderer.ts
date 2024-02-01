@@ -12,6 +12,7 @@ export class ThreeRenderer {
     renderer: THREE.WebGLRenderer;
     scene: THREE.Scene;
     camera: THREE.PerspectiveCamera;
+    raycaster: THREE.Raycaster;
     controls?: OrbitControls;
     clock: THREE.Clock;
     width: number;
@@ -62,6 +63,8 @@ export class ThreeRenderer {
         directionalLight.shadow.bias = -0.00006;
         this.scene.add(directionalLight);
 
+        this.raycaster = new THREE.Raycaster();
+
         this.controls = this.renderer.domElement?
             new OrbitControls(this.camera, this.renderer.domElement):
             undefined;
@@ -83,10 +86,13 @@ export class ThreeRenderer {
     ) {
         const players = this.objects.filter(o => o.userData.isPlayer);
         if(player_num >= 0 && player_num < players.length) {
-            if(player_num !== this.pov.player_num) {
+            if(player_num !== this.pov.player_num || rotate_cam !== this.pov.rotate_cam) {
                 const player = players[player_num];
-                this.camera.position
-                    .set(player.position.x + 0.0, player.position.y + 5.0, player.position.z + 5.0);
+                this.camera.position.set(
+                    player.position.x + 0.0, 
+                    player.position.y + 5.0, 
+                    player.position.z + 5.0
+                );
 
                 this.pov = {
                     player_num,
@@ -132,16 +138,20 @@ export class ThreeRenderer {
                         const mesh = child as THREE.Mesh;
                         mesh.castShadow = true;
                         mesh.receiveShadow = true;
-                        const material = Array.isArray(mesh.material)? mesh.material[0]: mesh.material;
-                        material.side = THREE.FrontSide;
+                        const material = Array.isArray(mesh.material)? 
+                            mesh.material[0].clone(): 
+                            mesh.material.clone();
                         material.transparent = false;
-                        material.opacity = 0.5;
+                        material.opacity = 0.25;
 
                         if((material as any).map) {
                             (material as any).map.anisotropy = 4;
                         }
+                        mesh.material = material;
                     }
                 });
+
+                obj.userData.isMap = true;
 
                 this.assets[asset_ref] = obj;
                 break;
@@ -160,8 +170,8 @@ export class ThreeRenderer {
                 });
                 obj.visible = false;
 
-                obj.userData.animations = gltf.animations;
                 obj.userData.isPlayer = true;
+                obj.userData.animations = gltf.animations;
                 const bb = new THREE.Box3().setFromObject(obj);
                 obj.userData.height = (bb.max.y - bb.min.y) * 0.01;
 
@@ -184,8 +194,8 @@ export class ThreeRenderer {
                 });
                 obj.visible = false;
 
-                obj.userData.animations = gltf.animations;
                 obj.userData.isNpc = true;
+                obj.userData.animations = gltf.animations;
                 const bb = new THREE.Box3().setFromObject(obj);
                 obj.userData.height = (bb.max.y - bb.min.y) * 0.045;
 
@@ -325,14 +335,15 @@ export class ThreeRenderer {
 
     render(
     ) {
+        let player: THREE.Object3D<THREE.Object3DEventMap>|undefined = undefined;
         if(this.pov.player_num !== undefined) {
             const players = this.objects.filter(o => o.userData.isPlayer);
-            const player = players[this.pov.player_num];
+            player = players[this.pov.player_num];
 
             if(!this.pov.rotate_cam) {
                 this.camera.position.set(
-                    player.position.x + 0.0, 
-                    player.position.y + 5.0, 
+                    player.position.x + 5.0, 
+                    player.position.y + 3.0, 
                     player.position.z + 5.0
                 );
             }
@@ -347,11 +358,57 @@ export class ThreeRenderer {
             this.controls.update();
         }
 
+        let intersections: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[]|undefined = undefined;
+
+        if(player !== undefined) {
+            const map = this.objects.find(o => o.userData.isMap);
+            if(map) {
+                const dir = player.position
+                    .clone()
+                    .sub(this.camera.position)
+                    .normalize()
+
+                this.raycaster.set(this.camera.position.clone(), dir);
+
+                const maxDistance = this.camera.position.distanceTo(player.position);
+
+                intersections = this.raycaster.intersectObject(map);
+                for(const intersection of intersections) {
+                    if(intersection.distance < maxDistance) {
+                        const obj = intersection.object;
+                        if(obj && (obj as any).isMesh) {
+                            const mesh = obj as THREE.Mesh;
+                            const material = Array.isArray(mesh.material)? mesh.material[0]: mesh.material;
+                            if(!material.transparent) {
+                                material.transparent = true;
+                                material.needsUpdate = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         for(const obj of this.objects) {
             if(obj.userData.anim){
                 obj.userData.anim.update(1.0 / 60.0);
             }
         }
+
         this.renderer.render(this.scene, this.camera);
+
+        if(intersections) {
+            for(const intersection of intersections) {
+                const obj = intersection.object;
+                if(obj && (obj as any).isMesh) {
+                    const mesh = obj as THREE.Mesh;
+                    const material = Array.isArray(mesh.material)? mesh.material[0]: mesh.material;
+                    if(material.transparent) {
+                        material.transparent = false;
+                        material.needsUpdate = true;
+                    }
+                }
+            }
+        }
     }
 };
