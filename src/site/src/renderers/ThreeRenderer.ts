@@ -18,7 +18,10 @@ export class ThreeRenderer {
     height: number;
     assets: Array<THREE.Object3D>;
     objects: THREE.Object3D[];
-    pov?: THREE.Vector3;
+    pov: {
+        player_num?: number,
+        rotate_cam: boolean
+    };
 
     constructor(
         canvas: HTMLCanvasElement
@@ -31,9 +34,7 @@ export class ThreeRenderer {
         this.scene.fog = new THREE.Fog(0x88ccee, 0, 100)
 
         this.camera = new THREE.PerspectiveCamera(75.0, this.width / this.height, 0.1, 1000.0);
-        this.camera.position.x = 30.0;
-        this.camera.position.y = 10.0;
-        this.camera.position.z = 30.0;
+        this.camera.position.set(30.0, 10.0, 30.0);
 
         this.renderer = new THREE.WebGLRenderer(canvas? {canvas, antialias: true}: {antialias: true});
         this.renderer.shadowMap.enabled = true;
@@ -70,16 +71,28 @@ export class ThreeRenderer {
         this.assets = [];
         this.objects = [];
 
-        this.pov = undefined;
+        this.pov = {
+            player_num: undefined,
+            rotate_cam: false
+        };
     }
 
     change_pov(
-        pov: number
+        player_num: number,
+        rotate_cam?: boolean
     ) {
         const players = this.objects.filter(o => o.userData.isPlayer);
-        if(pov >= 0 && pov < players.length) {
-            const player = players[pov];
-            this.pov = player.position;
+        if(player_num >= 0 && player_num < players.length) {
+            if(player_num !== this.pov.player_num) {
+                const player = players[player_num];
+                this.camera.position
+                    .set(player.position.x + 0.0, player.position.y + 5.0, player.position.z + 5.0);
+
+                this.pov = {
+                    player_num,
+                    rotate_cam: rotate_cam? true: false
+                };
+            }
         }
     }
 
@@ -99,6 +112,11 @@ export class ThreeRenderer {
             obj.removeFromParent();
         }
         this.objects = [];
+        this.camera.position.set(30.0, 10.0, 30.0);
+        this.pov = {
+            player_num: undefined,
+            rotate_cam: false
+        };
     }
 
     async load_asset(
@@ -302,10 +320,17 @@ export class ThreeRenderer {
 
     render(
     ) {
-        if(this.pov) {
-            this.controls?.target.set(this.pov.x, this.pov.y, this.pov.z);
+        if(this.pov.player_num !== undefined) {
+            const players = this.objects.filter(o => o.userData.isPlayer);
+            const player = players[this.pov.player_num];
+            
+            this.controls?.target.set(player.position.x, player.position.y, player.position.z);
         }
-        this.controls?.update();
+
+        if(this.controls) {
+            this.controls.autoRotate = this.pov.rotate_cam;
+            this.controls.update();
+        }
 
         for(const obj of this.objects) {
             if(obj.userData.anim){

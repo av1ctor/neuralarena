@@ -251,7 +251,12 @@ export const Watch = (props: Props) => {
                         );
                         break;
                     case WatchState.FINISHED:
-                        //renderer?.show_winner(props.match.won_by as any);
+                        if(props.match.won_by.length > 0) {
+                            const winnerPrincipal = props.match.won_by[0]?.toString();
+                            const winner = props.match.players.findIndex(p => p.toString() === winnerPrincipal);
+                            renderer?.change_pov(winner, true);
+                        }
+                    //renderer?.show_winner(props.match.won_by as any);
                         engine.render(
                             Uint8Array.from([]), 
                             Uint8Array.from([]), 
