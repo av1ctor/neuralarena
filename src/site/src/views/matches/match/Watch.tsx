@@ -256,7 +256,7 @@ export const Watch = (props: Props) => {
                             const winner = props.match.players.findIndex(p => p.toString() === winnerPrincipal);
                             renderer?.change_pov(winner, true);
                         }
-                    //renderer?.show_winner(props.match.won_by as any);
+
                         engine.render(
                             Uint8Array.from([]), 
                             Uint8Array.from([]), 

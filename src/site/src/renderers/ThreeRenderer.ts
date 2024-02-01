@@ -34,7 +34,7 @@ export class ThreeRenderer {
         this.scene.fog = new THREE.Fog(0x88ccee, 0, 100)
 
         this.camera = new THREE.PerspectiveCamera(75.0, this.width / this.height, 0.1, 1000.0);
-        this.camera.position.set(30.0, 10.0, 30.0);
+        this.camera.position.set(15.0, 10.0, 15.0);
 
         this.renderer = new THREE.WebGLRenderer(canvas? {canvas, antialias: true}: {antialias: true});
         this.renderer.shadowMap.enabled = true;
@@ -112,7 +112,7 @@ export class ThreeRenderer {
             obj.removeFromParent();
         }
         this.objects = [];
-        this.camera.position.set(30.0, 10.0, 30.0);
+        this.camera.position.set(15.0, 10.0, 15.0);
         this.pov = {
             player_num: undefined,
             rotate_cam: false
@@ -324,7 +324,9 @@ export class ThreeRenderer {
             const players = this.objects.filter(o => o.userData.isPlayer);
             const player = players[this.pov.player_num];
             
-            this.controls?.target.set(player.position.x, player.position.y, player.position.z);
+            this.controls?.target.set(
+                player.position.x, player.position.y, player.position.z
+            );
         }
 
         if(this.controls) {

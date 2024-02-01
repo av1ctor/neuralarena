@@ -46,7 +46,7 @@ pub struct Match {
     pub id: String,
     pub options: MatchOptions,
     pub status: MatchStatus,
-    pub players: HashMap<UserId, usize>,
+    pub players: Vec<UserId>,
     pub state: MatchState,
     pub game: Option<Game>,
     pub agent: Option<DqnAgent>,
@@ -100,7 +100,7 @@ impl Match {
             state: MatchState { 
                 steps: vec![],
             },
-            players: HashMap::default(),
+            players: vec![],
             game: None,
             agent: None,
             created_at: ic_cdk::api::time(),
@@ -117,14 +117,12 @@ impl From<Match> for MatchResponse {
     fn from(
         e: Match
     ) -> Self {
-        let mut players = e.players.iter().collect::<Vec<_>>();
-        players.sort_by(|a, b| a.1.cmp(b.1));
         
         Self { 
             id: e.id,
             options: e.options,
             status: e.status,
-            players: players.iter().map(|e| e.0).cloned().collect(),
+            players: e.players,
             created_at: e.created_at,
             created_by: e.created_by,
             started_at: e.started_at,

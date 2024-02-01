@@ -170,11 +170,11 @@ impl MatchesService {
             return Err("Invalid match state".to_string());
         }
 
-        if m4tch.players.contains_key(caller) {
+        if m4tch.players.contains(caller) {
             return Err("Already part of the match".to_string());
         }
 
-        m4tch.players.insert(caller.clone(), num_players);
+        m4tch.players.push(caller.clone());
 
         let ok_to_run = m4tch.players.len() == m4tch.options.max_players;
         
@@ -324,9 +324,7 @@ impl MatchesService {
             running = !step.terminated && !step.timedout;
 
             if let Some(winner) = step.winner {
-                let player_ids = m4tch.players.iter().map(|p| p.0).collect::<Vec<_>>();
-
-                m4tch.won_by = Some(player_ids[winner].clone());
+                m4tch.won_by = Some(m4tch.players[winner].clone());
                 m4tch.won_at = Some(ic_cdk::api::time());
             }
 
