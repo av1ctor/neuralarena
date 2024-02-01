@@ -164,7 +164,7 @@ export class ThreeRenderer {
                 obj.userData.animations = gltf.animations;
                 obj.userData.isNpc = true;
                 const bb = new THREE.Box3().setFromObject(obj);
-                obj.userData.height = (bb.max.y - bb.min.y) * 0.05;
+                obj.userData.height = (bb.max.y - bb.min.y) * 0.045;
 
                 obj.scale.multiplyScalar(0.01);
 
