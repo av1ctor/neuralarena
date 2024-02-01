@@ -129,11 +129,16 @@ export class ThreeRenderer {
                 const obj = gltf.scene;
                 obj.traverse(child => {
                     if((child as any).isMesh) {
-                        child.castShadow = true;
-                        child.receiveShadow = true;
+                        const mesh = child as THREE.Mesh;
+                        mesh.castShadow = true;
+                        mesh.receiveShadow = true;
+                        const material = Array.isArray(mesh.material)? mesh.material[0]: mesh.material;
+                        material.side = THREE.FrontSide;
+                        material.transparent = false;
+                        material.opacity = 0.5;
 
-                        if((child as any).material.map) {
-                            (child as any).material.map.anisotropy = 4;
+                        if((material as any).map) {
+                            (material as any).map.anisotropy = 4;
                         }
                     }
                 });
@@ -323,6 +328,14 @@ export class ThreeRenderer {
         if(this.pov.player_num !== undefined) {
             const players = this.objects.filter(o => o.userData.isPlayer);
             const player = players[this.pov.player_num];
+
+            if(!this.pov.rotate_cam) {
+                this.camera.position.set(
+                    player.position.x + 0.0, 
+                    player.position.y + 5.0, 
+                    player.position.z + 5.0
+                );
+            }
             
             this.controls?.target.set(
                 player.position.x, player.position.y, player.position.z
