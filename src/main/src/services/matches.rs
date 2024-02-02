@@ -1,6 +1,6 @@
-use std::collections::{BTreeSet, HashSet};
+use std::collections::{BTreeSet, HashMap, HashSet};
 use brains_engine::{
-    env::{Asset, Env}, 
+    env::{Asset, AssetRef, Env}, 
     game::{Game, GameOptions, ObjectFOV, LevelOptions}, 
     map::Map
 };
@@ -33,7 +33,7 @@ impl MatchesService {
     pub fn get_assets(
         db: &DB,
         id: MatchId
-    ) -> Result<Vec<Asset>, String> {
+    ) -> Result<HashMap<AssetRef, Asset>, String> {
         let matches = db.matches.borrow_mut();
 
         let m4tch = match matches.find_by_id(&id) {

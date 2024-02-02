@@ -65,7 +65,7 @@ export const Watch = (props: Props) => {
     const { classes } = useStyles();
     const canvas = useRef<HTMLCanvasElement|null>(null);
     const fullscreenContainer = useRef<HTMLDivElement|null>(null);
-    const [assets, setAssets] = useState<Array<Asset>|undefined>();
+    const [assets, setAssets] = useState<Map<number, Asset>|undefined>();
     const [engine, setEngine] = useState<GameWrapper>();
     const [renderer, setRenderer] = useState<ThreeRenderer>();
     const [state, setState] = useState<WatchState>(WatchState.PAUSED);
@@ -166,8 +166,8 @@ export const Watch = (props: Props) => {
             try {
                 setLoadingProgress(5);
                 const assets = await matchGetAssets(main, props.match.id);
-                for(let i = 0; i < assets.length; i++) {
-                    await renderer.load_asset(i, assets[i]);
+                for(const e of assets.entries()) {
+                    await renderer.load_asset(e[0], e[1]);
                 }
                 setAssets(assets);
             }

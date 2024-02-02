@@ -30,6 +30,7 @@ impl Renderer for NullRenderer {
 
     fn load_asset(
         &mut self,
+        _asset_ref: AssetRef,
         _asset: &Asset
     ) -> Result<(), String> {
         Ok(())

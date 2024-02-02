@@ -22,7 +22,7 @@ type GameResponse = record {
   category : text;
   image : text;
 };
-type MatchAssetsResponse = record { assets : vec Asset };
+type MatchAssetsResponse = record { assets : vec record { nat64; Asset } };
 type MatchOptions = record {
   min_players : nat64;
   num_hidden_layers : nat64;

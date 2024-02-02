@@ -17,7 +17,7 @@ export class ThreeRenderer {
     clock: THREE.Clock;
     width: number;
     height: number;
-    assets: Array<THREE.Object3D>;
+    assets: Map<number, THREE.Object3D>;
     objects: THREE.Object3D[];
     pov: {
         player_num?: number,
@@ -71,7 +71,7 @@ export class ThreeRenderer {
 
         this.clock = new THREE.Clock();
 
-        this.assets = [];
+        this.assets = new Map();
         this.objects = [];
 
         this.pov = {
@@ -153,7 +153,7 @@ export class ThreeRenderer {
 
                 obj.userData.isMap = true;
 
-                this.assets[asset_ref] = obj;
+                this.assets.set(asset_ref, obj);
                 break;
             }
             case GameAssetType.Player: {
@@ -177,10 +177,10 @@ export class ThreeRenderer {
 
                 obj.scale.multiplyScalar(0.01);
 
-                this.assets[asset_ref] = obj;
+                this.assets.set(asset_ref, obj);
                 break;
             }
-            case GameAssetType.Brain: {
+            case GameAssetType.Npc: {
                 const npcs = ['man'];
                 const gltf = await loader.loadAsync(
                     `/models/npcs/${npcs[0]}/default.gltf`
@@ -201,7 +201,7 @@ export class ThreeRenderer {
 
                 obj.scale.multiplyScalar(0.01);
 
-                this.assets[asset_ref] = obj;
+                this.assets.set(asset_ref, obj);
                 break;
             }
             case GameAssetType.Exit: {
@@ -213,7 +213,7 @@ export class ThreeRenderer {
                 obj.visible = false;
                 
                 this.scene.add(obj);
-                this.assets[asset_ref] = obj;
+                this.assets.set(asset_ref, obj);
                 break;
             }
             default: {
@@ -227,7 +227,7 @@ export class ThreeRenderer {
         asset_ref: number,
         model_ref: number
     ): number {
-        const obj = this.assets[asset_ref];
+        const obj = this.assets.get(asset_ref);
         if(!obj) {
             throw new Error("Unknown asset: " + asset_ref);
         }

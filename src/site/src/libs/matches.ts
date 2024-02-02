@@ -137,11 +137,16 @@ export const matchGetSteps = async (
 export const matchGetAssets = async (
     main: Main,
     id: MatchId
-): Promise<Array<Asset>> => {
+): Promise<Map<number, Asset>> => {
     const res = await main.match_get_assets(id);
     if('Err' in res) {
         throw new Error(res.Err);
     }
+
+    const assets = new Map<number, Asset>();
+    for(const e of res.Ok.assets) {
+        assets.set(Number(e[0]), e[1]);
+    }
     
-    return res.Ok.assets; 
+    return assets; 
 };
