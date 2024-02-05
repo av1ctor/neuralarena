@@ -53,7 +53,7 @@ enum WatchState {
 
 interface Props {
     match: MatchResponse,
-    pov: number
+    pov: number|undefined,
 }
 
 const FPS = 60;
@@ -182,7 +182,9 @@ export const Watch = (props: Props) => {
     }, [loadAssets]);
 
     useEffect(() => {
-        renderer?.change_pov(props.pov);
+        if(props.pov !== undefined) {
+            renderer?.change_pov(props.pov);
+        }
     }, [props.pov, renderer]);
 
     useEffect(() => {

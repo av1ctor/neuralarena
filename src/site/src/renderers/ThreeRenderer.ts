@@ -197,9 +197,9 @@ export class ThreeRenderer {
                 obj.userData.isNpc = true;
                 obj.userData.animations = gltf.animations;
                 const bb = new THREE.Box3().setFromObject(obj);
-                obj.userData.height = (bb.max.y - bb.min.y) * 0.045;
+                obj.userData.height = (bb.max.y - bb.min.y) * 0.05;
 
-                obj.scale.multiplyScalar(0.01);
+                obj.scale.multiplyScalar(0.011);
 
                 this.assets.set(asset_ref, obj);
                 break;
@@ -244,8 +244,8 @@ export class ThreeRenderer {
             }
 
             cloned.userData.actions = actions;
-            cloned.userData.activeAction = 'Idle';
-            (cloned.userData.actions as any)[cloned.userData.activeAction]?.play();
+            cloned.userData.action = 'Idle';
+            (cloned.userData.actions as any)[cloned.userData.action]?.play();
         }
 
         this.objects[model_ref] = cloned;
@@ -267,34 +267,60 @@ export class ThreeRenderer {
 
     change_state(
         model_ref: number,
-        _from: ObjectState,
+        from: ObjectState,
         to: ObjectState
     ) {
         const obj = this.objects[model_ref];
-        let toAction = undefined;
+        let action = undefined;
+        let repeat = false;
         switch(to) {
-            case ObjectState.MOVING:
-                toAction = 'Walking';
+            case ObjectState.IDLE:
+                action = 'Idle';
+                repeat = true;
                 break;
-            case ObjectState.EATING:
-                toAction = 'Eating';
+            case ObjectState.WALKING:
+                action = 'Walking';
+                repeat = true;
                 break;
             case ObjectState.CELEBRATING:
-                toAction = 'Celebrating';
+                action = 'Celebrating';
+                repeat = true;
+                break;
+            case ObjectState.BITING:
+                action = 'Biting';
+                break;
+            case ObjectState.PUNCHING:
+                action = 'Punching';
+                break;
+            case ObjectState.HIT:
+                action = 'Hit';
+                break;
+            case ObjectState.DYING:
+            case ObjectState.DEAD:
+                action = 'Dying';
+                break;
+            default:
+                console.log(`Unknown: ${to}`);
                 break;
         }
 
-        if(obj.userData.actions && toAction) {
-            const from = (obj.userData.actions as any)[obj.userData.activeAction];
-            const to = (obj.userData.actions as any)[toAction];
-            if(from) {
-                to?.crossFadeFrom(from, 0.5, false);
+        if(obj.userData.actions && action) {
+            const fromAction = (obj.userData.actions as Record<string, THREE.AnimationAction>)[obj.userData.action];
+            const toAction = (obj.userData.actions as Record<string, THREE.AnimationAction>)[action];
+            if(obj.userData.action !== action) {
+                if(toAction) {
+                    if(fromAction) {
+                        fromAction.fadeOut(.1);
+                    }
+                    
+                    toAction.loop = repeat? THREE.LoopRepeat: THREE.LoopOnce;
+                    toAction.enabled = true;
+                    toAction.clampWhenFinished = !repeat;
+                    toAction.reset().fadeIn(0.1).play();
+                    
+                    obj.userData.action = action;
+                }
             }
-            if(to) {
-                to.play();
-                to.enabled = true;
-            }
-            obj.userData.activeAction = toAction;
         }
     }
 

@@ -75,7 +75,7 @@ impl MatchesService {
                 },
                 num_players: 0,
                 min_keys: 4,
-                max_steps: 60 * 60,
+                max_steps: 60 * 60 * 2,
                 player_radius,
                 debug: false,
                 training: false,
