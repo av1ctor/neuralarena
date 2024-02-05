@@ -23,6 +23,7 @@ const MAP: &[u8] = include_bytes!("../../maps/map-no-tex.glb");
 const NAVMESH: &[u8] = include_bytes!("../../maps/navmesh.bin");
 
 struct Player {
+    active: bool,
     last_thought: u32,
     steps_per_thought: u32,
     obs: Tensor,
@@ -279,6 +280,7 @@ impl MatchesService {
         for i in 0..game.options.num_players {
             let steps_per_thought = rng.gen_range(1000..10000);
             players.push(Player {
+                active: true,
                 last_thought: 0,
                 steps_per_thought,
                 obs: obs[i].to_owned().into(),
@@ -297,18 +299,20 @@ impl MatchesService {
                 let p = players_idx[i];
                 let player = &mut players[p];
                 
-                player.last_thought += 1000;
-                if player.last_thought >= player.steps_per_thought {
-                    player.last_thought = 0;
+                if player.active {
+                    player.last_thought += 1000;
+                    if player.last_thought >= player.steps_per_thought {
+                        player.last_thought = 0;
 
-                    actions[p] = match agent.choose_action(player.obs.clone(), rng) {
-                        Some(action) => Some(action),
-                        None => Some(game.random_action(rng)),
-                    };
+                        actions[p] = match agent.choose_action(player.obs.clone(), rng) {
+                            Some(action) => Some(action),
+                            None => Some(game.random_action(rng)),
+                        };
+                    }
                 }
             }
 
-            let step = game.step(&actions, 1.0, &mut renderer);
+            let step = game.step(&actions, 1.0, &mut renderer, rng);
             steps += 1;
 
             let entities = game.serialize_entities()?;
@@ -329,6 +333,7 @@ impl MatchesService {
             }
 
             for i in 0..step.players.len() {
+                players[i].active = step.players[i].active;
                 players[i].obs = step.players[i].obs.to_owned().into();
             }
 
