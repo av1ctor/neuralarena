@@ -48,7 +48,7 @@ export class ThreeRenderer {
         fillLight1.position.set(0, 300, 0);
         this.scene.add(fillLight1);
 
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 3.0);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
         directionalLight.position.set(15, 30, 10);
         directionalLight.castShadow = true;
         directionalLight.shadow.camera.near = 0.01;
