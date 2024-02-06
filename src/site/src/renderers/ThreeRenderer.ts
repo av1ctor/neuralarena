@@ -44,11 +44,11 @@ export class ThreeRenderer {
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(this.width, this.height);
 
-        const fillLight1 = new THREE.HemisphereLight(0xffffff, 0x444444, 6.0);
+        const fillLight1 = new THREE.HemisphereLight(0xffffff, 0x444444, 2.0);
         fillLight1.position.set(0, 300, 0);
         this.scene.add(fillLight1);
 
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 7.0);
         directionalLight.position.set(15, 30, 10);
         directionalLight.castShadow = true;
         directionalLight.shadow.camera.near = 0.01;
@@ -57,8 +57,8 @@ export class ThreeRenderer {
         directionalLight.shadow.camera.left = -60.0;
         directionalLight.shadow.camera.top = 60.0;
         directionalLight.shadow.camera.bottom = -60.0;
-        directionalLight.shadow.mapSize.width = 1024;
-        directionalLight.shadow.mapSize.height = 1024;
+        directionalLight.shadow.mapSize.width = 2048;
+        directionalLight.shadow.mapSize.height = 2048;
         directionalLight.shadow.radius = 4;
         directionalLight.shadow.bias = -0.00006;
         this.scene.add(directionalLight);
