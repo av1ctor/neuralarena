@@ -9,7 +9,7 @@ import {
     IconPlayerPause, IconPlayerPlay, IconQuestionMark, 
     IconRefresh, IconWindowMaximize, IconWindowMinimize, 
 } from "@tabler/icons-react";
-import GameEngineInit, {GameWrapper, GameOptionsWrapper, ObjectFOVWrapper} from "brains-engine";
+import GameEngineInit, {GameWrapper, GameOptionsWrapper, PlayerFOVWrapper} from "brains-engine";
 
 GameEngineInit();
 
@@ -202,7 +202,7 @@ export const Watch = (props: Props) => {
             
             setEngine(new GameWrapper(
                 new GameOptionsWrapper(
-                    new ObjectFOVWrapper(
+                    new PlayerFOVWrapper(
                         15.0, 
                         180.0*(Math.PI/180.0), 
                         40.0

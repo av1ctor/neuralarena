@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
-import { GameAssetType, ObjectState } from "brains-engine";
+import { GameAssetType, EntityState } from "brains-engine";
 import { Asset } from '../../../declarations/main/main.did';
 import { gameAssetDataU32Value } from '../libs/games';
 
@@ -18,7 +18,7 @@ export class ThreeRenderer {
     width: number;
     height: number;
     assets: Map<number, THREE.Object3D>;
-    objects: THREE.Object3D[];
+    entities: THREE.Object3D[];
     pov: {
         player_num?: number,
         rotate_cam: boolean
@@ -72,7 +72,7 @@ export class ThreeRenderer {
         this.clock = new THREE.Clock();
 
         this.assets = new Map();
-        this.objects = [];
+        this.entities = [];
 
         this.pov = {
             player_num: undefined,
@@ -84,7 +84,7 @@ export class ThreeRenderer {
         player_num: number,
         rotate_cam?: boolean
     ) {
-        const players = this.objects.filter(o => o.userData.isPlayer);
+        const players = this.entities.filter(o => o.userData.isPlayer);
         if(player_num >= 0 && player_num < players.length) {
             if(player_num !== this.pov.player_num || rotate_cam !== this.pov.rotate_cam) {
                 const player = players[player_num];
@@ -114,10 +114,10 @@ export class ThreeRenderer {
 
     reset(
     ) {
-        for(const obj of this.objects) {
+        for(const obj of this.entities) {
             obj.removeFromParent();
         }
-        this.objects = [];
+        this.entities = [];
         this.camera.position.set(15.0, 10.0, 15.0);
         this.pov = {
             player_num: undefined,
@@ -132,8 +132,8 @@ export class ThreeRenderer {
         switch (Number(asset.typ)) {
             case GameAssetType.Level: {
                 const gltf = await loader.loadAsync("/maps/level-0/map.gltf");
-                const obj = gltf.scene;
-                obj.traverse(child => {
+                const mesh = gltf.scene;
+                mesh.traverse(child => {
                     if((child as any).isMesh) {
                         const mesh = child as THREE.Mesh;
                         mesh.castShadow = true;
@@ -151,9 +151,9 @@ export class ThreeRenderer {
                     }
                 });
 
-                obj.userData.isMap = true;
+                mesh.userData.isMap = true;
 
-                this.assets.set(asset_ref, obj);
+                this.assets.set(asset_ref, mesh);
                 break;
             }
             case GameAssetType.Player: {
@@ -161,23 +161,23 @@ export class ThreeRenderer {
                 const gltf = await loader.loadAsync(
                     `/models/zombies/${zombies[gameAssetDataU32Value(asset, 'num') || 0]}/default.gltf`
                 );
-                const obj = gltf.scene;
-                obj.traverse(child => {
+                const mesh = gltf.scene;
+                mesh.traverse(child => {
                     if((child as any).isMesh) {
                         child.castShadow = true;
                         child.receiveShadow = true;
                     }
                 });
-                obj.visible = false;
+                mesh.visible = false;
 
-                obj.userData.isPlayer = true;
-                obj.userData.animations = gltf.animations;
-                const bb = new THREE.Box3().setFromObject(obj);
-                obj.userData.height = (bb.max.y - bb.min.y) * 0.01;
+                mesh.userData.isPlayer = true;
+                mesh.userData.animations = gltf.animations;
+                const bb = new THREE.Box3().setFromObject(mesh);
+                mesh.userData.height = (bb.max.y - bb.min.y) * 0.01;
 
-                obj.scale.multiplyScalar(0.01);
+                mesh.scale.multiplyScalar(0.01);
 
-                this.assets.set(asset_ref, obj);
+                this.assets.set(asset_ref, mesh);
                 break;
             }
             case GameAssetType.Npc: {
@@ -185,23 +185,23 @@ export class ThreeRenderer {
                 const gltf = await loader.loadAsync(
                     `/models/npcs/${npcs[0]}/default.gltf`
                 );
-                const obj = gltf.scene;
-                obj.traverse(child => {
+                const mesh = gltf.scene;
+                mesh.traverse(child => {
                     if((child as any).isMesh) {
                         child.castShadow = true;
                         child.receiveShadow = true;
                     }
                 });
-                obj.visible = false;
+                mesh.visible = false;
 
-                obj.userData.isNpc = true;
-                obj.userData.animations = gltf.animations;
-                const bb = new THREE.Box3().setFromObject(obj);
-                obj.userData.height = (bb.max.y - bb.min.y) * 0.05;
+                mesh.userData.isNpc = true;
+                mesh.userData.animations = gltf.animations;
+                const bb = new THREE.Box3().setFromObject(mesh);
+                mesh.userData.height = (bb.max.y - bb.min.y) * 0.05;
 
-                obj.scale.multiplyScalar(0.011);
+                mesh.scale.multiplyScalar(0.011);
 
-                this.assets.set(asset_ref, obj);
+                this.assets.set(asset_ref, mesh);
                 break;
             }
             case GameAssetType.Exit: {
@@ -209,11 +209,11 @@ export class ThreeRenderer {
                 const material = new THREE.MeshBasicMaterial({
                     color: 0x0000ff
                 });
-                const obj = new THREE.Mesh(geometry, material);
-                obj.visible = false;
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.visible = false;
                 
-                this.scene.add(obj);
-                this.assets.set(asset_ref, obj);
+                this.scene.add(mesh);
+                this.assets.set(asset_ref, mesh);
                 break;
             }
             default: {
@@ -248,7 +248,7 @@ export class ThreeRenderer {
             (cloned.userData.actions as any)[cloned.userData.action]?.play();
         }
 
-        this.objects[model_ref] = cloned;
+        this.entities[model_ref] = cloned;
         this.scene.add(cloned)
         return model_ref;
     }
@@ -256,47 +256,47 @@ export class ThreeRenderer {
     show_model(
         model_ref: number
     ) {
-        this.objects[model_ref].visible = true;
+        this.entities[model_ref].visible = true;
     }
 
     hide_model(
         model_ref: number
     ) {
-        this.objects[model_ref].visible = false;
+        this.entities[model_ref].visible = false;
     }
 
     change_state(
         model_ref: number,
-        from: ObjectState,
-        to: ObjectState
+        from: EntityState,
+        to: EntityState
     ) {
-        const obj = this.objects[model_ref];
+        const obj = this.entities[model_ref];
         let action = undefined;
         let repeat = false;
         switch(to) {
-            case ObjectState.IDLE:
+            case EntityState.IDLE:
                 action = 'Idle';
                 repeat = true;
                 break;
-            case ObjectState.WALKING:
+            case EntityState.WALKING:
                 action = 'Walking';
                 repeat = true;
                 break;
-            case ObjectState.CELEBRATING:
+            case EntityState.CELEBRATING:
                 action = 'Celebrating';
                 repeat = true;
                 break;
-            case ObjectState.BITING:
+            case EntityState.BITING:
                 action = 'Biting';
                 break;
-            case ObjectState.PUNCHING:
+            case EntityState.PUNCHING:
                 action = 'Punching';
                 break;
-            case ObjectState.HIT:
+            case EntityState.HIT:
                 action = 'Hit';
                 break;
-            case ObjectState.DYING:
-            case ObjectState.DEAD:
+            case EntityState.DYING:
+            case EntityState.DEAD:
                 action = 'Dying';
                 break;
             default:
@@ -328,7 +328,7 @@ export class ThreeRenderer {
         model_ref: number,
         pos: Float32Array
     ) {
-        const obj = this.objects[model_ref];
+        const obj = this.entities[model_ref];
         obj.position.x = pos[0];
         if(obj.userData.height) {
             obj.position.y = pos[1] + obj.userData.height * 0.5; 
@@ -343,7 +343,7 @@ export class ThreeRenderer {
         model_ref: number,
         q: Float32Array
     ) {
-        const obj = this.objects[model_ref];
+        const obj = this.entities[model_ref];
         obj.setRotationFromQuaternion(
             new THREE.Quaternion(q[0], q[1], q[2], q[3])
         );
@@ -353,7 +353,7 @@ export class ThreeRenderer {
         model_ref: number,
         scale: Float32Array
     ) {
-        const obj = this.objects[model_ref];
+        const obj = this.entities[model_ref];
         obj.scale.x = scale[0];
         obj.scale.y = scale[1];
         obj.scale.z = scale[2];
@@ -363,7 +363,7 @@ export class ThreeRenderer {
     ) {
         let player: THREE.Object3D<THREE.Object3DEventMap>|undefined = undefined;
         if(this.pov.player_num !== undefined) {
-            const players = this.objects.filter(o => o.userData.isPlayer);
+            const players = this.entities.filter(o => o.userData.isPlayer);
             player = players[this.pov.player_num];
 
             if(!this.pov.rotate_cam) {
@@ -387,7 +387,7 @@ export class ThreeRenderer {
         let intersections: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[]|undefined = undefined;
 
         if(player !== undefined) {
-            const map = this.objects.find(o => o.userData.isMap);
+            const map = this.entities.find(o => o.userData.isMap);
             if(map) {
                 const dir = player.position
                     .clone()
@@ -415,7 +415,7 @@ export class ThreeRenderer {
             }
         }
 
-        for(const obj of this.objects) {
+        for(const obj of this.entities) {
             if(obj.userData.anim){
                 obj.userData.anim.update(1.0 / 60.0);
             }

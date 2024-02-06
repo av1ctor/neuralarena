@@ -1,7 +1,8 @@
 use std::collections::{BTreeSet, HashMap, HashSet};
 use brains_engine::{
     env::{Asset, AssetRef, Env}, 
-    game::{Game, GameOptions, ObjectFOV, LevelOptions}, 
+    game::{Game, GameOptions, LevelOptions}, 
+    player::PlayerFOV,
     map::Map
 };
 use candid::Principal;
@@ -69,7 +70,7 @@ impl MatchesService {
                 level: LevelOptions {
                     num: 0
                 },
-                fov: ObjectFOV { 
+                fov: PlayerFOV { 
                     rays, 
                     angle, 
                     max_dist: 2.5,

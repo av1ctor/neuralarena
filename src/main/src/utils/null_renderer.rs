@@ -1,6 +1,7 @@
 use brains_engine::{
     renderer::{ModelRef, Renderer},
     env::{Asset, AssetRef},
+    entity::EntityState
 };
 use three_rs::math::{
     Vector3, Quaternion
@@ -81,8 +82,8 @@ impl Renderer for NullRenderer {
     fn change_state(
         &mut self,
         _model_ref: ModelRef,
-        _from: brains_engine::object::ObjectState,
-        _to: brains_engine::object::ObjectState
+        _from: EntityState,
+        _to: EntityState
     ) {
     }
 
