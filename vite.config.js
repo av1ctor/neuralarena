@@ -12,7 +12,7 @@ dotenv.config({
   path: resolve(process.cwd(), '.env'),
 });
 
-const UI_ENV_VARS = ['DFX_NETWORK', 'BACKEND_CANISTER_ID'];
+const UI_ENV_VARS = ['DFX_NETWORK', 'MAIN_CANISTER_ID'];
 
 process.env = {
   ...process.env,
@@ -46,6 +46,7 @@ export default defineConfig({
     build: {
         rollupOptions: {
             output: {
+                dir: resolve(process.cwd(), 'dist', 'site'),
                 manualChunks: id => {
                     if (id.includes('@dfinity')) {
                         return 'dfinity-vendor';
@@ -55,7 +56,7 @@ export default defineConfig({
         },
     },
     worker: {
-        plugins: [
+        plugins: () => [
             wasm(),
             topLevelAwait()
         ]
