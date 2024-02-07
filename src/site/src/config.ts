@@ -6,12 +6,12 @@ export const config = {
         'https://ic0.app':
         undefined,
     IC_URL: isProduction?
-        process.env.IC_URL:
-        process.env.IC_URL_LOCAL,
+        process.env.VITE_IC_URL:
+        process.env.VITE_IC_URL_LOCAL,
     II_URL: isProduction?
-        process.env.II_URL:
-        process.env.II_URL_LOCAL,
+        process.env.VITE_II_URL:
+        process.env.VITE_II_URL_LOCAL,
     APP_URL: isProduction?
-        process.env.APP_URL:
-        process.env.APP_URL_LOCAL,
+        process.env.VITE_APP_URL:
+        process.env.VITE_APP_URL_LOCAL,
 }

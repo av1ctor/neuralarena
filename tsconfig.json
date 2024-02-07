@@ -32,5 +32,6 @@
     "include": ["src/site/**/*"],
     "exclude": [
         "src/declarations/**",
-    ]
+    ],
+    "references": [{ "path": "./tsconfig.node.json" }]
 }

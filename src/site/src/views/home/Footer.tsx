@@ -2,6 +2,7 @@ import React from 'react';
 import { Anchor, Center, Container, Divider, Grid, Space, Stack, Text } from '@mantine/core';
 import { IconBrandGithubFilled, IconBrandTwitterFilled } from '@tabler/icons-react';
 import { FormattedMessage } from 'react-intl';
+import poweredBy from "../../assets/powered-by.svg";
 
 interface Props {
 }
@@ -17,7 +18,7 @@ const AppFooter = (props: Props) => {
                 <Grid.Col span={12}>
                     <Center>
                         <a href="https://dfinity.org" target="_blank">
-                            <img src="/powered-by.svg" />
+                            <img src={poweredBy} />
                         </a>
                     </Center>
                 </Grid.Col>

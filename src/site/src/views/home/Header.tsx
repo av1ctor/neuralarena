@@ -5,6 +5,7 @@ import { IconChevronDown, IconHome2, IconMoonStars, IconSun } from '@tabler/icon
 import { AuthMenu } from './menus/Auth';
 import { UserMenu } from './menus/User';
 import { useAuth } from '../../hooks/auth';
+import neuralArenaLogo from "../../assets/neuralarena-logo.svg";
 
 const useStyles = createStyles((theme) => ({
     link: {
@@ -73,7 +74,7 @@ const AppHeader = (props: Props) => {
             <Header height={60} px="md" zIndex={101}>
                 <Group position="apart" sx={{ height: '100%' }}>
                     <Group sx={{ height: '100%' }} spacing={0} className={classes.hiddenMobile}>
-                        <img src="/neuralarena-logo.svg" />
+                        <img src={neuralArenaLogo} />
 
                         <a href="#" className={classes.link}>
                             <IconHome2 size="1rem" />&nbsp;Home

@@ -3,6 +3,7 @@ import { createStyles, Image, Container, Title, Button, Group, Text, List, Theme
 import { IconBrandGithub, IconCheck, IconUserPlus } from '@tabler/icons-react';
 import { useBrowser } from "../../hooks/browser";
 import { Top } from "../games/Top";
+import neuralArenaLogo from "../../assets/logo.svg";
   
 const useStyles = createStyles((theme) => ({
     inner: {
@@ -129,7 +130,7 @@ const Landing = () => {
                     </Group>
                 </div>
                 <div className={classes.imageContainer}>
-                    <Image src="logo.svg" className={classes.image} />
+                    <Image src={neuralArenaLogo} className={classes.image} />
                 </div>
             </div>
 

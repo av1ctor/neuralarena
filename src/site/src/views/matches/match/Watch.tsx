@@ -9,9 +9,9 @@ import {
     IconPlayerPause, IconPlayerPlay, IconQuestionMark, 
     IconRefresh, IconWindowMaximize, IconWindowMinimize, 
 } from "@tabler/icons-react";
-import GameEngineInit, {GameWrapper, GameOptionsWrapper, PlayerFOVWrapper} from "brains-engine";
+import init, {GameWrapper, GameOptionsWrapper, PlayerFOVWrapper} from "brains-engine";
 
-GameEngineInit();
+init();
 
 const useStyles = createStyles((theme) => ({
     container: {

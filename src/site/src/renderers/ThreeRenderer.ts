@@ -299,9 +299,6 @@ export class ThreeRenderer {
             case EntityState.DEAD:
                 action = 'Dying';
                 break;
-            default:
-                console.log(`Unknown: ${to}`);
-                break;
         }
 
         if(obj.userData.actions && action) {
