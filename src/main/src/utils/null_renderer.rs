@@ -58,28 +58,28 @@ impl Renderer for NullRenderer {
     ) {
     }
 
-    fn set_position(
+    fn set_model_position(
         &mut self,
         _model_ref: ModelRef,
         _pos: &Vector3
     ) {
     }
 
-    fn set_rotation(
+    fn set_model_rotation(
         &mut self,
         _model_ref: ModelRef,
         _q: &Quaternion
     ) {
     }
 
-    fn set_scale(
+    fn set_model_scale(
         &mut self,
         _model_ref: ModelRef,
         _scale: &Vector3
     ) {
     }
 
-    fn change_state(
+    fn change_model_state(
         &mut self,
         _model_ref: ModelRef,
         _from: EntityState,

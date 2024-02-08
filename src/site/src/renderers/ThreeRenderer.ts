@@ -265,7 +265,7 @@ export class ThreeRenderer {
         this.entities[model_ref].visible = false;
     }
 
-    change_state(
+    change_model_state(
         model_ref: number,
         from: EntityState,
         to: EntityState
@@ -321,7 +321,7 @@ export class ThreeRenderer {
         }
     }
 
-    set_position(
+    set_model_position(
         model_ref: number,
         pos: Float32Array
     ) {
@@ -336,7 +336,7 @@ export class ThreeRenderer {
         obj.position.z = pos[2];
     }
 
-    set_rotation(
+    set_model_rotation(
         model_ref: number,
         q: Float32Array
     ) {
@@ -346,7 +346,7 @@ export class ThreeRenderer {
         );
     }
 
-    set_scale(
+    set_model_scale(
         model_ref: number,
         scale: Float32Array
     ) {
