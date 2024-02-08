@@ -9,6 +9,7 @@ import Login from "../users/user/Login";
 import Signup from "../users/user/Signup";
 import { Game } from "../games/game/Game";
 import { Match } from "../matches/match/Match";
+import loadingImage from "../../assets/loading.svg";
 
 interface Props {
 }
@@ -50,7 +51,7 @@ const Home = (props: Props) => {
                 <Footer />
             </AppShell>
             
-            <LoadingOverlay loader={<img src="/loading.svg" />} visible={isLoading}  />
+            <LoadingOverlay loader={<img src={loadingImage} />} visible={isLoading}  />
         </>
     );
 };
