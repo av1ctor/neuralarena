@@ -3,7 +3,6 @@ import {HashRouter as Router} from "react-router-dom";
 import {QueryClient, QueryClientProvider} from 'react-query';
 import {AuthContextProvider} from "./stores/auth";
 import { ActorContextProvider } from "./stores/actor";
-import { IntlContextProvider } from "./stores/intl";
 import { UIContextProvider } from "./stores/ui";
 import { WalletContextProvider } from "./stores/wallet";
 import { IcProviderBuider } from "./libs/icproviderbuilder";
@@ -42,36 +41,34 @@ export const App = () => {
     }, [colorScheme, setColorScheme]);
         
     return (
-        <IntlContextProvider>
-            <QueryClientProvider client={queryClient}>
-                <AuthContextProvider provider={authProvider}>
-                    <WalletContextProvider>
-                        <ActorContextProvider>
-                            <UIContextProvider>
-                                <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-                                    <MantineProvider 
-                                        theme={{ 
-                                            colorScheme, 
-                                            primaryColor: 'magenta',
-                                            colors: colors as any, 
-                                            defaultGradient: {from: '#ff6600', to: '#ff00ff', deg: 135.0}
-                                        }} 
-                                        withGlobalStyles 
-                                        withNormalizeCSS
-                                    >
-                                        <GlobalStyles />
-                                        <Notifications position="bottom-right" />
-                                        <Router> 
-                                            <Home />
-                                        </Router>
-                                    </MantineProvider>
-                                </ColorSchemeProvider>
-                            </UIContextProvider>
-                        </ActorContextProvider>
-                    </WalletContextProvider>
-                </AuthContextProvider>
-            </QueryClientProvider>
-        </IntlContextProvider> 
+        <QueryClientProvider client={queryClient}>
+            <AuthContextProvider provider={authProvider}>
+                <WalletContextProvider>
+                    <ActorContextProvider>
+                        <UIContextProvider>
+                            <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+                                <MantineProvider 
+                                    theme={{ 
+                                        colorScheme, 
+                                        primaryColor: 'magenta',
+                                        colors: colors as any, 
+                                        defaultGradient: {from: '#ff6600', to: '#ff00ff', deg: 135.0}
+                                    }} 
+                                    withGlobalStyles 
+                                    withNormalizeCSS
+                                >
+                                    <GlobalStyles />
+                                    <Notifications position="bottom-right" />
+                                    <Router> 
+                                        <Home />
+                                    </Router>
+                                </MantineProvider>
+                            </ColorSchemeProvider>
+                        </UIContextProvider>
+                    </ActorContextProvider>
+                </WalletContextProvider>
+            </AuthContextProvider>
+        </QueryClientProvider>
     );
 };
 

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect } from "react";
 import { Text, Center, Group, Stack, ThemeIcon, Title, UnstyledButton, createStyles, Grid } from "@mantine/core";
-import { FormattedMessage } from "react-intl";
 import { useAuth } from "../../../../../site/src/hooks/auth";
 import { useUI } from "../../../../../site/src/hooks/ui";
 import { ICProviderType } from "../../../../../site/src/interfaces/icprovider";
@@ -97,7 +96,7 @@ const Login = (props: Props) => {
         <Stack mih="20rem">
             <Center>
                 <Title order={4}>
-                    <FormattedMessage defaultMessage="Please choose a provider"/>
+                    Please choose a provider
                 </Title>
             </Center>
             <Grid>

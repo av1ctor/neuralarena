@@ -1,7 +1,6 @@
 import React from 'react';
 import { Anchor, Center, Container, Divider, Grid, Space, Stack, Text } from '@mantine/core';
 import { IconBrandGithubFilled, IconBrandTwitterFilled } from '@tabler/icons-react';
-import { FormattedMessage } from 'react-intl';
 import poweredBy from "../../assets/powered-by.svg";
 
 interface Props {
@@ -27,20 +26,20 @@ const AppFooter = (props: Props) => {
                 <Grid.Col span={4}>
                     <Stack>
                         <Anchor href="#/about">
-                            <FormattedMessage id="Aboutus" defaultMessage="About us"/>
+                            About us
                         </Anchor>
                         <Anchor href="#/jobs">
-                            <FormattedMessage id="Jobs" defaultMessage="Jobs" />
+                            Jobs
                         </Anchor>
                     </Stack>
                 </Grid.Col>
                 <Grid.Col span={4}>
                     <Stack>
                         <Anchor href="#/policies">
-                            <FormattedMessage id="Policies" defaultMessage="Policies" />
+                            Policies
                         </Anchor>
                         <Anchor href="#/privacy">
-                            <FormattedMessage id="Privacy" defaultMessage="Privacy" />
+                            Privacy
                         </Anchor>
                     </Stack>
                 </Grid.Col>
