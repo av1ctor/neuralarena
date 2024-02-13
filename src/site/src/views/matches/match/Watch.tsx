@@ -29,12 +29,17 @@ const useStyles = createStyles((theme) => ({
     progress_container: {
         position: 'relative',
         width: '100%',
+        height: '4px',
+        ":hover": {
+            height: '12px',
+            cursor: 'pointer',
+        }
     },
     progress: {
         position: 'absolute',
         left: 0,
         width: '1%',
-        height: '4px',
+        height: '100%',
         backgroundColor: '#f00',
     },
     canvas: {
@@ -120,6 +125,46 @@ export const Watch = (props: Props) => {
             }
         }
     }, [fullscreenContainer])
+
+    const handleSkip = useCallback((e: React.MouseEvent) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const t = (e.clientX - rect.left) / (rect.right - rect.left);
+        const stp = Math.floor(t * frames.length);
+        if(stp === 0) {
+            step.current = 0;
+            renderer?.reset(true);
+        }
+        else {
+            renderer?.set_skipping(true);
+            let first = step.current;
+            if(stp < step.current) {
+                first = 0;
+                renderer?.reset(false);
+            }
+
+            for(let i = first; i < stp; i++) {
+                const frame = frames[i];
+                try {
+                    engine?.render(
+                        frame.entities as Uint8Array, 
+                        frame.events as Uint8Array, 
+                        renderer
+                    );
+                }
+                catch(e) {
+                    console.error(e);
+                }
+            }
+            renderer?.set_skipping(false);
+            step.current = stp;
+            if(state === WatchState.FINISHED) {
+                renderer?.change_pov();
+                setState(WatchState.PLAYING);
+            }
+        }
+        
+        setGameProgress(t * 100.0);
+    }, [step, frames, renderer, engine, state]);
 
     const changeCanvasDim = (dim: {w: number, h: number}) => {
         if(canvas.current) {
@@ -292,7 +337,10 @@ export const Watch = (props: Props) => {
                 >
                 </canvas>
                 <Grid className={classes.controls}>
-                    <div className={classes.progress_container}>
+                    <div 
+                        className={classes.progress_container}
+                        onClick={handleSkip}
+                    >
                         <div 
                             className={classes.progress} 
                             style={{width:`${gameProgress}%`}}

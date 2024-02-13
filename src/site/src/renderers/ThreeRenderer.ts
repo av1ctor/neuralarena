@@ -23,6 +23,7 @@ export class ThreeRenderer {
         player_num?: number,
         rotate_cam: boolean
     };
+    skipping: boolean;
 
     constructor(
         canvas: HTMLCanvasElement
@@ -78,28 +79,44 @@ export class ThreeRenderer {
             player_num: undefined,
             rotate_cam: false
         };
+
+        this.skipping = false;
     }
 
     change_pov(
-        player_num: number,
+        player_num?: number,
         rotate_cam?: boolean
     ) {
-        const players = this.entities.filter(o => o.userData.isPlayer);
-        if(player_num >= 0 && player_num < players.length) {
-            if(player_num !== this.pov.player_num || rotate_cam !== this.pov.rotate_cam) {
-                const player = players[player_num];
-                this.camera.position.set(
-                    player.position.x + 0.0, 
-                    player.position.y + 5.0, 
-                    player.position.z + 5.0
-                );
+        if(player_num !== undefined) {
+            const players = this.entities.filter(o => o.userData.isPlayer);
+            if(player_num >= 0 && player_num < players.length) {
+                if(player_num !== this.pov.player_num || rotate_cam !== this.pov.rotate_cam) {
+                    const player = players[player_num];
+                    this.camera.position.set(
+                        player.position.x + 0.0, 
+                        player.position.y + 5.0, 
+                        player.position.z + 5.0
+                    );
 
-                this.pov = {
-                    player_num,
-                    rotate_cam: rotate_cam? true: false
-                };
+                    this.pov = {
+                        player_num,
+                        rotate_cam: rotate_cam? true: false
+                    };
+                }
             }
         }
+        else {
+            this.pov = {
+                player_num: undefined,
+                rotate_cam: false
+            };
+        }
+    }
+
+    set_skipping(
+        skipping: boolean
+    ) {
+        this.skipping = skipping;
     }
 
     resize_canvas(
@@ -113,16 +130,19 @@ export class ThreeRenderer {
     }
 
     reset(
+        reset_cam: boolean = true
     ) {
         for(const obj of this.entities) {
             obj.removeFromParent();
         }
         this.entities = [];
-        this.camera.position.set(15.0, 10.0, 15.0);
         this.pov = {
             player_num: undefined,
             rotate_cam: false
         };
+        if(reset_cam) {
+            this.camera.position.set(15.0, 10.0, 15.0);
+        }
     }
 
     async load_asset(
@@ -358,6 +378,10 @@ export class ThreeRenderer {
 
     render(
     ) {
+        if(this.skipping) {
+            return;
+        }
+
         let player: THREE.Object3D<THREE.Object3DEventMap>|undefined = undefined;
         if(this.pov.player_num !== undefined) {
             const players = this.entities.filter(o => o.userData.isPlayer);
