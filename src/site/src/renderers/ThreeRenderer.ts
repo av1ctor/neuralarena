@@ -159,7 +159,7 @@ export class ThreeRenderer {
             case GameAssetType.Player: {
                 const zombies = ['man', 'girl', 'woman', 'boy'];
                 const gltf = await loader.loadAsync(
-                    `/models/zombies/${zombies[gameAssetDataU32Value(asset, 'num') || 0]}/default.gltf`
+                    `/models/zombies/${zombies[(gameAssetDataU32Value(asset, 'num')! % 4) || 0]}/default.gltf`
                 );
                 const mesh = gltf.scene;
                 mesh.traverse(child => {
