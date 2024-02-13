@@ -129,17 +129,17 @@ export const Watch = (props: Props) => {
     const handleSkip = useCallback((e: React.MouseEvent) => {
         const rect = e.currentTarget.getBoundingClientRect();
         const t = (e.clientX - rect.left) / (rect.right - rect.left);
-        const stp = Math.floor(t * frames.length);
+        const stp = Math.floor(t * frames.length)|0;
         if(stp === 0) {
             step.current = 0;
-            renderer?.reset(true);
+            renderer?.reset(true, true);
         }
         else {
             renderer?.set_skipping(true);
             let first = step.current;
             if(stp < step.current) {
                 first = 0;
-                renderer?.reset(false);
+                renderer?.reset(false, false);
             }
 
             for(let i = first; i < stp; i++) {
@@ -157,12 +157,13 @@ export const Watch = (props: Props) => {
             }
             renderer?.set_skipping(false);
             step.current = stp;
-            if(state === WatchState.FINISHED) {
-                renderer?.change_pov();
-                setState(WatchState.PLAYING);
-            }
         }
-        
+
+        if(state !== WatchState.PLAYING) {
+            renderer?.change_pov();
+            setState(WatchState.PLAYING);
+        }
+    
         setGameProgress(t * 100.0);
     }, [step, frames, renderer, engine, state]);
 

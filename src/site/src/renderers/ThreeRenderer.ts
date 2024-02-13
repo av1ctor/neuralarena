@@ -107,7 +107,7 @@ export class ThreeRenderer {
         }
         else {
             this.pov = {
-                player_num: undefined,
+                player_num: this.pov.player_num,
                 rotate_cam: false
             };
         }
@@ -130,18 +130,23 @@ export class ThreeRenderer {
     }
 
     reset(
-        reset_cam: boolean = true
+        reset_cam: boolean = true,
+        reset_pov: boolean = true
     ) {
         for(const obj of this.entities) {
             obj.removeFromParent();
         }
         this.entities = [];
-        this.pov = {
-            player_num: undefined,
-            rotate_cam: false
-        };
+
         if(reset_cam) {
             this.camera.position.set(15.0, 10.0, 15.0);
+        }
+
+        if(reset_pov) {
+            this.pov = {
+                player_num: undefined,
+                rotate_cam: false
+            };
         }
     }
 
