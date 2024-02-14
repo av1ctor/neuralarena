@@ -7,7 +7,7 @@ import { matchGetAssets } from "../../../libs/matches";
 import { useActors } from "../../../hooks/actors";
 import { 
     IconPlayerPause, IconPlayerPlay, IconQuestionMark, 
-    IconRefresh, IconWindowMaximize, IconWindowMinimize, 
+    IconWindowMaximize, IconWindowMinimize, 
 } from "@tabler/icons-react";
 import init, {GameWrapper, GameOptionsWrapper, PlayerFOVWrapper} from "brains-engine";
 
@@ -105,12 +105,6 @@ export const Watch = (props: Props) => {
 
             return newState;
         });
-    }, [step, frames, renderer]);
-
-    const handleRestart = useCallback(() => {
-        step.current = 0;
-        renderer?.reset();
-        setState(WatchState.PLAYING);
     }, [step, frames, renderer]);
 
     const handleToggleFullscreen = useCallback(() => {
@@ -356,12 +350,6 @@ export const Watch = (props: Props) => {
                     </Grid.Col>
                     <Grid.Col span={6}>
                         <Group position="center">
-                            <ActionIcon
-                                variant="outline"
-                                onClick={handleRestart}
-                            >
-                                <IconRefresh />
-                            </ActionIcon>
                             <ActionIcon
                                 variant="outline"
                                 onClick={handleTogglePlay}
