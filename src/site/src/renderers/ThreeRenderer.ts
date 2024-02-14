@@ -403,15 +403,23 @@ export class ThreeRenderer {
             player = players[this.pov.player_num];
 
             if(!this.pov.rotate_cam) {
-                this.camera.position.set(
-                    player.position.x + 5.0, 
-                    player.position.y + 3.0, 
-                    player.position.z + 5.0
+                this.camera.position.lerp(
+                    new THREE.Vector3(
+                        player.position.x + 5.0, 
+                        player.position.y + 3.0, 
+                        player.position.z + 5.0
+                    ),
+                    0.5
                 );
             }
             
-            this.controls?.target.set(
-                player.position.x, player.position.y, player.position.z
+            this.controls?.target.lerp(
+                new THREE.Vector3(
+                    player.position.x, 
+                    player.position.y, 
+                    player.position.z
+                ),
+                0.5
             );
         }
 
