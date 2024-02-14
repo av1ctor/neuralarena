@@ -351,14 +351,23 @@ export class ThreeRenderer {
         pos: Float32Array
     ) {
         const obj = this.entities[model_ref];
-        obj.position.x = pos[0];
-        if(obj.userData.height) {
-            obj.position.y = pos[1] + obj.userData.height * 0.5; 
+        if(obj.position.lengthSq() !== 0.0) {
+            obj.position.lerp(
+                new THREE.Vector3(
+                    pos[0], 
+                    pos[1] + (obj.userData.height||0.0) * 0.5, 
+                    pos[2]
+                ), 
+                0.5
+            );
         }
         else {
-            obj.position.y = pos[1];
+            obj.position.set(
+                pos[0], 
+                pos[1] + (obj.userData.height||0.0) * 0.5, 
+                pos[2]
+            );
         }
-        obj.position.z = pos[2];
     }
 
     set_model_rotation(
@@ -366,8 +375,9 @@ export class ThreeRenderer {
         q: Float32Array
     ) {
         const obj = this.entities[model_ref];
-        obj.setRotationFromQuaternion(
-            new THREE.Quaternion(q[0], q[1], q[2], q[3])
+        obj.quaternion.slerp(
+            new THREE.Quaternion(q[0], q[1], q[2], q[3]), 
+            0.5
         );
     }
 
