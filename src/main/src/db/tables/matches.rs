@@ -1,7 +1,12 @@
 use std::collections::BTreeMap;
 use crate::db::TableName;
-use crate::db::traits::table::{TableSerializable, TableDeserializable, TableData, Table, TableSchema, TableVersioned, TableSubscribable, TableSubs, TableEventKey};
-use crate::db::traits::crud::{CrudSubscribable, Crud};
+use neuralarena_cdk::db::traits::{
+    table::{
+        TableSerializable, TableDeserializable, TableData, Table, TableSchema, 
+        TableVersioned, TableSubscribable, TableSubs, TableEventKey
+    },
+    crud::{CrudSubscribable, Crud}
+};
 use crate::models::m4tch::{MatchId, Match};
 
 pub struct MatchesTable {
@@ -84,7 +89,7 @@ impl TableSubscribable<TableName, MatchId, Match> for MatchesTable {
         let mut arr = vec![TableEventKey::Text(v.options.game_id.clone())];
 
         arr.append(
-            &mut v.players.iter()
+            &mut v.state.players.iter()
                 .map(|p| TableEventKey::Principal(p.clone()))
                 .collect::<Vec<_>>()
         );

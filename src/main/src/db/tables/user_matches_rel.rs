@@ -1,7 +1,12 @@
 use std::collections::{BTreeSet, BTreeMap};
 use crate::db::TableName;
-use crate::db::traits::table::{TableSerializable, TableDeserializable, TableEventKind, TableEventKey, TableSubscriber, TableData, Table, TableSchema, TableVersioned, TableEvent};
-use crate::db::traits::crud::Crud;
+use neuralarena_cdk::db::traits::{
+    table::{
+        TableSerializable, TableDeserializable, TableEventKind, TableEventKey, 
+        TableSubscriber, TableData, Table, TableSchema, TableVersioned, TableEvent
+    },
+    crud::Crud
+};
 use crate::models::{user::UserId, m4tch::MatchId};
 
 pub struct UserMatchesRelTable {

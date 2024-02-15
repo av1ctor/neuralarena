@@ -1,33 +1,33 @@
 use std::cell::RefCell;
-use std::mem::size_of;
 use crate::db::DB;
 use candid::Principal;
-use db::traits::crud::Pagination;
 use ic_cdk::api::stable;
 use ic_cdk::{caller, trap};
 use models::game::{GameRequest, Game, GameResponse, GameId};
 use models::m4tch::{
-    Match, MatchId, 
-    MatchAssetsResponse, 
-    MatchRequest, MatchResponse, 
-    MatchStepsResponse
+    Match, MatchId, MatchRequest, MatchResponse
 };
 use models::user::{UserRequest, UserResponse, User, UserId};
-use rand::{SeedableRng, RngCore};
-use rand::rngs::StdRng;
+use neuralarena_cdk::{
+    db::traits::crud::Pagination,
+    models::game_instance::{
+        InstanceAssetsResponse,
+        InstanceStepsResponse
+    },
+    utils::{
+        serdeser,
+        uniqueid,
+        random
+    }
+};
 use serde::{Deserialize, Serialize};
 use services::games::GamesService;
 use services::matches::MatchesService;
 use services::users::UsersService;
-use utils::serdeser;
 
-mod nn;
-mod dqn;
-mod agent;
 mod models;
 mod db;
 mod services;
-mod utils;
 
 const STATE_VERSION: f32 = 0.1;
 
@@ -39,7 +39,6 @@ struct State {
 thread_local! {
     static STATE: RefCell<State> = RefCell::default();
     static DB: RefCell<DB> = RefCell::new(DB::new());    
-    static RNG: RefCell<Option<StdRng>> = RefCell::default();
 }
 
 #[ic_cdk::init]
@@ -52,14 +51,7 @@ fn init(
         state.owner = Some(caller());
     });
 
-    _init_rng();
-}
-
-fn _init_rng() {
-    RNG.with(|r| {
-        let mut rng = r.borrow_mut();
-        *rng = Some(StdRng::seed_from_u64(ic_cdk::api::time()));
-    });
+    random::init();
 }
 
 #[ic_cdk::pre_upgrade]
@@ -119,17 +111,7 @@ fn post_upgrade() {
         }
     });
     
-    _init_rng();
-}
-
-fn _gen_id(
-) -> String {
-    let (lsu64, msu64) = RNG.with(|r| {
-        let mut rng = r.borrow_mut();
-        let rng = rng.as_mut().unwrap();
-        (rng.next_u64(), rng.next_u64())
-    });
-    ulid::Ulid::from_parts(ic_cdk::api::time() / 1000000, (msu64 as u128) << 64 | (lsu64 as u128)).to_string()
+    random::init();
 }
 
 /*
@@ -244,7 +226,7 @@ fn game_create(
     let caller = caller();
 
     DB.with(|db| {
-        let id = _gen_id();
+        let id = uniqueid::generate();
         let game = Game::new(&id, &req, &caller);
         match GamesService::create(&id, &game, &mut db.borrow_mut(), &caller) {
             Ok(()) => Ok(game.into()),
@@ -312,123 +294,191 @@ fn game_find_active(
  * matches facade
  */
 #[ic_cdk::update]
-pub fn match_create(
+pub async fn match_create(
     req: MatchRequest
 ) -> Result<MatchResponse, String> {
-    let caller = caller();
+    let caller = &caller();
+
+    let (user, game) = DB.with(|db| -> Result<(User, Game), String> {
+        let user: User = UsersService::find_by_id(
+            caller, &db.borrow(), caller)?;
+    
+        let game: Game = GamesService::find_by_id(
+            &req.options.game_id, &mut db.borrow_mut(), caller)?;
+
+        Ok((user, game))
+    })?;
+
+    let m4tch = MatchesService::create(&req, &game, &user).await?;
 
     DB.with(|db| {
-        let id = _gen_id();
-        let mut m4tch = Match::new(&id, &req, &caller);
-        match MatchesService::create(&id, &mut m4tch, &mut db.borrow_mut(), &caller) {
-            Ok(()) => Ok(m4tch.into()),
-            Err(msg) => Err(msg)
-        }
-    })
+        MatchesService::insert(
+            &m4tch,
+            &mut db.borrow_mut()
+        )
+    })?;
+
+    Ok(m4tch.into())
 }
 
 #[ic_cdk::update]
-pub fn match_join(
+pub async fn match_join(
     id: MatchId
 ) -> Result<(), String> {
-    DB.with(|db| {
-        match MatchesService::join(&id, &mut db.borrow_mut(), &caller()) {
-            Ok(start) => {
-                if start {
-                    _ = RNG.with(|rng| {
-                        match MatchesService::start(
-                            &id, 
-                            &mut db.borrow_mut(), 
-                            &mut rng.borrow_mut().as_mut().unwrap(), 
-                            &caller()
-                        ) {
-                            Ok(_) => {
-                                //FIXME: method should be async so this could return immediately
-                                match MatchesService::run(
-                                    &id, 
-                                    &mut db.borrow_mut(), 
-                                    &mut rng.borrow_mut().as_mut().unwrap(), 
-                                    &caller()
-                                ) {
-                                    Ok(_) => {},
-                                    Err(msg) => return Err(msg),
-                                };
+    let caller = &caller();
 
-                                Ok(())
-                            },
-                            Err(msg) => return Err(msg),
-                        }
-                    });
-                }
+    let (user, mut m4tch, game) = DB.with(|db| -> Result<(User, Match, Game), String> {
+        let user: User = UsersService::find_by_id(
+            caller, &db.borrow(), caller)?;
 
+        let m4tch = MatchesService::find_by_id(
+            &id, &db.borrow(), caller)?;
+    
+        let game: Game = GamesService::find_by_id(
+            &m4tch.options.game_id, &mut db.borrow_mut(), caller)?;
+
+        Ok((user, m4tch, game))
+    })?;
+
+    match MatchesService::join(&mut m4tch, &user) {
+        Ok(start) => {
+            if start {
+                _start_match(&mut m4tch, &game, &user).await?;
+                _run_match(&mut m4tch, &game, &user).await
+            }
+            else {
                 Ok(())
-            },
-            Err(msg) => Err(msg),
-        }
-    })
+            }
+        },
+        Err(msg) => Err(msg),
+    }
+}
+
+async fn _start_match(
+    m4tch: &mut Match,
+    game: &Game,
+    user: &User
+) -> Result<(), String> {
+    MatchesService::start_step1(m4tch, &user)?;
+
+    DB.with(|db| {
+        MatchesService::update(m4tch, &mut db.borrow_mut())
+    })?;
+
+    MatchesService::start_step2(m4tch, &game).await?;
+
+    DB.with(|db| {
+        MatchesService::update(m4tch, &mut db.borrow_mut())
+    })?;
+
+    Ok(())
+}
+
+async fn _run_match(
+    m4tch: &mut Match,
+    game: &Game,
+    user: &User
+) -> Result<(), String> {
+    MatchesService::run_step1(m4tch, &user)?;
+
+    DB.with(|db| {
+        MatchesService::update(m4tch, &mut db.borrow_mut())
+    })?;
+
+    MatchesService::run_step2(m4tch, &game).await?;
+
+    DB.with(|db| {
+        MatchesService::update(m4tch, &mut db.borrow_mut())
+    })?;
+
+    Ok(())
 }
 
 #[ic_cdk::update]        
-pub fn match_start(
+pub async fn match_start(
     id: MatchId
 ) -> Result<(), String> {     
-    DB.with(|db| {
-        RNG.with(|rng| {
-            MatchesService::start(
-                &id, 
-                &mut db.borrow_mut(), 
-                &mut rng.borrow_mut().as_mut().unwrap(), 
-                &caller()
-            )
-        })
-    })
+    let caller = &caller();
+
+    let (user, mut m4tch, game) = DB.with(|db| -> Result<(User, Match, Game), String> {
+        let user: User = UsersService::find_by_id(
+            caller, &db.borrow(), caller)?;
+
+        let m4tch = MatchesService::find_by_id(
+            &id, &db.borrow(), caller)?;
+    
+        let game: Game = GamesService::find_by_id(
+            &m4tch.options.game_id, &mut db.borrow_mut(), caller)?;
+
+        Ok((user, m4tch, game))
+    })?;
+
+    _start_match(&mut m4tch, &game, &user).await
 }
 
 #[ic_cdk::update]
-pub fn match_run(
+pub async fn match_run(
     id: MatchId
 ) -> Result<(), String> {
-    DB.with(|db| {
-        RNG.with(|rng| {
-            MatchesService::run(
-                &id, 
-                &mut db.borrow_mut(), 
-                &mut rng.borrow_mut().as_mut().unwrap(), 
-                &caller()
-            )
-        })
-    })
+    let caller = &caller();
+
+    let (user, mut m4tch, game) = DB.with(|db| -> Result<(User, Match, Game), String> {
+        let user: User = UsersService::find_by_id(
+            caller, &db.borrow(), caller)?;
+
+        let m4tch = MatchesService::find_by_id(
+            &id, &db.borrow(), caller)?;
+    
+        let game: Game = GamesService::find_by_id(
+            &m4tch.options.game_id, &mut db.borrow_mut(), caller)?;
+
+        Ok((user, m4tch, game))
+    })?;
+
+    _run_match(&mut m4tch, &game, &user).await
 }
 
-#[ic_cdk::query]
-pub fn match_get_assets(
+#[ic_cdk::query(composite = true)]
+pub async fn match_get_assets(
     id: MatchId
-) -> Result<MatchAssetsResponse, String> {
-    DB.with(|db| {
-        match MatchesService::get_assets(&db.borrow(), id) {
-            Ok(assets) => {
-                Ok(MatchAssetsResponse{
-                    assets
-                })
-            },
-            Err(err) => Err(err),
-        }
-    })
+) -> Result<InstanceAssetsResponse, String> {
+    let caller = &caller();
+    
+    let m4tch = DB.with(|db| {
+        MatchesService::find_by_id(&id, &db.borrow(), caller)
+    })?;
+
+    let game = DB.with(|db| {
+        GamesService::find_by_id(
+            &m4tch.options.game_id, 
+            &mut db.borrow_mut(), 
+            caller
+        )
+    })?;
+
+    MatchesService::get_assets(&game).await
 }
 
-#[ic_cdk::query]
-pub fn match_get_steps(
+#[ic_cdk::query(composite = true)]
+pub async fn match_get_steps(
     id: MatchId,
     pag: Pagination
-) -> Result<MatchStepsResponse, String> {
-    DB.with(|db| {
-        match MatchesService::steps(&id, pag, &mut db.borrow_mut(), &caller()) {
-            Ok(steps) => Ok(MatchStepsResponse{
-                steps
-            }),
-            Err(msg) => Err(msg),
-        }
-    })
+) -> Result<InstanceStepsResponse, String> {
+    let caller = &caller();
+    
+    let m4tch = DB.with(|db| {
+        MatchesService::find_by_id(&id, &db.borrow(), caller)
+    })?;
+
+    let game = DB.with(|db| {
+        GamesService::find_by_id(
+            &m4tch.options.game_id, 
+            &mut db.borrow_mut(), 
+            caller
+        )
+    })?;
+
+    MatchesService::get_steps(&m4tch, &game, pag).await
 }
 
 #[ic_cdk::query]
@@ -472,44 +522,6 @@ fn match_find_by_game(
             Err(msg) => Err(msg)
         }
     })
-}
-
-#[cfg(target_arch = "wasm32")]
-pub fn always_fail(_buf: &mut [u8]) -> Result<(), getrandom::Error> {
-    Err(getrandom::Error::UNSUPPORTED)
-}
-
-#[cfg(target_arch = "wasm32")]
-getrandom::register_custom_getrandom!(always_fail);
-
-#[no_mangle]
-pub unsafe fn malloc(
-    size: usize
-) -> *mut u8 {
-    let align = std::mem::align_of::<usize>();
-    let layout = std::alloc::Layout::from_size_align_unchecked(size + size_of::<usize>(), align);
-    let ptr = std::alloc::alloc(layout);
-    *ptr.cast::<usize>() = size;
-    ptr.add(size_of::<usize>())
-}
-
-#[no_mangle]
-pub unsafe fn free(
-    ptr: *mut u8
-) {
-    let ptr = ptr.sub(size_of::<usize>());
-    let size = *ptr.cast::<usize>();
-    let align = std::mem::align_of::<usize>();
-    let layout = std::alloc::Layout::from_size_align_unchecked(size, align);
-    std::alloc::dealloc(ptr, layout);
-}
-
-#[no_mangle]
-#[allow(non_snake_case)]
-pub unsafe fn _ZdlPv(
-    _ptr: *mut u8
-) {
-    panic!("delete called from C++");
 }
 
 ic_cdk::export_candid!();

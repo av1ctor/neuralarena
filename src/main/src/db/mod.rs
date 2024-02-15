@@ -1,4 +1,3 @@
-pub mod traits;
 pub mod tables;
 pub mod migrations;
 
@@ -10,7 +9,7 @@ use self::tables::games::GamesTable;
 use self::tables::user_matches_rel::UserMatchesRelTable;
 use self::tables::users::UsersTable;
 use self::tables::matches::MatchesTable;
-use self::traits::table::{TableSerializable, TableDeserializable, Table, TableSubscribable};
+use neuralarena_cdk::db::traits::table::{TableSerializable, TableDeserializable, Table, TableSubscribable};
 
 #[derive(Clone, Debug)]
 pub enum TableName {

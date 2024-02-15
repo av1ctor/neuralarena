@@ -1,7 +1,12 @@
 use std::collections::BTreeMap;
 use crate::db::TableName;
-use crate::db::traits::table::{TableSerializable, TableDeserializable, TableData, Table, TableSchema, TableVersioned, TableSubscribable, TableSubs, TableEventKey};
-use crate::db::traits::crud::{CrudSubscribable, Crud};
+use neuralarena_cdk::db::traits::{
+    table::{
+        TableSerializable, TableDeserializable, TableData, Table, TableSchema, 
+        TableVersioned, TableSubscribable, TableSubs, TableEventKey
+    },
+    crud::{CrudSubscribable, Crud}
+};
 use crate::models::user::{UserId, User};
 
 pub struct UsersTable {

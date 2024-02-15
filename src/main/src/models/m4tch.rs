@@ -1,9 +1,6 @@
 use std::collections::HashMap;
-use brains_engine::env::{Asset, AssetRef};
 use candid::{CandidType, Principal};
 use serde::{Serialize, Deserialize};
-use brains_engine::game::Game;
-use crate::agent::dqnagent::DqnAgent;
 use super::game::GameId;
 use super::user::UserId;
 
@@ -14,42 +11,31 @@ pub struct MatchOptions {
     pub game_id: GameId,
     pub min_players: usize,
     pub max_players: usize,
-    pub epsilon: f64,
-    pub num_hidden_layers: usize,
     pub game_options: HashMap<String, String>,
 }
 
 #[derive(PartialEq, Clone, Serialize, Deserialize, CandidType)]
 pub enum MatchStatus {
     CREATED,
+    STARTING,
     STARTED,
     RUNNING,
     CANCELLED,
     FINISHED,
 }
 
-#[derive(Clone, Serialize, Deserialize, CandidType)]
-pub struct MatchStep {
-    pub terminated: bool,
-    pub timedout: bool,
-    pub entities: Vec<u8>,
-    pub events: Vec<u8>,
-}
-
 #[derive(Clone, Serialize, Deserialize)]
 pub struct MatchState {
-    pub steps: Vec<MatchStep>,
+    pub status: MatchStatus,
+    pub game_instance_id: String,
+    pub players: Vec<UserId>,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Match {
     pub id: String,
     pub options: MatchOptions,
-    pub status: MatchStatus,
-    pub players: Vec<UserId>,
     pub state: MatchState,
-    pub game: Option<Game>,
-    pub agent: Option<DqnAgent>,
     pub created_at: u64,
     pub created_by: UserId,
     pub started_at: Option<u64>,
@@ -68,6 +54,7 @@ pub struct MatchResponse {
     pub id: String,
     pub options: MatchOptions,
     pub status: MatchStatus,
+    pub game_instance_id: String,
     pub players: Vec<UserId>,
     pub created_at: u64,
     pub created_by: UserId,
@@ -75,16 +62,6 @@ pub struct MatchResponse {
     pub started_by: Option<UserId>,
     pub won_at: Option<u64>,
     pub won_by: Option<UserId>,
-}
-
-#[derive(Clone, Serialize, Deserialize, CandidType)]
-pub struct MatchAssetsResponse {
-    pub assets: HashMap<AssetRef, Asset>,
-}
-
-#[derive(Clone, Serialize, Deserialize, CandidType)]
-pub struct MatchStepsResponse {
-    pub steps: Vec<MatchStep>,
 }
 
 impl Match {
@@ -96,13 +73,11 @@ impl Match {
         Self {
             id: id.clone(),
             options: req.options.clone(), 
-            status: MatchStatus::CREATED,
             state: MatchState { 
-                steps: vec![],
+                status: MatchStatus::CREATED,
+                game_instance_id: "".to_string(),
+                players: vec![],
             },
-            players: vec![],
-            game: None,
-            agent: None,
             created_at: ic_cdk::api::time(),
             created_by: caller.clone(),
             started_at: None,
@@ -121,8 +96,9 @@ impl From<Match> for MatchResponse {
         Self { 
             id: e.id,
             options: e.options,
-            status: e.status,
-            players: e.players,
+            status: e.state.status,
+            game_instance_id: e.state.game_instance_id,
+            players: e.state.players,
             created_at: e.created_at,
             created_by: e.created_by,
             started_at: e.started_at,

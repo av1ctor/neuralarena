@@ -1,6 +1,6 @@
 use candid::Principal;
 use crate::db::DB;
-use crate::db::traits::crud::{Crud, Pagination, CrudSubscribable};
+use neuralarena_cdk::db::traits::crud::{Crud, Pagination, CrudSubscribable};
 use crate::models::m4tch::Match;
 use crate::models::user::{User, UserId, UserKind};
 

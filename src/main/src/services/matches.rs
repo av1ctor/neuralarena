@@ -1,92 +1,67 @@
-use std::collections::{BTreeSet, HashMap, HashSet};
-use brains_engine::{
-    env::{Asset, AssetRef, Env}, 
-    game::{Game, GameOptions, LevelOptions}, 
-    player::PlayerFOV,
-    map::Map
-};
+use std::collections::BTreeSet;
 use candid::Principal;
-use rand::Rng;
-use rand::rngs::StdRng;
-use crate::{agent::agent::Agent, utils::null_renderer::NullRenderer, nn::tensor::Tensor};
-use crate::agent::baseagent::BaseAgentOptions;
-use crate::agent::dqnagent::DqnAgent;
-use crate::db::traits::crud::{CrudSubscribable, Crud, Pagination};
-use crate::dqn::dqn::DqnOptions;
-use crate::models::game::GameId;
-use crate::models::m4tch::{Match, MatchId, MatchStatus, MatchStep};
+use neuralarena_cdk::{
+    db::traits::crud::{CrudSubscribable, Crud, Pagination},
+    models::game_instance::{
+        InstanceCreateResponse, 
+        InstanceAssetsResponse,
+        InstanceStepsResponse
+    },
+    utils::uniqueid
+};
+use crate::models::{
+    game::{
+        Game, 
+        GameId, 
+    }, 
+    m4tch::MatchRequest, user::User
+};
+use crate::models::m4tch::{Match, MatchId, MatchStatus};
 use crate::db::DB;
 use crate::models::user::UserKind;
-use super::users::UsersService;
 
-const TENSORS: &[u8] = include_bytes!("../../tensors/15rays-32hidden-0.05epsilon.safetensors");
-const MAP: &[u8] = include_bytes!("../../maps/map-no-tex.glb");
-const NAVMESH: &[u8] = include_bytes!("../../maps/navmesh.bin");
-
-struct Player {
-    active: bool,
-    last_thought: u32,
-    steps_per_thought: u32,
-    obs: Tensor,
-}
 pub struct MatchesService {}
 
 impl MatchesService {
-    pub fn get_assets(
-        db: &DB,
-        id: MatchId
-    ) -> Result<HashMap<AssetRef, Asset>, String> {
-        let matches = db.matches.borrow_mut();
+    pub async fn create(
+        req: &MatchRequest,
+        game: &Game,
+        user: &User
+    ) -> Result<Match, String> {
+        Self::authorize(user)?;
 
-        let m4tch = match matches.find_by_id(&id) {
-            None => return Err("Not found".to_string()),
-            Some(e) => e.clone()
-        };
+        let id = uniqueid::generate();
+        let mut m4tch = Match::new(&id, &req, &user.id);
 
-        let game = m4tch.game.as_ref().unwrap();
+        let (res, ): (InstanceCreateResponse, ) = ic_cdk::call(
+            game.canister_id, 
+            "instance_create",
+            (
+                m4tch.options.game_options.clone(), 
+            )
+        ).await.unwrap();
 
-        let assets = game.get_assets();
-        Ok(assets)
+        m4tch.state.game_instance_id = res.instance_id;
+        m4tch.options.min_players = res.min_players;
+        m4tch.options.max_players = res.max_players;
+
+        Ok(m4tch)
     }
 
-    pub fn create(
-        id: &MatchId,
-        m4tch: &mut Match,
-        db: &mut DB,
-        caller: &Principal
+    pub fn insert(
+        m4tch: &Match,
+        db: &mut DB
     ) -> Result<(), String> {
-        Self::authorize(caller, db)?;
+        db.matches.borrow_mut()
+            .insert_and_notify(m4tch.id.clone(), m4tch.clone())
+    }
 
-        let rays = m4tch.options.game_options["rays"].parse::<usize>()
-            .map_err(|err| err.to_string())?;
-        let angle = m4tch.options.game_options["fov"].parse::<f32>()
-            .map_err(|err| err.to_string())?;
-        let player_radius = m4tch.options.game_options["player_radius"].parse::<f32>()
-            .map_err(|err| err.to_string())?;
-        
-        let game = Game::new(
-            Map::new(MAP, NAVMESH),
-            GameOptions {
-                level: LevelOptions {
-                    num: 0
-                },
-                fov: PlayerFOV { 
-                    rays, 
-                    angle, 
-                    max_dist: 2.5,
-                },
-                num_players: 0,
-                min_keys: 4,
-                max_steps: 60 * 60 * 2,
-                player_radius,
-                debug: false,
-                training: false,
-            }
-        );
-
-        m4tch.game = Some(game);
-    
-        db.matches.borrow_mut().insert_and_notify(id.clone(), m4tch.clone())
+    pub fn update(
+        m4tch: &Match,
+        db: &mut DB
+    ) -> Result<(), String> {
+        db.matches.borrow_mut()
+            .update_and_notify(m4tch.id.clone(), m4tch.clone())
     }
 
     pub fn find_by_id(
@@ -113,7 +88,7 @@ impl MatchesService {
         
         let mut arr = matches.data.0.iter()
             .map(|v| v.1)
-            .filter(|m| m.status == MatchStatus::CREATED)
+            .filter(|m| m.state.status == MatchStatus::CREATED)
             .cloned()
             .collect::<Vec<_>>();
 
@@ -150,224 +125,110 @@ impl MatchesService {
     }
 
     pub fn join(
-        id: &MatchId,
-        db: &mut DB,
-        caller: &Principal
+        m4tch: &mut Match,
+        user: &User
     ) -> Result<bool, String> {
-        Self::authorize(caller, db)?;
+        Self::authorize(user)?;
         
-        let mut matches = db.matches.borrow_mut();
-
-        let mut m4tch = match matches.find_by_id(id) {
-            None => return Err("Not found".to_string()),
-            Some(e) => e.clone()
-        };
-
-        let num_players = m4tch.players.len();
+        let num_players = m4tch.state.players.len();
         if  num_players >= m4tch.options.max_players {
             return Err("Too many players".to_string());
         }
 
-        if m4tch.status != MatchStatus::CREATED {
+        if m4tch.state.status != MatchStatus::CREATED {
             return Err("Invalid match state".to_string());
         }
 
-        if m4tch.players.contains(caller) {
+        if m4tch.state.players.contains(&user.id) {
             return Err("Already part of the match".to_string());
         }
 
-        m4tch.players.push(caller.clone());
+        m4tch.state.players.push(user.id.clone());
 
-        let ok_to_run = m4tch.players.len() == m4tch.options.max_players;
+        let ok_to_run = m4tch.state.players.len() == m4tch.options.max_players;
         
-        matches.update_and_notify(id.to_owned(), m4tch)?;
-
         Ok(ok_to_run)
     }
 
-    pub fn start(
-        id: &MatchId,
-        db: &mut DB,
-        _rng: &mut StdRng,
-        caller: &Principal
+    pub fn start_step1(
+        m4tch: &mut Match,
+        user: &User
     ) -> Result<(), String> {
-        Self::authorize(caller, db)?;
+        Self::authorize(user)?;
         
-        let mut matches = db.matches.borrow_mut();
-
-        let mut m4tch = match matches.find_by_id(id) {
-            None => return Err("Not found".to_string()),
-            Some(e) => e.clone()
-        };
-
-        if m4tch.players.len() < m4tch.options.min_players {
+        if m4tch.state.players.len() < m4tch.options.min_players {
             return Err("Too few players".to_string());
         }
 
-        if m4tch.status != MatchStatus::CREATED {
+        if m4tch.state.status != MatchStatus::CREATED {
             return Err("Invalid match state".to_string());
         }
 
-        // update game
-        let game = m4tch.game.as_mut().unwrap();
+        m4tch.state.status = MatchStatus::STARTING;
 
-        game.options.num_players = m4tch.players.len();
-
-        // create the agent
-        let options = BaseAgentOptions { 
-            dqn: DqnOptions {
-                n_actions: game.get_num_actions(),
-                n_obs: game.get_num_obs(),
-                n_hidden: m4tch.options.num_hidden_layers
-            },
-            epsilon: m4tch.options.epsilon,
-        };
-        
-        let mut agent = DqnAgent::new(&options);
-
-        /*let tensors_path = format!(
-            "./weights/{}rays-{}hidden-{}epsilon.safetensors", 
-            m4tch.options.rays, 
-            m4tch.options.num_hidden_layers, 
-            m4tch.options.fps, 
-            m4tch.options.tps, 
-            m4tch.options.epsilon
-        );*/
-    
-        agent.load(&TENSORS.to_vec())?;
-
-        m4tch.agent = Some(agent);
-
-        // start match
-        m4tch.status = MatchStatus::STARTED;
-
-        matches.update_and_notify(id.clone(), m4tch)
+        Ok(())
     }
 
-    pub fn run(
-        id: &MatchId,
-        db: &mut DB,
-        rng: &mut StdRng,
-        caller: &Principal
+    pub async fn start_step2(
+        m4tch: &mut Match,
+        game: &Game
     ) -> Result<(), String> {
-        Self::authorize(caller, db)?;
+        let (_, ): ((), ) = ic_cdk::call(
+            game.canister_id, 
+            "instance_start",
+            (
+                m4tch.state.game_instance_id.clone(), 
+                m4tch.state.players.clone()
+            )
+        ).await.unwrap();
+
+        m4tch.state.status = MatchStatus::STARTED;
+
+        Ok(())
+    }
+
+    pub fn run_step1(
+        m4tch: &mut Match,
+        user: &User
+    ) -> Result<(), String> {
+        Self::authorize(user)?;
         
-        let mut matches = db.matches.borrow_mut();
-
-        let mut m4tch = match matches.find_by_id(id) {
-            None => return Err("Not found".to_string()),
-            Some(e) => e.clone()
-        };
-
-        if m4tch.players.len() < m4tch.options.min_players {
+        if m4tch.state.players.len() < m4tch.options.min_players {
             return Err("Too few players".to_string());
         }
 
-        if m4tch.status != MatchStatus::STARTED {
+        if m4tch.state.status != MatchStatus::STARTED {
             return Err("Invalid match state".to_string());
         }
 
-        m4tch.status = MatchStatus::RUNNING;
-
-        let game = m4tch.game.as_mut().unwrap();
-        let mut renderer = NullRenderer::new();
-        let agent = m4tch.agent.as_mut().unwrap();
-        
-        let mut steps = 0;
-        let mut running = true;
-
-        let mut players = vec![];
-        let obs = &game.reset(&mut renderer, rng);
-        for i in 0..game.options.num_players {
-            let steps_per_thought = rng.gen_range(1000..10000);
-            players.push(Player {
-                active: true,
-                last_thought: 0,
-                steps_per_thought,
-                obs: obs[i].to_owned().into(),
-            });
-        }
-
-        let pre = ic_cdk::api::performance_counter(0);
-
-        while running && steps < game.options.max_steps {
-
-            let mut actions = vec![None; game.options.num_players];
-
-            let players_idx = Self::shuffle_players_idx(game, rng);
-            
-            for i in 0..game.options.num_players {
-                let p = players_idx[i];
-                let player = &mut players[p];
-                
-                if player.active {
-                    player.last_thought += 1000;
-                    if player.last_thought >= player.steps_per_thought {
-                        player.last_thought = 0;
-
-                        actions[p] = match agent.choose_action(player.obs.clone(), rng) {
-                            Some(action) => Some(action),
-                            None => Some(game.random_action(rng)),
-                        };
-                    }
-                }
-            }
-
-            let step = game.step(&actions, 1.0, &mut renderer, rng);
-            steps += 1;
-
-            let entities = game.serialize_entities()?;
-            let events = game.serialize_events()?;
-
-            m4tch.state.steps.push(MatchStep {
-                terminated: step.terminated,
-                timedout: step.timedout,
-                entities,
-                events,
-            });
-
-            running = !step.terminated && !step.timedout;
-
-            if let Some(winner) = step.winner {
-                m4tch.won_by = Some(m4tch.players[winner].clone());
-                m4tch.won_at = Some(ic_cdk::api::time());
-            }
-
-            for i in 0..step.players.len() {
-                players[i].active = step.players[i].active;
-                players[i].obs = step.players[i].obs.to_owned().into();
-            }
-
-            game.render(&mut renderer, true);
-        }
-
-        m4tch.status = MatchStatus::FINISHED;
-
-        let post = ic_cdk::api::performance_counter(0);
-        ic_cdk::print((post - pre).to_string());
-
-        matches.update_and_notify(id.to_owned(), m4tch)
+        m4tch.state.status = MatchStatus::RUNNING;
+        Ok(())
     }
 
-    fn shuffle_players_idx(
-        game: &mut Game,
-        rng: &mut StdRng
-    ) -> Vec<usize> {
-        let mut indexes = HashSet::new();
-    
-        while indexes.len() < game.options.num_players {
-            indexes.insert(rng.gen_range(0..game.options.num_players));
-        }
-    
-        indexes.into_iter().collect()
+    pub async fn run_step2(
+        m4tch: &mut Match,
+        game: &Game
+    ) -> Result<(), String> {
+
+        let (_, ): ((), ) = ic_cdk::call(
+            game.canister_id, 
+            "instance_run",
+            (
+                m4tch.state.game_instance_id.clone(),
+            )
+        ).await.unwrap();        
+        
+        m4tch.state.status = MatchStatus::FINISHED;
+        
+        Ok(())
     }
 
     pub fn _delete(
         id: &MatchId,
         db: &mut DB,
-        caller: &Principal
+        user: &User
     ) -> Result<(), String> {
-        Self::authorize(caller, db)?;
+        Self::authorize(user)?;
         
         let mut matches = db.matches.borrow_mut();
 
@@ -376,58 +237,54 @@ impl MatchesService {
             Some(e) => e
         };
 
-        if *caller != m4tch.created_by {
+        if user.id != m4tch.created_by {
             return Err("Forbidden".to_string());
         }
 
-        if m4tch.status != MatchStatus::CREATED {
+        if m4tch.state.status != MatchStatus::CREATED {
             return Err("Invalid match state".to_string());
         }
         
         matches.delete_and_notify(id)
     }
 
-    pub fn steps(
-        id: &MatchId,
-        pag: Pagination,
-        db: &mut DB,
-        _caller: &Principal
-    ) -> Result<Vec<MatchStep>, String> {
-        let matches = db.matches.borrow_mut();
+    pub async fn get_assets(
+        game: &Game
+    ) -> Result<InstanceAssetsResponse, String> {
+        let (res, ): (InstanceAssetsResponse, ) = ic_cdk::call(
+            game.canister_id, 
+            "instance_get_assets",
+            ()
+        ).await.unwrap();
 
-        let m4tch = match matches.find_by_id(id) {
-            None => return Err("Not found".to_string()),
-            Some(e) => e
-        };
+        Ok(res)
+    }
 
+    pub async fn get_steps(
+        m4tch: &Match,
+        game: &Game,
+        pag: Pagination
+    ) -> Result<InstanceStepsResponse, String> {
         if ![MatchStatus::STARTED, MatchStatus::FINISHED]
-            .contains(&m4tch.status) {
+            .contains(&m4tch.state.status) {
             return Err("Invalid match state".to_string());
         }
+        
+        let (res, ): (InstanceStepsResponse, ) = ic_cdk::call(
+            game.canister_id, 
+            "instance_get_steps",
+            (pag, )
+        ).await.unwrap();
 
-        Ok(m4tch.state.steps.iter()
-            .skip(pag.offset as usize)
-            .take(pag.limit as usize)
-            .cloned()
-            .collect())
+        Ok(res)
     }
 
     fn authorize(
-        caller: &Principal, 
-        db: &mut DB
+        user: &User
     ) -> Result<(), String> {
         //FIXME: remove this by-pass when the UI is done
         if false {
-            if *caller == Principal::anonymous() {
-                return Err("Anonymous not allowed".to_string());
-            }
-            
-            let user = match UsersService::find_by_id(caller, db, caller) {
-                Ok(e) => e,
-                Err(msg) => return Err(msg),
-            };
-        
-            if let UserKind::Player(_player) = user.kind {
+            if let UserKind::Player(_) = user.kind.clone() {
             }
             else {
                 return Err("Forbidden".to_string());

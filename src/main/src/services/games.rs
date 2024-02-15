@@ -1,10 +1,9 @@
 use candid::Principal;
 use crate::db::DB;
-use crate::db::traits::crud::{Crud, CrudSubscribable, Pagination};
+use neuralarena_cdk::db::traits::crud::{Crud, CrudSubscribable, Pagination};
 use crate::models::game::{Game, GameId, GameStatus};
 use crate::models::staff::StaffRole;
 use crate::models::user::UserKind;
-
 use super::users::UsersService;
 
 pub struct GamesService {}
