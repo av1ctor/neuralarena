@@ -2,6 +2,19 @@ import { _SERVICE as Main, GameRequest, GameResponse, Pagination, Asset } from "
 
 export type GameId = string;
 
+export const gameAssetDataTextValue = (
+    asset: Asset,
+    key: string
+): string|undefined => {
+    const field = asset.data.find(f => f[0] === key);
+    if(!field || !('Text' in field[1])) {
+        return undefined;
+    }
+    else {
+        return (field[1] as any).Text;
+    }
+};
+
 export const gameAssetDataU32Value = (
     asset: Asset,
     key: string

@@ -2,9 +2,9 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
-import { GameAssetType, EntityState } from "brains-engine";
 import { Asset } from '../../../declarations/neuralarena_be/neuralarena_be.did';
-import { gameAssetDataU32Value } from '../libs/games';
+import { gameAssetDataTextValue, gameAssetDataU32Value } from '../libs/games';
+import { AssetType, EntityState } from "brains-engine";
 
 const loader = new GLTFLoader();
 
@@ -155,8 +155,9 @@ export class ThreeRenderer {
         asset: Asset
     ): Promise<void> {
         switch (Number(asset.typ)) {
-            case GameAssetType.Level: {
-                const gltf = await loader.loadAsync("/maps/level-0/map.gltf");
+            case AssetType.Level: {
+                const gltf = await loader.loadAsync(
+                    gameAssetDataTextValue(asset, 'path')!);
                 const mesh = gltf.scene;
                 mesh.traverse(child => {
                     if((child as any).isMesh) {
@@ -181,11 +182,9 @@ export class ThreeRenderer {
                 this.assets.set(asset_ref, mesh);
                 break;
             }
-            case GameAssetType.Player: {
-                const zombies = ['man', 'girl', 'woman', 'boy'];
+            case AssetType.Player: {
                 const gltf = await loader.loadAsync(
-                    `/models/zombies/${zombies[(gameAssetDataU32Value(asset, 'num')! % 4) || 0]}/default.gltf`
-                );
+                    gameAssetDataTextValue(asset, 'path')!);
                 const mesh = gltf.scene;
                 mesh.traverse(child => {
                     if((child as any).isMesh) {
@@ -205,11 +204,9 @@ export class ThreeRenderer {
                 this.assets.set(asset_ref, mesh);
                 break;
             }
-            case GameAssetType.Npc: {
-                const npcs = ['man'];
+            case AssetType.Npc: {
                 const gltf = await loader.loadAsync(
-                    `/models/npcs/${npcs[0]}/default.gltf`
-                );
+                    gameAssetDataTextValue(asset, 'path')!);
                 const mesh = gltf.scene;
                 mesh.traverse(child => {
                     if((child as any).isMesh) {
@@ -229,7 +226,7 @@ export class ThreeRenderer {
                 this.assets.set(asset_ref, mesh);
                 break;
             }
-            case GameAssetType.Exit: {
+            case AssetType.Object: {
                 const geometry = new THREE.BoxGeometry(2.0, 2.0, 2.0);
                 const material = new THREE.MeshBasicMaterial({
                     color: 0x0000ff
