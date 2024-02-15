@@ -33,7 +33,7 @@ export const Banner = (props: Props) => {
             shadow="md"
             radius="md"
             style={{ 
-                backgroundImage: `url(${props.game.image})`,
+                backgroundImage: `url(${props.game.info.image_url})`,
                 height: props.isHalf? rem(110): rem(220),
             }}
             className={classes.card}
@@ -46,7 +46,7 @@ export const Banner = (props: Props) => {
                         variant="gradient"
                         size="xl" 
                     >
-                        {props.game.name}
+                        {props.game.info.name}
                     </Text>
                 </Center>
             </Container>

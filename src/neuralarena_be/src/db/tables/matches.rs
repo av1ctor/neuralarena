@@ -86,7 +86,7 @@ impl TableSubscribable<TableName, MatchId, Match> for MatchesTable {
     fn get_keys(
         v: &Match
     ) -> Vec<TableEventKey> {
-        let mut arr = vec![TableEventKey::Text(v.options.game_id.clone())];
+        let mut arr = vec![TableEventKey::Text(v.game.id.clone())];
 
         arr.append(
             &mut v.state.players.iter()

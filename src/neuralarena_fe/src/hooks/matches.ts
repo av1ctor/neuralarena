@@ -1,5 +1,5 @@
 import { UseInfiniteQueryResult, UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from "react-query";
-import { MatchRequest, MatchResponse, MatchStepsResponse } from "../../../declarations/neuralarena_be/neuralarena_be.did";
+import { InstanceStepsResponse, MatchRequest, MatchResponse } from "../../../declarations/neuralarena_be/neuralarena_be.did";
 import { useActors } from "./actors";
 import { matchCreate, matchFindOpen, matchFindById, matchJoin, matchStart, matchRun, MatchId, matchFindByGame, matchGetSteps } from "../libs/matches";
 import { GameId } from "../libs/games";
@@ -141,10 +141,10 @@ export const useMatchFindByGame = (
 export const useMatchGetSteps = (
     id: MatchId,
     limit: number
-): UseInfiniteQueryResult<MatchStepsResponse, Error> => {
+): UseInfiniteQueryResult<InstanceStepsResponse, Error> => {
     const {main} = useActors();
 
-    return useInfiniteQuery<MatchStepsResponse, Error>(
+    return useInfiniteQuery<InstanceStepsResponse, Error>(
         ['match-steps', id, limit], 
         ({pageParam = 0}) => matchGetSteps(main, id, {offset: pageParam, limit}),
         {

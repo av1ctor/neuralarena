@@ -52,13 +52,15 @@ export const Card = (props: Props) => {
     const handleView = useCallback(() => {
         navigate(`/games/${props.game.id}`)
     }, [props.game.id]);
+
+    const {info} = props.game;
     
     return (
         <Paper
             shadow="md"
             p="xl"
             radius="md"
-            style={{ backgroundImage: `url(${props.game.image})` }}
+            style={{ backgroundImage: `url(${info.image_url})` }}
             className={classes.card}
         >
             <div className={classes.categoryBox}>
@@ -66,7 +68,7 @@ export const Card = (props: Props) => {
                     className={classes.category} 
                     size="xs"
                 >
-                    {props.game.category}
+                    {info.category}
                 </Badge>
             </div>
             <Container/>
@@ -77,13 +79,13 @@ export const Card = (props: Props) => {
                         variant="gradient"
                         size="xl" 
                     >
-                        {props.game.name}
+                        {info.name}
                     </Text>
                 </Center>
                 <Center>
                     <Text
                         className={classes.description}>
-                        {props.game.description}
+                        {info.description}
                     </Text>
                 </Center>
             </Container>

@@ -18,7 +18,7 @@ export const Match = (props: Props) => {
     const {toggleLoading, showError, showSuccess} = useUI();
     const [pov, setPov] = useState<number|undefined>(undefined);
     const match = useMatchFindById(id);
-    const game = useGameFindById(match?.data?.options.game_id);
+    const game = useGameFindById(match?.data?.game.id);
 
     const handleJoin = useCallback(async () => {
         if(id) {

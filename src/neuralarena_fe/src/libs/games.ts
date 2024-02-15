@@ -39,29 +39,6 @@ export const gameCreate = async (
     return res.Ok; 
 };
 
-export const gameUpdate = async (
-    main: Main,
-    id: GameId,
-    req: GameRequest
-): Promise<GameResponse> => {
-    const res = await main.game_update(id, req);
-    if('Err' in res) {
-        throw new Error(res.Err);
-    }
-    return res.Ok; 
-};
-
-export const gameDelete = async (
-    main: Main,
-    id: GameId
-): Promise<void> => {
-    const res = await main.game_delete(id);
-    if('Err' in res) {
-        throw new Error(res.Err);
-    }
-    return; 
-};
-
 export const gameFindById = async (
     main: Main,
     id?: GameId

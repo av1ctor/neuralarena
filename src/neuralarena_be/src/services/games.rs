@@ -1,65 +1,50 @@
 use candid::Principal;
+use neuralarena_cdk::models::game::GameInfoResponse;
+use neuralarena_cdk::utils::uniqueid;
 use crate::db::DB;
 use neuralarena_cdk::db::traits::crud::{Crud, CrudSubscribable, Pagination};
-use crate::models::game::{Game, GameId, GameStatus};
+use crate::models::game::{Game, GameId, GameRequest, GameStatus};
 use crate::models::staff::StaffRole;
-use crate::models::user::UserKind;
-use super::users::UsersService;
+use crate::models::user::{User, UserKind};
 
 pub struct GamesService {}
 
 impl GamesService {
-    pub fn create(
-        id: &GameId,
+    pub async fn create(
+        req: &GameRequest,
+        user: &User
+    ) -> Result<Game, String> {
+        Self::authorize(user)?;
+
+        let (res, ): (Result<GameInfoResponse, String>, ) = ic_cdk::call(
+            req.canister_id, 
+            "game_get_info",
+            ()
+        ).await.map_err(|e| e.1)?;
+
+        let info = match res {
+            Err(msg) => return Err(msg),
+            Ok(info) => info
+        }.info;
+
+        let id = uniqueid::generate();
+        Ok(Game::new(&id, &req, &info, &user.id))
+    }
+
+    pub fn insert(
         game: &Game,
-        db: &mut DB,
-        caller: &Principal
+        db: &mut DB
     ) -> Result<(), String> {
-        Self::authorize(caller, db)?;
-        db.games.borrow_mut().insert_and_notify(id.clone(), game.clone())
+        db.games.borrow_mut()
+            .insert_and_notify(game.id.clone(), game.clone())
     }
 
-    pub fn update(
-        id: &GameId,
-        req: &Game,
-        db: &mut DB,
-        caller: &Principal
+    pub fn _update(
+        game: &Game,
+        db: &mut DB
     ) -> Result<(), String> {
-        Self::authorize(caller, db)?;
-
-        let mut games = db.games.borrow_mut();
-
-        let game = match games.find_by_id(id) {
-            None => return Err("Not found".to_string()),
-            Some(e) => e
-        };
-
-        if *caller != game.created_by {
-            return Err("Forbidden".to_string());
-        }
-
-        games.update_and_notify(id.to_owned(), req.clone())
-    }
-
-    pub fn delete(
-        id: &GameId,
-        db: &mut DB,
-        caller: &Principal
-    ) -> Result<(), String> {
-        Self::authorize(caller, db)?;
-
-        let mut games = db.games.borrow_mut();
-
-        let game = match games.find_by_id(id) {
-            None => return Err("Not found".to_string()),
-            Some(e) => e
-        };
-
-        if *caller != game.created_by {
-            return Err("Forbidden".to_string());
-        }
-        
-        games.delete_and_notify(id)
+        db.games.borrow_mut()
+            .update_and_notify(game.id.clone(), game.clone())
     }
 
     pub fn find_by_id(
@@ -90,7 +75,7 @@ impl GamesService {
             .cloned()
             .collect::<Vec<_>>();
 
-        arr.sort_by(|a, b| b.name.cmp(&a.name));
+        arr.sort_by(|a, b| b.info.name.cmp(&a.info.name));
         
         Ok(arr.iter()
             .skip(pag.offset as usize)
@@ -100,18 +85,11 @@ impl GamesService {
     }
 
     fn authorize(
-        caller: &Principal, 
-        db: &mut DB
+        user: &User
     ) -> Result<(), String> {
         //FIXME: remove this by-pass when the UI is done
         if false {
-            if *caller == Principal::anonymous() {
-                return Err("Anonymous not allowed".to_string());
-            }
-            
-            let user = UsersService::find_by_id(caller, db, caller)?;
-        
-            if let UserKind::Staff(staff) = user.kind {
+            if let UserKind::Staff(staff) = &user.kind {
                 if staff.role != StaffRole::Admin {
                     return Err("Forbidden".to_string());
                 }

@@ -7,9 +7,9 @@ use super::user::UserId;
 pub type MatchId = String;
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
-pub struct MatchOptions {
-    pub game_id: GameId,
-    pub game_options: HashMap<String, String>,
+pub struct MatchGame {
+    pub id: GameId,
+    pub options: HashMap<String, String>,
 }
 
 #[derive(PartialEq, Clone, Copy, Serialize, Deserialize, CandidType)]
@@ -26,8 +26,6 @@ pub enum MatchStatus {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct MatchGameInstance {
     pub instance_id: String,
-    pub min_players: usize,
-    pub max_players: usize,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -39,7 +37,7 @@ pub struct MatchState {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Match {
     pub id: String,
-    pub options: MatchOptions,
+    pub game: MatchGame,
     pub state: MatchState,
     pub instance: MatchGameInstance,
     pub created_at: u64,
@@ -52,13 +50,14 @@ pub struct Match {
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
 pub struct MatchRequest {
-    pub options: MatchOptions,
+    pub game: MatchGame,
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
 pub struct MatchResponse {
     pub id: String,
     pub status: MatchStatus,
+    pub game: MatchGame,
     pub players: Vec<UserId>,
     pub created_at: u64,
     pub created_by: UserId,
@@ -76,15 +75,13 @@ impl Match {
     ) -> Self {
         Self {
             id: id.clone(),
-            options: req.options.clone(), 
+            game: req.game.clone(), 
             state: MatchState { 
                 status: MatchStatus::CREATED,
                 players: vec![],
             },
             instance: MatchGameInstance {
                 instance_id: "".to_string(),
-                min_players: 0,
-                max_players: 0,
             },
             created_at: ic_cdk::api::time(),
             created_by: caller.clone(),
@@ -104,6 +101,7 @@ impl From<Match> for MatchResponse {
         Self { 
             id: e.id,
             status: e.state.status,
+            game: e.game,
             players: e.state.players,
             created_at: e.created_at,
             created_by: e.created_by,

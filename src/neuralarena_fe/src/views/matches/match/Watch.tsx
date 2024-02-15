@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ActionIcon, Center, Grid, Group, createStyles } from "@mantine/core";
-import { Asset, MatchResponse, MatchStep } from "../../../../../declarations/neuralarena_be/neuralarena_be.did";
+import { Asset, MatchResponse, InstanceStep } from "../../../../../declarations/neuralarena_be/neuralarena_be.did";
 import { useMatchGetSteps } from "../../../hooks/matches";
 import { ThreeRenderer } from "../../../renderers/ThreeRenderer";
 import { matchGetAssets } from "../../../libs/matches";
@@ -9,9 +9,6 @@ import {
     IconPlayerPause, IconPlayerPlay, IconQuestionMark, 
     IconWindowMaximize, IconWindowMinimize, 
 } from "@tabler/icons-react";
-import init, {GameWrapper, GameOptionsWrapper, PlayerFOVWrapper} from "brains-engine";
-
-init();
 
 const useStyles = createStyles((theme) => ({
     container: {
@@ -71,7 +68,7 @@ export const Watch = (props: Props) => {
     const canvas = useRef<HTMLCanvasElement|null>(null);
     const fullscreenContainer = useRef<HTMLDivElement|null>(null);
     const [assets, setAssets] = useState<Map<number, Asset>|undefined>();
-    const [engine, setEngine] = useState<GameWrapper>();
+    const [engine, setEngine] = useState<any>();
     const [renderer, setRenderer] = useState<ThreeRenderer>();
     const [state, setState] = useState<WatchState>(WatchState.PAUSED);
     const [loadingProgress, setLoadingProgress] = useState(0);
@@ -81,8 +78,8 @@ export const Watch = (props: Props) => {
     const steps = useMatchGetSteps(props.match.id, STEPS_PER_CALL)
     const step = useRef(0);
 
-    const frames = useMemo((): MatchStep[] => {
-        const res = new Array<MatchStep>();
+    const frames = useMemo((): InstanceStep[] => {
+        const res = new Array<InstanceStep>();
 
         steps.data?.pages.forEach(p => 
             p.steps.forEach(s => res.push(s))
@@ -235,29 +232,20 @@ export const Watch = (props: Props) => {
         }
     }, [steps.data?.pages.length]);
 
+    const load_engine = useCallback(async () => {
+        const module = await import("http://foo.bar/brains-engine");
+
+        await module.init();
+
+        setEngine(new module.GameWrapper());
+        setState(WatchState.PLAYING);
+    }, []);
+
     useEffect(() => {
         if(assets && !engine && state === WatchState.PAUSED) {
-            const {options} = props.match;
-            const game_options = new Map(options.game_options);
-            
-            setEngine(new GameWrapper(
-                new GameOptionsWrapper(
-                    new PlayerFOVWrapper(
-                        15.0, 
-                        180.0*(Math.PI/180.0), 
-                        40.0
-                    ), 
-                    props.match.players.length, 
-                    4, 
-                    20.0, 
-                    false,
-                    false,
-                    20000
-                )
-            ));
-            setState(WatchState.PLAYING);
+            load_engine();
         }
-    }, [props.match.options, state, engine, assets]);
+    }, [state, engine, assets]);
 
     useLayoutEffect(() => {
         if(engine && frames.length > 0) {

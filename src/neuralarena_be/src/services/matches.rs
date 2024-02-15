@@ -1,12 +1,11 @@
 use std::{any::Any, collections::BTreeSet};
 use candid::Principal;
 use neuralarena_cdk::{
-    db::traits::crud::{CrudSubscribable, Crud, Pagination},
-    models::game_instance::{
-        InstanceCreateResponse, 
+    db::traits::crud::{Crud, CrudSubscribable, Pagination},
+    models::{instance::InstanceId, instance::{
         InstanceAssetsResponse,
         InstanceStepsResponse
-    },
+    }},
     utils::uniqueid
 };
 use crate::models::{
@@ -33,20 +32,18 @@ impl MatchesService {
         let id = uniqueid::generate();
         let mut m4tch = Match::new(&id, &req, &user.id);
 
-        let (res, ): (Result<InstanceCreateResponse, String>, ) = ic_cdk::call(
+        let (res, ): (Result<InstanceId, String>, ) = ic_cdk::call(
             game.canister_id, 
             "instance_create",
             (
-                m4tch.options.game_options.clone(), 
+                m4tch.game.options.clone(), 
             )
         ).await.map_err(|e| e.1)?;
 
         match res {
             Err(msg) => Err(msg),
-            Ok(res) => {
-                m4tch.instance.instance_id = res.instance_id;
-                m4tch.instance.min_players = res.min_players;
-                m4tch.instance.max_players = res.max_players;
+            Ok(id) => {
+                m4tch.instance.instance_id = id;
                 Ok(m4tch)
             }
         } 
@@ -130,12 +127,13 @@ impl MatchesService {
 
     pub fn join(
         m4tch: &mut Match,
+        game: &Game,
         user: &User
     ) -> Result<bool, String> {
         Self::authorize(user)?;
         
         let num_players = m4tch.state.players.len();
-        if  num_players >= m4tch.instance.max_players {
+        if  num_players >= game.info.max_players {
             return Err("Too many players".to_string());
         }
 
@@ -149,17 +147,18 @@ impl MatchesService {
 
         m4tch.state.players.push(user.id.clone());
 
-        let ok_to_run = m4tch.state.players.len() == m4tch.instance.max_players;
+        let ok_to_run = m4tch.state.players.len() == game.info.max_players;
         Ok(ok_to_run)
     }
 
     pub fn start_step1(
         m4tch: &mut Match,
+        game: &Game,
         user: &User
     ) -> Result<(), String> {
         Self::authorize(user)?;
         
-        if m4tch.state.players.len() < m4tch.instance.min_players {
+        if m4tch.state.players.len() < game.info.min_players {
             return Err("Too few players".to_string());
         }
 
@@ -195,11 +194,12 @@ impl MatchesService {
 
     pub fn run_step1(
         m4tch: &mut Match,
+        game: &Game,
         user: &User
     ) -> Result<(), String> {
         Self::authorize(user)?;
         
-        if m4tch.state.players.len() < m4tch.instance.min_players {
+        if m4tch.state.players.len() < game.info.min_players {
             return Err("Too few players".to_string());
         }
 

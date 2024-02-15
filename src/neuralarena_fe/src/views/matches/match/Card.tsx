@@ -61,15 +61,15 @@ export const Card = (props: Props) => {
 
     const {game, match} = props;
 
-    const min_players = Number(match.options.min_players);
-    const max_players = Number(match.options.max_players);
+    const min_players = Number(game.info.min_players);
+    const max_players = Number(game.info.max_players);
     
     return (
         <Paper
             shadow="md"
             p="xl"
             radius="md"
-            style={{ backgroundImage: `url(${game.image})` }}
+            style={{ backgroundImage: `url(${game.info.image_url})` }}
             className={classes.card}
         >
             <div className={classes.statusBox}>

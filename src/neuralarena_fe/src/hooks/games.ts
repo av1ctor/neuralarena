@@ -1,12 +1,10 @@
 import { UseInfiniteQueryResult, UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from "react-query";
 import { GameRequest, GameResponse } from "../../../declarations/neuralarena_be/neuralarena_be.did";
 import { useActors } from "./actors";
-import { GameId, gameCreate, gameDelete, gameFindActive, gameFindById, gameUpdate } from "../libs/games";
+import { GameId, gameCreate, gameFindActive, gameFindById } from "../libs/games";
 
 interface GameMethods {
     create: (req: GameRequest) => Promise<GameResponse>;
-    update: (id: GameId, req: GameRequest) => Promise<GameResponse>;
-    remove: (id: GameId) => Promise<void>;
 }
 
 export const useGame = (
@@ -31,45 +29,8 @@ export const useGame = (
         return createMut.mutateAsync({req});
     };
 
-    const updateMut = useMutation(
-        async (options: {id: GameId, req: GameRequest}) => {
-            return gameUpdate(main, options.id, options.req);
-        },
-        {
-            onSuccess: () => {
-                queryClient.invalidateQueries(['games']);
-            }   
-        }
-    );
-
-    const update = (
-        id: GameId,
-        req: GameRequest
-    ): Promise<GameResponse> => {
-        return updateMut.mutateAsync({id, req});
-    };
-
-    const deleteMut = useMutation(
-        async (options: {id: GameId}) => {
-            return gameDelete(main, options.id);
-        },
-        {
-            onSuccess: () => {
-                queryClient.invalidateQueries(['games']);
-            }   
-        }
-    );
-
-    const remove = (
-        id: GameId
-    ): Promise<void> => {
-        return deleteMut.mutateAsync({id});
-    };
-    
     return {
         create,
-        update,
-        remove,
     }
 };
 

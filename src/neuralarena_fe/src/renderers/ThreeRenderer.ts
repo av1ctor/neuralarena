@@ -3,8 +3,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
 import { Asset } from '../../../declarations/neuralarena_be/neuralarena_be.did';
-import { gameAssetDataTextValue, gameAssetDataU32Value } from '../libs/games';
-import { AssetType, EntityState } from "brains-engine";
+import { gameAssetDataTextValue } from '../libs/games';
 
 const loader = new GLTFLoader();
 
@@ -154,94 +153,88 @@ export class ThreeRenderer {
         asset_ref: number,
         asset: Asset
     ): Promise<void> {
-        switch (Number(asset.typ)) {
-            case AssetType.Level: {
-                const gltf = await loader.loadAsync(
-                    gameAssetDataTextValue(asset, 'path')!);
-                const mesh = gltf.scene;
-                mesh.traverse(child => {
-                    if((child as any).isMesh) {
-                        const mesh = child as THREE.Mesh;
-                        mesh.castShadow = true;
-                        mesh.receiveShadow = true;
-                        const material = Array.isArray(mesh.material)? 
-                            mesh.material[0].clone(): 
-                            mesh.material.clone();
-                        material.transparent = false;
-                        material.opacity = 0.25;
+        if('Level' in asset.typ) {
+            const gltf = await loader.loadAsync(
+                gameAssetDataTextValue(asset, 'path')!);
+            const mesh = gltf.scene;
+            mesh.traverse(child => {
+                if((child as any).isMesh) {
+                    const mesh = child as THREE.Mesh;
+                    mesh.castShadow = true;
+                    mesh.receiveShadow = true;
+                    const material = Array.isArray(mesh.material)? 
+                        mesh.material[0].clone(): 
+                        mesh.material.clone();
+                    material.transparent = false;
+                    material.opacity = 0.25;
 
-                        if((material as any).map) {
-                            (material as any).map.anisotropy = 4;
-                        }
-                        mesh.material = material;
+                    if((material as any).map) {
+                        (material as any).map.anisotropy = 4;
                     }
-                });
+                    mesh.material = material;
+                }
+            });
 
-                mesh.userData.isMap = true;
+            mesh.userData.isMap = true;
 
-                this.assets.set(asset_ref, mesh);
-                break;
-            }
-            case AssetType.Player: {
-                const gltf = await loader.loadAsync(
-                    gameAssetDataTextValue(asset, 'path')!);
-                const mesh = gltf.scene;
-                mesh.traverse(child => {
-                    if((child as any).isMesh) {
-                        child.castShadow = true;
-                        child.receiveShadow = true;
-                    }
-                });
-                mesh.visible = false;
+            this.assets.set(asset_ref, mesh);
+        }
+        else if('Player' in asset.typ) {
+            const gltf = await loader.loadAsync(
+                gameAssetDataTextValue(asset, 'path')!);
+            const mesh = gltf.scene;
+            mesh.traverse(child => {
+                if((child as any).isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+            mesh.visible = false;
 
-                mesh.userData.isPlayer = true;
-                mesh.userData.animations = gltf.animations;
-                const bb = new THREE.Box3().setFromObject(mesh);
-                mesh.userData.height = (bb.max.y - bb.min.y) * 0.01;
+            mesh.userData.isPlayer = true;
+            mesh.userData.animations = gltf.animations;
+            const bb = new THREE.Box3().setFromObject(mesh);
+            mesh.userData.height = (bb.max.y - bb.min.y) * 0.01;
 
-                mesh.scale.multiplyScalar(0.01);
+            mesh.scale.multiplyScalar(0.01);
 
-                this.assets.set(asset_ref, mesh);
-                break;
-            }
-            case AssetType.Npc: {
-                const gltf = await loader.loadAsync(
-                    gameAssetDataTextValue(asset, 'path')!);
-                const mesh = gltf.scene;
-                mesh.traverse(child => {
-                    if((child as any).isMesh) {
-                        child.castShadow = true;
-                        child.receiveShadow = true;
-                    }
-                });
-                mesh.visible = false;
+            this.assets.set(asset_ref, mesh);
+        }
+        else if('Npc' in asset.typ) {
+            const gltf = await loader.loadAsync(
+                gameAssetDataTextValue(asset, 'path')!);
+            const mesh = gltf.scene;
+            mesh.traverse(child => {
+                if((child as any).isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
+            });
+            mesh.visible = false;
 
-                mesh.userData.isNpc = true;
-                mesh.userData.animations = gltf.animations;
-                const bb = new THREE.Box3().setFromObject(mesh);
-                mesh.userData.height = (bb.max.y - bb.min.y) * 0.05;
+            mesh.userData.isNpc = true;
+            mesh.userData.animations = gltf.animations;
+            const bb = new THREE.Box3().setFromObject(mesh);
+            mesh.userData.height = (bb.max.y - bb.min.y) * 0.05;
 
-                mesh.scale.multiplyScalar(0.011);
+            mesh.scale.multiplyScalar(0.011);
 
-                this.assets.set(asset_ref, mesh);
-                break;
-            }
-            case AssetType.Object: {
-                const geometry = new THREE.BoxGeometry(2.0, 2.0, 2.0);
-                const material = new THREE.MeshBasicMaterial({
-                    color: 0x0000ff
-                });
-                const mesh = new THREE.Mesh(geometry, material);
-                mesh.visible = false;
-                
-                this.scene.add(mesh);
-                this.assets.set(asset_ref, mesh);
-                break;
-            }
-            default: {
-                console.error("Unknown asset:" + asset_ref);
-                throw new Error("Unknown asset: " + asset_ref);
-            }
+            this.assets.set(asset_ref, mesh);
+        }
+        else if('Object' in asset.typ) {
+            const geometry = new THREE.BoxGeometry(2.0, 2.0, 2.0);
+            const material = new THREE.MeshBasicMaterial({
+                color: 0x0000ff
+            });
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.visible = false;
+            
+            this.scene.add(mesh);
+            this.assets.set(asset_ref, mesh);
+        }
+        else {
+            console.error("Unknown asset:" + asset_ref);
+            throw new Error("Unknown asset: " + asset_ref);
         }
     }
 
@@ -289,44 +282,26 @@ export class ThreeRenderer {
 
     change_model_state(
         model_ref: number,
-        from: EntityState,
-        to: EntityState
+        from: string,
+        to: string
     ) {
         const obj = this.entities[model_ref];
-        let action = undefined;
         let repeat = false;
         switch(to) {
-            case EntityState.IDLE:
-                action = 'Idle';
+            case 'Idle':
+            case 'Walking':
+            case 'Celebrating':
                 repeat = true;
                 break;
-            case EntityState.WALKING:
-                action = 'Walking';
-                repeat = true;
-                break;
-            case EntityState.CELEBRATING:
-                action = 'Celebrating';
-                repeat = true;
-                break;
-            case EntityState.BITING:
-                action = 'Biting';
-                break;
-            case EntityState.PUNCHING:
-                action = 'Punching';
-                break;
-            case EntityState.HIT:
-                action = 'Hit';
-                break;
-            case EntityState.DYING:
-            case EntityState.DEAD:
-                action = 'Dying';
+            case 'Dead':
+                to = 'Dying';
                 break;
         }
 
-        if(obj.userData.actions && action) {
+        if(obj.userData.actions && to) {
             const fromAction = (obj.userData.actions as Record<string, THREE.AnimationAction>)[obj.userData.action];
-            const toAction = (obj.userData.actions as Record<string, THREE.AnimationAction>)[action];
-            if(obj.userData.action !== action) {
+            const toAction = (obj.userData.actions as Record<string, THREE.AnimationAction>)[to];
+            if(obj.userData.action !== to) {
                 if(toAction) {
                     if(fromAction) {
                         fromAction.fadeOut(.1);
@@ -337,7 +312,7 @@ export class ThreeRenderer {
                     toAction.clampWhenFinished = !repeat;
                     toAction.reset().fadeIn(0.1).play();
                     
-                    obj.userData.action = action;
+                    obj.userData.action = to;
                 }
             }
         }

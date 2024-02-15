@@ -3,7 +3,7 @@ import {
     _SERVICE as Main, 
     MatchRequest, MatchResponse, 
     MatchStatus, 
-    MatchStepsResponse, 
+    InstanceStepsResponse, 
     Pagination 
 } from "../../../declarations/neuralarena_be/neuralarena_be.did";
 import { GameId } from "./games";
@@ -126,7 +126,7 @@ export const matchGetSteps = async (
     main: Main,
     id: MatchId,
     pag: Pagination
-): Promise<MatchStepsResponse> => {
+): Promise<InstanceStepsResponse> => {
     const res = await main.match_get_steps(id, pag);
     if('Err' in res) {
         throw new Error(res.Err);

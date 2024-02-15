@@ -1,6 +1,6 @@
 import {StoicIdentity} from "ic-stoic-identity";
 import { ActorSubclass } from "@dfinity/agent";
-import { createActor as mainCreateActor, canisterId as mainCanisterId } from "../../../declarations/main";
+import { createActor as mainCreateActor, canisterId as mainCanisterId } from "../../../declarations/neuralarena_be";
 import { ICProvider } from "../interfaces/icprovider";
 import { Result } from "../interfaces/result";
 import { Principal } from "@dfinity/principal";

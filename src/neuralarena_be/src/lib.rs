@@ -10,14 +10,12 @@ use models::m4tch::{
 use models::user::{UserRequest, UserResponse, User, UserId};
 use neuralarena_cdk::{
     db::traits::crud::Pagination,
-    models::game_instance::{
+    models::instance::{
         InstanceAssetsResponse,
         InstanceStepsResponse
     },
     utils::{
-        serdeser,
-        uniqueid,
-        random
+        serdeser, random
     }
 };
 use serde::{Deserialize, Serialize};
@@ -220,46 +218,29 @@ fn user_find_matches(
  * games facade
  */
 #[ic_cdk::update]
-fn game_create(
+async fn game_create(
     req: GameRequest
 ) -> Result<GameResponse, String> {
-    let caller = caller();
+    let caller = &caller();
+
+    let user = DB.with(|db| -> Result<User, String> {
+        let user = UsersService::find_by_id(
+            caller, &db.borrow(), caller)?;
+
+        Ok(user)
+    })?;
+
+    let game = GamesService::create(&req, &user).await?;
 
     DB.with(|db| {
-        let id = uniqueid::generate();
-        let game = Game::new(&id, &req, &caller);
-        match GamesService::create(&id, &game, &mut db.borrow_mut(), &caller) {
-            Ok(()) => Ok(game.into()),
-            Err(msg) => Err(msg)
-        }
-    })
-}
+        GamesService::insert(
+            &game,
+            &mut db.borrow_mut()
+        )
+    })?;
 
-#[ic_cdk::update]
-fn game_update(
-    id: GameId,
-    req: GameRequest
-) -> Result<GameResponse, String> {
-    let caller = caller();
+    Ok(game.into())
 
-    DB.with(|db| {
-        let game = Game::new(&id, &req, &caller);
-        match GamesService::update(&id, &game, &mut db.borrow_mut(), &caller) {
-            Ok(()) => Ok(game.into()),
-            Err(msg) => Err(msg)
-        }
-    })
-}
-
-#[ic_cdk::update]
-fn game_delete(
-    id: GameId
-) -> Result<(), String> {
-    let caller = caller();
-
-    DB.with(|db| {
-        GamesService::delete(&id, &mut db.borrow_mut(), &caller)
-    })
 }
 
 #[ic_cdk::query]
@@ -304,7 +285,7 @@ pub async fn match_create(
             caller, &db.borrow(), caller)?;
 
         let game = GamesService::find_by_id(
-            &req.options.game_id, &db.borrow(), caller)?;
+            &req.game.id, &db.borrow(), caller)?;
 
         Ok((user, game))
     })?;
@@ -335,17 +316,17 @@ pub async fn match_join(
             &id, &db.borrow(), caller)?;
     
         let game = GamesService::find_by_id(
-            &m4tch.options.game_id, &db.borrow(), caller)?;
+            &m4tch.game.id, &db.borrow(), caller)?;
 
         Ok((user, m4tch, game))
     })?;
 
-    match MatchesService::join(&mut m4tch, &user) {
+    match MatchesService::join(&mut m4tch, &game, &user) {
         Ok(start) => {
             DB.with(|db| {
                 MatchesService::update(&m4tch, &mut db.borrow_mut())
             })?;
-            
+
             if start {
                 _start_match(&mut m4tch, &game, &user).await?;
                 _run_match(&mut m4tch, &game, &user).await
@@ -363,13 +344,13 @@ async fn _start_match(
     game: &Game,
     user: &User
 ) -> Result<(), String> {
-    MatchesService::start_step1(m4tch, &user)?;
+    MatchesService::start_step1(m4tch, game, user)?;
 
     DB.with(|db| {
         MatchesService::update(m4tch, &mut db.borrow_mut())
     })?;
 
-    MatchesService::start_step2(m4tch, &game).await?;
+    MatchesService::start_step2(m4tch, game).await?;
 
     DB.with(|db| {
         MatchesService::update(m4tch, &mut db.borrow_mut())
@@ -383,13 +364,13 @@ async fn _run_match(
     game: &Game,
     user: &User
 ) -> Result<(), String> {
-    MatchesService::run_step1(m4tch, &user)?;
+    MatchesService::run_step1(m4tch, game, user)?;
 
     DB.with(|db| {
         MatchesService::update(m4tch, &mut db.borrow_mut())
     })?;
 
-    MatchesService::run_step2(m4tch, &game).await?;
+    MatchesService::run_step2(m4tch, game).await?;
 
     DB.with(|db| {
         MatchesService::update(m4tch, &mut db.borrow_mut())
@@ -412,7 +393,7 @@ pub async fn match_start(
             &id, &db.borrow(), caller)?;
     
         let game = GamesService::find_by_id(
-            &m4tch.options.game_id, &db.borrow(), caller)?;
+            &m4tch.game.id, &db.borrow(), caller)?;
 
         Ok((user, m4tch, game))
     })?;
@@ -434,7 +415,7 @@ pub async fn match_run(
             &id, &db.borrow(), caller)?;
     
         let game = GamesService::find_by_id(
-            &m4tch.options.game_id, &db.borrow(), caller)?;
+            &m4tch.game.id, &db.borrow(), caller)?;
 
         Ok((user, m4tch, game))
     })?;
@@ -452,7 +433,7 @@ pub async fn match_get_assets(
         let m4tch = MatchesService::find_by_id(
             &id, &db.borrow(), caller)?;
         let game = GamesService::find_by_id(
-            &m4tch.options.game_id, &db.borrow(), caller)?;
+            &m4tch.game.id, &db.borrow(), caller)?;
 
         Ok((m4tch, game))
     })?;
@@ -471,7 +452,7 @@ pub async fn match_get_steps(
         let m4tch = MatchesService::find_by_id(
             &id, &db.borrow(), caller)?;
         let game = GamesService::find_by_id(
-            &m4tch.options.game_id, &db.borrow(), caller)?;
+            &m4tch.game.id, &db.borrow(), caller)?;
 
         Ok((m4tch, game))
     })?;
