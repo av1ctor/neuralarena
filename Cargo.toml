@@ -1,5 +1,5 @@
 [workspace]
 resolver = "2"
 members = [
-    "src/main",
+    "src/neuralarena_be",
 ]

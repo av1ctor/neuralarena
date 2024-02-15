@@ -1,18 +1,18 @@
 {
   "canisters": {
-    "main": {
-      "candid": "src/main/main.did",
-      "package": "main",
+    "neuralarena_be": {
+      "candid": "src/neuralarena_be/neuralarena_be.did",
+      "package": "neuralarena_be",
       "type": "rust",
       "optimize": "O4",
       "gzip": true
     },
-    "site": {
+    "neuralarena_fe": {
       "site": {
-        "entrypoint": "src/site/src/index.html"
+        "entrypoint": "src/neuralarena_fe/src/index.html"
       },
       "source": [
-        "dist/site/"
+        "dist/neuralarena_fe/"
       ],
       "type": "assets",
       "gzip": true

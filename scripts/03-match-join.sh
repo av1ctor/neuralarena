@@ -2,6 +2,6 @@
 
 MATCH_ID=$1
 
-dfx canister call main match_join "(\"$MATCH_ID\")"
+dfx canister call neuralarena_be match_join "(\"$MATCH_ID\")"
 
 

@@ -12,7 +12,7 @@ dotenv.config({
   path: resolve(process.cwd(), '.env'),
 });
 
-const UI_ENV_VARS = ['DFX_NETWORK', 'MAIN_CANISTER_ID'];
+const UI_ENV_VARS = ['DFX_NETWORK', 'NEURALARENA_BE_CANISTER_ID'];
 
 process.env = {
   ...process.env,
@@ -26,7 +26,7 @@ process.env = {
 };
 
 export default defineConfig({
-    root: 'src/site/src',
+    root: 'src/neuralarena_fe/src',
     publicDir: '../public',
     plugins: [
         react(),
@@ -81,7 +81,7 @@ export default defineConfig({
     define: {
         'process.env': {
             DFX_NETWORK: process.env.DFX_NETWORK,
-            MAIN_CANISTER_ID: process.env.MAIN_CANISTER_ID,
+            NEURALARENA_BE_CANISTER_ID: process.env.NEURALARENA_BE_CANISTER_ID,
         },
     },
     server: {

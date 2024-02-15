@@ -26,10 +26,10 @@
         "isolatedModules": true,
         "baseUrl": ".",
         "paths": {
-            "*": [ "src/site/src/custom-types/*"]
+            "*": [ "src/neuralarena_fe/src/custom-types/*"]
         }
       },
-    "include": ["src/site/**/*"],
+    "include": ["src/neuralarena_fe/**/*"],
     "exclude": [
         "src/declarations/**",
     ],

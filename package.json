@@ -1,17 +1,17 @@
 {
-  "name": "site",
+  "name": "neuralarena-fe",
   "version": "0.0.1",
   "type": "module",
-  "description": "NeuralArena site",
+  "description": "Neural Arena frontend",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "prebuild": "dfx generate",
     "deploy:local": "dfx deploy --network=local",
     "deploy:ic": "dfx deploy --network=ic",
-    "deploy:backend:dev": "dfx deploy main && npm run extract && npm run generate",
-    "extract": "candid-extractor target/wasm32-unknown-unknown/release/main.wasm >./src/main/main.did",
-    "generate": "dfx generate main"
+    "deploy:backend:dev": "dfx deploy neuralarena_be && npm run extract && npm run generate",
+    "extract": "candid-extractor target/wasm32-unknown-unknown/release/neuralarena_be.wasm >./src/neuralarena_be/neuralarena_be.did",
+    "generate": "dfx generate neuralarena_be"
   },
   "dependencies": {
     "@dfinity/agent": "^0.19.3",
