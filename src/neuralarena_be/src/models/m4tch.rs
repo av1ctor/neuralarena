@@ -12,7 +12,8 @@ pub struct MatchOptions {
     pub game_options: HashMap<String, String>,
 }
 
-#[derive(PartialEq, Clone, Serialize, Deserialize, CandidType)]
+#[derive(PartialEq, Clone, Copy, Serialize, Deserialize, CandidType)]
+#[repr(C)]
 pub enum MatchStatus {
     CREATED,
     STARTING,

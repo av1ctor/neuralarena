@@ -342,6 +342,10 @@ pub async fn match_join(
 
     match MatchesService::join(&mut m4tch, &user) {
         Ok(start) => {
+            DB.with(|db| {
+                MatchesService::update(&m4tch, &mut db.borrow_mut())
+            })?;
+            
             if start {
                 _start_match(&mut m4tch, &game, &user).await?;
                 _run_match(&mut m4tch, &game, &user).await

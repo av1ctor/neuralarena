@@ -109,10 +109,7 @@ impl GamesService {
                 return Err("Anonymous not allowed".to_string());
             }
             
-            let user = match UsersService::find_by_id(caller, db, caller) {
-                Ok(e) => e,
-                Err(msg) => return Err(msg),
-            };
+            let user = UsersService::find_by_id(caller, db, caller)?;
         
             if let UserKind::Staff(staff) = user.kind {
                 if staff.role != StaffRole::Admin {
