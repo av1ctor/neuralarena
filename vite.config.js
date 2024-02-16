@@ -35,7 +35,7 @@ export default defineConfig({
         emptyOutDir: true,
         rollupOptions: {
             output: {
-                dir: resolve(process.cwd(), 'dist', 'neuralarena_fe'),
+                dir: resolve(process.cwd(), '../../../dist', 'neuralarena_fe'),
                 manualChunks: id => {
                     if (id.includes('@dfinity')) {
                         return 'dfinity-vendor';
