@@ -5,33 +5,21 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { resolve } from 'path';
 import dotenv from 'dotenv';
-import wasm from "vite-plugin-wasm";
-import topLevelAwait from "vite-plugin-top-level-await";
+import environment from 'vite-plugin-environment';
+import { fileURLToPath, URL } from 'url';
 
 dotenv.config({
   path: resolve(process.cwd(), '.env'),
 });
 
-const UI_ENV_VARS = ['DFX_NETWORK', 'NEURALARENA_BE_CANISTER_ID'];
-
-process.env = {
-  ...process.env,
-  ...UI_ENV_VARS.reduce(
-    (accum, entry) => ({
-      ...accum,
-      [`VITE_${entry}`]: process.env[entry],
-    }),
-    {},
-  ),
-};
-
 export default defineConfig({
     root: 'src/neuralarena_fe/src',
     publicDir: '../public',
     plugins: [
+        environment("all", { prefix: "VITE_" }),
+        environment("all", { prefix: "CANISTER_" }),
+        environment("all", { prefix: "DFX_" }),
         react(),
-        wasm(),
-        topLevelAwait(),
         checker({ typescript: true }),
         tsconfigPaths(),
         viteStaticCopy({
@@ -44,6 +32,7 @@ export default defineConfig({
         })
     ],
     build: {
+        emptyOutDir: true,
         rollupOptions: {
             output: {
                 dir: resolve(process.cwd(), 'dist', 'neuralarena_fe'),
@@ -57,8 +46,6 @@ export default defineConfig({
     },
     worker: {
         plugins: () => [
-            wasm(),
-            topLevelAwait()
         ]
     },
     test: {
@@ -78,18 +65,25 @@ export default defineConfig({
             },
         },
     },
-    define: {
-        'process.env': {
-            DFX_NETWORK: process.env.DFX_NETWORK,
-            NEURALARENA_BE_CANISTER_ID: process.env.NEURALARENA_BE_CANISTER_ID,
-        },
+    resolve: {
+        alias: [
+            {
+                find: "declarations",
+                replacement: fileURLToPath(
+                    new URL("../declarations", import.meta.url)
+                ),
+            },
+        ],
     },
     server: {
         fs: {
             strict: false
         },
         proxy: {
-            '/api': 'http://127.0.0.1:4943',
+            '/api': {
+                target: 'http://127.0.0.1:4943',
+                changeOrigin: true,
+            },
         },
     },
 });
