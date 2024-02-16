@@ -78,7 +78,7 @@ export const Watch = (props: Props) => {
     const [state, setState] = useState<WatchState>(WatchState.LOADING);
     const [assetsLoadingProgress, setAssetsLoadingProgress] = useState(0);
     const [engineLoadingProgress, setEngineLoadingProgress] = useState(0);
-    const [gameProgress, setGameProgress] = useState(0.0);
+    const [matchProgress, setMatchProgress] = useState(0.0);
     const [canvasDim, setCanvasDim] = useState(CANVAS_DIM);
 
     const assetsLoading = useRef(false);
@@ -146,7 +146,6 @@ export const Watch = (props: Props) => {
                 const frame = frames[i];
                 try {
                     engine?.render(
-                        frame.entities as Uint8Array, 
                         frame.events as Uint8Array, 
                         renderer
                     );
@@ -164,7 +163,7 @@ export const Watch = (props: Props) => {
             setState(WatchState.PLAYING);
         }
     
-        setGameProgress(t * 100.0);
+        setMatchProgress(t * 100.0);
     }, [step, frames, renderer, engine, state]);
 
     const changeCanvasDim = (dim: {w: number, h: number}) => {
@@ -286,7 +285,6 @@ export const Watch = (props: Props) => {
                             const frame = frames[step.current];
                             try {
                                 engine.render(
-                                    frame.entities as Uint8Array, 
                                     frame.events as Uint8Array, 
                                     renderer
                                 );
@@ -294,7 +292,7 @@ export const Watch = (props: Props) => {
                             catch(e) {
                                 console.error(e);
                             }
-                            setGameProgress(step.current / frames.length * 100.0);
+                            setMatchProgress(step.current / frames.length * 100.0);
                             ++step.current;
                             if(step.current >= frames.length) {
                                 setState(WatchState.FINISHED);
@@ -354,7 +352,7 @@ export const Watch = (props: Props) => {
                     >
                         <div 
                             className={classes.progress} 
-                            style={{width:`${gameProgress}%`}}
+                            style={{width:`${matchProgress}%`}}
                         />
                     </div>
                     <Grid.Col span={3}>

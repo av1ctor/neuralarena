@@ -16,11 +16,10 @@ export class GameEngine {
 */
   constructor();
 /**
-* @param {Uint8Array} entities
 * @param {Uint8Array} events
 * @param {any} renderer
 */
-  render(entities: Uint8Array, events: Uint8Array, renderer: any): void;
+  render(events: Uint8Array, renderer: any): void;
 /**
 * @param {any} renderer
 */
@@ -33,7 +32,7 @@ export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly __wbg_gameengine_free: (a: number) => void;
   readonly gameengine_new: () => number;
-  readonly gameengine_render: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
+  readonly gameengine_render: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly gameengine_reset: (a: number, b: number) => void;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
   readonly __wbindgen_malloc: (a: number, b: number) => number;

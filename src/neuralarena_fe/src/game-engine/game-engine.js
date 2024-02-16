@@ -104,18 +104,15 @@ export class GameEngine {
         return this;
     }
     /**
-    * @param {Uint8Array} entities
     * @param {Uint8Array} events
     * @param {any} renderer
     */
-    render(entities, events, renderer) {
+    render(events, renderer) {
         try {
             const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            const ptr0 = passArray8ToWasm0(entities, wasm.__wbindgen_malloc);
+            const ptr0 = passArray8ToWasm0(events, wasm.__wbindgen_malloc);
             const len0 = WASM_VECTOR_LEN;
-            const ptr1 = passArray8ToWasm0(events, wasm.__wbindgen_malloc);
-            const len1 = WASM_VECTOR_LEN;
-            wasm.gameengine_render(retptr, this.__wbg_ptr, ptr0, len0, ptr1, len1, addHeapObject(renderer));
+            wasm.gameengine_render(retptr, this.__wbg_ptr, ptr0, len0, addHeapObject(renderer));
             var r0 = getInt32Memory0()[retptr / 4 + 0];
             var r1 = getInt32Memory0()[retptr / 4 + 1];
             if (r1) {
