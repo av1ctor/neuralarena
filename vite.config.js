@@ -12,6 +12,8 @@ dotenv.config({
   path: resolve(process.cwd(), '.env'),
 });
 
+const dist = resolve(process.cwd(), 'dist', 'neuralarena_fe');
+
 export default defineConfig({
     root: 'src/neuralarena_fe/src',
     publicDir: '../public',
@@ -26,7 +28,7 @@ export default defineConfig({
             targets: [
                 {
                     src: '.ic-assets.json',
-                    dest: '.',
+                    dest: dist,
                 },
             ],
         })
@@ -35,7 +37,7 @@ export default defineConfig({
         emptyOutDir: true,
         rollupOptions: {
             output: {
-                dir: resolve(process.cwd(), '../../../dist', 'neuralarena_fe'),
+                dir: dist,
                 manualChunks: id => {
                     if (id.includes('@dfinity')) {
                         return 'dfinity-vendor';
