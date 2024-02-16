@@ -300,11 +300,7 @@ export const Watch = (props: Props) => {
                         }
                         break;
                     case WatchState.PAUSED:
-                        engine.render(
-                            Uint8Array.from([]), 
-                            Uint8Array.from([]), 
-                            renderer
-                        );
+                        engine.render(Uint8Array.from([]), renderer);
                         break;
                     case WatchState.FINISHED:
                         if(props.match.won_by.length > 0) {
@@ -313,11 +309,7 @@ export const Watch = (props: Props) => {
                             renderer?.change_pov(winner, true);
                         }
 
-                        engine.render(
-                            Uint8Array.from([]), 
-                            Uint8Array.from([]), 
-                            renderer
-                        );
+                        engine.render(Uint8Array.from([]), renderer);
                         break;
                 }
 

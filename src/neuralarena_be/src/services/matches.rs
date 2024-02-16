@@ -2,10 +2,10 @@ use std::{any::Any, collections::BTreeSet};
 use candid::Principal;
 use neuralarena_cdk::{
     db::traits::crud::{Crud, CrudSubscribable, Pagination},
-    models::{instance::InstanceId, instance::{
-        InstanceAssetsResponse,
-        InstanceStepsResponse
-    }},
+    models::instance::{
+        InstanceAssetsResponse, InstanceId, 
+        InstanceRunResponse, InstanceStepsResponse
+    },
     utils::uniqueid
 };
 use crate::models::{
@@ -216,7 +216,7 @@ impl MatchesService {
         game: &Game
     ) -> Result<(), String> {
 
-        let (res, ): (Result<(), String>, ) = ic_cdk::call(
+        let (res, ): (Result<InstanceRunResponse, String>, ) = ic_cdk::call(
             game.canister_id, 
             "instance_run",
             (
@@ -224,12 +224,15 @@ impl MatchesService {
             )
         ).await.map_err(|e| e.1)?;
         
-        if let Err(msg) = res {
-            Err(msg)
-        }
-        else {
-            m4tch.state.status = MatchStatus::FINISHED;
-            Ok(())
+        m4tch.state.status = MatchStatus::FINISHED;
+
+        match res {
+            Ok(result) => {
+                m4tch.won_by = result.won_by;
+                m4tch.won_at = result.won_at;
+                Ok(())
+            },
+            Err(msg) => Err(msg),
         }
     }
 
