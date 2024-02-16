@@ -289,19 +289,21 @@ export class ThreeRenderer {
         to: string
     ) {
         const obj = this.entities[model_ref];
-        let repeat = false;
+        let repeat = false;        
         switch(to) {
-            case 'Idle':
-            case 'Walking':
-            case 'Celebrating':
+            case 'idle':
+            case 'walking':
+            case 'celebrating':
                 repeat = true;
                 break;
-            case 'Dead':
-                to = 'Dying';
+            case 'dead':
+                to = 'dying';
                 break;
         }
 
         if(obj.userData.actions && to) {
+            to = to[0].toUpperCase() + to.substring(1);
+
             const fromAction = (obj.userData.actions as Record<string, THREE.AnimationAction>)[obj.userData.action];
             const toAction = (obj.userData.actions as Record<string, THREE.AnimationAction>)[to];
             if(obj.userData.action !== to) {
