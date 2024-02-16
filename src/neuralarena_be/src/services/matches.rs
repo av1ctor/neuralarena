@@ -43,7 +43,7 @@ impl MatchesService {
         match res {
             Err(msg) => Err(msg),
             Ok(id) => {
-                m4tch.instance.instance_id = id;
+                m4tch.instance.id = id;
                 Ok(m4tch)
             }
         } 
@@ -178,7 +178,7 @@ impl MatchesService {
             game.canister_id, 
             "instance_start",
             (
-                m4tch.instance.instance_id.clone(), 
+                m4tch.instance.id.clone(), 
                 m4tch.state.players.clone()
             )
         ).await.map_err(|e| e.1)?;
@@ -220,7 +220,7 @@ impl MatchesService {
             game.canister_id, 
             "instance_run",
             (
-                m4tch.instance.instance_id.clone(),
+                m4tch.instance.id.clone(),
             )
         ).await.map_err(|e| e.1)?;
         
@@ -259,15 +259,16 @@ impl MatchesService {
     }
 
     pub async fn get_assets(
+        m4tch: &Match,
         game: &Game
     ) -> Result<InstanceAssetsResponse, String> {
-        let (res, ): (InstanceAssetsResponse, ) = ic_cdk::call(
+        let (res, ): (Result<InstanceAssetsResponse, String>, ) = ic_cdk::call(
             game.canister_id, 
             "instance_get_assets",
-            ()
+            (m4tch.instance.id.clone(), )
         ).await.map_err(|e| e.1)?;
 
-        Ok(res)
+        res
     }
 
     pub async fn get_steps(
@@ -280,13 +281,13 @@ impl MatchesService {
             return Err("Invalid match state".to_string());
         }
         
-        let (res, ): (InstanceStepsResponse, ) = ic_cdk::call(
+        let (res, ): (Result<InstanceStepsResponse, String>, ) = ic_cdk::call(
             game.canister_id, 
             "instance_get_steps",
-            (pag, )
+            (m4tch.instance.id.clone(), pag, )
         ).await.map_err(|e| e.1)?;
 
-        Ok(res)
+        res
     }
 
     fn authorize(

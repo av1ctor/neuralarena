@@ -429,7 +429,7 @@ pub async fn match_get_assets(
 ) -> Result<InstanceAssetsResponse, String> {
     let caller = &caller();
     
-    let (_, game) = DB.with(|db| -> Result<(Match, Game), String> {
+    let (m4tch, game) = DB.with(|db| -> Result<(Match, Game), String> {
         let m4tch = MatchesService::find_by_id(
             &id, &db.borrow(), caller)?;
         let game = GamesService::find_by_id(
@@ -438,7 +438,7 @@ pub async fn match_get_assets(
         Ok((m4tch, game))
     })?;
 
-    MatchesService::get_assets(&game).await
+    MatchesService::get_assets(&m4tch, &game).await
 }
 
 #[ic_cdk::query(composite = true)]

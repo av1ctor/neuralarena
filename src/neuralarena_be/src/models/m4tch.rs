@@ -25,7 +25,7 @@ pub enum MatchStatus {
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct MatchGameInstance {
-    pub instance_id: String,
+    pub id: String,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -81,7 +81,7 @@ impl Match {
                 players: vec![],
             },
             instance: MatchGameInstance {
-                instance_id: "".to_string(),
+                id: "".to_string(),
             },
             created_at: ic_cdk::api::time(),
             created_by: caller.clone(),

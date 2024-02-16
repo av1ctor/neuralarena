@@ -147,8 +147,9 @@ export const Match = (props: Props) => {
                     }
                     {(status === 'FINISHED' || status === 'RUNNING') &&
                         <Stack>
-                            {match.data &&
+                            {match.data && game.data &&
                                 <Watch 
+                                    game={game.data}
                                     match={match.data}
                                     pov={pov}
                                 />

@@ -4,10 +4,10 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
 import { Asset } from '../../../declarations/neuralarena_be/neuralarena_be.did';
 import { gameAssetDataTextValue } from '../libs/games';
-
-const loader = new GLTFLoader();
+import { AssetLoadingManager } from '../libs/loadingmanager';
 
 export class ThreeRenderer {
+    loader: GLTFLoader;
     renderer: THREE.WebGLRenderer;
     scene: THREE.Scene;
     camera: THREE.PerspectiveCamera;
@@ -25,7 +25,8 @@ export class ThreeRenderer {
     skipping: boolean;
 
     constructor(
-        canvas: HTMLCanvasElement
+        canvas: HTMLCanvasElement,
+        assets_url: string
     ) {
         this.width = canvas.width;
         this.height = canvas.height;
@@ -80,6 +81,8 @@ export class ThreeRenderer {
         };
 
         this.skipping = false;
+
+        this.loader = new GLTFLoader(new AssetLoadingManager(assets_url));
     }
 
     change_pov(
@@ -154,7 +157,7 @@ export class ThreeRenderer {
         asset: Asset
     ): Promise<void> {
         if('Level' in asset.typ) {
-            const gltf = await loader.loadAsync(
+            const gltf = await this.loader.loadAsync(
                 gameAssetDataTextValue(asset, 'path')!);
             const mesh = gltf.scene;
             mesh.traverse(child => {
@@ -180,7 +183,7 @@ export class ThreeRenderer {
             this.assets.set(asset_ref, mesh);
         }
         else if('Player' in asset.typ) {
-            const gltf = await loader.loadAsync(
+            const gltf = await this.loader.loadAsync(
                 gameAssetDataTextValue(asset, 'path')!);
             const mesh = gltf.scene;
             mesh.traverse(child => {
@@ -201,7 +204,7 @@ export class ThreeRenderer {
             this.assets.set(asset_ref, mesh);
         }
         else if('Npc' in asset.typ) {
-            const gltf = await loader.loadAsync(
+            const gltf = await this.loader.loadAsync(
                 gameAssetDataTextValue(asset, 'path')!);
             const mesh = gltf.scene;
             mesh.traverse(child => {

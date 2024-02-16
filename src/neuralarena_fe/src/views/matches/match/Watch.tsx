@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ActionIcon, Center, Grid, Group, createStyles } from "@mantine/core";
-import { Asset, MatchResponse, InstanceStep } from "../../../../../declarations/neuralarena_be/neuralarena_be.did";
+import { Asset, MatchResponse, InstanceStep, GameResponse } from "../../../../../declarations/neuralarena_be/neuralarena_be.did";
 import { useMatchGetSteps } from "../../../hooks/matches";
 import { ThreeRenderer } from "../../../renderers/ThreeRenderer";
 import { matchGetAssets } from "../../../libs/matches";
 import { useActors } from "../../../hooks/actors";
+import { useUI } from "../../../hooks/ui";
+import gameEngineInit, {GameEngine} from "../../../game-engine/game-engine";
 import { 
     IconPlayerPause, IconPlayerPlay, IconQuestionMark, 
     IconWindowMaximize, IconWindowMinimize, 
@@ -48,12 +50,14 @@ const useStyles = createStyles((theme) => ({
 }));
 
 enum WatchState {
+    LOADING,
     PAUSED,
     PLAYING,
     FINISHED,
 }
 
 interface Props {
+    game: GameResponse,
     match: MatchResponse,
     pov: number|undefined,
 }
@@ -63,6 +67,7 @@ const STEPS_PER_CALL = FPS*10;
 const CANVAS_DIM = {w: 900, h: 506};
 
 export const Watch = (props: Props) => {
+    const {toggleLoading, showError, showSuccess} = useUI();
     const { main } = useActors();
     const { classes } = useStyles();
     const canvas = useRef<HTMLCanvasElement|null>(null);
@@ -70,7 +75,7 @@ export const Watch = (props: Props) => {
     const [assets, setAssets] = useState<Map<number, Asset>|undefined>();
     const [engine, setEngine] = useState<any>();
     const [renderer, setRenderer] = useState<ThreeRenderer>();
-    const [state, setState] = useState<WatchState>(WatchState.PAUSED);
+    const [state, setState] = useState<WatchState>(WatchState.LOADING);
     const [loadingProgress, setLoadingProgress] = useState(0);
     const [gameProgress, setGameProgress] = useState(0.0);
     const [canvasDim, setCanvasDim] = useState(CANVAS_DIM);
@@ -193,14 +198,15 @@ export const Watch = (props: Props) => {
 
     useEffect(() => {
         if(canvas.current && !renderer) {
-            const renderer = new ThreeRenderer(canvas.current);
+            const renderer = new ThreeRenderer(canvas.current, props.game.info.assets_url);
             setRenderer(renderer);
         }
-    }, [canvas.current, renderer]);
+    }, [canvas.current, renderer, props.game.info]);
 
     const loadAssets = useCallback(async () => {
         if(renderer && loadingProgress === 0) {
             try {
+                toggleLoading(true);
                 setLoadingProgress(5);
                 const assets = await matchGetAssets(main, props.match.id);
                 for(const e of assets.entries()) {
@@ -208,7 +214,12 @@ export const Watch = (props: Props) => {
                 }
                 setAssets(assets);
             }
+            catch(e) {
+                console.log(e);
+                showError(e);
+            }
             finally {
+                toggleLoading(false);
                 setLoadingProgress(100);
             }
         }
@@ -233,22 +244,29 @@ export const Watch = (props: Props) => {
     }, [steps.data?.pages.length]);
 
     const load_engine = useCallback(async () => {
-        const module = await import("http://foo.bar/brains-engine");
-
-        await module.init();
-
-        setEngine(new module.GameWrapper());
-        setState(WatchState.PLAYING);
-    }, []);
+        try {
+            toggleLoading(true);
+            await gameEngineInit(props.game.info.engine_wasm_url);
+            setEngine(new GameEngine());
+            setState(WatchState.PLAYING);
+        }
+        catch(e) {
+            console.log(e);
+            showError(e);
+        }
+        finally {
+            toggleLoading(false);
+        }
+    }, [props.game]);
 
     useEffect(() => {
-        if(assets && !engine && state === WatchState.PAUSED) {
+        if(!engine && state === WatchState.LOADING) {
             load_engine();
         }
-    }, [state, engine, assets]);
+    }, [state, engine]);
 
     useLayoutEffect(() => {
-        if(engine && frames.length > 0) {
+        if(engine && assets && frames.length > 0) {
             let timerId: number = 0;
 
             const animate = () => {
@@ -304,7 +322,7 @@ export const Watch = (props: Props) => {
         else {
             return () => {};
         };
-    }, [engine, steps, frames, state, renderer, props.match]);
+    }, [engine, assets, steps, frames, state, renderer, props.match]);
 
     return (
         <Center                 
