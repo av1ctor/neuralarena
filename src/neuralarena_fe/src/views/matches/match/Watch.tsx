@@ -76,9 +76,13 @@ export const Watch = (props: Props) => {
     const [engine, setEngine] = useState<any>();
     const [renderer, setRenderer] = useState<ThreeRenderer>();
     const [state, setState] = useState<WatchState>(WatchState.LOADING);
-    const [loadingProgress, setLoadingProgress] = useState(0);
+    const [assetsLoadingProgress, setAssetsLoadingProgress] = useState(0);
+    const [engineLoadingProgress, setEngineLoadingProgress] = useState(0);
     const [gameProgress, setGameProgress] = useState(0.0);
     const [canvasDim, setCanvasDim] = useState(CANVAS_DIM);
+
+    const assetsLoading = useRef(false);
+    const engineLoading = useRef(false);
 
     const steps = useMatchGetSteps(props.match.id, STEPS_PER_CALL)
     const step = useRef(0);
@@ -204,10 +208,11 @@ export const Watch = (props: Props) => {
     }, [canvas.current, renderer, props.game.info]);
 
     const loadAssets = useCallback(async () => {
-        if(renderer && loadingProgress === 0) {
+        if(renderer && !assetsLoading.current) {
             try {
+                assetsLoading.current = true;
+                setAssetsLoadingProgress(5);
                 toggleLoading(true);
-                setLoadingProgress(5);
                 const assets = await matchGetAssets(main, props.match.id);
                 for(const e of assets.entries()) {
                     await renderer.load_asset(e[0], e[1]);
@@ -220,10 +225,11 @@ export const Watch = (props: Props) => {
             }
             finally {
                 toggleLoading(false);
-                setLoadingProgress(100);
+                setAssetsLoadingProgress(100);
+                assetsLoading.current = false;
             }
         }
-    }, [props.match.id, renderer, loadingProgress]);
+    }, [props.match.id, renderer, assetsLoading]);
 
     useEffect(() => {
         loadAssets();
@@ -244,26 +250,30 @@ export const Watch = (props: Props) => {
     }, [steps.data?.pages.length]);
 
     const load_engine = useCallback(async () => {
-        try {
-            toggleLoading(true);
-            await gameEngineInit(props.game.info.engine_wasm_url);
-            setEngine(new GameEngine());
-            setState(WatchState.PLAYING);
+        if(!engineLoading.current && !engine) {
+            try {
+                engineLoading.current = true;
+                setEngineLoadingProgress(5);
+                toggleLoading(true);
+                await gameEngineInit(props.game.info.engine_wasm_url);
+                setEngine(new GameEngine());
+                setState(WatchState.PLAYING);
+            }
+            catch(e) {
+                console.log(e);
+                showError(e);
+            }
+            finally {
+                toggleLoading(false);
+                setEngineLoadingProgress(100);
+                engineLoading.current = false;
+            }
         }
-        catch(e) {
-            console.log(e);
-            showError(e);
-        }
-        finally {
-            toggleLoading(false);
-        }
-    }, [props.game]);
+    }, [props.game, engine, engineLoading]);
 
     useEffect(() => {
-        if(!engine && state === WatchState.LOADING) {
-            load_engine();
-        }
-    }, [state, engine]);
+        load_engine();
+    }, [load_engine]);
 
     useLayoutEffect(() => {
         if(engine && assets && frames.length > 0) {
