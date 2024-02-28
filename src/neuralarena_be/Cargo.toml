@@ -10,5 +10,6 @@ crate-type = ["cdylib"]
 candid = "0.10.3"
 ic-cdk = "0.12.1"
 ic-cdk-timers = "0.6"
+icrc-ledger-types = "0.1.5"
 serde = "1.0.190"
 neuralarena-cdk = {version = "0.1.0", path = "../../../neuralarena-cdk", features = ["uniqueid", "db"]}

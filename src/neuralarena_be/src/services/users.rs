@@ -1,8 +1,17 @@
+use std::collections::HashMap;
 use candid::Principal;
+use icrc_ledger_types::icrc1::account::Account;
 use crate::db::DB;
-use neuralarena_cdk::db::traits::crud::{Crud, Pagination, CrudSubscribable};
+use neuralarena_cdk::{
+    db::traits::crud::{Crud, CrudSubscribable, Pagination},
+    models::{
+        icrc7_types::Standard, 
+        nas1_types::Nas1Collection, 
+        nft::{Nft, NftStandard}
+    }
+};
 use crate::models::m4tch::Match;
-use crate::models::user::{User, UserId, UserKind};
+use crate::models::user::{User, UserId, UserKind, UserNftRequest};
 
 pub struct UsersService {}
 
@@ -63,6 +72,85 @@ impl UsersService {
         }
 
         users.update_and_notify(id.to_owned(), req.clone())
+    }
+
+    pub fn update_nfts(
+        user: &mut User,
+        nfts: Vec<Nft>,
+        db: &mut DB,
+        caller: &Principal
+    ) -> Result<(), String> {
+        if user.id != user.created_by || *caller != user.created_by {
+            return Err("Forbidden".to_string());
+        }
+
+        user.nfts = nfts;
+
+        let mut users = db.users.borrow_mut();
+        users.update_and_notify(user.id.to_owned(), user.clone())?;
+
+        Ok(())
+    }
+
+    pub async fn verify_nfts(
+        user: &User,
+        nfts: &Vec<UserNftRequest>
+    ) -> Result<Vec<Nft>, String> {
+        let mut nfts_by_canister = HashMap::<Principal, Vec<u128>>::new();
+        for nft in nfts {
+            if let Some(nft_by_id) = nfts_by_canister.get_mut(&nft.canister_id) {
+                nft_by_id.push(nft.token_id);
+            }
+            else {
+                nfts_by_canister.insert(nft.canister_id.clone(), vec![nft.token_id]);
+            }
+        }
+
+        let mut nfts = vec![];
+
+        for (canister_id, token_ids) in nfts_by_canister {
+            // check if the nft's support NAS-1
+            let (stds, ): (Vec<Standard>, ) = ic_cdk::call(
+                canister_id, 
+                "icrc7_supported_standards",
+                ()
+            ).await.map_err(|e| e.1)?;
+
+            if !stds.iter().any(|s| s.name == "NAS-1") {
+                return Err(format!("These NFT's aren't NAS-1 compatible: {}[{:?}]", canister_id, token_ids));
+            }
+
+            // check if user is the owner
+            let (accounts, ): (Vec<Account>, ) = ic_cdk::call(
+                canister_id, 
+                "icrc7_owner_of",
+                ()
+            ).await.map_err(|e| e.1)?;
+
+            for (i, acc) in accounts.iter().enumerate() {
+                if acc.owner != user.id {
+                    return Err(format!("User {} isn't the owner of {}[{}]", user.id, canister_id, token_ids[i]));
+                }
+            }
+
+            // save the NAS1 info
+            let (info, ): (Nas1Collection, ) = ic_cdk::call(
+                canister_id, 
+                "nas1_info",
+                ()
+            ).await.map_err(|e| e.1)?;
+
+            for token_id in token_ids {
+                nfts.push(Nft { 
+                    std: NftStandard::ICRC1, 
+                    canister_id: canister_id.clone(), 
+                    token_id,
+                    info: info.clone(),
+                })
+            }
+        }
+
+        Ok(nfts)
     }
 
     pub fn delete(

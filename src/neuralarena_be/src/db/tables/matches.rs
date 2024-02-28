@@ -90,7 +90,7 @@ impl TableSubscribable<TableName, MatchId, Match> for MatchesTable {
 
         arr.append(
             &mut v.state.players.iter()
-                .map(|p| TableEventKey::Principal(p.clone()))
+                .map(|p| TableEventKey::Principal(p.id.clone()))
                 .collect::<Vec<_>>()
         );
 

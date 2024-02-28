@@ -5,9 +5,11 @@ use ic_cdk::api::stable;
 use ic_cdk::{caller, trap};
 use models::game::{GameRequest, Game, GameResponse, GameId};
 use models::m4tch::{
-    Match, MatchId, MatchRequest, MatchResponse
+    Match, MatchId, MatchJoinRequest, MatchRequest, MatchResponse
 };
-use models::user::{UserRequest, UserResponse, User, UserId};
+use models::user::{
+    User, UserId, UserNftsRequest, UserRequest, UserResponse
+};
 use neuralarena_cdk::{
     db::traits::crud::Pagination,
     models::instance::{
@@ -162,6 +164,31 @@ fn user_update(
 }
 
 #[ic_cdk::update]
+async fn user_update_nfts(
+    id: UserId,
+    req: UserNftsRequest
+) -> Result<UserResponse, String> {
+    let caller = &caller();
+
+    let mut user = DB.with(|db| -> Result<User, String> {
+        let user = UsersService::find_by_id(
+            &id, &db.borrow(), caller)?;
+
+        Ok(user)
+    })?;
+
+    let nfts = UsersService::verify_nfts(&user, &req.nfts).await?;
+
+    DB.with(|db| {
+        match UsersService::update_nfts(
+            &mut user, nfts, &mut db.borrow_mut(), &caller) {
+            Ok(_) => Ok(user.into()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+#[ic_cdk::update]
 fn user_delete(
     id: UserId
 ) -> Result<(), String> {
@@ -304,7 +331,7 @@ pub async fn match_create(
 
 #[ic_cdk::update]
 pub async fn match_join(
-    id: MatchId
+    req: MatchJoinRequest
 ) -> Result<(), String> {
     let caller = &caller();
 
@@ -313,7 +340,7 @@ pub async fn match_join(
             caller, &db.borrow(), caller)?;
 
         let m4tch = MatchesService::find_by_id(
-            &id, &db.borrow(), caller)?;
+            &req.id, &db.borrow(), caller)?;
     
         let game = GamesService::find_by_id(
             &m4tch.game.id, &db.borrow(), caller)?;
@@ -321,7 +348,7 @@ pub async fn match_join(
         Ok((user, m4tch, game))
     })?;
 
-    match MatchesService::join(&mut m4tch, &game, &user) {
+    match MatchesService::join(&mut m4tch, &game, &user, &req.nft).await {
         Ok(start) => {
             DB.with(|db| {
                 MatchesService::update(&m4tch, &mut db.borrow_mut())

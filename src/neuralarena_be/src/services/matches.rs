@@ -2,20 +2,20 @@ use std::{any::Any, collections::BTreeSet};
 use candid::Principal;
 use neuralarena_cdk::{
     db::traits::crud::{Crud, CrudSubscribable, Pagination},
-    models::instance::{
-        InstanceAssetsResponse, InstanceId, 
-        InstanceRunResponse, InstanceStepsResponse
+    models::{
+        instance::{
+            InstanceAssetsResponse, InstanceId, 
+            InstanceRunResponse, InstanceStepsResponse
+        },
+        player
     },
     utils::uniqueid
 };
 use crate::models::{
-    game::{
-        Game, 
-        GameId, 
-    }, 
-    m4tch::MatchRequest, user::User
+    game::{Game, GameId}, 
+    m4tch::{MatchRequest, Match, MatchId, MatchStatus}, 
+    user::{User, UserNftRequest}
 };
-use crate::models::m4tch::{Match, MatchId, MatchStatus};
 use crate::db::DB;
 use crate::models::user::UserKind;
 
@@ -125,10 +125,11 @@ impl MatchesService {
             .collect())
     }
 
-    pub fn join(
+    pub async fn join(
         m4tch: &mut Match,
         game: &Game,
-        user: &User
+        user: &User,
+        nft: &UserNftRequest
     ) -> Result<bool, String> {
         Self::authorize(user)?;
         
@@ -141,14 +142,37 @@ impl MatchesService {
             return Err("Invalid match state".to_string());
         }
 
-        if m4tch.state.players.contains(&user.id) {
+        if m4tch.state.players.iter().any(|u| u.id == user.id) {
             return Err("Already part of the match".to_string());
         }
 
-        m4tch.state.players.push(user.id.clone());
+        if let Some(user_nft) = user.nfts.iter()
+            .find(|n| n.canister_id == nft.canister_id && n.token_id == nft.token_id) {
+            
+            // verify if the nft can be used in this game
+            for skill in &game.info.skills {
+                if !user_nft.info.skills.contains(skill) {
+                    return Err(format!("NFT doesn't know the skill {} needed to play this game", skill));
+                }
+            }
 
-        let ok_to_run = m4tch.state.players.len() == game.info.max_players;
-        Ok(ok_to_run)
+            for anim in &game.info.animations {
+                if !user_nft.info.animations.contains(anim) {
+                    return Err(format!("NFT doesn't have the animation {} needed to play this game", anim));
+                }
+            }
+
+            m4tch.state.players.push(player::Player {
+                id: user.id.clone(),
+                nft: user_nft.clone(),
+            });
+
+            let ok_to_run = m4tch.state.players.len() == game.info.max_players;
+            Ok(ok_to_run)
+        }
+        else {
+            Err("NFT not registered".to_string())
+        }
     }
 
     pub fn start_step1(

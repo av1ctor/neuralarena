@@ -1,5 +1,6 @@
 use candid::{Principal, CandidType};
 use serde::{Deserialize, Serialize};
+use neuralarena_cdk::models::nft::{Nft, NftStandard};
 use super::developer::{Developer, DeveloperRequest, DeveloperResponse};
 use super::moderator::{Moderator, ModeratorRequest, ModeratorResponse};
 use super::player::{PlayerResponse, PlayerRequest, Player};
@@ -25,6 +26,7 @@ pub struct User {
     pub active: bool,
     pub banned: bool,
     pub kind: UserKind,
+    pub nfts: Vec<Nft>,
     pub created_at: u64,
     pub created_by: Principal,
     pub updated_at: Option<u64>,
@@ -49,12 +51,31 @@ pub struct UserRequest {
     kind: UserKindRequest,
 }
 
+#[derive(Clone, Serialize, Deserialize, CandidType)]
+pub struct UserNftRequest {
+    pub std: NftStandard, 
+    pub canister_id: Principal,
+    pub token_id: u128,
+}
+
+#[derive(CandidType, Deserialize, Clone)]
+pub struct UserNftsRequest {
+    pub nfts: Vec<UserNftRequest>,
+}
+
 #[derive(CandidType)]
 pub enum UserKindResponse {
     Player(PlayerResponse),
     Developer(DeveloperResponse),
     Moderator(ModeratorResponse),
     Staff(StaffResponse),
+}
+
+#[derive(CandidType)]
+pub struct UserNftResponse {
+    pub kind: NftStandard, 
+    pub canister_id: Principal,
+    pub token_id: u128,
 }
 
 #[derive(CandidType)]
@@ -66,6 +87,7 @@ pub struct UserResponse {
     active: bool,
     banned: bool,
     kind: UserKindResponse,
+    nfts: Vec<UserNftResponse>,
     created_at: u64,
     updated_at: Option<u64>,
 }
@@ -84,6 +106,7 @@ impl User {
             banned: false,
             credits: 0,
             kind: e.kind.clone().into(),
+            nfts: vec![],
             created_at: ic_cdk::api::time(),
             created_by: caller.clone(),
             updated_at: None,
@@ -117,6 +140,11 @@ impl From<User> for UserResponse {
             active: e.active,
             banned: e.banned,
             kind: e.kind.into(),
+            nfts: e.nfts.iter().map(|n| UserNftResponse { 
+                kind: n.std.clone(),
+                canister_id: n.canister_id, 
+                token_id: n.token_id, 
+            }).collect(),
             created_at: e.created_at,
             updated_at: e.updated_at,
         }
