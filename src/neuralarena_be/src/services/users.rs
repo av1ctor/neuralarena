@@ -6,7 +6,7 @@ use neuralarena_cdk::{
     db::traits::crud::{Crud, CrudSubscribable, Pagination},
     models::{
         icrc7_types::Standard, 
-        nas1_types::Nas1Collection, 
+        nas1_types::{Nas1Collection, Nas1Token}, 
         nft::{Nft, NftStandard}
     }
 };
@@ -124,8 +124,12 @@ impl UsersService {
             let (accounts, ): (Vec<Account>, ) = ic_cdk::call(
                 canister_id, 
                 "icrc7_owner_of",
-                ()
+                (&token_ids, )
             ).await.map_err(|e| e.1)?;
+
+            if accounts.len() != token_ids.len() {
+                return Err("One or more tokens not found".to_string());
+            }
 
             for (i, acc) in accounts.iter().enumerate() {
                 if acc.owner != user.id {
@@ -133,20 +137,32 @@ impl UsersService {
                 }
             }
 
-            // save the NAS1 info
-            let (info, ): (Nas1Collection, ) = ic_cdk::call(
+            // save the NAS1 colection data
+            let (collection_data, ): (Nas1Collection, ) = ic_cdk::call(
                 canister_id, 
-                "nas1_info",
+                "nas1_collection_data",
                 ()
             ).await.map_err(|e| e.1)?;
 
             for token_id in token_ids {
-                nfts.push(Nft { 
-                    std: NftStandard::ICRC1, 
-                    canister_id: canister_id.clone(), 
-                    token_id,
-                    info: info.clone(),
-                })
+                let (token_data, ): (Option<Nas1Token>, ) = ic_cdk::call(
+                    canister_id, 
+                    "nas1_token_data",
+                    (token_id, )
+                ).await.map_err(|e| e.1)?;
+    
+                if let Some(token_data) = token_data {
+                    nfts.push(Nft { 
+                        std: NftStandard::ICRC1, 
+                        canister_id: canister_id.clone(), 
+                        token_id,
+                        collection_data: collection_data.clone(),
+                        token_data,
+                    });
+                }
+                else {
+                    return Err(format!("Token not found: {}", token_id));
+                }
             }
         }
 

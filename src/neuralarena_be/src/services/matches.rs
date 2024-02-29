@@ -1,13 +1,10 @@
-use std::{any::Any, collections::BTreeSet};
+use std::{any::Any, collections::{BTreeSet, HashMap}};
 use candid::Principal;
 use neuralarena_cdk::{
     db::traits::crud::{Crud, CrudSubscribable, Pagination},
-    models::{
-        instance::{
-            InstanceAssetsResponse, InstanceId, 
-            InstanceRunResponse, InstanceStepsResponse
-        },
-        player
+    models::instance::{
+        InstanceAssetsResponse, InstanceId, InstancePlayer, 
+        InstanceRunResponse, InstanceStepsResponse
     },
     utils::uniqueid
 };
@@ -151,21 +148,33 @@ impl MatchesService {
             
             // verify if the nft can be used in this game
             for skill in &game.info.skills {
-                if !user_nft.info.skills.contains(skill) {
+                if !user_nft.collection_data.skills.contains(skill) {
                     return Err(format!("NFT doesn't know the skill {} needed to play this game", skill));
                 }
             }
 
             for anim in &game.info.animations {
-                if !user_nft.info.animations.contains(anim) {
+                if !user_nft.collection_data.animations.contains(anim) {
                     return Err(format!("NFT doesn't have the animation {} needed to play this game", anim));
                 }
             }
 
-            m4tch.state.players.push(player::Player {
-                id: user.id.clone(),
-                nft: user_nft.clone(),
-            });
+            let (res, ): (Result<HashMap<String, Vec<u8>>, String>, ) = ic_cdk::call(
+                user_nft.collection_data.assets_canister_id, 
+                "nas1_token_tensors", 
+                (user_nft.token_id, )
+            ).await.map_err(|e| e.1)?;
+
+            match res {
+                Ok(tensors) => {
+                    m4tch.state.players.push(InstancePlayer {
+                        id: user.id.clone(),
+                        nft: user_nft.clone(),
+                        tensors,
+                    });
+                },
+                Err(msg) => return Err(msg),
+            }
 
             let ok_to_run = m4tch.state.players.len() == game.info.max_players;
             Ok(ok_to_run)

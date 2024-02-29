@@ -394,7 +394,6 @@ dependencies = [
  "candid",
  "getrandom",
  "ic-cdk",
- "icrc-ledger-types",
  "rand",
  "rmp-serde",
  "serde",
