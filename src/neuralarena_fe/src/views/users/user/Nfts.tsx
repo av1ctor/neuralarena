@@ -1,8 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { Nft } from "../../nfts/Nft";
 import { useAuth } from "../../../hooks/auth";
-import { ActionIcon, Button, Space } from "@mantine/core";
-import { IconTrash } from "@tabler/icons-react";
+import { ActionIcon, Button, Card, Divider, Group, Space, Text } from "@mantine/core";
+import { IconMoneybag, IconTrash } from "@tabler/icons-react";
 import { ConfirmDialog } from "../../../components/ConfirmDialog";
 import { DrawerPanel } from "../../../components/DrawerPanel";
 import { useDisclosure } from "@mantine/hooks";
@@ -76,7 +76,20 @@ export const UserNfts = (props: Props) => {
     }, [nfts]);
 
     return (
-        <div>
+        <Card withBorder radius="md" p="xl" className="main-card card">
+            <Group position="apart" noWrap spacing="xl">
+                <div>
+                    <Text fz="lg" className="card-title" fw={500}>
+                        <IconMoneybag size="1rem" /> NFT's
+                    </Text>
+                    <Text fz="xs" c="dimmed" mt={3} mb="xl">
+                        Edit your NFT's
+                    </Text>
+                </div>
+            </Group>
+
+            <Divider pb="xs" />
+
             {nfts?.map((nft, index) => 
                 <Nft
                     key={index} 
@@ -95,7 +108,7 @@ export const UserNfts = (props: Props) => {
                     fullWidth
                     onClick={addOpen}
                 >
-                    Add a new NFT
+                    New
                 </Button>
             </div>
 
@@ -125,6 +138,6 @@ export const UserNfts = (props: Props) => {
                 onClose={delClose}
                 onConfirm={handleDelete}
             />
-        </div>
+        </Card>
     );
 }
