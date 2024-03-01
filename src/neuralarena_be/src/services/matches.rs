@@ -2,9 +2,12 @@ use std::{any::Any, collections::{BTreeSet, HashMap}};
 use candid::Principal;
 use neuralarena_cdk::{
     db::traits::crud::{Crud, CrudSubscribable, Pagination},
-    models::instance::{
-        InstanceAssetsResponse, InstanceId, InstancePlayer, 
-        InstanceRunResponse, InstanceStepsResponse
+    models::{
+        instance::{
+            InstanceAssetsResponse, InstanceId, InstancePlayer, 
+            InstanceRunResponse, InstanceStepsResponse
+        },
+        ic_asset_types::{GetRequest, GetResponse}
     },
     utils::uniqueid
 };
@@ -162,23 +165,31 @@ impl MatchesService {
                 }
             }
 
-            let (res, ): (Result<HashMap<String, Vec<u8>>, String>, ) = ic_cdk::call(
-                nft_col.meta.nas1.assets_canister_id, 
-                "nas1_token_tensors", 
-                (user_nft.token_id, )
-            ).await.map_err(|e| e.1)?;
+            // get tensors
+            let mut tensors = HashMap::new();
 
-            match res {
-                Ok(tensors) => {
-                    m4tch.state.players.push(InstancePlayer {
-                        id: user.id.clone(),
-                        nft: user_nft.data.clone(),
-                        nft_col: nft_col.meta.clone(),
-                        tensors,
-                    });
-                },
-                Err(msg) => return Err(msg),
+            for skill in &nft_col.meta.nas1.skills {
+                let key = format!("/tensors/{}/{:0>5}.safetensors", skill, nft.token_id);
+                let (res, ): (GetResponse, ) = ic_cdk::call(
+                    nft_col.meta.nas1.assets_canister_id, 
+                    "get", 
+                    (
+                        GetRequest{
+                            key, 
+                            accept_encodings: vec!["identity".to_string()]
+                        },
+                    )
+                ).await.map_err(|e| e.1)?;
+        
+                tensors.insert(skill.clone(), res.content);
             }
+            
+            m4tch.state.players.push(InstancePlayer {
+                id: user.id.clone(),
+                nft: user_nft.data.clone(),
+                nft_col: nft_col.meta.clone(),
+                tensors,
+            });
 
             let ok_to_run = m4tch.state.players.len() == game.info.max_players;
             Ok(ok_to_run)
