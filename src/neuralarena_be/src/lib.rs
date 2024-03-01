@@ -7,6 +7,7 @@ use models::game::{GameRequest, Game, GameResponse, GameId};
 use models::m4tch::{
     Match, MatchId, MatchJoinRequest, MatchRequest, MatchResponse
 };
+use models::nftcol::{NftCollection, NftCollectionId, NftCollectionRequest, NftCollectionResponse};
 use models::user::{
     User, UserId, UserNftsRequest, UserRequest, UserResponse
 };
@@ -23,6 +24,7 @@ use neuralarena_cdk::{
 use serde::{Deserialize, Serialize};
 use services::games::GamesService;
 use services::matches::MatchesService;
+use services::nftcols::NftCollectionsService;
 use services::users::UsersService;
 
 mod models;
@@ -174,6 +176,18 @@ async fn user_update_nfts(
         let user = UsersService::find_by_id(
             &id, &db.borrow(), caller)?;
 
+        // verify if all NFT's are registered, active and not banned
+        for req_nft in &req.nfts {
+            let nft = NftCollectionsService::find_by_id(
+                &req_nft.collection_id, &db.borrow(), caller)?;
+            if !nft.active {
+                return Err("NFT inactive".to_string());
+            }
+            if nft.banned {
+                return Err("NFT banned".to_string());
+            }
+        }
+
         Ok(user)
     })?;
 
@@ -299,6 +313,62 @@ fn game_find_active(
 }
 
 /*
+ * nft collections facade
+ */
+#[ic_cdk::update]
+async fn nft_col_create(
+    req: NftCollectionRequest
+) -> Result<NftCollectionResponse, String> {
+    let caller = &caller();
+
+    let user = DB.with(|db| -> Result<User, String> {
+        let user = UsersService::find_by_id(
+            caller, &db.borrow(), caller)?;
+
+        Ok(user)
+    })?;
+
+    let col = NftCollectionsService::create(&req, &user).await?;
+
+    DB.with(|db| {
+        NftCollectionsService::insert(
+            &col,
+            &mut db.borrow_mut()
+        )
+    })?;
+
+    Ok(col.into())
+}
+
+#[ic_cdk::query]
+fn nft_col_find_by_id(
+    id: NftCollectionId
+) -> Result<NftCollectionResponse, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        match NftCollectionsService::find_by_id(&id, &db.borrow(), &caller) {
+            Ok(col) => Ok(col.into()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+#[ic_cdk::query]
+fn nft_col_find_active(
+    pag: Pagination
+) -> Result<Vec<NftCollectionResponse>, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        match NftCollectionsService::find_active(pag, &db.borrow(), &caller) {
+            Ok(list) => Ok(list.iter().map(|e| e.clone().into()).collect()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+/*
  * matches facade
  */
 #[ic_cdk::update]
@@ -335,7 +405,7 @@ pub async fn match_join(
 ) -> Result<(), String> {
     let caller = &caller();
 
-    let (user, mut m4tch, game) = DB.with(|db| -> Result<(User, Match, Game), String> {
+    let (user, mut m4tch, game, nft_col) = DB.with(|db| -> Result<(User, Match, Game, NftCollection), String> {
         let user = UsersService::find_by_id(
             caller, &db.borrow(), caller)?;
 
@@ -345,10 +415,13 @@ pub async fn match_join(
         let game = GamesService::find_by_id(
             &m4tch.game.id, &db.borrow(), caller)?;
 
-        Ok((user, m4tch, game))
+        let nft_col = NftCollectionsService::find_by_id(
+            &req.nft.collection_id, &db.borrow(), caller)?;
+    
+        Ok((user, m4tch, game, nft_col))
     })?;
 
-    match MatchesService::join(&mut m4tch, &game, &user, &req.nft).await {
+    match MatchesService::join(&mut m4tch, &game, &user, &req.nft, &nft_col).await {
         Ok(start) => {
             DB.with(|db| {
                 MatchesService::update(&m4tch, &mut db.borrow_mut())

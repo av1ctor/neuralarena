@@ -1,7 +1,9 @@
 use std::collections::HashMap;
 use candid::{CandidType, Principal};
-use neuralarena_cdk::models::player::Player;
-use neuralarena_cdk::models::{instance::InstancePlayer, player};
+use neuralarena_cdk::models::{
+    nas1_types::Nas1Token,
+    instance::InstancePlayer
+};
 use serde::{Serialize, Deserialize};
 use super::game::GameId;
 use super::user::{UserId, UserNftRequest};
@@ -56,11 +58,17 @@ pub struct MatchRequest {
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
+pub struct MatchPlayerResponse {
+    pub id: Principal,
+    pub nft: Nas1Token,
+}
+
+#[derive(Clone, Serialize, Deserialize, CandidType)]
 pub struct MatchResponse {
     pub id: String,
     pub status: MatchStatus,
     pub game: MatchGame,
-    pub players: Vec<player::Player>,
+    pub players: Vec<MatchPlayerResponse>,
     pub created_at: u64,
     pub created_by: UserId,
     pub started_at: Option<u64>,
@@ -110,7 +118,7 @@ impl From<Match> for MatchResponse {
             id: e.id,
             status: e.state.status,
             game: e.game,
-            players: e.state.players.iter().map(|p| Player {
+            players: e.state.players.iter().map(|p| MatchPlayerResponse {
                 id: p.id,
                 nft: p.nft.clone(),
             }).collect(),

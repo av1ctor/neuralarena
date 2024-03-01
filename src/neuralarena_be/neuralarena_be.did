@@ -49,6 +49,7 @@ type InstanceStep = record {
 type InstanceStepsResponse = record { steps : vec InstanceStep };
 type MatchGame = record { id : text; options : vec record { text; text } };
 type MatchJoinRequest = record { id : text; nft : UserNftRequest };
+type MatchPlayerResponse = record { id : principal; nft : Nas1Token };
 type MatchRequest = record { game : MatchGame };
 type MatchResponse = record {
   id : text;
@@ -56,7 +57,7 @@ type MatchResponse = record {
   game : MatchGame;
   created_at : nat64;
   created_by : principal;
-  players : vec Player;
+  players : vec MatchPlayerResponse;
   won_at : opt nat64;
   won_by : opt principal;
   started_at : opt nat64;
@@ -101,16 +102,25 @@ type Nas1Value = variant {
   Float : float32;
   Array : vec Nas1Value;
 };
-type Nft = record {
+type NftCollectionMetadata = record {
   std : NftStandard;
-  token_id : nat;
-  canister_id : principal;
-  collection_data : Nas1Collection;
-  token_data : Nas1Token;
+  desc : text;
+  logo : text;
+  name : text;
+  nas1 : Nas1Collection;
 };
-type NftStandard = variant { ICRC1 };
+type NftCollectionRequest = record {
+  std : NftStandard;
+  canister_id : principal;
+};
+type NftCollectionResponse = record {
+  id : principal;
+  active : bool;
+  meta : NftCollectionMetadata;
+  banned : bool;
+};
+type NftStandard = variant { ICRC7 };
 type Pagination = record { offset : nat32; limit : nat32 };
-type Player = record { id : principal; nft : Nft };
 type Result = variant { Ok : GameResponse; Err : text };
 type Result_1 = variant { Ok : vec GameResponse; Err : text };
 type Result_2 = variant { Ok : MatchResponse; Err : text };
@@ -118,7 +128,9 @@ type Result_3 = variant { Ok : vec MatchResponse; Err : text };
 type Result_4 = variant { Ok : InstanceAssetsResponse; Err : text };
 type Result_5 = variant { Ok : InstanceStepsResponse; Err : text };
 type Result_6 = variant { Ok; Err : text };
-type Result_7 = variant { Ok : UserResponse; Err : text };
+type Result_7 = variant { Ok : NftCollectionResponse; Err : text };
+type Result_8 = variant { Ok : vec NftCollectionResponse; Err : text };
+type Result_9 = variant { Ok : UserResponse; Err : text };
 type StaffRequest = record { role : StaffRole };
 type StaffRole = variant { Member; Admin; Contributor };
 type UserKindRequest = variant {
@@ -127,10 +139,11 @@ type UserKindRequest = variant {
   Developer : DeveloperRequest;
   Moderator : record {};
 };
-type UserNftRequest = record {
-  std : NftStandard;
+type UserNftRequest = record { token_id : nat; collection_id : principal };
+type UserNftResponse = record {
   token_id : nat;
-  canister_id : principal;
+  data : Nas1Token;
+  collection_id : principal;
 };
 type UserNftsRequest = record { nfts : vec UserNftRequest };
 type UserRequest = record {
@@ -145,7 +158,7 @@ type UserResponse = record {
   active : bool;
   kind : UserKindRequest;
   name : opt text;
-  nfts : vec UserNftRequest;
+  nfts : vec UserNftResponse;
   nick : text;
   banned : bool;
   created_at : nat64;
@@ -164,12 +177,15 @@ service : () -> {
   match_join : (MatchJoinRequest) -> (Result_6);
   match_run : (text) -> (Result_6);
   match_start : (text) -> (Result_6);
-  user_create_player : (UserRequest) -> (Result_7);
-  user_create_staff : (UserRequest) -> (Result_7);
+  nft_col_create : (NftCollectionRequest) -> (Result_7);
+  nft_col_find_active : (Pagination) -> (Result_8) query;
+  nft_col_find_by_id : (principal) -> (Result_7) query;
+  user_create_player : (UserRequest) -> (Result_9);
+  user_create_staff : (UserRequest) -> (Result_9);
   user_delete : (principal) -> (Result_6);
-  user_find_by_id : (principal) -> (Result_7) query;
+  user_find_by_id : (principal) -> (Result_9) query;
   user_find_matches : (principal, Pagination) -> (Result_3) query;
-  user_find_me : () -> (Result_7) query;
-  user_update : (principal, UserRequest) -> (Result_7);
-  user_update_nfts : (principal, UserNftsRequest) -> (Result_7);
+  user_find_me : () -> (Result_9) query;
+  user_update : (principal, UserRequest) -> (Result_9);
+  user_update_nfts : (principal, UserNftsRequest) -> (Result_9);
 }

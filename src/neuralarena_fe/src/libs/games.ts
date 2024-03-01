@@ -1,4 +1,8 @@
-import { _SERVICE as Main, GameRequest, GameResponse, Pagination, Asset } from "../../../declarations/neuralarena_be/neuralarena_be.did";
+import { 
+    _SERVICE as Main, 
+    GameRequest, GameResponse, 
+    Pagination, Asset 
+} from "../../../declarations/neuralarena_be/neuralarena_be.did";
 
 export type GameId = string;
 

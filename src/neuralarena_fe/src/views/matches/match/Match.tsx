@@ -36,11 +36,8 @@ export const Match = (props: Props) => {
                 await join({
                     id, 
                     nft: {
-                        std: {
-                            ICRC1: null
-                        },
                         token_id: nft.token_id,
-                        canister_id: nft.canister_id
+                        collection_id: nft.collection_id
                     }
                 });
                 showSuccess('You have joined this match!');

@@ -3,7 +3,7 @@ import { Nas1Token, Nas1Collection } from "../../../declarations/nas1_nft/nas1_n
 import { createActor } from "../../../declarations/nas1_nft";
 
 export interface NFT {
-    canister_id: Principal, 
+    collection_id: Principal, 
     token_id: bigint,
 }
 

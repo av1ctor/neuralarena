@@ -15,9 +15,9 @@ interface Props {
 
 export const Nft = (props: Props) => {
     const {user} = useAuth();
-    const symbol = useNAS1GetCollectionSymbol(props.nft.canister_id);
-    const token = useNAS1FindTokenById(props.nft.canister_id, Number(props.nft.token_id));
-    const owner = useNAS1GetTokenOwner(props.nft.canister_id, Number(props.nft.token_id));
+    const symbol = useNAS1GetCollectionSymbol(props.nft.collection_id);
+    const token = useNAS1FindTokenById(props.nft.collection_id, Number(props.nft.token_id));
+    const owner = useNAS1GetTokenOwner(props.nft.collection_id, Number(props.nft.token_id));
 
     const handleClick = useCallback(() => {
         if(props.onClick) {

@@ -1,5 +1,9 @@
 import { Principal } from "@dfinity/principal";
-import { _SERVICE as Main, UserNftsRequest, UserRequest, UserResponse } from "../../../declarations/neuralarena_be/neuralarena_be.did";
+import { 
+    _SERVICE as Main, 
+    UserNftsRequest, UserRequest, 
+    UserResponse 
+} from "../../../declarations/neuralarena_be/neuralarena_be.did";
 
 export enum UserKind {
     Player,

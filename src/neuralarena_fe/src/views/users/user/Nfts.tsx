@@ -11,6 +11,7 @@ import { Lookup } from "../../nfts/Lookup";
 import { useUser } from "../../../hooks/users";
 import { useUI } from "../../../hooks/ui";
 import { Principal } from "@dfinity/principal";
+import { UserNftRequest } from "../../../../../declarations/neuralarena_be/neuralarena_be.did";
 
 interface Props {
 }
@@ -20,7 +21,8 @@ export const UserNfts = (props: Props) => {
     const {toggleLoading, showError, showSuccess} = useUI();
     const [delOpened, {open: delOpen, close: delClose}] = useDisclosure(false);
     const [addOpened, {open: addOpen, close: addClose}] = useDisclosure(false);
-    const [nfts, setNfts] = useState(user?.nfts);
+    const [nfts, setNfts] = useState<UserNftRequest[]|undefined>(
+        user?.nfts.map(n => ({collection_id: n.collection_id, token_id: n.token_id})));
     const [toDelete, setToDelete] = useState<number|undefined>();
     const [nft, setNft] = useState<NFT|undefined>();
 
@@ -40,8 +42,7 @@ export const UserNfts = (props: Props) => {
         if(nft && user && nfts) {
             const nftsUpdated = Array.from(nfts);
             nftsUpdated.push({
-                std: {'ICRC1': null},
-                canister_id: nft.canister_id,
+                collection_id: nft.collection_id,
                 token_id: nft.token_id,
             });
             

@@ -10,7 +10,8 @@ use neuralarena_cdk::{
 };
 use crate::models::{
     game::{Game, GameId}, 
-    m4tch::{MatchRequest, Match, MatchId, MatchStatus}, 
+    m4tch::{Match, MatchId, MatchRequest, MatchStatus}, 
+    nftcol::NftCollection, 
     user::{User, UserNftRequest}
 };
 use crate::db::DB;
@@ -70,7 +71,7 @@ impl MatchesService {
         let matches = db.matches.borrow();
 
         let m4tch = match matches.find_by_id(id) {
-            None => return Err("Not found".to_string()),
+            None => return Err("Match not found".to_string()),
             Some(e) => e
         };
 
@@ -107,7 +108,8 @@ impl MatchesService {
     ) -> Result<Vec<Match>, String> {
         let matches_rel = db.game_matches_rel.borrow();
         
-        let ids = matches_rel.data.0.get(&game_id).cloned().unwrap_or(BTreeSet::new());
+        let ids = matches_rel.data.0.get(&game_id)
+            .cloned().unwrap_or(BTreeSet::new());
 
         let mut arr = ids.iter()
             .map(|id| db.matches.borrow().data.0[id].clone())
@@ -126,7 +128,8 @@ impl MatchesService {
         m4tch: &mut Match,
         game: &Game,
         user: &User,
-        nft: &UserNftRequest
+        nft: &UserNftRequest,
+        nft_col: &NftCollection
     ) -> Result<bool, String> {
         Self::authorize(user)?;
         
@@ -144,23 +147,23 @@ impl MatchesService {
         }
 
         if let Some(user_nft) = user.nfts.iter()
-            .find(|n| n.canister_id == nft.canister_id && n.token_id == nft.token_id) {
+            .find(|n| n.collection_id == nft.collection_id && n.token_id == nft.token_id) {
             
             // verify if the nft can be used in this game
             for skill in &game.info.skills {
-                if !user_nft.collection_data.skills.contains(skill) {
+                if !nft_col.meta.nas1.skills.contains(skill) {
                     return Err(format!("NFT doesn't know the skill {} needed to play this game", skill));
                 }
             }
 
             for anim in &game.info.animations {
-                if !user_nft.collection_data.animations.contains(anim) {
+                if !nft_col.meta.nas1.animations.contains(anim) {
                     return Err(format!("NFT doesn't have the animation {} needed to play this game", anim));
                 }
             }
 
             let (res, ): (Result<HashMap<String, Vec<u8>>, String>, ) = ic_cdk::call(
-                user_nft.collection_data.assets_canister_id, 
+                nft_col.meta.nas1.assets_canister_id, 
                 "nas1_token_tensors", 
                 (user_nft.token_id, )
             ).await.map_err(|e| e.1)?;
@@ -169,7 +172,8 @@ impl MatchesService {
                 Ok(tensors) => {
                     m4tch.state.players.push(InstancePlayer {
                         id: user.id.clone(),
-                        nft: user_nft.clone(),
+                        nft: user_nft.data.clone(),
+                        nft_col: nft_col.meta.clone(),
                         tensors,
                     });
                 },

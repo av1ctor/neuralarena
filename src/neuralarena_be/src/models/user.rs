@@ -1,6 +1,6 @@
 use candid::{Principal, CandidType};
+use neuralarena_cdk::models::nas1_types::Nas1Token;
 use serde::{Deserialize, Serialize};
-use neuralarena_cdk::models::nft::{Nft, NftStandard};
 use super::developer::{Developer, DeveloperRequest, DeveloperResponse};
 use super::moderator::{Moderator, ModeratorRequest, ModeratorResponse};
 use super::player::{PlayerResponse, PlayerRequest, Player};
@@ -17,6 +17,20 @@ pub enum UserKind {
 }
 
 #[derive(Clone, Serialize, Deserialize)]
+pub struct UserNft {
+    pub collection_id: Principal,
+    pub token_id: u128,
+    pub data: Nas1Token,
+}
+
+impl PartialEq for UserNft {
+    fn eq(&self, other: &Self) -> bool {
+        self.collection_id == other.collection_id && 
+        self.token_id == other.token_id
+    }
+}
+
+#[derive(Clone, Serialize, Deserialize)]
 pub struct User {
     pub id: UserId,
     pub nick: String,
@@ -26,7 +40,7 @@ pub struct User {
     pub active: bool,
     pub banned: bool,
     pub kind: UserKind,
-    pub nfts: Vec<Nft>,
+    pub nfts: Vec<UserNft>,
     pub created_at: u64,
     pub created_by: Principal,
     pub updated_at: Option<u64>,
@@ -53,8 +67,7 @@ pub struct UserRequest {
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
 pub struct UserNftRequest {
-    pub std: NftStandard, 
-    pub canister_id: Principal,
+    pub collection_id: Principal,
     pub token_id: u128,
 }
 
@@ -73,9 +86,9 @@ pub enum UserKindResponse {
 
 #[derive(CandidType)]
 pub struct UserNftResponse {
-    pub std: NftStandard, 
-    pub canister_id: Principal,
+    pub collection_id: Principal,
     pub token_id: u128,
+    pub data: Nas1Token,
 }
 
 #[derive(CandidType)]
@@ -141,9 +154,9 @@ impl From<User> for UserResponse {
             banned: e.banned,
             kind: e.kind.into(),
             nfts: e.nfts.iter().map(|n| UserNftResponse { 
-                std: n.std.clone(),
-                canister_id: n.canister_id, 
+                collection_id: n.collection_id, 
                 token_id: n.token_id, 
+                data: n.data.clone(),
             }).collect(),
             created_at: e.created_at,
             updated_at: e.updated_at,

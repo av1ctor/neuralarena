@@ -87,23 +87,20 @@ impl GamesService {
     fn authorize(
         user: &User
     ) -> Result<(), String> {
-        //FIXME: remove this by-pass when the UI is done
-        if false {
-            if let UserKind::Staff(staff) = &user.kind {
-                if staff.role != StaffRole::Admin {
-                    return Err("Forbidden".to_string());
-                }
-            }
-            else {
+        if let UserKind::Staff(staff) = &user.kind {
+            if staff.role != StaffRole::Admin {
                 return Err("Forbidden".to_string());
             }
+        }
+        else {
+            return Err("Forbidden".to_string());
+        }
 
-            if !user.active {
-                return Err("User inactive".to_string());
-            }
-            else if user.banned {
-                return Err("User banned".to_string());
-            }
+        if !user.active {
+            return Err("User inactive".to_string());
+        }
+        else if user.banned {
+            return Err("User banned".to_string());
         }
 
         Ok(())

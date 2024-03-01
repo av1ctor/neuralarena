@@ -1,14 +1,10 @@
 use std::collections::HashMap;
 use candid::Principal;
 use icrc_ledger_types::icrc1::account::Account;
-use crate::db::DB;
+use crate::{db::DB, models::user::UserNft};
 use neuralarena_cdk::{
     db::traits::crud::{Crud, CrudSubscribable, Pagination},
-    models::{
-        icrc7_types::Standard, 
-        nas1_types::{Nas1Collection, Nas1Token}, 
-        nft::{Nft, NftStandard}
-    }
+    models::nas1_types::Nas1Token
 };
 use crate::models::m4tch::Match;
 use crate::models::user::{User, UserId, UserKind, UserNftRequest};
@@ -67,7 +63,7 @@ impl UsersService {
         let mut users = db.users.borrow_mut();
 
         let user = match users.find_by_id(id) {
-            None => return Err("Not found".to_string()),
+            None => return Err("User not found".to_string()),
             Some(e) => e
         };
 
@@ -90,7 +86,7 @@ impl UsersService {
 
     pub fn update_nfts(
         user: &mut User,
-        nfts: Vec<Nft>,
+        nfts: Vec<UserNft>,
         db: &mut DB,
         caller: &Principal
     ) -> Result<(), String> {
@@ -109,31 +105,20 @@ impl UsersService {
     pub async fn verify_nfts(
         user: &User,
         nfts: &Vec<UserNftRequest>
-    ) -> Result<Vec<Nft>, String> {
+    ) -> Result<Vec<UserNft>, String> {
         let mut nfts_by_canister = HashMap::<Principal, Vec<u128>>::new();
         for nft in nfts {
-            if let Some(nft_by_id) = nfts_by_canister.get_mut(&nft.canister_id) {
+            if let Some(nft_by_id) = nfts_by_canister.get_mut(&nft.collection_id) {
                 nft_by_id.push(nft.token_id);
             }
             else {
-                nfts_by_canister.insert(nft.canister_id.clone(), vec![nft.token_id]);
+                nfts_by_canister.insert(nft.collection_id.clone(), vec![nft.token_id]);
             }
         }
 
         let mut nfts = vec![];
 
         for (canister_id, token_ids) in nfts_by_canister {
-            // check if the nft's support NAS-1
-            let (stds, ): (Vec<Standard>, ) = ic_cdk::call(
-                canister_id, 
-                "icrc7_supported_standards",
-                ()
-            ).await.map_err(|e| e.1)?;
-
-            if !stds.iter().any(|s| s.name == "NAS-1") {
-                return Err(format!("These NFT's aren't NAS-1 compatible: {}[{:?}]", canister_id, token_ids));
-            }
-
             // check if user is the owner
             let (accounts, ): (Vec<Option<Account>>, ) = ic_cdk::call(
                 canister_id, 
@@ -141,7 +126,6 @@ impl UsersService {
                 (&token_ids, )
             ).await.map_err(|e| e.1)?;
 
-            ic_cdk::print(format!("{} {}", accounts.len(), token_ids.len()));
             if accounts.len() != token_ids.len() {
                 return Err("One or more tokens not found".to_string());
             }
@@ -157,13 +141,6 @@ impl UsersService {
                 }
             }
 
-            // save the NAS1 colection data
-            let (collection_data, ): (Nas1Collection, ) = ic_cdk::call(
-                canister_id, 
-                "nas1_collection_data",
-                ()
-            ).await.map_err(|e| e.1)?;
-
             for token_id in token_ids {
                 let (token_data, ): (Option<Nas1Token>, ) = ic_cdk::call(
                     canister_id, 
@@ -172,12 +149,10 @@ impl UsersService {
                 ).await.map_err(|e| e.1)?;
     
                 if let Some(token_data) = token_data {
-                    nfts.push(Nft { 
-                        std: NftStandard::ICRC1, 
-                        canister_id: canister_id.clone(), 
+                    nfts.push(UserNft { 
+                        collection_id: canister_id.clone(), 
                         token_id,
-                        collection_data: collection_data.clone(),
-                        token_data,
+                        data: token_data,
                     });
                 }
                 else {
@@ -197,7 +172,7 @@ impl UsersService {
         let mut users = db.users.borrow_mut();
 
         let user = match users.find_by_id(id) {
-            None => return Err("Not found".to_string()),
+            None => return Err("User not found".to_string()),
             Some(e) => e
         };
 
@@ -216,7 +191,7 @@ impl UsersService {
         let users = db.users.borrow();
 
         let user = match users.find_by_id(id) {
-            None => return Err("Not found".to_string()),
+            None => return Err("User not found".to_string()),
             Some(e) => e
         };
 
@@ -232,7 +207,7 @@ impl UsersService {
         let users = db.users.borrow();
 
         let user = match users.find_by_id(id) {
-            None => return Err("Not found".to_string()),
+            None => return Err("User not found".to_string()),
             Some(e) => e
         };
 

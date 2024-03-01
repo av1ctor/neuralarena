@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from "react";
+import React, { forwardRef, useCallback, useMemo, useState } from "react";
 import * as yup from 'yup';
-import { TextInput, Space, Button, NumberInput } from "@mantine/core";
+import { Space, Button, NumberInput, Select, Group, Avatar, Text } from "@mantine/core";
 import { useAuth } from "../../hooks/auth";
 import { useUI } from "../../hooks/ui";
 import { NFT, nas1FindTokenById, nas1GetTokenOwner } from "../../libs/nas1";
@@ -8,9 +8,32 @@ import { useForm, yupResolver } from "@mantine/form";
 import { Nft } from "./Nft";
 import { Nas1Token } from "../../../../declarations/neuralarena_be/neuralarena_be.did";
 import { Principal } from "@dfinity/principal";
+import { useNftCollectionFindActive } from "../../hooks/nft_cols";
 
+interface ItemProps extends React.ComponentPropsWithoutRef<'div'> {
+    image: string;
+    label: string;
+    description: string;
+}
+  
+const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
+    ({ image, label, description, ...others }: ItemProps, ref) => (
+        <div ref={ref} {...others}>
+            <Group noWrap>
+                <Avatar src={image} />
+                <div>
+                    <Text size="sm">{label}</Text>
+                    <Text size="xs" opacity={0.65}>
+                        {description}
+                    </Text>
+                </div>
+            </Group>
+        </div>
+    )
+);
+  
 const schema = {
-    canister_id: yup.string().required().length(27),
+    collection_id: yup.string().required().length(27),
     token_id: yup.number().required().min(0).max(99999),
 };
 
@@ -24,9 +47,27 @@ export const Lookup = (props: Props) => {
     const [token, setToken] = useState<Nas1Token|undefined>();
     const [nft, setNft] = useState<NFT|undefined>();
 
+    const nft_cols = useNftCollectionFindActive(100);
+
+    const data = useMemo(() => {
+        if(!nft_cols.data) {
+            return [];
+        }
+
+        const cols = nft_cols.data.pages.flatMap((p) => p);
+        const data = cols.map(c => ({
+            label: c.meta.name,
+            value: c.id.toString(),
+            description: c.meta.desc,
+            image: c.meta.logo,
+        }));
+
+        return data;
+    }, [nft_cols.data]);
+
     const form = useForm({
         initialValues: {
-            canister_id: '',
+            collection_id: '',
             token_id: 0
         },
 
@@ -38,11 +79,11 @@ export const Lookup = (props: Props) => {
     const handleLookup = useCallback(async (values: any) => {
         try {
             toggleLoading(true);
-            const token = await nas1FindTokenById(values.canister_id, values.token_id);
-            const owner = await nas1GetTokenOwner(values.canister_id, values.token_id);
+            const token = await nas1FindTokenById(values.collection_id, values.token_id);
+            const owner = await nas1GetTokenOwner(values.collection_id, values.token_id);
             setToken(token);
             const nft = {
-                canister_id: Principal.fromText(values.canister_id),
+                collection_id: Principal.fromText(values.collection_id),
                 token_id: BigInt(values.token_id)
             };
             setNft(nft);
@@ -66,10 +107,12 @@ export const Lookup = (props: Props) => {
     
     return (
         <form onSubmit={form.onSubmit(handleLookup)}>
-            <TextInput
-                label="Canister Id"
-                placeholder="b77ix-eeaaa-aaaaa-qaada-cai"
-                {...form.getInputProps('canister_id')}
+            <Select
+                label="NFT Collection"
+                placeholder="Select a NFT collection"
+                {...form.getInputProps('collection_id')}
+                itemComponent={SelectItem}
+                data={data}
             />
             <NumberInput
                 label="Token Id"
