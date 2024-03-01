@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Nft } from "../../nfts/Nft";
 import { useAuth } from "../../../hooks/auth";
-import { ActionIcon, Button, Card, Divider, Group, Space, Text } from "@mantine/core";
+import { ActionIcon, Button, Card, Divider, Grid, Group, Space, Text } from "@mantine/core";
 import { IconMoneybag, IconTrash } from "@tabler/icons-react";
 import { ConfirmDialog } from "../../../components/ConfirmDialog";
 import { DrawerPanel } from "../../../components/DrawerPanel";
@@ -123,18 +123,26 @@ export const UserNfts = (props: Props) => {
 
             <Divider pb="xs" />
 
-            {nfts?.map((nft, index) => 
-                <Nft
-                    key={index} 
-                    nft={nft}
-                >
-                    <ActionIcon
-                        onClick={() => handleConfirm(index)}
+            <Grid>
+                {nfts?.map((nft, index) => 
+                    <Grid.Col 
+                        key={index} 
+                        sm={6}
                     >
-                        <IconTrash />
-                    </ActionIcon>
-                </Nft>
-            )}
+                        <Nft nft={nft}>
+                            <Group mt="md" position="right">
+                                <ActionIcon
+                                    onClick={() => handleConfirm(index)}
+                                >
+                                    <IconTrash />
+                                </ActionIcon>
+                            </Group>
+                        </Nft>
+                    </Grid.Col>
+                )}
+            </Grid>
+
+            <Space h="lg" />
 
             <div>
                 <Button 
