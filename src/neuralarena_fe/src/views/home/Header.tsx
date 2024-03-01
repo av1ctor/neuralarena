@@ -115,7 +115,7 @@ const AppHeader = (props: Props) => {
                 onClose={closeDrawer}
                 size="100%"
                 padding="md"
-                title={<img src="/neuralarena-logo.svg" />}
+                title={<img src={neuralArenaLogo} />}
                 className={classes.hiddenDesktop}
                 zIndex={1000000}
             >
