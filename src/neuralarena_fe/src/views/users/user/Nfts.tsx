@@ -41,6 +41,12 @@ export const UserNfts = (props: Props) => {
     
     const handleAdd = useCallback(async () => {
         if(toAdd && user && nfts) {
+            // check for dups
+            if(nfts.find(n => n.collection_id.compareTo(toAdd.collection_id) === 'eq' && n.token_id === toAdd.token_id)) {
+                showError("Token duplicated");
+                return;
+            }
+            
             const nftsUpdated = Array.from(nfts);
             nftsUpdated.push({
                 collection_id: toAdd.collection_id,

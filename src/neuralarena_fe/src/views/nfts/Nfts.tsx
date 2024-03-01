@@ -1,13 +1,24 @@
 import React from "react";
-import { createStyles } from "@mantine/core";
+import { Group, createStyles } from "@mantine/core";
 import { Nft } from "./Nft";
 import { NFT } from "../../libs/nas1";
 
 const useStyles = createStyles((theme) => ({
     container: {
-        position: 'relative',
-        margin: 'auto',
+        width: '100%',
+        overflowX: 'auto',
+        display: 'flex',
+        flexWrap: 'nowrap',
+        gap: '1rem',
+        marginTop: '1rem',
+        marginBottom: '2rem',
     },
+    nft: {
+        flex: '0 0 auto',
+        ":hover": {
+            cursor: 'pointer'
+        }
+    }
 }));
 
 interface Props {
@@ -22,11 +33,16 @@ export const Nfts = (props: Props) => {
     return (
         <div className={classes.container}>
             {nfts?.map((nft, index) => 
-                <Nft
+                <div 
                     key={index} 
-                    nft={nft}
-                    onClick={props.onClick}
-                />
+                    className={classes.nft}
+                >
+                    <Nft
+                        nft={nft}
+                        mini
+                        onClick={props.onClick}
+                    />
+                </div>
             )}            
         </div>
     );

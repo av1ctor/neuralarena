@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use candid::Principal;
 use icrc_ledger_types::icrc1::account::Account;
 use crate::{db::DB, models::user::UserNft};
@@ -117,6 +117,17 @@ impl UsersService {
         }
 
         let mut nfts = vec![];
+
+        // check dups
+        for (canister_id, token_ids) in &nfts_by_canister {
+            let mut cnt = HashSet::new();
+            for token_id in token_ids {
+                if cnt.contains(token_id) {
+                    return Err(format!("Duplicated token: {}[{}]", canister_id, token_id));
+                }
+                cnt.insert(token_id);
+            }
+        }
 
         for (canister_id, token_ids) in nfts_by_canister {
             // check if user is the owner

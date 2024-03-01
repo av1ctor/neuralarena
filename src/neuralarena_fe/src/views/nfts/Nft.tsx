@@ -9,6 +9,7 @@ import { principalToString } from "../../libs/icp";
 
 interface Props {
     nft: NFT;
+    mini?: boolean,
     children?: ReactElement,
     onClick?: (nft: NFT) => void;
 }
@@ -36,7 +37,7 @@ export const Nft = (props: Props) => {
             <Card.Section>
                 <Image
                     src={token.data?.image_url}
-                    height={512}
+                    height={props.mini? 128: 512}
                     fit="cover"
                     withPlaceholder
                 />
@@ -79,17 +80,21 @@ export const Nft = (props: Props) => {
                             )}
                         </Group>
                     </div>
-                    <Space h="sm"/>
-                    <div>
-                        <Text size="sm" color="dimmed">
-                            Owner
-                        </Text>
-                        <Group position="left" mt="xs">
-                            <Badge color={user?.id === owner.data? "green": "red"} variant="light" size="xs">
-                                {principalToString(owner.data)}
-                            </Badge>
-                        </Group>
-                    </div>
+                    {!props.mini &&
+                        <>
+                            <Space h="sm"/>
+                            <div>
+                                <Text size="sm" color="dimmed">
+                                    Owner
+                                </Text>
+                                <Group position="left" mt="xs">
+                                    <Badge color={user?.id === owner.data? "green": "red"} variant="light" size="xs">
+                                        {principalToString(owner.data)}
+                                    </Badge>
+                                </Group>
+                            </div>
+                        </>
+                    }
                 </div>
             }
 

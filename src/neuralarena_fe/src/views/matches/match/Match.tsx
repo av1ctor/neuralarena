@@ -27,6 +27,7 @@ export const Match = (props: Props) => {
 
     const handleSelectNft = useCallback(async (nft: NFT) => {
         setNft(nft);
+        showSuccess(`NFT ${nft.token_id} selected!`);
     }, []);
         
     const handleJoin = useCallback(async () => {
