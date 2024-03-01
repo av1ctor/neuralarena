@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Button, Avatar as Avatar_, Space, Stack, Title, Tooltip } from "@mantine/core";
+import { Button, Avatar as Avatar_, Space, Stack, Title, Tooltip, Container, Center } from "@mantine/core";
 import { useMatchFindById, useMatch } from "../../../hooks/matches";
 import { useGameFindById } from "../../../hooks/games";
 import { Banner } from "../../games/game/Banner";
@@ -17,7 +17,7 @@ interface Props {
 
 export const Match = (props: Props) => {
     const {id} = useParams();
-    const {user} = useAuth();
+    const {user, isLogged} = useAuth();
     const {join, start, run} = useMatch()
     const {toggleLoading, showError, showSuccess} = useUI();
     const [pov, setPov] = useState<number|undefined>(undefined);
@@ -27,7 +27,6 @@ export const Match = (props: Props) => {
 
     const handleSelectNft = useCallback(async (nft: NFT) => {
         setNft(nft);
-        showSuccess(`NFT ${nft.token_id} selected!`);
     }, []);
         
     const handleJoin = useCallback(async () => {
@@ -112,6 +111,7 @@ export const Match = (props: Props) => {
     const winner = match.data && match.data.won_by.length > 0?
         match.data.won_by[0]?.toString():
         undefined;
+    const joined = match.data && user && match.data.players.find(p => p.id.compareTo(user.id) === 'eq');
 
     return (
         <>
@@ -145,27 +145,40 @@ export const Match = (props: Props) => {
                 </div>
                 <Space h="xl" />
                 <Stack spacing="xl">
-                    {status === 'OPEN' &&
-                        <div>
+                    {isLogged?
+                        status === 'OPEN' && !joined &&
                             <div>
-                                <div>Please select a NFT to be your player in this match</div>
-                                <Nfts  
-                                    nfts={nfts}
-                                    onClick={handleSelectNft}
-                                />
+                                <div>
+                                    {nfts.length > 0?
+                                        <Center>Please select a NFT to be your player in this match</Center>
+                                    :
+                                        <Center>You have no NFT's in your account. Please add at least one!</Center>
+                                    }
+                                    <Nfts  
+                                        nfts={nfts}
+                                        selected={nft}
+                                        onClick={handleSelectNft}
+                                    />
+                                </div>
+                                <div>
+                                    <Button
+                                        variant="gradient"
+                                        fullWidth
+                                        disabled={!nft}
+                                        onClick={handleJoin}
+                                    >
+                                        Join
+                                    </Button>
+                                </div>
                             </div>
-                            <div>
-                                <Button
-                                    variant="gradient"
-                                    fullWidth
-                                    onClick={handleJoin}
-                                >
-                                    Join
-                                </Button>
-                            </div>
-                        </div>
+                    :
+                        status === 'OPEN' &&
+                            <Center>
+                                Please log in or sign up to be able to participate!
+                            </Center>
                     }
-                    {status === 'OPEN' &&
+                    {isLogged &&
+                        status === 'OPEN' &&
                         <div>
                             <Button
                                 variant="gradient"

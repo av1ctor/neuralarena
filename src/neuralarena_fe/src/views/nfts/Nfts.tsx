@@ -17,12 +17,19 @@ const useStyles = createStyles((theme) => ({
         flex: '0 0 auto',
         ":hover": {
             cursor: 'pointer'
-        }
-    }
+        },
+        border: '4px solid transparent;',
+        borderRadius: '0.5rem',
+    },
+    selected: {
+        border: '4px solid #fff',
+        borderRadius: '0.5rem',
+    },
 }));
 
 interface Props {
     nfts: NFT[];
+    selected?: NFT;
     onClick?: (nft: NFT) => void;
 }
 
@@ -35,7 +42,7 @@ export const Nfts = (props: Props) => {
             {nfts?.map((nft, index) => 
                 <div 
                     key={index} 
-                    className={classes.nft}
+                    className={`${classes.nft} ${props.selected?.collection_id === nft.collection_id && props.selected?.token_id === nft.token_id? classes.selected: ''}`}
                 >
                     <Nft
                         nft={nft}

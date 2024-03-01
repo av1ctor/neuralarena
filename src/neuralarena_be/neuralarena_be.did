@@ -85,11 +85,12 @@ type Nas1Token = record {
   image_url : text;
   traits : vec text;
   name : text;
-  hidden_layers : nat64;
+  num_hidden_layers : nat64;
   extra : vec record { text; Nas1Value };
   model_url : text;
   epsilon : float32;
   radius : float32;
+  hidden_layers_weights_size : vec nat64;
   steps_per_thought : nat64;
 };
 type Nas1Value = variant {

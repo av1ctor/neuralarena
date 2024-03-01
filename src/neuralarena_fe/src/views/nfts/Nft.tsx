@@ -88,7 +88,7 @@ export const Nft = (props: Props) => {
                                     Owner
                                 </Text>
                                 <Group position="left" mt="xs">
-                                    <Badge color={user?.id === owner.data? "green": "red"} variant="light" size="xs">
+                                    <Badge color={owner.data && user?.id.compareTo(owner.data) === 'eq'? "green": "red"} variant="light" size="xs">
                                         {principalToString(owner.data)}
                                     </Badge>
                                 </Group>

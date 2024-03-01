@@ -4,10 +4,11 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
 import { Asset } from '../../../declarations/neuralarena_be/neuralarena_be.did';
 import { gameAssetDataTextValue } from '../libs/games';
-import { AssetLoadingManager } from '../libs/loadingmanager';
+import { GameAssetsLoadingManager, NftAssetsLoadingManager } from '../libs/loadingmanager';
 
 export class ThreeRenderer {
-    loader: GLTFLoader;
+    gameAssetLader: GLTFLoader;
+    nftAssetLader: GLTFLoader;
     renderer: THREE.WebGLRenderer;
     scene: THREE.Scene;
     camera: THREE.PerspectiveCamera;
@@ -82,7 +83,12 @@ export class ThreeRenderer {
 
         this.skipping = false;
 
-        this.loader = new GLTFLoader(new AssetLoadingManager(assets_url));
+        this.gameAssetLader = new GLTFLoader(
+            new GameAssetsLoadingManager(assets_url)
+        );
+        this.nftAssetLader = new GLTFLoader(
+            new NftAssetsLoadingManager()
+        );
     }
 
     change_pov(
@@ -157,7 +163,7 @@ export class ThreeRenderer {
         asset: Asset
     ): Promise<void> {
         if('Level' in asset.typ) {
-            const gltf = await this.loader.loadAsync(
+            const gltf = await this.gameAssetLader.loadAsync(
                 gameAssetDataTextValue(asset, 'path')!);
             const mesh = gltf.scene;
             mesh.traverse(child => {
@@ -183,7 +189,7 @@ export class ThreeRenderer {
             this.assets.set(asset_ref, mesh);
         }
         else if('Player' in asset.typ) {
-            const gltf = await this.loader.loadAsync(
+            const gltf = await this.nftAssetLader.loadAsync(
                 gameAssetDataTextValue(asset, 'path')!);
             const mesh = gltf.scene;
             mesh.traverse(child => {
@@ -197,14 +203,14 @@ export class ThreeRenderer {
             mesh.userData.isPlayer = true;
             mesh.userData.animations = gltf.animations;
             const bb = new THREE.Box3().setFromObject(mesh);
-            mesh.userData.height = (bb.max.y - bb.min.y) * 0.01;
+            mesh.userData.height = (bb.max.y - bb.min.y) * 0.006;
 
             mesh.scale.multiplyScalar(0.01);
 
             this.assets.set(asset_ref, mesh);
         }
         else if('Npc' in asset.typ) {
-            const gltf = await this.loader.loadAsync(
+            const gltf = await this.gameAssetLader.loadAsync(
                 gameAssetDataTextValue(asset, 'path')!);
             const mesh = gltf.scene;
             mesh.traverse(child => {
