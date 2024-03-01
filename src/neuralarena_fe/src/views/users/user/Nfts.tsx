@@ -107,6 +107,12 @@ export const UserNfts = (props: Props) => {
         }
     }, [user?.id]);
 
+    useEffect(() => {
+        if(!addOpened) {
+            setToAdd(undefined);
+        }
+    }, [addOpened]);
+
     return (
         <Card withBorder radius="md" p="xl" className="main-card card">
             <Group position="apart" noWrap spacing="xl">
