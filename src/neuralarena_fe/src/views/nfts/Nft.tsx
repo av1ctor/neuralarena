@@ -4,7 +4,6 @@ import {
     useNAS1FindTokenById, useNAS1GetCollectionSymbol, useNAS1GetTokenOwner
 } from "../../hooks/nas1";
 import { NFT } from "../../libs/nas1";
-import { useAuth } from "../../hooks/auth";
 import { principalToString } from "../../libs/icp";
 
 interface Props {
@@ -15,7 +14,6 @@ interface Props {
 }
 
 export const Nft = (props: Props) => {
-    const {user} = useAuth();
     const symbol = useNAS1GetCollectionSymbol(props.nft.collection_id);
     const token = useNAS1FindTokenById(props.nft.collection_id, Number(props.nft.token_id));
     const owner = useNAS1GetTokenOwner(props.nft.collection_id, Number(props.nft.token_id));
@@ -88,7 +86,7 @@ export const Nft = (props: Props) => {
                                     Owner
                                 </Text>
                                 <Group position="left" mt="xs">
-                                    <Badge color={owner.data && user?.id.compareTo(owner.data) === 'eq'? "green": "red"} variant="light" size="xs">
+                                    <Badge color="blue" variant="light" size="xs">
                                         {principalToString(owner.data)}
                                     </Badge>
                                 </Group>

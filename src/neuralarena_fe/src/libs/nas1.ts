@@ -74,3 +74,29 @@ export const nas1GetTokenOwner = async (
 
     return res[0][0]?.owner; 
 };
+
+export const nas1GetTokensOf = async (
+    canister_id: Principal|undefined,
+    owner: Principal|undefined,
+    last: number|undefined,
+    limit: number
+): Promise<{tokenId: bigint, data: Nas1Token}[]> => {
+    if(!canister_id || !owner) {
+        return []
+    };
+
+    let actor = createActor(canister_id);
+    const tokensIds = await actor.icrc7_tokens_of(
+        {owner, subaccount: [new Uint8Array(32)]},
+        last !== undefined? [BigInt(last)]: [],
+        [BigInt(limit)]
+    );
+
+    const res = Array<{tokenId: bigint, data: Nas1Token}>();
+    for(const tokenId of tokensIds) {
+        const nft = await nas1FindTokenById(canister_id, Number(tokenId));
+        res.push({tokenId, data: nft});
+    }
+
+    return res; 
+};

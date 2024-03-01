@@ -8,7 +8,7 @@ import { matchStatusToString } from "../../../libs/matches";
 import { useUI } from "../../../hooks/ui";
 import { Watch } from "./Watch";
 import { Avatar } from "../../users/user/Avatar";
-import { Nfts } from "../../nfts/Nfts";
+import { ListNfts } from "../../nfts/List";
 import { useAuth } from "../../../hooks/auth";
 import { NFT } from "../../../libs/nas1";
 
@@ -154,7 +154,7 @@ export const Match = (props: Props) => {
                                     :
                                         <Center>You have no NFT's in your account. Please add at least one!</Center>
                                     }
-                                    <Nfts  
+                                    <ListNfts  
                                         nfts={nfts}
                                         selected={nft}
                                         onClick={handleSelectNft}

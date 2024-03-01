@@ -7,10 +7,9 @@ import { ConfirmDialog } from "../../../components/ConfirmDialog";
 import { DrawerPanel } from "../../../components/DrawerPanel";
 import { useDisclosure } from "@mantine/hooks";
 import { NFT } from "../../../libs/nas1";
-import { Lookup } from "../../nfts/Lookup";
+import { SelectNft } from "../../nfts/Select";
 import { useUser } from "../../../hooks/users";
 import { useUI } from "../../../hooks/ui";
-import { Principal } from "@dfinity/principal";
 import { UserNftRequest } from "../../../../../declarations/neuralarena_be/neuralarena_be.did";
 import { AuthActionType, AuthContext } from "../../../stores/auth";
 
@@ -27,13 +26,7 @@ export const UserNfts = (props: Props) => {
     const [toDelete, setToDelete] = useState<number|undefined>();
     const [toAdd, setToAdd] = useState<NFT|undefined>();
 
-    const handleSetCurrent = useCallback((nft: NFT, owner?: Principal) => {
-        if(owner?.compareTo(user!.id) !== 'eq') {
-            if(owner) {
-                showError("Your are not the owner of the NFT");
-            }
-            return;
-        }
+    const handleSetCurrent = useCallback((nft: NFT) => {
         setToAdd(nft);
     }, [user]);
 
@@ -155,7 +148,7 @@ export const UserNfts = (props: Props) => {
                     fullWidth
                     onClick={addOpen}
                 >
-                    New
+                    Add
                 </Button>
             </div>
 
@@ -164,8 +157,10 @@ export const UserNfts = (props: Props) => {
                 opened={addOpened}
                 onClose={addClose}
             >
-                <Lookup
-                    onSelected={handleSetCurrent}
+                <SelectNft
+                    owner={user?.id}
+                    selected={toAdd}
+                    onSelect={handleSetCurrent}
                 />
 
                 <Space h="xs" />
