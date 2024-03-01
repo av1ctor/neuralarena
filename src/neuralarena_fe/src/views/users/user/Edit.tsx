@@ -107,6 +107,12 @@ const UserEdit = (props: Props) => {
     return (
         <form onSubmit={form.onSubmit(handleUpdate)}>
             <TextInput
+                label="Principal"
+                placeholder="Your principal"
+                value={user?.id.toString()}
+                readOnly
+            />
+            <TextInput
                 label="Nick"
                 placeholder="Your nick"
                 {...form.getInputProps('nick')}

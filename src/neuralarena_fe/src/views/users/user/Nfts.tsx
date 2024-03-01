@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Nft } from "../../nfts/Nft";
 import { useAuth } from "../../../hooks/auth";
 import { ActionIcon, Button, Card, Divider, Group, Space, Text } from "@mantine/core";
@@ -12,44 +12,49 @@ import { useUser } from "../../../hooks/users";
 import { useUI } from "../../../hooks/ui";
 import { Principal } from "@dfinity/principal";
 import { UserNftRequest } from "../../../../../declarations/neuralarena_be/neuralarena_be.did";
+import { AuthActionType, AuthContext } from "../../../stores/auth";
 
 interface Props {
 }
 
 export const UserNfts = (props: Props) => {
     const {user} = useAuth();
+    const [, dispatch] = useContext(AuthContext);
     const {toggleLoading, showError, showSuccess} = useUI();
     const [delOpened, {open: delOpen, close: delClose}] = useDisclosure(false);
     const [addOpened, {open: addOpen, close: addClose}] = useDisclosure(false);
-    const [nfts, setNfts] = useState<UserNftRequest[]|undefined>(
-        user?.nfts.map(n => ({collection_id: n.collection_id, token_id: n.token_id})));
+    const [nfts, setNfts] = useState<UserNftRequest[]|undefined>();
     const [toDelete, setToDelete] = useState<number|undefined>();
-    const [nft, setNft] = useState<NFT|undefined>();
+    const [toAdd, setToAdd] = useState<NFT|undefined>();
 
-    const handleSelected = useCallback((nft: NFT, owner?: Principal) => {
-        if(owner !== user?.id) {
+    const handleSetCurrent = useCallback((nft: NFT, owner?: Principal) => {
+        if(owner?.compareTo(user!.id) !== 'eq') {
             if(owner) {
                 showError("Your are not the owner of the NFT");
             }
             return;
         }
-        setNft(nft);
+        setToAdd(nft);
     }, [user]);
 
     const {updateNfts} = useUser()
     
     const handleAdd = useCallback(async () => {
-        if(nft && user && nfts) {
+        if(toAdd && user && nfts) {
             const nftsUpdated = Array.from(nfts);
             nftsUpdated.push({
-                collection_id: nft.collection_id,
-                token_id: nft.token_id,
+                collection_id: toAdd.collection_id,
+                token_id: toAdd.token_id,
             });
             
             try {
                 toggleLoading(true);
-                await updateNfts(user.id, {
+                const userUpded = await updateNfts(user.id, {
                     nfts: nftsUpdated
+                });
+                dispatch({
+                    type: AuthActionType.SET_USER,
+                    payload: userUpded,
                 });
                 setNfts(nftsUpdated);
                 addClose();
@@ -62,19 +67,46 @@ export const UserNfts = (props: Props) => {
                 toggleLoading(false);
             }
         }
-    }, [nfts, nft, user]);
+    }, [nfts, toAdd, user]);
 
-    const handleDelete = useCallback(() => {
-        if(toDelete !== undefined) {
-            nfts?.splice(toDelete, 1);
-            setNfts(nfts);
+    const handleDelete = useCallback(async () => {
+        if(toDelete !== undefined && nfts && user) {
+            const nftsUpdated = Array.from(nfts);
+            nftsUpdated.splice(toDelete, 1);
+            
+            try {
+                toggleLoading(true);
+                const userUpded = await updateNfts(user.id, {
+                    nfts: nftsUpdated
+                });
+                dispatch({
+                    type: AuthActionType.SET_USER,
+                    payload: userUpded,
+                });
+                setNfts(nftsUpdated);
+                showSuccess("NFT removed!");
+            }
+            catch(e) {
+                showError(e);
+            }
+            finally {
+                toggleLoading(false);
+            }
         }
-    }, [nfts, toDelete]);
+    }, [nfts, user, toDelete]);
 
     const handleConfirm = useCallback((index: number) => {
         setToDelete(index);
         delOpen();
     }, [nfts]);
+
+    useEffect(() => {
+        if(user) {
+            setNfts(
+                user.nfts.map(n => ({collection_id: n.collection_id, token_id: n.token_id}))
+            );
+        }
+    }, [user?.id]);
 
     return (
         <Card withBorder radius="md" p="xl" className="main-card card">
@@ -119,7 +151,7 @@ export const UserNfts = (props: Props) => {
                 onClose={addClose}
             >
                 <Lookup
-                    onSelected={handleSelected}
+                    onSelected={handleSetCurrent}
                 />
 
                 <Space h="xs" />
@@ -127,7 +159,7 @@ export const UserNfts = (props: Props) => {
                 <Button 
                     color="red"
                     fullWidth
-                    disabled={!nft}
+                    disabled={!toAdd}
                     onClick={handleAdd}
                 >
                     Add
@@ -136,6 +168,7 @@ export const UserNfts = (props: Props) => {
 
             <ConfirmDialog  
                 opened={delOpened}
+                desc="Are you sure you want to remove this NFT from your account?"
                 onClose={delClose}
                 onConfirm={handleDelete}
             />
