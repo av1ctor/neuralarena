@@ -73,7 +73,7 @@ pub enum UserKindResponse {
 
 #[derive(CandidType)]
 pub struct UserNftResponse {
-    pub kind: NftStandard, 
+    pub std: NftStandard, 
     pub canister_id: Principal,
     pub token_id: u128,
 }
@@ -141,7 +141,7 @@ impl From<User> for UserResponse {
             banned: e.banned,
             kind: e.kind.into(),
             nfts: e.nfts.iter().map(|n| UserNftResponse { 
-                kind: n.std.clone(),
+                std: n.std.clone(),
                 canister_id: n.canister_id, 
                 token_id: n.token_id, 
             }).collect(),

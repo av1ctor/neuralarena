@@ -1,12 +1,13 @@
 import { UseQueryResult, useMutation, useQuery, useQueryClient } from "react-query";
 import { Principal } from "@dfinity/principal";
-import { UserRequest, UserResponse } from "../../../declarations/neuralarena_be/neuralarena_be.did";
+import { UserNftsRequest, UserRequest, UserResponse } from "../../../declarations/neuralarena_be/neuralarena_be.did";
 import { useActors } from "./actors";
-import { userCreatePlayer, userCreateStaff, userDelete, userFindById, userFindMe, userUpdate } from "../libs/users";
+import { userCreatePlayer, userCreateStaff, userDelete, userFindById, userFindMe, userUpdate, userUpdateNfts } from "../libs/users";
 
 interface UserMethods {
     create: (req: UserRequest) => Promise<UserResponse>;
     update: (id: Principal, req: UserRequest) => Promise<UserResponse>;
+    updateNfts: (id: Principal, req: UserNftsRequest) => Promise<UserResponse>;
     remove: (id: Principal) => Promise<void>;
 }
 
@@ -52,6 +53,24 @@ export const useUser = (
         return updateMut.mutateAsync({id, req});
     };
 
+    const updateNftsMut = useMutation(
+        async (options: {id: Principal, req: UserNftsRequest}) => {
+            return userUpdateNfts(main, options.id, options.req);
+        },
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries(['users']);
+            }   
+        }
+    );
+
+    const updateNfts = (
+        id: Principal,
+        req: UserNftsRequest
+    ): Promise<UserResponse> => {
+        return updateNftsMut.mutateAsync({id, req});
+    };
+
     const deleteMut = useMutation(
         async (options: {id: Principal}) => {
             return userDelete(main, options.id);
@@ -72,6 +91,7 @@ export const useUser = (
     return {
         create,
         update,
+        updateNfts,
         remove,
     }
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Group, UnstyledButton, createStyles, rem, Text, ThemeIcon, Grid } from '@mantine/core';
-import { IconUser, IconKey, IconClipboardList, IconUsersGroup } from '@tabler/icons-react';
+import { IconUser, IconKey, IconClipboardList, IconUsersGroup, IconList } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
 
 const useStyles = createStyles((theme) => ({
@@ -24,22 +24,10 @@ const useStyles = createStyles((theme) => ({
 
 const data = [
     {
-        icon: IconClipboardList,
-        title: 'Prescriptions',
-        description: 'Prescriptions you have access',
-        to: "/prescriptions"
-    },
-    {
-        icon: IconKey,
-        title: 'Keys',
-        description: 'Your keys',
-        to: "/keys"
-    },
-    {
-        icon: IconUsersGroup,
-        title: 'Groups',
-        description: 'Your groups',
-        to: "/groups"
+        icon: IconList,
+        title: 'Matches',
+        description: 'Your matches',
+        to: "/user/matches"
     },
     {
         icon: IconUser,

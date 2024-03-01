@@ -1,5 +1,5 @@
 import { Principal } from "@dfinity/principal";
-import { _SERVICE as Main, UserRequest, UserResponse } from "../../../declarations/neuralarena_be/neuralarena_be.did";
+import { _SERVICE as Main, UserNftsRequest, UserRequest, UserResponse } from "../../../declarations/neuralarena_be/neuralarena_be.did";
 
 export enum UserKind {
     Player,
@@ -93,6 +93,18 @@ export const userUpdate = async (
     return res.Ok; 
 };
 
+export const userUpdateNfts = async (
+    main: Main,
+    id: Principal,
+    req: UserNftsRequest
+): Promise<UserResponse> => {
+    const res = await main.user_update_nfts(id, req);
+    if('Err' in res) {
+        throw new Error(res.Err);
+    }
+    return res.Ok; 
+};
+
 export const userDelete = async (
     main: Main,
     id: Principal
@@ -129,6 +141,7 @@ export const userFindById = async (
             kind: {
                 'Player': {}
             },
+            nfts: [],
             created_at: 0n,
             updated_at: [],
         };

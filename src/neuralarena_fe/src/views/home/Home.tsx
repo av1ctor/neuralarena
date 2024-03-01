@@ -10,6 +10,7 @@ import Signup from "../users/user/Signup";
 import { Game } from "../games/game/Game";
 import { Match } from "../matches/match/Match";
 import loadingImage from "../../assets/loading.svg";
+import Profile from "../users/user/Profile";
 
 interface Props {
 }
@@ -42,6 +43,7 @@ const Home = (props: Props) => {
                         <Route path="/matches/:id" element={<Match />} />
                         <Route path="/user/login" element={<Login authenticateOnly={false} />} />
                         <Route path="/user/signup" element={<Signup />} />
+                        <Route path="/user/profile" element={<Profile />} />
                         <Route path="/" element={<Front />} />
                     </Routes>
                 </Container>

@@ -27,6 +27,19 @@ type GameResponse = record {
   info : GameInfo;
   canister_id : principal;
 };
+type HashMap = vec record {
+  text;
+  variant {
+    Int : int;
+    Map : HashMap;
+    Nat : nat;
+    Blob : vec nat8;
+    Text : text;
+    Double : float64;
+    Float : float32;
+    Array : vec Nas1Value;
+  };
+};
 type InstanceAssetsResponse = record { assets : vec record { nat64; Asset } };
 type InstanceStep = record {
   terminated : bool;
@@ -59,15 +72,41 @@ type MatchStatus = variant {
 };
 type Nas1Collection = record {
   assets_canister_id : principal;
+  version : float32;
   animations : vec text;
   assets_url : text;
   skills : vec text;
 };
+type Nas1Token = record {
+  xp : nat64;
+  height : float32;
+  model : text;
+  image_url : text;
+  traits : vec text;
+  name : text;
+  hidden_layers : nat64;
+  extra : vec record { text; Nas1Value };
+  model_url : text;
+  epsilon : float32;
+  radius : float32;
+  steps_per_thought : nat64;
+};
+type Nas1Value = variant {
+  Int : int;
+  Map : HashMap;
+  Nat : nat;
+  Blob : vec nat8;
+  Text : text;
+  Double : float64;
+  Float : float32;
+  Array : vec Nas1Value;
+};
 type Nft = record {
   std : NftStandard;
   token_id : nat;
-  info : Nas1Collection;
   canister_id : principal;
+  collection_data : Nas1Collection;
+  token_data : Nas1Token;
 };
 type NftStandard = variant { ICRC1 };
 type Pagination = record { offset : nat32; limit : nat32 };
@@ -93,11 +132,6 @@ type UserNftRequest = record {
   token_id : nat;
   canister_id : principal;
 };
-type UserNftResponse = record {
-  token_id : nat;
-  kind : NftStandard;
-  canister_id : principal;
-};
 type UserNftsRequest = record { nfts : vec UserNftRequest };
 type UserRequest = record {
   kind : UserKindRequest;
@@ -111,7 +145,7 @@ type UserResponse = record {
   active : bool;
   kind : UserKindRequest;
   name : opt text;
-  nfts : vec UserNftResponse;
+  nfts : vec UserNftRequest;
   nick : text;
   banned : bool;
   created_at : nat64;

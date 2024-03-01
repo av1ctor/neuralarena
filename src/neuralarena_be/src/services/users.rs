@@ -31,6 +31,10 @@ impl UsersService {
                 return Err("Invalid user kind".to_string());
             }
         }
+
+        if user.nfts.len() != 0 {
+            return Err("Number of user's NFT's must be zero".to_string());
+        }
         
         db.users.borrow_mut().insert_and_notify(caller.to_owned(), user.clone())
     }
@@ -69,6 +73,16 @@ impl UsersService {
 
         if *id != user.created_by || *caller != user.created_by {
             return Err("Forbidden".to_string());
+        }
+
+        if req.nfts.len() != user.nfts.len() {
+            return Err("User's NFT's can't be changed".to_string());
+        }
+
+        for nft in &req.nfts {
+            if !user.nfts.contains(&nft) {
+                return Err("User's NFT can't be changed".to_string());
+            }
         }
 
         users.update_and_notify(id.to_owned(), req.clone())
@@ -121,19 +135,25 @@ impl UsersService {
             }
 
             // check if user is the owner
-            let (accounts, ): (Vec<Account>, ) = ic_cdk::call(
+            let (accounts, ): (Vec<Option<Account>>, ) = ic_cdk::call(
                 canister_id, 
                 "icrc7_owner_of",
                 (&token_ids, )
             ).await.map_err(|e| e.1)?;
 
+            ic_cdk::print(format!("{} {}", accounts.len(), token_ids.len()));
             if accounts.len() != token_ids.len() {
                 return Err("One or more tokens not found".to_string());
             }
 
             for (i, acc) in accounts.iter().enumerate() {
-                if acc.owner != user.id {
-                    return Err(format!("User {} isn't the owner of {}[{}]", user.id, canister_id, token_ids[i]));
+                if let Some(acc) = acc {
+                    if acc.owner != user.id {
+                        return Err(format!("User {} isn't the owner of {}[{}]", user.id, canister_id, token_ids[i]));
+                    }
+                }
+                else {
+                    return Err(format!("Token not found {}[{}]", canister_id, token_ids[i]));
                 }
             }
 

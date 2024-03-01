@@ -1,28 +1,58 @@
 import React from "react";
-import { Card, Divider, Group, Text } from "@mantine/core";
-import { IconUserEdit } from "@tabler/icons-react";
+import { Card, Divider, Group, Space, Text } from "@mantine/core";
+import { IconMoneybag, IconUserEdit } from "@tabler/icons-react";
 import UserEdit from "./Edit";
+import { UserNfts } from "./Nfts";
+import { UserKind, userGetKind } from "../../../libs/users";
+import { useAuth } from "../../../hooks/auth";
 
 const Profile = () => {
+    const {user} = useAuth();
+
+    const kind = userGetKind(user);
+
     return (
-        <Card withBorder radius="md" p="xl" className="main-card card">
-            <Group position="apart" noWrap spacing="xl">
+        <>
+            <Card withBorder radius="md" p="xl" className="main-card card">
+                <Group position="apart" noWrap spacing="xl">
+                    <div>
+                        <Text fz="lg" className="card-title" fw={500}>
+                            <IconUserEdit size="1rem" /> Profile
+                        </Text>
+                        <Text fz="xs" c="dimmed" mt={3} mb="xl">
+                            Edit your profile
+                        </Text>
+                    </div>
+                </Group>
+
+                <Divider pb="xs" />
+
                 <div>
-                    <Text fz="lg" className="card-title" fw={500}>
-                        <IconUserEdit size="1rem" /> Profile
-                    </Text>
-                    <Text fz="xs" c="dimmed" mt={3} mb="xl">
-                        Edit your profile
-                    </Text>
+                    <UserEdit />
                 </div>
-            </Group>
+            </Card>
+            
+            <Space p="lg" />
 
-            <Divider pb="xs" />
+            {kind === UserKind.Player && 
+                <Card withBorder radius="md" p="xl" className="main-card card">
+                    <Group position="apart" noWrap spacing="xl">
+                        <div>
+                            <Text fz="lg" className="card-title" fw={500}>
+                                <IconMoneybag size="1rem" /> NFT's
+                            </Text>
+                            <Text fz="xs" c="dimmed" mt={3} mb="xl">
+                                Edit your NFT's
+                            </Text>
+                        </div>
+                    </Group>
 
-            <div>
-                <UserEdit />
-            </div>
-        </Card>
+                    <Divider pb="xs" />
+
+                    <UserNfts />
+                </Card>
+            }
+        </>
     );
 };
 

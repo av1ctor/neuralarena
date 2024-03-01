@@ -1,12 +1,19 @@
-import { UseInfiniteQueryResult, UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from "react-query";
-import { InstanceStepsResponse, MatchRequest, MatchResponse } from "../../../declarations/neuralarena_be/neuralarena_be.did";
+import { 
+    UseInfiniteQueryResult, UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient 
+} from "react-query";
+import { 
+    InstanceStepsResponse, MatchJoinRequest, MatchRequest, MatchResponse 
+} from "../../../declarations/neuralarena_be/neuralarena_be.did";
 import { useActors } from "./actors";
-import { matchCreate, matchFindOpen, matchFindById, matchJoin, matchStart, matchRun, MatchId, matchFindByGame, matchGetSteps } from "../libs/matches";
+import { 
+    matchCreate, matchFindOpen, matchFindById, matchJoin, 
+    matchStart, matchRun, MatchId, matchFindByGame, matchGetSteps 
+} from "../libs/matches";
 import { GameId } from "../libs/games";
 
 interface MatchMethods {
     create: (req: MatchRequest) => Promise<MatchResponse>;
-    join: (id: MatchId) => Promise<void>;
+    join: (req: MatchJoinRequest) => Promise<void>;
     start: (id: MatchId) => Promise<void>;
     run: (id: MatchId) => Promise<void>;
 }
@@ -34,20 +41,20 @@ export const useMatch = (
     };
 
     const joinMut = useMutation(
-        async (options: {id: string}) => {
-            return matchJoin(main, options.id);
+        async (options: {req: MatchJoinRequest}) => {
+            return matchJoin(main, options.req);
         },
         {
             onSuccess: (_, vars) => {
-                queryClient.invalidateQueries(['matches', vars.id]);
+                queryClient.invalidateQueries(['matches', vars.req.id]);
             }   
         }
     );
 
     const join = (
-        id: string
+        req: MatchJoinRequest
     ): Promise<void> => {
-        return joinMut.mutateAsync({id});
+        return joinMut.mutateAsync({req});
     };
 
     const startMut = useMutation(

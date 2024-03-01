@@ -8,23 +8,41 @@ import { matchStatusToString } from "../../../libs/matches";
 import { useUI } from "../../../hooks/ui";
 import { Watch } from "./Watch";
 import { Avatar } from "../../users/user/Avatar";
+import { Nfts } from "../../nfts/Nfts";
+import { useAuth } from "../../../hooks/auth";
+import { NFT } from "../../../libs/nas1";
 
 interface Props {
 }
 
 export const Match = (props: Props) => {
     const {id} = useParams();
+    const {user} = useAuth();
     const {join, start, run} = useMatch()
     const {toggleLoading, showError, showSuccess} = useUI();
     const [pov, setPov] = useState<number|undefined>(undefined);
+    const [nft, setNft] = useState<NFT|undefined>(undefined);
     const match = useMatchFindById(id);
     const game = useGameFindById(match?.data?.game.id);
 
+    const handleSelectNft = useCallback(async (nft: NFT) => {
+        setNft(nft);
+    }, []);
+        
     const handleJoin = useCallback(async () => {
-        if(id) {
+        if(id && nft) {
             try {
                 toggleLoading(true);
-                await join(id)
+                await join({
+                    id, 
+                    nft: {
+                        std: {
+                            ICRC1: null
+                        },
+                        token_id: nft.token_id,
+                        canister_id: nft.canister_id
+                    }
+                });
                 showSuccess('You have joined this match!');
             }
             catch(e) {
@@ -34,14 +52,14 @@ export const Match = (props: Props) => {
                 toggleLoading(false);
             }
         }
-    }, [join, id]);
+    }, [join, id, nft]);
 
     const handleStartAndRun = useCallback(async () => {
         if(id) {
             try {
                 toggleLoading(true);
-                await start(id)
-                run(id)
+                await start(id);
+                run(id);
                 showSuccess('This match is running!');
             }
             catch(e) {
@@ -90,6 +108,8 @@ export const Match = (props: Props) => {
         return () => clearInterval(t);
     }, [updateStatus]);
 
+    const nfts = user?.nfts || [];
+
     const status = matchStatusToString(match.data?.status);
     const winner = match.data && match.data.won_by.length > 0?
         match.data.won_by[0]?.toString():
@@ -116,9 +136,9 @@ export const Match = (props: Props) => {
                         <Avatar_.Group spacing="xs">
                             {match.data?.players.map((player, index) => 
                                 <Avatar 
-                                    key={player.toString()} 
-                                    id={player}
-                                    isWinner={winner? player.toString() === winner: false}
+                                    key={player.id.toString()} 
+                                    id={player.id}
+                                    isWinner={winner? player.id.toString() === winner: false}
                                     onClick={() => handleChangePov(index)}
                                 />
                             )}
@@ -128,22 +148,35 @@ export const Match = (props: Props) => {
                 <Space h="xl" />
                 <Stack spacing="xl">
                     {status === 'OPEN' &&
-                        <Button
-                            variant="gradient"
-                            fullWidth
-                            onClick={handleJoin}
-                        >
-                            Join
-                        </Button>
+                        <div>
+                            <div>
+                                <div>Please select a NFT to be your player in this match</div>
+                                <Nfts  
+                                    nfts={nfts}
+                                    onClick={handleSelectNft}
+                                />
+                            </div>
+                            <div>
+                                <Button
+                                    variant="gradient"
+                                    fullWidth
+                                    onClick={handleJoin}
+                                >
+                                    Join
+                                </Button>
+                            </div>
+                        </div>
                     }
                     {status === 'OPEN' &&
-                        <Button
-                            variant="gradient"
-                            fullWidth
-                            onClick={handleStartAndRun}
-                        >
-                            Start & Run
-                        </Button>
+                        <div>
+                            <Button
+                                variant="gradient"
+                                fullWidth
+                                onClick={handleStartAndRun}
+                            >
+                                Start & Run
+                            </Button>
+                        </div>
                     }
                     {(status === 'FINISHED' || status === 'RUNNING') &&
                         <Stack>

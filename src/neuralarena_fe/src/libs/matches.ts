@@ -4,7 +4,8 @@ import {
     MatchRequest, MatchResponse, 
     MatchStatus, 
     InstanceStepsResponse, 
-    Pagination 
+    Pagination, 
+    MatchJoinRequest
 } from "../../../declarations/neuralarena_be/neuralarena_be.did";
 import { GameId } from "./games";
 
@@ -49,9 +50,9 @@ export const matchCreate = async (
 
 export const matchJoin = async (
     main: Main,
-    id: MatchId
+    req: MatchJoinRequest
 ): Promise<void> => {
-    const res = await main.match_join(id);
+    const res = await main.match_join(req);
     if('Err' in res) {
         throw new Error(res.Err);
     }
