@@ -86,6 +86,7 @@ const UserEdit = (props: Props) => {
         const kind = userGetKind(user);
 
         form.setValues({
+            nick: user.nick,
             name: user.name,
             email: user.email,
             ...(kind === UserKind.Player? 
