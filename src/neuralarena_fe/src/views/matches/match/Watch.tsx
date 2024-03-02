@@ -305,7 +305,7 @@ export const Watch = (props: Props) => {
                     case WatchState.FINISHED:
                         if(props.match.won_by.length > 0) {
                             const winnerPrincipal = props.match.won_by[0]?.toString();
-                            const winner = props.match.players.findIndex(p => p.toString() === winnerPrincipal);
+                            const winner = props.match.players.findIndex(p => p.id.toString() === winnerPrincipal);
                             renderer?.change_pov(winner, true);
                         }
 
