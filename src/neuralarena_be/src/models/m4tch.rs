@@ -2,7 +2,8 @@ use std::collections::HashMap;
 use candid::{CandidType, Principal};
 use neuralarena_cdk::models::{
     nas1_types::Nas1Token,
-    instance::InstancePlayer
+    instance::InstancePlayer,
+    game::GameMapId
 };
 use serde::{Serialize, Deserialize};
 use super::game::GameId;
@@ -13,6 +14,7 @@ pub type MatchId = String;
 #[derive(Clone, Serialize, Deserialize, CandidType)]
 pub struct MatchGame {
     pub id: GameId,
+    pub map_id: GameMapId,
     pub options: HashMap<String, String>,
 }
 
@@ -54,7 +56,7 @@ pub struct Match {
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
 pub struct MatchRequest {
-    pub game: MatchGame,
+    pub game: MatchGame
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]

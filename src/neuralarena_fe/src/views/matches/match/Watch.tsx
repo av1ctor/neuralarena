@@ -201,7 +201,10 @@ export const Watch = (props: Props) => {
 
     useEffect(() => {
         if(canvas.current && !renderer) {
-            const renderer = new ThreeRenderer(canvas.current, props.game.info.assets_url);
+            const renderer = new ThreeRenderer(
+                canvas.current, 
+                props.game.info.assets_url
+            );
             setRenderer(renderer);
         }
     }, [canvas.current, renderer, props.game.info]);

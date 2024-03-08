@@ -162,7 +162,7 @@ export class ThreeRenderer {
         asset_ref: number,
         asset: Asset
     ): Promise<void> {
-        if('Level' in asset.typ) {
+        if('Map' in asset.typ) {
             const gltf = await this.gameAssetLader.loadAsync(
                 gameAssetDataTextValue(asset, 'path')!);
             const mesh = gltf.scene;
@@ -253,6 +253,7 @@ export class ThreeRenderer {
     ): number {
         const obj = this.assets.get(asset_ref);
         if(!obj) {
+            console.error("Unknown asset:" + asset_ref);
             throw new Error("Unknown asset: " + asset_ref);
         }
         

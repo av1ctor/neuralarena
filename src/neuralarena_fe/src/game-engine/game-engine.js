@@ -80,7 +80,7 @@ function getArrayF32FromWasm0(ptr, len) {
 }
 /**
 */
-export const AssetType = Object.freeze({ Level:0,"0":"Level",Player:1,"1":"Player",Npc:2,"2":"Npc",Object:3,"3":"Object", });
+export const AssetType = Object.freeze({ Map:0,"0":"Map",Player:1,"1":"Player",Npc:2,"2":"Npc",Object:3,"3":"Object", });
 /**
 */
 export class GameEngine {

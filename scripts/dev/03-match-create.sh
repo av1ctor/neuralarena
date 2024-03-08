@@ -1,7 +1,8 @@
 #!/bin/bash
 
 GAME_ID=$1
+MAP_ID=0
 
-dfx canister call neuralarena_be match_create "(record {game=record {options=vec {}; id=\"$GAME_ID\"}})"
+dfx canister call neuralarena_be match_create "(record {game=record {id=\"$GAME_ID\"; map_id=$MAP_ID; options=vec {};}})"
 
 

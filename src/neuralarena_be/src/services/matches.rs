@@ -37,6 +37,7 @@ impl MatchesService {
             game.canister_id, 
             "instance_create",
             (
+                m4tch.game.map_id,
                 m4tch.game.options.clone(), 
             )
         ).await.map_err(|e| e.1)?;

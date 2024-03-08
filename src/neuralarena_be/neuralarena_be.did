@@ -1,5 +1,5 @@
 type Asset = record { typ : AssetType; data : vec record { text; AssetValue } };
-type AssetType = variant { Npc; Level; Object; Player };
+type AssetType = variant { Map; Npc; Object; Player };
 type AssetValue = variant {
   F32 : float32;
   U32 : nat32;
@@ -11,6 +11,7 @@ type DeveloperRequest = record { url : opt text };
 type GameInfo = record {
   min_players : nat64;
   image_url : text;
+  maps : vec GameMap;
   name : text;
   engine_wasm_url : text;
   description : text;
@@ -20,6 +21,13 @@ type GameInfo = record {
   assets_url : text;
   category : text;
   skills : vec text;
+};
+type GameMap = record {
+  id : nat64;
+  image_url : text;
+  name : text;
+  description : text;
+  version : float32;
 };
 type GameRequest = record { canister_id : principal };
 type GameResponse = record {
@@ -47,7 +55,11 @@ type InstanceStep = record {
   timedout : bool;
 };
 type InstanceStepsResponse = record { steps : vec InstanceStep };
-type MatchGame = record { id : text; options : vec record { text; text } };
+type MatchGame = record {
+  id : text;
+  map_id : nat64;
+  options : vec record { text; text };
+};
 type MatchJoinRequest = record { id : text; nft : UserNftRequest };
 type MatchPlayerResponse = record { id : principal; nft : Nas1Token };
 type MatchRequest = record { game : MatchGame };

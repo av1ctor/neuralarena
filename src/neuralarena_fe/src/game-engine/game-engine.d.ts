@@ -3,7 +3,7 @@
 /**
 */
 export enum AssetType {
-  Level = 0,
+  Map = 0,
   Player = 1,
   Npc = 2,
   Object = 3,
