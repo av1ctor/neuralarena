@@ -82,7 +82,15 @@ export const EndCredits = (props: Props) => {
                 {credits.people.map((people, index) => 
                     <div 
                         key={index} 
-                        className={classes.people}
+                        className={cx(
+                            classes.people,
+                            {
+                                [classes.level_1]: level === 0,
+                                [classes.level_2]: level === 1,
+                                [classes.level_3]: level === 2,
+                                [classes.level_4]: level >= 3,
+                            }
+                        )}
                     >
                         <div className={classes.role}>
                             {people[0]}
