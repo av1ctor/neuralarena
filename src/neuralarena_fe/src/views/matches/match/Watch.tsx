@@ -1,16 +1,22 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ActionIcon, Center, Grid, Group, createStyles } from "@mantine/core";
-import { Asset, MatchResponse, InstanceStep, GameResponse } from "../../../../../declarations/neuralarena_be/neuralarena_be.did";
+import { 
+    Asset, MatchResponse, InstanceStep, 
+    GameResponse, GameEndCredits 
+} from "../../../../../declarations/neuralarena_be/neuralarena_be.did";
 import { useMatchGetSteps } from "../../../hooks/matches";
 import { ThreeRenderer } from "../../../renderers/ThreeRenderer";
 import { matchGetAssets } from "../../../libs/matches";
+import { gameGetEndCredits } from "../../../libs/games";
 import { useActors } from "../../../hooks/actors";
 import { useUI } from "../../../hooks/ui";
 import gameEngineInit, {GameEngine} from "../../../game-engine/game-engine";
 import { 
     IconPlayerPause, IconPlayerPlay, IconQuestionMark, 
+    IconReload, 
     IconWindowMaximize, IconWindowMinimize, 
 } from "@tabler/icons-react";
+import { EndCredits } from "../../games/game/EndCredits";
 
 const useStyles = createStyles((theme) => ({
     container: {
@@ -47,6 +53,24 @@ const useStyles = createStyles((theme) => ({
         borderRadius: '4px',
         margin: 'auto',
     },
+    credits_ctn: {
+        display: 'none',
+        position: 'absolute',
+        top: '12px',
+        left: '12px',
+        bottom: '64px',
+        right: '12px',
+        overflowY: 'auto',
+        backgroundColor: '#0006',
+    },
+    credits: {
+        display: 'block',
+        position: 'relative',
+        width: '100%',
+    },
+    visible: {
+        display: 'block',
+    }
 }));
 
 enum WatchState {
@@ -69,15 +93,17 @@ const CANVAS_DIM = {w: 900, h: 506};
 export const Watch = (props: Props) => {
     const {toggleLoading, showError, showSuccess} = useUI();
     const { main } = useActors();
-    const { classes } = useStyles();
+    const { classes, cx } = useStyles();
     const canvas = useRef<HTMLCanvasElement|null>(null);
     const fullscreenContainer = useRef<HTMLDivElement|null>(null);
     const [assets, setAssets] = useState<Map<number, Asset>|undefined>();
     const [engine, setEngine] = useState<any>();
     const [renderer, setRenderer] = useState<ThreeRenderer>();
     const [state, setState] = useState<WatchState>(WatchState.LOADING);
-    const [assetsLoadingProgress, setAssetsLoadingProgress] = useState(0);
-    const [engineLoadingProgress, setEngineLoadingProgress] = useState(0);
+    const [, setAssetsLoadingProgress] = useState(0);
+    const [, setEngineLoadingProgress] = useState(0);
+    const [endCredits, setEndCredits] = useState<GameEndCredits|undefined>();
+    const [endCreditsVisible, setEndCreditsVisible] = useState(false);
     const [matchProgress, setMatchProgress] = useState(0.0);
     const [canvasDim, setCanvasDim] = useState(CANVAS_DIM);
 
@@ -112,6 +138,10 @@ export const Watch = (props: Props) => {
             return newState;
         });
     }, [step, frames, renderer]);
+
+    const handleToggleCredits = useCallback(() => {
+        setEndCreditsVisible(visible => !visible);
+    }, [])
 
     const handleToggleFullscreen = useCallback(() => {
         if(!document.fullscreenElement) {
@@ -237,6 +267,21 @@ export const Watch = (props: Props) => {
         loadAssets();
     }, [loadAssets]);
 
+    const loadEndCredits = useCallback(async () => {
+        try {
+            const credits = await gameGetEndCredits(main, props.game.id);
+            setEndCredits(credits);
+        }
+        catch(e) {
+            console.log(e);
+            showError(e);
+        }
+    }, [props.game.id]);
+
+    useEffect(() => {
+        loadEndCredits();
+    }, [loadEndCredits]);
+
     useEffect(() => {
         if(props.pov !== undefined) {
             renderer?.change_pov(props.pov);
@@ -308,7 +353,8 @@ export const Watch = (props: Props) => {
                     case WatchState.FINISHED:
                         if(props.match.won_by.length > 0) {
                             const winnerPrincipal = props.match.won_by[0]?.toString();
-                            const winner = props.match.players.findIndex(p => p.id.toString() === winnerPrincipal);
+                            const winner = props.match.players
+                                .findIndex(p => p.id.toString() === winnerPrincipal);
                             renderer?.change_pov(winner, true);
                         }
 
@@ -340,6 +386,13 @@ export const Watch = (props: Props) => {
                     height={canvasDim.h}
                 >
                 </canvas>
+                <div 
+                    className={cx(classes.credits_ctn, {[classes.visible]: endCreditsVisible})}
+                >
+                    <div className={classes.credits}>
+                        <EndCredits credits={endCredits} level={0} />
+                    </div>
+                </div>
                 <Grid className={classes.controls}>
                     <div 
                         className={classes.progress_container}
@@ -352,7 +405,9 @@ export const Watch = (props: Props) => {
                     </div>
                     <Grid.Col span={3}>
                         <Group position="left">
-                            <ActionIcon>
+                            <ActionIcon
+                                onClick={handleToggleCredits}
+                            >
                                 <IconQuestionMark />
                             </ActionIcon>
                         </Group>
@@ -360,11 +415,12 @@ export const Watch = (props: Props) => {
                     <Grid.Col span={6}>
                         <Group position="center">
                             <ActionIcon
-                                variant="outline"
                                 onClick={handleTogglePlay}
                             >
-                                {state === WatchState.PAUSED || state === WatchState.FINISHED?
+                                {state === WatchState.PAUSED?
                                     <IconPlayerPlay />
+                                : state === WatchState.FINISHED?
+                                    <IconReload />
                                 :
                                     <IconPlayerPause />
                                 }

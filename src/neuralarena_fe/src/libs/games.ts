@@ -1,7 +1,7 @@
 import { 
     _SERVICE as Main, 
     GameRequest, GameResponse, 
-    Pagination, Asset 
+    Pagination, Asset, GameEndCredits 
 } from "../../../declarations/neuralarena_be/neuralarena_be.did";
 
 export type GameId = string;
@@ -66,5 +66,17 @@ export const gameFindActive = async (
     if('Err' in res) {
         throw new Error(res.Err);
     }
+    return res.Ok; 
+};
+
+export const gameGetEndCredits = async (
+    main: Main,
+    id: GameId
+): Promise<GameEndCredits> => {
+    const res = await main.game_get_end_credits(id);
+    if('Err' in res) {
+        throw new Error(res.Err);
+    }
+
     return res.Ok; 
 };

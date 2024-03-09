@@ -1,5 +1,5 @@
 use candid::Principal;
-use neuralarena_cdk::models::game::GameInfoResponse;
+use neuralarena_cdk::models::game::{GameInfoResponse, GameEndCredits};
 use neuralarena_cdk::utils::uniqueid;
 use crate::db::DB;
 use neuralarena_cdk::db::traits::crud::{Crud, CrudSubscribable, Pagination};
@@ -84,6 +84,17 @@ impl GamesService {
             .collect())
     }
 
+    pub async fn get_end_credits(
+        game: &Game
+    ) -> Result<GameEndCredits, String> {
+        let (res, ): (Result<GameEndCredits, String>, ) = ic_cdk::call(
+            game.canister_id, 
+            "game_get_end_credits",
+            ()
+        ).await.map_err(|e| e.1)?;
+
+        res
+    }
     fn authorize(
         user: &User
     ) -> Result<(), String> {

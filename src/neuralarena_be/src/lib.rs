@@ -13,9 +13,12 @@ use models::user::{
 };
 use neuralarena_cdk::{
     db::traits::crud::Pagination,
-    models::instance::{
-        InstanceAssetsResponse,
-        InstanceStepsResponse
+    models::{
+        instance::{
+            InstanceAssetsResponse,
+            InstanceStepsResponse
+        },
+        game::GameEndCredits
     },
     utils::{
         serdeser, random
@@ -310,6 +313,22 @@ fn game_find_active(
             Err(msg) => Err(msg)
         }
     })
+}
+
+#[ic_cdk::query(composite = true)]
+pub async fn game_get_end_credits(
+    id: GameId
+) -> Result<GameEndCredits, String> {
+    let caller = &caller();
+    
+    let game = DB.with(|db| -> Result<Game, String> {
+        let game = GamesService::find_by_id(
+            &id, &db.borrow(), caller)?;
+
+        Ok(game)
+    })?;
+
+    GamesService::get_end_credits(&game).await
 }
 
 /*
