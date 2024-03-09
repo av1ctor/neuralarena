@@ -28,12 +28,14 @@ const useStyles = createStyles((theme) => ({
     },
     titleDivider: {
         marginTop: '0.25rem',
-        borderTop: '2px solid #fff4',
-        width: '33%'
+        borderTop: '2px solid #fff1',
+        width: '33%',
+        maxWidth: '350px',
     },
     people: {
         display: 'flex',
         width: '80%',
+        maxWidth: '1200px',
         alignItems: 'center'
     },
     role: {
