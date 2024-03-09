@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { Paper, createStyles, rem, Container, Text, Center } from "@mantine/core";
 import { GameResponse } from "../../../../../declarations/neuralarena_be/neuralarena_be.did";
 
@@ -11,6 +12,7 @@ const useStyles = createStyles((theme) => ({
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         position: 'relative',
+        cursor: 'pointer',
     },
   
     title: {
@@ -27,6 +29,12 @@ interface Props {
   
 export const Banner = (props: Props) => {
     const { classes } = useStyles();
+
+    const navigate = useNavigate();
+
+    const handleView = useCallback(() => {
+        navigate(`/games/${props.game.id}`)
+    }, [props.game.id]);
     
     return (
         <Paper
@@ -37,8 +45,8 @@ export const Banner = (props: Props) => {
                 height: props.isHalf? rem(110): rem(220),
             }}
             className={classes.card}
+            onClick={handleView}
         >
-            <Container/>
             <Container>
                 <Center>
                     <Text 
@@ -49,8 +57,6 @@ export const Banner = (props: Props) => {
                         {props.game.info.name}
                     </Text>
                 </Center>
-            </Container>
-            <Container>
             </Container>
         </Paper>
     );

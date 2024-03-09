@@ -72,7 +72,7 @@ const Landing = () => {
     const {redirectToSignup} = useBrowser();
 
     const handleViewSourceCode = useCallback(() => {
-        window.open("https://github.com/av1ctor/neuralnet", "blank");
+        window.open("https://github.com/av1ctor/neuralarena", "blank");
     }, []);
 
     const handleSignup = useCallback(() => {
