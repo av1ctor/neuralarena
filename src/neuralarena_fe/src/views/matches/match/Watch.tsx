@@ -61,7 +61,7 @@ const useStyles = createStyles((theme) => ({
         bottom: '64px',
         right: '12px',
         overflowY: 'auto',
-        backgroundColor: '#0006',
+        backgroundColor: '#0009',
     },
     credits: {
         display: 'block',

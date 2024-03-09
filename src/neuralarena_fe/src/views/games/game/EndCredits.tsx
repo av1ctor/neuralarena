@@ -25,8 +25,10 @@ const useStyles = createStyles((theme) => ({
         fontSize: '0.75rem',
     },
     title: {
+        fontVariant: 'small-caps',
+        fontWeight: 'bold',
     },
-    titleDivider: {
+    line: {
         marginTop: '0.25rem',
         borderTop: '2px solid #fff1',
         width: '33%',
@@ -36,20 +38,24 @@ const useStyles = createStyles((theme) => ({
         display: 'flex',
         width: '80%',
         maxWidth: '1200px',
-        alignItems: 'center'
+        alignItems: 'flex-end',
     },
     role: {
-        flex: '0 0 50%',
-        textAlign: 'center',
+        flex: '0 0 40%',
+        textAlign: 'right',
         overflow: 'hidden',
+    },
+    empty: {
+        flex: '1 1 20%',
     },
     name: {
-        flex: '0 0 50%',
-        textAlign: 'center',
+        flex: '0 0 40%',
+        textAlign: 'left',
         overflow: 'hidden',
+        fontWeight: 'bold',
     },
     divisor: {
-        height: '3rem',
+        height: '4rem',
     }
 }));
 
@@ -77,7 +83,7 @@ export const EndCredits = (props: Props) => {
                 <div className={classes.title}>
                     {credits.title}
                 </div>
-                <div className={classes.titleDivider}>
+                <div className={classes.line}>
                 </div>
                 {credits.people.map((people, index) => 
                     <div 
@@ -94,6 +100,8 @@ export const EndCredits = (props: Props) => {
                     >
                         <div className={classes.role}>
                             {people[0]}
+                        </div>
+                        <div className={classes.empty}>
                         </div>
                         <div className={classes.name}>
                             {people[1]}
