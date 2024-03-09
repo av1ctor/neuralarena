@@ -202,8 +202,6 @@ export class ThreeRenderer {
 
             mesh.userData.isPlayer = true;
             mesh.userData.animations = gltf.animations;
-            const bb = new THREE.Box3().setFromObject(mesh);
-            mesh.userData.height = (bb.max.y - bb.min.y) * 0.006;
 
             mesh.scale.multiplyScalar(0.01);
 
@@ -223,8 +221,6 @@ export class ThreeRenderer {
 
             mesh.userData.isNpc = true;
             mesh.userData.animations = gltf.animations;
-            const bb = new THREE.Box3().setFromObject(mesh);
-            mesh.userData.height = (bb.max.y - bb.min.y) * 0.05;
 
             mesh.scale.multiplyScalar(0.011);
 
