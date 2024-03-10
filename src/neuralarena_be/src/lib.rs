@@ -5,9 +5,13 @@ use ic_cdk::api::stable;
 use ic_cdk::{caller, trap};
 use models::game::{GameRequest, Game, GameResponse, GameId};
 use models::m4tch::{
-    Match, MatchId, MatchJoinRequest, MatchRequest, MatchResponse
+    Match, MatchId, MatchJoinRequest, 
+    MatchRequest, MatchResponse
 };
-use models::nftcol::{NftCollection, NftCollectionId, NftCollectionRequest, NftCollectionResponse};
+use models::nftcol::{
+    NftCollection, NftCollectionId, 
+    NftCollectionRequest, NftCollectionResponse
+};
 use models::user::{
     User, UserId, UserNftsRequest, UserRequest, UserResponse
 };
@@ -284,7 +288,35 @@ async fn game_create(
     })?;
 
     Ok(game.into())
+}
 
+#[ic_cdk::update]
+async fn game_update(
+    id: GameId,
+    req: GameRequest
+) -> Result<GameResponse, String> {
+    let caller = &caller();
+
+    let (user, mut game) = DB.with(|db| -> Result<(User, Game), String> {
+        let user = UsersService::find_by_id(
+            caller, &db.borrow(), caller)?;
+
+        let game = GamesService::find_by_id(
+            &id, &db.borrow(), caller)?;
+
+        Ok((user, game))
+    })?;
+
+    GamesService::reload(&req, &mut game, &user).await?;
+
+    DB.with(|db| {
+        GamesService::update(
+            &game,
+            &mut db.borrow_mut()
+        )
+    })?;
+
+    Ok(game.into())
 }
 
 #[ic_cdk::query]

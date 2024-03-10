@@ -1,5 +1,5 @@
 use candid::Principal;
-use neuralarena_cdk::models::game::{GameInfoResponse, GameEndCredits};
+use neuralarena_cdk::models::game::{GameEndCredits, GameInfo, GameInfoResponse};
 use neuralarena_cdk::utils::uniqueid;
 use crate::db::DB;
 use neuralarena_cdk::db::traits::crud::{Crud, CrudSubscribable, Pagination};
@@ -10,25 +10,45 @@ use crate::models::user::{User, UserKind};
 pub struct GamesService {}
 
 impl GamesService {
+    async fn get_info(
+        canister_id: Principal
+    ) -> Result<GameInfo, String> {
+        let (res, ): (Result<GameInfoResponse, String>, ) = ic_cdk::call(
+            canister_id, 
+            "game_get_info",
+            ()
+        ).await.map_err(|e| e.1)?;
+
+        match res {
+            Err(msg) => Err(msg),
+            Ok(info) => Ok(info.info)
+        }
+    }
+
     pub async fn create(
         req: &GameRequest,
         user: &User
     ) -> Result<Game, String> {
         Self::authorize(user)?;
 
-        let (res, ): (Result<GameInfoResponse, String>, ) = ic_cdk::call(
-            req.canister_id, 
-            "game_get_info",
-            ()
-        ).await.map_err(|e| e.1)?;
-
-        let info = match res {
-            Err(msg) => return Err(msg),
-            Ok(info) => info
-        }.info;
+        let info = Self::get_info(req.canister_id).await?;
 
         let id = uniqueid::generate();
         Ok(Game::new(&id, &req, &info, &user.id))
+    }
+
+    pub async fn reload(
+        req: &GameRequest,
+        game: &mut Game,
+        user: &User
+    ) -> Result<(), String> {
+        Self::authorize(user)?;
+
+        let info = Self::get_info(req.canister_id).await?;
+
+        game.info = info;
+
+        Ok(())
     }
 
     pub fn insert(
@@ -39,7 +59,7 @@ impl GamesService {
             .insert_and_notify(game.id.clone(), game.clone())
     }
 
-    pub fn _update(
+    pub fn update(
         game: &Game,
         db: &mut DB
     ) -> Result<(), String> {

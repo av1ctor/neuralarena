@@ -188,6 +188,7 @@ service : () -> {
   game_find_active : (Pagination) -> (Result_1) query;
   game_find_by_id : (text) -> (Result) query;
   game_get_end_credits : (text) -> (Result_2) composite_query;
+  game_update : (text, GameRequest) -> (Result);
   match_create : (MatchRequest) -> (Result_3);
   match_find_by_game : (text, Pagination) -> (Result_4) query;
   match_find_by_id : (text) -> (Result_3) query;
