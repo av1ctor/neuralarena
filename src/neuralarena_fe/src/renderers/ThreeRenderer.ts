@@ -21,7 +21,8 @@ export class ThreeRenderer {
     entities: THREE.Object3D[];
     pov: {
         player_num?: number,
-        rotate_cam: boolean
+        follow: boolean,
+        auto_rotate: boolean,
     };
     skipping: boolean;
 
@@ -78,7 +79,8 @@ export class ThreeRenderer {
 
         this.pov = {
             player_num: undefined,
-            rotate_cam: false
+            follow: false,
+            auto_rotate: false,
         };
 
         this.skipping = false;
@@ -98,7 +100,7 @@ export class ThreeRenderer {
         if(player_num !== undefined) {
             const players = this.entities.filter(o => o.userData.isPlayer);
             if(player_num >= 0 && player_num < players.length) {
-                if(player_num !== this.pov.player_num || rotate_cam !== this.pov.rotate_cam) {
+                if(player_num !== this.pov.player_num || rotate_cam !== this.pov.auto_rotate) {
                     const player = players[player_num];
                     this.camera.position.set(
                         player.position.x + 0.0, 
@@ -108,7 +110,8 @@ export class ThreeRenderer {
 
                     this.pov = {
                         player_num,
-                        rotate_cam: rotate_cam? true: false
+                        follow: true,
+                        auto_rotate: rotate_cam? true: false
                     };
                 }
             }
@@ -116,7 +119,8 @@ export class ThreeRenderer {
         else {
             this.pov = {
                 player_num: this.pov.player_num,
-                rotate_cam: false
+                follow: this.pov.follow,
+                auto_rotate: false
             };
         }
     }
@@ -153,7 +157,8 @@ export class ThreeRenderer {
         if(reset_pov) {
             this.pov = {
                 player_num: undefined,
-                rotate_cam: false
+                follow: false,
+                auto_rotate: false
             };
         }
     }
@@ -170,9 +175,9 @@ export class ThreeRenderer {
                 if((child as any).isMesh) {
                     const mesh = child as THREE.Mesh;
                     const isContainer = mesh.name.toLowerCase().startsWith('container');
-                    const isFloor = mesh.name.toLowerCase().startsWith('floor');
-                    mesh.castShadow = isContainer;
-                    mesh.receiveShadow = isContainer || isFloor;
+                    const isGrass = mesh.name.toLowerCase().startsWith('grass');
+                    mesh.castShadow = !isGrass;
+                    mesh.receiveShadow = !isGrass;
                     const material = Array.isArray(mesh.material)? 
                         mesh.material[0].clone(): 
                         mesh.material.clone();
@@ -387,12 +392,12 @@ export class ThreeRenderer {
             const players = this.entities.filter(o => o.userData.isPlayer);
             player = players[this.pov.player_num];
 
-            if(!this.pov.rotate_cam) {
+            if(!this.pov.auto_rotate && this.pov.follow) {
                 this.camera.position.lerp(
                     new THREE.Vector3(
-                        player.position.x + 5.0, 
+                        player.position.x + 2.5, 
                         player.position.y + 3.0, 
-                        player.position.z + 5.0
+                        player.position.z + 2.5
                     ),
                     0.5
                 );
@@ -409,7 +414,7 @@ export class ThreeRenderer {
         }
 
         if(this.controls) {
-            this.controls.autoRotate = this.pov.rotate_cam;
+            this.controls.autoRotate = this.pov.auto_rotate;
             this.controls.update();
         }
 
@@ -434,7 +439,9 @@ export class ThreeRenderer {
                         if(obj && (obj as any).isMesh) {
                             const mesh = obj as THREE.Mesh;
                             if(mesh.userData.isContainer) {
-                                const material = Array.isArray(mesh.material)? mesh.material[0]: mesh.material;
+                                const material = Array.isArray(mesh.material)? 
+                                    mesh.material[0]: 
+                                    mesh.material;
                                 if(!material.transparent) {
                                     material.transparent = true;
                                     material.needsUpdate = true;
@@ -460,7 +467,9 @@ export class ThreeRenderer {
                 if(obj && (obj as any).isMesh) {
                     const mesh = obj as THREE.Mesh;
                     if(mesh.userData.isContainer) {
-                        const material = Array.isArray(mesh.material)? mesh.material[0]: mesh.material;
+                        const material = Array.isArray(mesh.material)? 
+                            mesh.material[0]: 
+                            mesh.material;
                         if(material.transparent) {
                             material.transparent = false;
                             material.needsUpdate = true;
