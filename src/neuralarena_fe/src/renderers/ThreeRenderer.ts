@@ -174,8 +174,10 @@ export class ThreeRenderer {
                     const material = Array.isArray(mesh.material)? 
                         mesh.material[0].clone(): 
                         mesh.material.clone();
-                    material.transparent = false;
-                    material.opacity = 0.25;
+                    if(mesh.name.toLowerCase().startsWith('container')){
+                        material.transparent = false;
+                        material.opacity = 0.25;
+                    }
 
                     if((material as any).map) {
                         (material as any).map.anisotropy = 4;
