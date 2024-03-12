@@ -165,68 +165,71 @@ export class ThreeRenderer {
         if('Map' in asset.typ) {
             const gltf = await this.gameAssetLader.loadAsync(
                 gameAssetDataTextValue(asset, 'path')!);
-            const mesh = gltf.scene;
-            mesh.traverse(child => {
+            const obj = gltf.scene;
+            obj.traverse(child => {
                 if((child as any).isMesh) {
                     const mesh = child as THREE.Mesh;
-                    mesh.castShadow = true;
-                    mesh.receiveShadow = true;
+                    const isContainer = mesh.name.toLowerCase().startsWith('container');
+                    const isFloor = mesh.name.toLowerCase().startsWith('floor');
+                    mesh.castShadow = isContainer;
+                    mesh.receiveShadow = isContainer || isFloor;
                     const material = Array.isArray(mesh.material)? 
                         mesh.material[0].clone(): 
                         mesh.material.clone();
-                    if(mesh.name.toLowerCase().startsWith('container')){
+                    if(isContainer){
                         material.transparent = false;
                         material.opacity = 0.25;
-                    }
 
-                    if((material as any).map) {
-                        (material as any).map.anisotropy = 4;
+                        if((material as any).map) {
+                            (material as any).map.anisotropy = 4;
+                        }
                     }
                     mesh.material = material;
+                    mesh.userData.isContainer = isContainer;
                 }
             });
 
-            mesh.userData.isMap = true;
+            obj.userData.isMap = true;
 
-            this.assets.set(asset_ref, mesh);
+            this.assets.set(asset_ref, obj);
         }
         else if('Player' in asset.typ) {
             const gltf = await this.nftAssetLader.loadAsync(
                 gameAssetDataTextValue(asset, 'path')!);
-            const mesh = gltf.scene;
-            mesh.traverse(child => {
+            const obj = gltf.scene;
+            obj.traverse(child => {
                 if((child as any).isMesh) {
                     child.castShadow = true;
                     child.receiveShadow = true;
                 }
             });
-            mesh.visible = false;
+            obj.visible = false;
 
-            mesh.userData.isPlayer = true;
-            mesh.userData.animations = gltf.animations;
+            obj.userData.isPlayer = true;
+            obj.userData.animations = gltf.animations;
 
-            mesh.scale.multiplyScalar(0.01);
+            obj.scale.multiplyScalar(0.01);
 
-            this.assets.set(asset_ref, mesh);
+            this.assets.set(asset_ref, obj);
         }
         else if('Npc' in asset.typ) {
             const gltf = await this.gameAssetLader.loadAsync(
                 gameAssetDataTextValue(asset, 'path')!);
-            const mesh = gltf.scene;
-            mesh.traverse(child => {
+            const obj = gltf.scene;
+            obj.traverse(child => {
                 if((child as any).isMesh) {
                     child.castShadow = true;
                     child.receiveShadow = true;
                 }
             });
-            mesh.visible = false;
+            obj.visible = false;
 
-            mesh.userData.isNpc = true;
-            mesh.userData.animations = gltf.animations;
+            obj.userData.isNpc = true;
+            obj.userData.animations = gltf.animations;
 
-            mesh.scale.multiplyScalar(0.011);
+            obj.scale.multiplyScalar(0.011);
 
-            this.assets.set(asset_ref, mesh);
+            this.assets.set(asset_ref, obj);
         }
         else if('Object' in asset.typ) {
             const geometry = new THREE.BoxGeometry(2.0, 2.0, 2.0);
@@ -430,10 +433,12 @@ export class ThreeRenderer {
                         const obj = intersection.object;
                         if(obj && (obj as any).isMesh) {
                             const mesh = obj as THREE.Mesh;
-                            const material = Array.isArray(mesh.material)? mesh.material[0]: mesh.material;
-                            if(!material.transparent) {
-                                material.transparent = true;
-                                material.needsUpdate = true;
+                            if(mesh.userData.isContainer) {
+                                const material = Array.isArray(mesh.material)? mesh.material[0]: mesh.material;
+                                if(!material.transparent) {
+                                    material.transparent = true;
+                                    material.needsUpdate = true;
+                                }
                             }
                         }
                     }
@@ -454,10 +459,12 @@ export class ThreeRenderer {
                 const obj = intersection.object;
                 if(obj && (obj as any).isMesh) {
                     const mesh = obj as THREE.Mesh;
-                    const material = Array.isArray(mesh.material)? mesh.material[0]: mesh.material;
-                    if(material.transparent) {
-                        material.transparent = false;
-                        material.needsUpdate = true;
+                    if(mesh.userData.isContainer) {
+                        const material = Array.isArray(mesh.material)? mesh.material[0]: mesh.material;
+                        if(material.transparent) {
+                            material.transparent = false;
+                            material.needsUpdate = true;
+                        }
                     }
                 }
             }
