@@ -13,19 +13,17 @@ use crate::models::user::{User, UserKind};
 pub struct NftCollectionsService {}
 
 impl NftCollectionsService {
-    pub async fn create(
-        req: &NftCollectionRequest,
-        user: &User
-    ) -> Result<NftCollection, String> {
-        Self::authorize(user)?;
-
-        if req.std != NftStandard::ICRC7 {
+    async fn get_meta(
+        standard: NftStandard,
+        canister_id: &Principal
+    ) -> Result<NftCollectionMetadata, String> {
+        if standard != NftStandard::ICRC7 {
             return Err("Unsupported NFT standard".to_string());
         }
 
         // check if the nft's support NAS-1
         let (stds, ): (Vec<Standard>, ) = ic_cdk::call(
-            req.canister_id, 
+            canister_id.clone(), 
             "icrc7_supported_standards",
             ()
         ).await.map_err(|e| e.1)?;
@@ -36,14 +34,14 @@ impl NftCollectionsService {
 
         // get the ICRC7 metadata
         let (icrc7_meta, ): (HashMap<String, Value>, ) = ic_cdk::call(
-            req.canister_id, 
+            canister_id.clone(), 
             "icrc7_collection_metadata",
             ()
         ).await.map_err(|e| e.1)?;
 
         // get the NAS1 metadata
         let (nas1_meta, ): (Nas1Collection, ) = ic_cdk::call(
-            req.canister_id, 
+            canister_id.clone(), 
             "nas1_collection_data",
             ()
         ).await.map_err(|e| e.1)?;
@@ -55,8 +53,39 @@ impl NftCollectionsService {
             logo: icrc7_meta["icrc7:logo"].to_string(),
             nas1: nas1_meta,
         };
+        
+        Ok(meta)
+    }
+    
+    pub async fn create(
+        req: &NftCollectionRequest,
+        user: &User
+    ) -> Result<NftCollection, String> {
+        Self::authorize(user)?;
+
+        let meta = Self::get_meta(
+            req.std.clone(), 
+            &req.canister_id
+        ).await?;
 
         Ok(NftCollection::new(&req, &meta, &user.id))
+    }
+
+    pub async fn reload(
+        req: &NftCollectionRequest,
+        col: &mut NftCollection,
+        user: &User
+    ) -> Result<(), String> {
+        Self::authorize(user)?;
+
+        let meta = Self::get_meta(
+            req.std.clone(), 
+            &req.canister_id
+        ).await?;
+
+        col.meta = meta;
+
+        Ok(())
     }
 
     pub fn insert(
@@ -67,7 +96,7 @@ impl NftCollectionsService {
             .insert_and_notify(nft.id.clone(), nft.clone())
     }
 
-    pub fn _update(
+    pub fn update(
         nft: &NftCollection,
         db: &mut DB
     ) -> Result<(), String> {

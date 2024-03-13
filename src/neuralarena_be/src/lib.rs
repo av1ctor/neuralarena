@@ -391,6 +391,35 @@ async fn nft_col_create(
     Ok(col.into())
 }
 
+#[ic_cdk::update]
+async fn nft_col_update(
+    id: NftCollectionId,
+    req: NftCollectionRequest
+) -> Result<NftCollectionResponse, String> {
+    let caller = &caller();
+
+    let (user, mut col) = DB.with(|db| -> Result<(User, NftCollection), String> {
+        let user = UsersService::find_by_id(
+            caller, &db.borrow(), caller)?;
+
+        let col = NftCollectionsService::find_by_id(
+            &id, &db.borrow(), caller)?;
+
+        Ok((user, col))
+    })?;
+
+    NftCollectionsService::reload(&req, &mut col, &user).await?;
+
+    DB.with(|db| {
+        NftCollectionsService::update(
+            &col,
+            &mut db.borrow_mut()
+        )
+    })?;
+
+    Ok(col.into())
+}
+
 #[ic_cdk::query]
 fn nft_col_find_by_id(
     id: NftCollectionId
