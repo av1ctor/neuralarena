@@ -14,13 +14,8 @@ pub struct NftCollectionsService {}
 
 impl NftCollectionsService {
     async fn get_meta(
-        standard: NftStandard,
         canister_id: &Principal
     ) -> Result<NftCollectionMetadata, String> {
-        if standard != NftStandard::ICRC7 {
-            return Err("Unsupported NFT standard".to_string());
-        }
-
         // check if the nft's support NAS-1
         let (stds, ): (Vec<Standard>, ) = ic_cdk::call(
             canister_id.clone(), 
@@ -63,8 +58,11 @@ impl NftCollectionsService {
     ) -> Result<NftCollection, String> {
         Self::authorize(user)?;
 
+        if req.std != NftStandard::ICRC7 {
+            return Err("Unsupported NFT standard".to_string());
+        }
+
         let meta = Self::get_meta(
-            req.std.clone(), 
             &req.canister_id
         ).await?;
 
@@ -72,15 +70,13 @@ impl NftCollectionsService {
     }
 
     pub async fn reload(
-        req: &NftCollectionRequest,
         col: &mut NftCollection,
         user: &User
     ) -> Result<(), String> {
         Self::authorize(user)?;
 
         let meta = Self::get_meta(
-            req.std.clone(), 
-            &req.canister_id
+            &col.id
         ).await?;
 
         col.meta = meta;

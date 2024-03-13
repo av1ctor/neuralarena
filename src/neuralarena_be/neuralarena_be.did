@@ -201,7 +201,7 @@ service : () -> {
   nft_col_create : (NftCollectionRequest) -> (Result_8);
   nft_col_find_active : (Pagination) -> (Result_9) query;
   nft_col_find_by_id : (principal) -> (Result_8) query;
-  nft_col_update : (principal, NftCollectionRequest) -> (Result_8);
+  nft_col_update : (principal) -> (Result_8);
   user_create_player : (UserRequest) -> (Result_10);
   user_create_staff : (UserRequest) -> (Result_10);
   user_delete : (principal) -> (Result_7);

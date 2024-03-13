@@ -393,8 +393,7 @@ async fn nft_col_create(
 
 #[ic_cdk::update]
 async fn nft_col_update(
-    id: NftCollectionId,
-    req: NftCollectionRequest
+    id: NftCollectionId
 ) -> Result<NftCollectionResponse, String> {
     let caller = &caller();
 
@@ -408,7 +407,7 @@ async fn nft_col_update(
         Ok((user, col))
     })?;
 
-    NftCollectionsService::reload(&req, &mut col, &user).await?;
+    NftCollectionsService::reload(&mut col, &user).await?;
 
     DB.with(|db| {
         NftCollectionsService::update(
