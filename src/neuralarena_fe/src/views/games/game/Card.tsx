@@ -60,7 +60,7 @@ export const Card = (props: Props) => {
             shadow="md"
             p="xl"
             radius="md"
-            style={{ backgroundImage: `url(${info.image_url})` }}
+            style={{ backgroundImage: `url(${info.urls.cover})` }}
             className={classes.card}
         >
             <div className={classes.categoryBox}>

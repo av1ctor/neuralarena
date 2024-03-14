@@ -15,15 +15,13 @@ type GameEndCredits = record {
 };
 type GameInfo = record {
   min_players : nat64;
-  image_url : text;
   maps : vec GameMap;
   name : text;
-  engine_wasm_url : text;
+  urls : GameURLs;
   description : text;
   max_players : nat64;
   version : float32;
   animations : vec text;
-  assets_url : text;
   category : text;
   skills : vec text;
 };
@@ -39,6 +37,12 @@ type GameResponse = record {
   id : text;
   info : GameInfo;
   canister_id : principal;
+};
+type GameURLs = record {
+  engine_wasm : text;
+  scenes : vec record { text; text };
+  cover : text;
+  assets : text;
 };
 type HashMap = vec record {
   text;

@@ -41,7 +41,7 @@ export const Banner = (props: Props) => {
             shadow="md"
             radius="md"
             style={{ 
-                backgroundImage: `url(${props.game.info.image_url})`,
+                backgroundImage: `url(${props.game.info.urls.cover})`,
                 height: props.isHalf? rem(110): rem(220),
             }}
             className={classes.card}

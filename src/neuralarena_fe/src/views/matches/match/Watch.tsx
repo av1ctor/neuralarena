@@ -231,9 +231,11 @@ export const Watch = (props: Props) => {
 
     useEffect(() => {
         if(canvas.current && !renderer) {
+            const {info} = props.game;
             const renderer = new ThreeRenderer(
                 canvas.current, 
-                props.game.info.assets_url
+                info.urls.assets,
+                new Map(info.urls.scenes)
             );
             setRenderer(renderer);
         }
@@ -302,7 +304,7 @@ export const Watch = (props: Props) => {
                 engineLoading.current = true;
                 setEngineLoadingProgress(5);
                 toggleLoading(true);
-                await gameEngineInit(props.game.info.engine_wasm_url);
+                await gameEngineInit(props.game.info.urls.engine_wasm);
                 setEngine(new GameEngine());
                 setState(WatchState.PLAYING);
             }
@@ -330,7 +332,7 @@ export const Watch = (props: Props) => {
                 switch(state) {
                     case WatchState.PLAYING:
                         if(step.current === 0) {
-                            renderer?.showStartCounter();
+                            renderer?.showStart();
                         }
                         if(step.current < frames.length) {
                             const frame = frames[step.current];

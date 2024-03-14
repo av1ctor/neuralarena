@@ -69,7 +69,7 @@ export const Card = (props: Props) => {
             shadow="md"
             p="xl"
             radius="md"
-            style={{ backgroundImage: `url(${game.info.image_url})` }}
+            style={{ backgroundImage: `url(${game.info.urls.cover})` }}
             className={classes.card}
         >
             <div className={classes.statusBox}>

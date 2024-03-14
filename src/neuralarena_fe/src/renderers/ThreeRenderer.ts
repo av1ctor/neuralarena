@@ -15,7 +15,7 @@ export class ThreeRenderer {
         scene: THREE.Scene;
         camera: THREE.PerspectiveCamera;
     };
-    startCnt: {
+    start: {
         visible: boolean;
         scene: THREE.Scene;
         camera: THREE.PerspectiveCamera;
@@ -36,7 +36,8 @@ export class ThreeRenderer {
 
     constructor(
         canvas: HTMLCanvasElement,
-        assets_url: string
+        assets_url: string,
+        scenes_urls: Map<string, string>
     ) {
         this.width = canvas.width;
         this.height = canvas.height;
@@ -49,12 +50,16 @@ export class ThreeRenderer {
             camera: main[1]
         };
 
-        const startCnt = ThreeRenderer.#setupStartCounter(
-            this.width, this.height, this.staticLoader);
-        this.startCnt = {
+        const start = ThreeRenderer.#setupStart(
+            this.width, 
+            this.height, 
+            scenes_urls.get("start"),
+            this.staticLoader
+        );
+        this.start = {
             visible: false,
-            scene: startCnt[0],
-            camera: startCnt[1]
+            scene: start[0],
+            camera: start[1]
         };
         
         this.renderer = new THREE.WebGLRenderer(
@@ -125,15 +130,16 @@ export class ThreeRenderer {
         return [scene, camera];
     }
 
-    static #setupStartCounter(
+    static #setupStart(
         width: number,
         height: number,
+        start_url: string|undefined,
         loader: GLTFLoader
     ): [THREE.Scene, THREE.PerspectiveCamera] {
         const scene = new THREE.Scene();
 
         const camera = new THREE.PerspectiveCamera(75.0, width / height, 0.1, 100.0);
-        camera.position.set(0.0, 0.0, 15.0);
+        camera.position.set(0.0, 0.0, 2.0);
 
         const fillLight1 = new THREE.HemisphereLight(0xffffff, 0x444444, 2.0);
         fillLight1.position.set(0.0, 300.0, 100.0);
@@ -154,7 +160,7 @@ export class ThreeRenderer {
         directionalLight.shadow.bias = -0.00006;
         scene.add(directionalLight);
 
-        loader.load("/scenes/start-counter.glb", (gltf) => {
+        loader.load(start_url ?? "/scenes/start-counter.glb", (gltf) => {
             const obj = gltf.scene;
 
             obj.traverse(child => {
@@ -175,8 +181,6 @@ export class ThreeRenderer {
             obj.userData.anim = anim;
             obj.userData.action = action;
 
-            obj.scale.multiplyScalar(10.0);
-
             scene.add(obj);
             scene.userData.root = obj;
         });
@@ -184,20 +188,20 @@ export class ThreeRenderer {
         return [scene, camera];
     }
 
-    showStartCounter(
+    showStart(
     ) {
-        if(this.startCnt.visible) {
+        if(this.start.visible) {
             return;
         }
 
-        const obj = this.startCnt.scene.userData.root as THREE.Group<THREE.Object3DEventMap>;
+        const obj = this.start.scene.userData.root as THREE.Group<THREE.Object3DEventMap>;
 
         //
         const anim = obj.userData.anim as THREE.AnimationMixer;
         
         const self = this;
         const hideWhenFinished = () => {
-            self.startCnt.visible = false;
+            self.start.visible = false;
             anim.removeEventListener('finished', hideWhenFinished);
         };
 
@@ -209,12 +213,12 @@ export class ThreeRenderer {
         action.play();
         action.enabled = true;
         
-        this.startCnt.visible = true;
+        this.start.visible = true;
     }
 
-    #animStartCounter(
+    #animStart(
     ) {
-        const obj = this.startCnt.scene.userData.root as THREE.Group<THREE.Object3DEventMap>;
+        const obj = this.start.scene.userData.root as THREE.Group<THREE.Object3DEventMap>;
 
         const anim = obj.userData.anim as THREE.AnimationMixer;
         anim.update(1.0 / 60.0);
@@ -586,10 +590,10 @@ export class ThreeRenderer {
 
         this.renderer.clear();
         this.renderer.render(this.main.scene, this.main.camera);
-        if(this.startCnt.visible) {
-            this.#animStartCounter();
+        if(this.start.visible) {
+            this.#animStart();
             this.renderer.clearDepth();
-            this.renderer.render(this.startCnt.scene, this.startCnt.camera);
+            this.renderer.render(this.start.scene, this.start.camera);
         }
 
         if(intersections) {
