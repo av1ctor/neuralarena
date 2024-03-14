@@ -165,7 +165,7 @@ export const Watch = (props: Props) => {
             renderer?.reset(true, true);
         }
         else {
-            renderer?.set_skipping(true);
+            renderer?.setSkipping(true);
             let first = step.current;
             if(stp < step.current) {
                 first = 0;
@@ -184,12 +184,12 @@ export const Watch = (props: Props) => {
                     console.error(e);
                 }
             }
-            renderer?.set_skipping(false);
+            renderer?.setSkipping(false);
             step.current = stp;
         }
 
         if(state !== WatchState.PLAYING) {
-            renderer?.change_pov();
+            renderer?.changePOV();
             setState(WatchState.PLAYING);
         }
     
@@ -226,7 +226,7 @@ export const Watch = (props: Props) => {
 
     useEffect(() => {
         changeCanvasDim(canvasDim);
-        renderer?.resize_canvas(canvasDim);
+        renderer?.resizeCanvas(canvasDim);
     }, [canvasDim, renderer]);
 
     useEffect(() => {
@@ -284,7 +284,7 @@ export const Watch = (props: Props) => {
 
     useEffect(() => {
         if(props.pov !== undefined) {
-            renderer?.change_pov(props.pov);
+            renderer?.changePOV(props.pov);
         }
     }, [props.pov, renderer]);
 
@@ -329,6 +329,9 @@ export const Watch = (props: Props) => {
             const animate = () => {
                 switch(state) {
                     case WatchState.PLAYING:
+                        if(step.current === 0) {
+                            renderer?.showStartCounter();
+                        }
                         if(step.current < frames.length) {
                             const frame = frames[step.current];
                             try {
@@ -355,7 +358,7 @@ export const Watch = (props: Props) => {
                             const winnerPrincipal = props.match.won_by[0]?.toString();
                             const winner = props.match.players
                                 .findIndex(p => p.id.toString() === winnerPrincipal);
-                            renderer?.change_pov(winner, true);
+                            renderer?.changePOV(winner, true);
                         }
 
                         engine.render(Uint8Array.from([]), renderer);

@@ -7,11 +7,19 @@ import { gameAssetDataTextValue } from '../libs/games';
 import { GameAssetsLoadingManager, NftAssetsLoadingManager } from '../libs/loadingmanager';
 
 export class ThreeRenderer {
-    gameAssetLader: GLTFLoader;
-    nftAssetLader: GLTFLoader;
+    gameAssetLoader: GLTFLoader;
+    nftAssetLoader: GLTFLoader;
+    staticLoader: GLTFLoader;
     renderer: THREE.WebGLRenderer;
-    scene: THREE.Scene;
-    camera: THREE.PerspectiveCamera;
+    main: {
+        scene: THREE.Scene;
+        camera: THREE.PerspectiveCamera;
+    };
+    startCnt: {
+        visible: boolean;
+        scene: THREE.Scene;
+        camera: THREE.PerspectiveCamera;
+    };
     raycaster: THREE.Raycaster;
     controls?: OrbitControls;
     clock: THREE.Clock;
@@ -32,45 +40,36 @@ export class ThreeRenderer {
     ) {
         this.width = canvas.width;
         this.height = canvas.height;
+
+        this.staticLoader = new GLTFLoader();
+
+        const main = ThreeRenderer.#setupMain(this.width, this.height);
+        this.main = {
+            scene: main[0],
+            camera: main[1]
+        };
+
+        const startCnt = ThreeRenderer.#setupStartCounter(
+            this.width, this.height, this.staticLoader);
+        this.startCnt = {
+            visible: false,
+            scene: startCnt[0],
+            camera: startCnt[1]
+        };
         
-        this.scene = new THREE.Scene();
-        this.scene.background = new THREE.Color(0x88ccee);
-        this.scene.fog = new THREE.Fog(0x88ccee, 0, 100)
-
-        this.camera = new THREE.PerspectiveCamera(75.0, this.width / this.height, 0.1, 1000.0);
-        this.camera.position.set(15.0, 10.0, 15.0);
-
-        this.renderer = new THREE.WebGLRenderer(canvas? {canvas, antialias: true}: {antialias: true});
+        this.renderer = new THREE.WebGLRenderer(
+            canvas? {canvas, antialias: true}: {antialias: true});
+        this.renderer.autoClear = false;
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.VSMShadowMap;
         this.renderer.toneMapping = THREE.LinearToneMapping;    
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(this.width, this.height);
 
-        const fillLight1 = new THREE.HemisphereLight(0xffffff, 0x444444, 2.0);
-        fillLight1.position.set(0, 300, 0);
-        this.scene.add(fillLight1);
-
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 7.0);
-        directionalLight.position.set(15, 30, 10);
-        directionalLight.castShadow = true;
-        directionalLight.shadow.camera.near = 0.01;
-        directionalLight.shadow.camera.far = 500.0;
-        directionalLight.shadow.camera.right = 60.0;
-        directionalLight.shadow.camera.left = -60.0;
-        directionalLight.shadow.camera.top = 60.0;
-        directionalLight.shadow.camera.bottom = -60.0;
-        directionalLight.shadow.mapSize.width = 2048;
-        directionalLight.shadow.mapSize.height = 2048;
-        directionalLight.shadow.radius = 4;
-        directionalLight.shadow.bias = -0.00006;
-        this.scene.add(directionalLight);
-
-        this.raycaster = new THREE.Raycaster();
-
         this.controls = this.renderer.domElement?
-            new OrbitControls(this.camera, this.renderer.domElement):
+            new OrbitControls(this.main.camera, this.renderer.domElement):
             undefined;
+        this.raycaster = new THREE.Raycaster();
 
         this.clock = new THREE.Clock();
 
@@ -85,15 +84,143 @@ export class ThreeRenderer {
 
         this.skipping = false;
 
-        this.gameAssetLader = new GLTFLoader(
+        this.gameAssetLoader = new GLTFLoader(
             new GameAssetsLoadingManager(assets_url)
         );
-        this.nftAssetLader = new GLTFLoader(
+        this.nftAssetLoader = new GLTFLoader(
             new NftAssetsLoadingManager()
         );
     }
 
-    change_pov(
+    static #setupMain(
+        width: number,
+        height: number
+    ): [THREE.Scene, THREE.PerspectiveCamera] {
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x88ccee);
+        scene.fog = new THREE.Fog(0x88ccee, 0, 100)
+
+        const camera = new THREE.PerspectiveCamera(75.0, width / height, 0.1, 1000.0);
+        camera.position.set(15.0, 10.0, 15.0);
+
+        const fillLight1 = new THREE.HemisphereLight(0xffffff, 0x444444, 2.0);
+        fillLight1.position.set(0.0, 300.0, 0.0);
+        scene.add(fillLight1);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 7.0);
+        directionalLight.position.set(15.0, 30.0, 10.0);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.camera.near = 0.01;
+        directionalLight.shadow.camera.far = 500.0;
+        directionalLight.shadow.camera.right = 60.0;
+        directionalLight.shadow.camera.left = -60.0;
+        directionalLight.shadow.camera.top = 60.0;
+        directionalLight.shadow.camera.bottom = -60.0;
+        directionalLight.shadow.mapSize.width = 2048;
+        directionalLight.shadow.mapSize.height = 2048;
+        directionalLight.shadow.radius = 4;
+        directionalLight.shadow.bias = -0.00006;
+        scene.add(directionalLight);
+
+        return [scene, camera];
+    }
+
+    static #setupStartCounter(
+        width: number,
+        height: number,
+        loader: GLTFLoader
+    ): [THREE.Scene, THREE.PerspectiveCamera] {
+        const scene = new THREE.Scene();
+
+        const camera = new THREE.PerspectiveCamera(75.0, width / height, 0.1, 100.0);
+        camera.position.set(0.0, 0.0, 15.0);
+
+        const fillLight1 = new THREE.HemisphereLight(0xffffff, 0x444444, 2.0);
+        fillLight1.position.set(0.0, 300.0, 100.0);
+        scene.add(fillLight1);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 7.0);
+        directionalLight.position.set(15.0, 30.0, 10.0);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.camera.near = 0.01;
+        directionalLight.shadow.camera.far = 500.0;
+        directionalLight.shadow.camera.right = 60.0;
+        directionalLight.shadow.camera.left = -60.0;
+        directionalLight.shadow.camera.top = 60.0;
+        directionalLight.shadow.camera.bottom = -60.0;
+        directionalLight.shadow.mapSize.width = 2048;
+        directionalLight.shadow.mapSize.height = 2048;
+        directionalLight.shadow.radius = 4;
+        directionalLight.shadow.bias = -0.00006;
+        scene.add(directionalLight);
+
+        loader.load("/scenes/start-counter.glb", (gltf) => {
+            const obj = gltf.scene;
+
+            obj.traverse(child => {
+                if((child as any).isMesh) {
+                    const mesh = child as THREE.Mesh;
+                    mesh.castShadow = true;
+                    mesh.receiveShadow = true;
+                }
+            });
+            
+            const anim = new THREE.AnimationMixer(obj);
+            const action = anim.clipAction(
+                THREE.AnimationClip.findByName(gltf.animations, 'Animation'));
+            action.clampWhenFinished = true;
+            action.loop = THREE.LoopOnce;
+            action.enabled = false;
+
+            obj.userData.anim = anim;
+            obj.userData.action = action;
+
+            obj.scale.multiplyScalar(10.0);
+
+            scene.add(obj);
+            scene.userData.root = obj;
+        });
+    
+        return [scene, camera];
+    }
+
+    showStartCounter(
+    ) {
+        if(this.startCnt.visible) {
+            return;
+        }
+
+        const obj = this.startCnt.scene.userData.root as THREE.Group<THREE.Object3DEventMap>;
+
+        //
+        const anim = obj.userData.anim as THREE.AnimationMixer;
+        
+        const self = this;
+        const hideWhenFinished = () => {
+            self.startCnt.visible = false;
+            anim.removeEventListener('finished', hideWhenFinished);
+        };
+
+        anim.addEventListener('finished', hideWhenFinished);
+
+        //
+        const action = obj.userData.action as THREE.AnimationAction;
+        action.reset();
+        action.play();
+        action.enabled = true;
+        
+        this.startCnt.visible = true;
+    }
+
+    #animStartCounter(
+    ) {
+        const obj = this.startCnt.scene.userData.root as THREE.Group<THREE.Object3DEventMap>;
+
+        const anim = obj.userData.anim as THREE.AnimationMixer;
+        anim.update(1.0 / 60.0);
+    }
+
+    changePOV(
         player_num?: number,
         rotate_cam?: boolean
     ) {
@@ -102,7 +229,7 @@ export class ThreeRenderer {
             if(player_num >= 0 && player_num < players.length) {
                 if(player_num !== this.pov.player_num || rotate_cam !== this.pov.auto_rotate) {
                     const player = players[player_num];
-                    this.camera.position.set(
+                    this.main.camera.position.set(
                         player.position.x + 0.0, 
                         player.position.y + 5.0, 
                         player.position.z + 5.0
@@ -125,20 +252,20 @@ export class ThreeRenderer {
         }
     }
 
-    set_skipping(
+    setSkipping(
         skipping: boolean
     ) {
         this.skipping = skipping;
     }
 
-    resize_canvas(
+    resizeCanvas(
         dim: {w: number, h: number}
     ) {
         this.width = dim.w;
         this.height = dim.h;
         this.renderer.setSize(dim.w, dim.h);
-        this.camera.aspect = dim.w / dim.h;
-        this.camera.updateProjectionMatrix();
+        this.main.camera.aspect = dim.w / dim.h;
+        this.main.camera.updateProjectionMatrix();
     }
 
     reset(
@@ -151,7 +278,7 @@ export class ThreeRenderer {
         this.entities = [];
 
         if(reset_cam) {
-            this.camera.position.set(15.0, 10.0, 15.0);
+            this.main.camera.position.set(15.0, 10.0, 15.0);
         }
 
         if(reset_pov) {
@@ -168,26 +295,24 @@ export class ThreeRenderer {
         asset: Asset
     ): Promise<void> {
         if('Map' in asset.typ) {
-            const gltf = await this.gameAssetLader.loadAsync(
+            const gltf = await this.gameAssetLoader.loadAsync(
                 gameAssetDataTextValue(asset, 'path')!);
             const obj = gltf.scene;
             obj.traverse(child => {
                 if((child as any).isMesh) {
                     const mesh = child as THREE.Mesh;
                     const isContainer = mesh.name.toLowerCase().startsWith('container');
-                    const isGrass = mesh.name.toLowerCase().startsWith('grass');
-                    mesh.castShadow = !isGrass;
-                    mesh.receiveShadow = !isGrass;
+                    mesh.castShadow = true;
+                    mesh.receiveShadow = true;
                     const material = Array.isArray(mesh.material)? 
                         mesh.material[0].clone(): 
                         mesh.material.clone();
                     if(isContainer){
                         material.transparent = false;
                         material.opacity = 0.25;
-
-                        if((material as any).map) {
-                            (material as any).map.anisotropy = 4;
-                        }
+                    }
+                    if((material as any).map) {
+                        (material as any).map.anisotropy = 4;
                     }
                     mesh.material = material;
                     mesh.userData.isContainer = isContainer;
@@ -199,7 +324,7 @@ export class ThreeRenderer {
             this.assets.set(asset_ref, obj);
         }
         else if('Player' in asset.typ) {
-            const gltf = await this.nftAssetLader.loadAsync(
+            const gltf = await this.nftAssetLoader.loadAsync(
                 gameAssetDataTextValue(asset, 'path')!);
             const obj = gltf.scene;
             obj.traverse(child => {
@@ -218,7 +343,7 @@ export class ThreeRenderer {
             this.assets.set(asset_ref, obj);
         }
         else if('Npc' in asset.typ) {
-            const gltf = await this.gameAssetLader.loadAsync(
+            const gltf = await this.gameAssetLoader.loadAsync(
                 gameAssetDataTextValue(asset, 'path')!);
             const obj = gltf.scene;
             obj.traverse(child => {
@@ -244,7 +369,7 @@ export class ThreeRenderer {
             const mesh = new THREE.Mesh(geometry, material);
             mesh.visible = false;
             
-            this.scene.add(mesh);
+            this.main.scene.add(mesh);
             this.assets.set(asset_ref, mesh);
         }
         else {
@@ -280,7 +405,7 @@ export class ThreeRenderer {
         }
 
         this.entities[model_ref] = cloned;
-        this.scene.add(cloned)
+        this.main.scene.add(cloned)
         return model_ref;
     }
 
@@ -393,7 +518,7 @@ export class ThreeRenderer {
             player = players[this.pov.player_num];
 
             if(!this.pov.auto_rotate && this.pov.follow) {
-                this.camera.position.lerp(
+                this.main.camera.position.lerp(
                     new THREE.Vector3(
                         player.position.x + 2.5, 
                         player.position.y + 3.0, 
@@ -425,12 +550,12 @@ export class ThreeRenderer {
             if(map) {
                 const dir = player.position
                     .clone()
-                    .sub(this.camera.position)
+                    .sub(this.main.camera.position)
                     .normalize()
 
-                this.raycaster.set(this.camera.position.clone(), dir);
+                this.raycaster.set(this.main.camera.position.clone(), dir);
 
-                const maxDistance = this.camera.position.distanceTo(player.position);
+                const maxDistance = this.main.camera.position.distanceTo(player.position);
 
                 intersections = this.raycaster.intersectObject(map);
                 for(const intersection of intersections) {
@@ -459,7 +584,13 @@ export class ThreeRenderer {
             }
         }
 
-        this.renderer.render(this.scene, this.camera);
+        this.renderer.clear();
+        this.renderer.render(this.main.scene, this.main.camera);
+        if(this.startCnt.visible) {
+            this.#animStartCounter();
+            this.renderer.clearDepth();
+            this.renderer.render(this.startCnt.scene, this.startCnt.camera);
+        }
 
         if(intersections) {
             for(const intersection of intersections) {
