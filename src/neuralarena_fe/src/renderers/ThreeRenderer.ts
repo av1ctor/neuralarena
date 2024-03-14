@@ -146,21 +146,21 @@ export class ThreeRenderer {
         scene.add(fillLight1);
 
         const directionalLight = new THREE.DirectionalLight(0xffffff, 7.0);
-        directionalLight.position.set(15.0, 30.0, 10.0);
+        directionalLight.position.set(5.0, 3.0, 3.0);
         directionalLight.castShadow = true;
         directionalLight.shadow.camera.near = 0.01;
-        directionalLight.shadow.camera.far = 500.0;
-        directionalLight.shadow.camera.right = 60.0;
-        directionalLight.shadow.camera.left = -60.0;
-        directionalLight.shadow.camera.top = 60.0;
-        directionalLight.shadow.camera.bottom = -60.0;
-        directionalLight.shadow.mapSize.width = 2048;
-        directionalLight.shadow.mapSize.height = 2048;
+        directionalLight.shadow.camera.far = 100.0;
+        directionalLight.shadow.camera.right = 10.0;
+        directionalLight.shadow.camera.left = -10.0;
+        directionalLight.shadow.camera.top = 10.0;
+        directionalLight.shadow.camera.bottom = -10.0;
+        directionalLight.shadow.mapSize.width = 4096;
+        directionalLight.shadow.mapSize.height = 4096;
         directionalLight.shadow.radius = 4;
         directionalLight.shadow.bias = -0.00006;
         scene.add(directionalLight);
 
-        loader.load(start_url ?? "/scenes/start-counter.glb", (gltf) => {
+        loader.load(start_url ?? "/scenes/start.glb", (gltf) => {
             const obj = gltf.scene;
 
             obj.traverse(child => {
