@@ -1,10 +1,13 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { Font, FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
-import { Asset } from '../../../declarations/neuralarena_be/neuralarena_be.did';
-import { gameAssetDataTextValue } from '../libs/games';
+import { Asset, GameInfo, MatchPlayerResponse } from '../../../declarations/neuralarena_be/neuralarena_be.did';
+import { gameAssetDataTextValue, gameAssetDataU32Value } from '../libs/games';
 import { GameAssetsLoadingManager, NftAssetsLoadingManager } from '../libs/loadingmanager';
+import { principalToString } from '../libs/icp';
 
 export class ThreeRenderer {
     gameAssetLoader: GLTFLoader;
@@ -33,14 +36,17 @@ export class ThreeRenderer {
         auto_rotate: boolean,
     };
     skipping: boolean;
+    fonts: Map<string, Font>;
+    players: MatchPlayerResponse[];
 
     constructor(
         canvas: HTMLCanvasElement,
-        assets_url: string,
-        scenes_urls: Map<string, string>
+        game: GameInfo,
+        players: MatchPlayerResponse[]
     ) {
         this.width = canvas.width;
         this.height = canvas.height;
+        this.players = players;
 
         this.staticLoader = new GLTFLoader();
 
@@ -50,6 +56,7 @@ export class ThreeRenderer {
             camera: main[1]
         };
 
+        const scenes_urls = new Map(game.urls.scenes)
         const start = ThreeRenderer.#setupStart(
             this.width, 
             this.height, 
@@ -90,11 +97,13 @@ export class ThreeRenderer {
         this.skipping = false;
 
         this.gameAssetLoader = new GLTFLoader(
-            new GameAssetsLoadingManager(assets_url)
+            new GameAssetsLoadingManager(game.urls.assets)
         );
         this.nftAssetLoader = new GLTFLoader(
             new NftAssetsLoadingManager()
         );
+
+        this.fonts = ThreeRenderer.#loadFonts();
     }
 
     static #setupMain(
@@ -186,6 +195,17 @@ export class ThreeRenderer {
         });
     
         return [scene, camera];
+    }
+
+    static #loadFonts(
+    ): Map<string, Font> {
+        const fonts = new Map<string, any>();
+        const loader = new FontLoader();
+        loader.load("/fonts/gentilis.typeface.json", (font) => {
+            fonts.set('gentilis', font);
+        });
+        
+        return fonts;
     }
 
     showStart(
@@ -340,6 +360,7 @@ export class ThreeRenderer {
             obj.visible = false;
 
             obj.userData.isPlayer = true;
+            obj.userData.num = gameAssetDataU32Value(asset, 'num')!
             obj.userData.animations = gltf.animations;
 
             obj.scale.multiplyScalar(0.01);
@@ -382,6 +403,49 @@ export class ThreeRenderer {
         }
     }
 
+    #buildStatusBar(
+        obj: THREE.Object3D
+    ): THREE.Object3D {
+        const geo = new THREE.BoxGeometry(80.0, 10.0, 1.0);
+        const mat = new THREE.MeshBasicMaterial({
+            color: 0xff00ff,
+            opacity: 0.5,
+            transparent: true,
+        });
+
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.copy(obj.position);
+        mesh.position.y += 200.0;
+
+        if(obj.userData.isPlayer) {
+            const playerName = principalToString(this.players[obj.userData.num].id);
+            const textGeo = new TextGeometry(playerName, {
+                font: this.fonts.get('gentilis')!,
+                size: 14.0,
+                height: 1.0,
+                curveSegments: 4,
+                bevelThickness: 2,
+                bevelSize: 1.5,
+                bevelEnabled: false
+
+            });
+            textGeo.computeBoundingBox();
+
+            const textMat = new THREE.MeshBasicMaterial({
+                color: 0xffffff,
+            })
+
+            const centerOffset = -0.5 * (textGeo.boundingBox!.max.x - textGeo.boundingBox!.min.x);
+            const textMesh1 = new THREE.Mesh(textGeo, textMat);
+            textMesh1.position.x = centerOffset;
+            textMesh1.position.y += 20.0;
+
+            mesh.add(textMesh1);
+        }
+
+        return mesh;
+    }
+
     add_model(
         asset_ref: number,
         model_ref: number
@@ -406,6 +470,9 @@ export class ThreeRenderer {
             cloned.userData.actions = actions;
             cloned.userData.action = 'Idle';
             (cloned.userData.actions as any)[cloned.userData.action]?.play();
+
+            const statusBar = this.#buildStatusBar(cloned);
+            cloned.add(statusBar);
         }
 
         this.entities[model_ref] = cloned;

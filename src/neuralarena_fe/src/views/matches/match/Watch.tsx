@@ -231,15 +231,14 @@ export const Watch = (props: Props) => {
 
     useEffect(() => {
         if(canvas.current && !renderer) {
-            const {info} = props.game;
             const renderer = new ThreeRenderer(
                 canvas.current, 
-                info.urls.assets,
-                new Map(info.urls.scenes)
+                props.game.info,
+                props.match.players
             );
             setRenderer(renderer);
         }
-    }, [canvas.current, renderer, props.game.info]);
+    }, [canvas.current, renderer, props.game.info, props.match.players]);
 
     const loadAssets = useCallback(async () => {
         if(renderer && !assetsLoading.current) {
