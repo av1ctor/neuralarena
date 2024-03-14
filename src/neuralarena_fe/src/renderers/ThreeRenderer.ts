@@ -406,20 +406,25 @@ export class ThreeRenderer {
     #buildStatusBar(
         obj: THREE.Object3D
     ): THREE.Object3D {
+        const group = new THREE.Group();
+        
+        // health bar
         const geo = new THREE.BoxGeometry(80.0, 10.0, 1.0);
         const mat = new THREE.MeshBasicMaterial({
-            color: 0xff00ff,
+            color: 0x00ff00,
             opacity: 0.5,
             transparent: true,
         });
 
-        const mesh = new THREE.Mesh(geo, mat);
-        mesh.position.copy(obj.position);
-        mesh.position.y += 200.0;
+        const healthBar = new THREE.Mesh(geo, mat);
+        healthBar.position.copy(obj.position);
+        healthBar.position.y = 200.0;
+        group.add(healthBar);
 
+        // player id
         if(obj.userData.isPlayer) {
-            const playerName = principalToString(this.players[obj.userData.num].id);
-            const textGeo = new TextGeometry(playerName, {
+            const name = principalToString(this.players[obj.userData.num].id);
+            const textGeo = new TextGeometry(name, {
                 font: this.fonts.get('gentilis')!,
                 size: 14.0,
                 height: 1.0,
@@ -436,14 +441,14 @@ export class ThreeRenderer {
             })
 
             const centerOffset = -0.5 * (textGeo.boundingBox!.max.x - textGeo.boundingBox!.min.x);
-            const textMesh1 = new THREE.Mesh(textGeo, textMat);
-            textMesh1.position.x = centerOffset;
-            textMesh1.position.y += 20.0;
+            const playerName = new THREE.Mesh(textGeo, textMat);
+            playerName.position.x = centerOffset;
+            playerName.position.y = healthBar.position.y + 20.0;
 
-            mesh.add(textMesh1);
+            group.add(playerName);
         }
 
-        return mesh;
+        return group;
     }
 
     add_model(
