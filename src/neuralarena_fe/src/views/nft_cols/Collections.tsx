@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import { Grid, Button, Center } from "@mantine/core";
-import { useAuth } from "@hooks/auth";
 import { IconPhoto } from "@tabler/icons-react";
 import { useUI } from "@hooks/ui";
 import { PageTitle } from "@components/PageTitle";
@@ -13,7 +12,6 @@ interface Props {
 const ITEMS_PER_PAGE = 6;
 
 export const NftCollections = (props: Props) => {
-    const {user} = useAuth();
     const {toggleLoading} = useUI();
 
     const nfts = useNftCollectionFindAll(ITEMS_PER_PAGE);
@@ -35,8 +33,7 @@ export const NftCollections = (props: Props) => {
 
             <Grid>
                 {nfts.data?.pages?.map((page) => (
-                    page.map((item, index) => (
-                        user &&
+                    page.map((item, index) => 
                     <Grid.Col 
                         key={index} 
                         sm={12}
@@ -45,7 +42,7 @@ export const NftCollections = (props: Props) => {
                             col={item}
                         />
                     </Grid.Col>
-                ))
+                )
             ))}
             </Grid>
 

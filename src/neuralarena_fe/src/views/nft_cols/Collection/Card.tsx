@@ -57,23 +57,22 @@ export const NftCollectionCard = (props: Props) => {
                     withPlaceholder />
             </Card.Section>
 
-            <Container>
-                <Center>
-                    <Text
-                        className={classes.title}
-                        variant="gradient"
-                        size="xl"
-                    >
-                        {col.meta.name}
-                    </Text>
-                </Center>
-                <Center>
-                    <Text
-                        className={classes.description}>
-                        {col.meta.desc}
-                    </Text>
-                </Center>
-            </Container>
+            <Center>
+                <Text
+                    className={classes.title}
+                    variant="gradient"
+                    size="xl"
+                >
+                    {col.meta.name}
+                </Text>
+            </Center>
+            <Center>
+                <Text
+                    className={classes.description}>
+                    {col.meta.desc}
+                </Text>
+            </Center>
+
             <Center mt="lg">
                 <Button
                     variant="gradient"

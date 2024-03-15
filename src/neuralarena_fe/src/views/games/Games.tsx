@@ -1,6 +1,5 @@
 import React, { useCallback } from "react";
 import { Grid, Button, Center } from "@mantine/core";
-import { useAuth } from "@hooks/auth";
 import { IconGoGame } from "@tabler/icons-react";
 import { useUI } from "@hooks/ui";
 import { useGameFindAll } from "@hooks/games";
@@ -13,7 +12,6 @@ interface Props {
 const ITEMS_PER_PAGE = 12;
 
 export const Games = (props: Props) => {
-    const {user} = useAuth();
     const {toggleLoading} = useUI();
 
     const games = useGameFindAll(ITEMS_PER_PAGE);
@@ -35,8 +33,7 @@ export const Games = (props: Props) => {
 
             <Grid>
                 {games.data?.pages?.map((page) => (
-                    page.map((item, index) => (
-                        user &&
+                    page.map((item, index) => 
                     <Grid.Col 
                         key={index} 
                         sm={12}
@@ -46,7 +43,7 @@ export const Games = (props: Props) => {
                             showView
                         />
                     </Grid.Col>
-                ))
+                )
             ))}
             </Grid>
 

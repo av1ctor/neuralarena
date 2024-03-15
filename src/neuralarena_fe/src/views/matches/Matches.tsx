@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
 import { Grid, Button, Center } from "@mantine/core";
 import { Card as MatchCard } from "@views/matches/match/Card";
-import { useAuth } from "@hooks/auth";
 import { IconDeviceGamepad } from "@tabler/icons-react";
 import { useUI } from "@hooks/ui";
 import { useMatchFindAll } from "@hooks/matches";
@@ -13,7 +12,6 @@ interface Props {
 const ITEMS_PER_PAGE = 6;
 
 export const Matches = (props: Props) => {
-    const {user} = useAuth();
     const {toggleLoading} = useUI();
 
     const matches = useMatchFindAll(ITEMS_PER_PAGE);
@@ -35,8 +33,7 @@ export const Matches = (props: Props) => {
 
             <Grid>
                 {matches.data?.pages?.map((page) => (
-                    page.map((item, index) => (
-                        user &&
+                    page.map((item, index) => 
                     <Grid.Col 
                         key={index} 
                         sm={6}
@@ -46,7 +43,7 @@ export const Matches = (props: Props) => {
                             showView
                         />
                     </Grid.Col>
-                ))
+                )
             ))}
             </Grid>
 
