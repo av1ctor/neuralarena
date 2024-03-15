@@ -78,6 +78,26 @@ function getArrayF32FromWasm0(ptr, len) {
     ptr = ptr >>> 0;
     return getFloat32Memory0().subarray(ptr / 4, ptr / 4 + len);
 }
+
+let cachedUint32Memory0 = null;
+
+function getUint32Memory0() {
+    if (cachedUint32Memory0 === null || cachedUint32Memory0.byteLength === 0) {
+        cachedUint32Memory0 = new Uint32Array(wasm.memory.buffer);
+    }
+    return cachedUint32Memory0;
+}
+
+function getArrayJsValueFromWasm0(ptr, len) {
+    ptr = ptr >>> 0;
+    const mem = getUint32Memory0();
+    const slice = mem.subarray(ptr / 4, ptr / 4 + len);
+    const result = [];
+    for (let i = 0; i < slice.length; i++) {
+        result.push(takeObject(slice[i]));
+    }
+    return result;
+}
 /**
 */
 export const AssetType = Object.freeze({ Map:0,"0":"Map",Player:1,"1":"Player",Npc:2,"2":"Npc",Object:3,"3":"Object", });
@@ -104,15 +124,18 @@ export class GameEngine {
         return this;
     }
     /**
+    * @param {Uint8Array} entities
     * @param {Uint8Array} events
     * @param {any} renderer
     */
-    render(events, renderer) {
+    render(entities, events, renderer) {
         try {
             const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-            const ptr0 = passArray8ToWasm0(events, wasm.__wbindgen_malloc);
+            const ptr0 = passArray8ToWasm0(entities, wasm.__wbindgen_malloc);
             const len0 = WASM_VECTOR_LEN;
-            wasm.gameengine_render(retptr, this.__wbg_ptr, ptr0, len0, addHeapObject(renderer));
+            const ptr1 = passArray8ToWasm0(events, wasm.__wbindgen_malloc);
+            const len1 = WASM_VECTOR_LEN;
+            wasm.gameengine_render(retptr, this.__wbg_ptr, ptr0, len0, ptr1, len1, addHeapObject(renderer));
             var r0 = getInt32Memory0()[retptr / 4 + 0];
             var r1 = getInt32Memory0()[retptr / 4 + 1];
             if (r1) {
@@ -127,6 +150,109 @@ export class GameEngine {
     */
     reset(renderer) {
         wasm.gameengine_reset(this.__wbg_ptr, addHeapObject(renderer));
+    }
+}
+/**
+*/
+export class InstanceNpcEntity {
+
+    static __wrap(ptr) {
+        ptr = ptr >>> 0;
+        const obj = Object.create(InstanceNpcEntity.prototype);
+        obj.__wbg_ptr = ptr;
+
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_instancenpcentity_free(ptr);
+    }
+    /**
+    * @returns {number}
+    */
+    get health() {
+        const ret = wasm.__wbg_get_instancenpcentity_health(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set health(arg0) {
+        wasm.__wbg_set_instancenpcentity_health(this.__wbg_ptr, arg0);
+    }
+}
+/**
+*/
+export class InstanceObjectEntity {
+
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_instanceobjectentity_free(ptr);
+    }
+}
+/**
+*/
+export class InstancePlayerEntity {
+
+    static __wrap(ptr) {
+        ptr = ptr >>> 0;
+        const obj = Object.create(InstancePlayerEntity.prototype);
+        obj.__wbg_ptr = ptr;
+
+        return obj;
+    }
+
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+
+        return ptr;
+    }
+
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_instanceplayerentity_free(ptr);
+    }
+    /**
+    * @returns {number}
+    */
+    get health() {
+        const ret = wasm.__wbg_get_instancenpcentity_health(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set health(arg0) {
+        wasm.__wbg_set_instancenpcentity_health(this.__wbg_ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+    get score() {
+        const ret = wasm.__wbg_get_instanceplayerentity_score(this.__wbg_ptr);
+        return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set score(arg0) {
+        wasm.__wbg_set_instanceplayerentity_score(this.__wbg_ptr, arg0);
     }
 }
 
@@ -171,6 +297,14 @@ function __wbg_get_imports() {
         const ret = getStringFromWasm0(arg0, arg1);
         return addHeapObject(ret);
     };
+    imports.wbg.__wbg_instanceplayerentity_new = function(arg0) {
+        const ret = InstancePlayerEntity.__wrap(arg0);
+        return addHeapObject(ret);
+    };
+    imports.wbg.__wbg_instancenpcentity_new = function(arg0) {
+        const ret = InstanceNpcEntity.__wrap(arg0);
+        return addHeapObject(ret);
+    };
     imports.wbg.__wbg_addmodel_f6997202159a608a = function(arg0, arg1, arg2) {
         const ret = getObject(arg0).add_model(arg1 >>> 0, arg2 >>> 0);
         return addHeapObject(ret);
@@ -203,6 +337,16 @@ function __wbg_get_imports() {
             wasm.__wbindgen_free(deferred1_0, deferred1_1, 1);
         }
     };
+    imports.wbg.__wbg_setplayers_13d5e2c831b5a6a3 = function(arg0, arg1, arg2) {
+        var v0 = getArrayJsValueFromWasm0(arg1, arg2).slice();
+        wasm.__wbindgen_free(arg1, arg2 * 4, 4);
+        getObject(arg0).set_players(v0);
+    };
+    imports.wbg.__wbg_setnpcs_9533a792c366c101 = function(arg0, arg1, arg2) {
+        var v0 = getArrayJsValueFromWasm0(arg1, arg2).slice();
+        wasm.__wbindgen_free(arg1, arg2 * 4, 4);
+        getObject(arg0).set_npcs(v0);
+    };
     imports.wbg.__wbg_render_12c25d7ca4a88162 = function(arg0) {
         getObject(arg0).render();
     };
@@ -225,6 +369,7 @@ function __wbg_finalize_init(instance, module) {
     __wbg_init.__wbindgen_wasm_module = module;
     cachedFloat32Memory0 = null;
     cachedInt32Memory0 = null;
+    cachedUint32Memory0 = null;
     cachedUint8Memory0 = null;
 
 

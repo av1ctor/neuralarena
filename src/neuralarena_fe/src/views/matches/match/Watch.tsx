@@ -97,7 +97,7 @@ export const Watch = (props: Props) => {
     const canvas = useRef<HTMLCanvasElement|null>(null);
     const fullscreenContainer = useRef<HTMLDivElement|null>(null);
     const [assets, setAssets] = useState<Map<number, Asset>|undefined>();
-    const [engine, setEngine] = useState<any>();
+    const [engine, setEngine] = useState<GameEngine>();
     const [renderer, setRenderer] = useState<ThreeRenderer>();
     const [state, setState] = useState<WatchState>(WatchState.LOADING);
     const [, setAssetsLoadingProgress] = useState(0);
@@ -176,6 +176,7 @@ export const Watch = (props: Props) => {
                 const frame = frames[i];
                 try {
                     engine?.render(
+                        frame.entities as Uint8Array,
                         frame.events as Uint8Array, 
                         renderer
                     );
@@ -337,6 +338,7 @@ export const Watch = (props: Props) => {
                             const frame = frames[step.current];
                             try {
                                 engine.render(
+                                    frame.entities as Uint8Array,
                                     frame.events as Uint8Array, 
                                     renderer
                                 );
@@ -352,7 +354,7 @@ export const Watch = (props: Props) => {
                         }
                         break;
                     case WatchState.PAUSED:
-                        engine.render(Uint8Array.from([]), renderer);
+                        engine.render(Uint8Array.from([]), Uint8Array.from([]), renderer);
                         break;
                     case WatchState.FINISHED:
                         if(props.match.won_by.length > 0) {
@@ -362,7 +364,7 @@ export const Watch = (props: Props) => {
                             renderer?.changePOV(winner, true);
                         }
 
-                        engine.render(Uint8Array.from([]), renderer);
+                        engine.render(Uint8Array.from([]), Uint8Array.from([]), renderer);
                         break;
                 }
 

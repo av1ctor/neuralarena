@@ -16,14 +16,39 @@ export class GameEngine {
 */
   constructor();
 /**
+* @param {Uint8Array} entities
 * @param {Uint8Array} events
 * @param {any} renderer
 */
-  render(events: Uint8Array, renderer: any): void;
+  render(entities: Uint8Array, events: Uint8Array, renderer: any): void;
 /**
 * @param {any} renderer
 */
   reset(renderer: any): void;
+}
+/**
+*/
+export class InstanceNpcEntity {
+  free(): void;
+/**
+*/
+  health: number;
+}
+/**
+*/
+export class InstanceObjectEntity {
+  free(): void;
+}
+/**
+*/
+export class InstancePlayerEntity {
+  free(): void;
+/**
+*/
+  health: number;
+/**
+*/
+  score: number;
 }
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
@@ -32,8 +57,17 @@ export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly __wbg_gameengine_free: (a: number) => void;
   readonly gameengine_new: () => number;
-  readonly gameengine_render: (a: number, b: number, c: number, d: number, e: number) => void;
+  readonly gameengine_render: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
   readonly gameengine_reset: (a: number, b: number) => void;
+  readonly __wbg_instanceplayerentity_free: (a: number) => void;
+  readonly __wbg_get_instanceplayerentity_score: (a: number) => number;
+  readonly __wbg_set_instanceplayerentity_score: (a: number, b: number) => void;
+  readonly __wbg_instancenpcentity_free: (a: number) => void;
+  readonly __wbg_get_instancenpcentity_health: (a: number) => number;
+  readonly __wbg_set_instancenpcentity_health: (a: number, b: number) => void;
+  readonly __wbg_set_instanceplayerentity_health: (a: number, b: number) => void;
+  readonly __wbg_get_instanceplayerentity_health: (a: number) => number;
+  readonly __wbg_instanceobjectentity_free: (a: number) => void;
   readonly __wbindgen_add_to_stack_pointer: (a: number) => number;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __wbindgen_free: (a: number, b: number, c: number) => void;

@@ -8,6 +8,7 @@ import { Asset, GameInfo, MatchPlayerResponse } from '../../../declarations/neur
 import { gameAssetDataTextValue, gameAssetDataU32Value } from '../libs/games';
 import { GameAssetsLoadingManager, NftAssetsLoadingManager } from '../libs/loadingmanager';
 import { principalToString } from '../libs/icp';
+import { InstanceNpcEntity, InstancePlayerEntity } from '../game-engine/game-engine';
 
 export class ThreeRenderer {
     gameAssetLoader: GLTFLoader;
@@ -29,7 +30,7 @@ export class ThreeRenderer {
     width: number;
     height: number;
     assets: Map<number, THREE.Object3D>;
-    entities: THREE.Object3D[];
+    models: THREE.Object3D[];
     pov: {
         player_num?: number,
         follow: boolean,
@@ -38,6 +39,14 @@ export class ThreeRenderer {
     skipping: boolean;
     fonts: Map<string, Font>;
     players: MatchPlayerResponse[];
+    entities: {
+        players: InstancePlayerEntity[],
+        npcs: InstanceNpcEntity[],
+    };
+    statusBars: {
+        players: THREE.Object3D[],
+        npcs: THREE.Object3D[],
+    };
 
     constructor(
         canvas: HTMLCanvasElement,
@@ -47,6 +56,10 @@ export class ThreeRenderer {
         this.width = canvas.width;
         this.height = canvas.height;
         this.players = players;
+        this.entities = {
+            players: [],
+            npcs: [],
+        };
 
         this.staticLoader = new GLTFLoader();
 
@@ -86,7 +99,7 @@ export class ThreeRenderer {
         this.clock = new THREE.Clock();
 
         this.assets = new Map();
-        this.entities = [];
+        this.models = [];
 
         this.pov = {
             player_num: undefined,
@@ -104,6 +117,10 @@ export class ThreeRenderer {
         );
 
         this.fonts = ThreeRenderer.#loadFonts();
+        this.statusBars = {
+            players: [],
+            npcs: []
+        };
     }
 
     static #setupMain(
@@ -249,7 +266,7 @@ export class ThreeRenderer {
         rotate_cam?: boolean
     ) {
         if(player_num !== undefined) {
-            const players = this.entities.filter(o => o.userData.isPlayer);
+            const players = this.models.filter(o => o.userData.isPlayer);
             if(player_num >= 0 && player_num < players.length) {
                 if(player_num !== this.pov.player_num || rotate_cam !== this.pov.auto_rotate) {
                     const player = players[player_num];
@@ -296,10 +313,10 @@ export class ThreeRenderer {
         reset_cam: boolean = true,
         reset_pov: boolean = true
     ) {
-        for(const obj of this.entities) {
+        for(const obj of this.models) {
             obj.removeFromParent();
         }
-        this.entities = [];
+        this.models = [];
 
         if(reset_cam) {
             this.main.camera.position.set(15.0, 10.0, 15.0);
@@ -360,7 +377,7 @@ export class ThreeRenderer {
             obj.visible = false;
 
             obj.userData.isPlayer = true;
-            obj.userData.num = gameAssetDataU32Value(asset, 'num')!
+            obj.userData.num = gameAssetDataU32Value(asset, 'num')!;
             obj.userData.animations = gltf.animations;
 
             obj.scale.multiplyScalar(0.01);
@@ -380,6 +397,7 @@ export class ThreeRenderer {
             obj.visible = false;
 
             obj.userData.isNpc = true;
+            obj.userData.num = gameAssetDataU32Value(asset, 'num')!;
             obj.userData.animations = gltf.animations;
 
             obj.scale.multiplyScalar(0.011);
@@ -406,7 +424,7 @@ export class ThreeRenderer {
     #buildStatusBar(
         obj: THREE.Object3D
     ): THREE.Object3D {
-        const group = new THREE.Group();
+        const bar = new THREE.Group();
         
         // health bar
         const geo = new THREE.BoxGeometry(80.0, 10.0, 1.0);
@@ -419,7 +437,7 @@ export class ThreeRenderer {
         const healthBar = new THREE.Mesh(geo, mat);
         healthBar.position.copy(obj.position);
         healthBar.position.y = 200.0;
-        group.add(healthBar);
+        bar.add(healthBar);
 
         // player id
         if(obj.userData.isPlayer) {
@@ -445,10 +463,10 @@ export class ThreeRenderer {
             playerName.position.x = centerOffset;
             playerName.position.y = healthBar.position.y + 20.0;
 
-            group.add(playerName);
+            bar.add(playerName);
         }
 
-        return group;
+        return bar;
     }
 
     add_model(
@@ -477,10 +495,17 @@ export class ThreeRenderer {
             (cloned.userData.actions as any)[cloned.userData.action]?.play();
 
             const statusBar = this.#buildStatusBar(cloned);
+            if(cloned.userData.isPlayer) {
+                this.statusBars.players[obj.userData.num] = statusBar;
+            }
+            else {
+                this.statusBars.npcs[obj.userData.num] = statusBar;
+                obj.userData.num += 1;
+            }
             cloned.add(statusBar);
         }
 
-        this.entities[model_ref] = cloned;
+        this.models[model_ref] = cloned;
         this.main.scene.add(cloned)
         return model_ref;
     }
@@ -488,13 +513,13 @@ export class ThreeRenderer {
     show_model(
         model_ref: number
     ) {
-        this.entities[model_ref].visible = true;
+        this.models[model_ref].visible = true;
     }
 
     hide_model(
         model_ref: number
     ) {
-        this.entities[model_ref].visible = false;
+        this.models[model_ref].visible = false;
     }
 
     change_model_state(
@@ -502,7 +527,7 @@ export class ThreeRenderer {
         from: string,
         to: string
     ) {
-        const obj = this.entities[model_ref];
+        const obj = this.models[model_ref];
         let repeat = false;        
         switch(to) {
             case 'idle':
@@ -541,7 +566,7 @@ export class ThreeRenderer {
         model_ref: number,
         pos: Float32Array
     ) {
-        const obj = this.entities[model_ref];
+        const obj = this.models[model_ref];
         if(obj.position.lengthSq() !== 0.0) {
             obj.position.lerp(
                 new THREE.Vector3(
@@ -565,7 +590,7 @@ export class ThreeRenderer {
         model_ref: number,
         q: Float32Array
     ) {
-        const obj = this.entities[model_ref];
+        const obj = this.models[model_ref];
         obj.quaternion.slerp(
             new THREE.Quaternion(q[0], q[1], q[2], q[3]), 
             0.5
@@ -576,10 +601,45 @@ export class ThreeRenderer {
         model_ref: number,
         scale: Float32Array
     ) {
-        const obj = this.entities[model_ref];
+        const obj = this.models[model_ref];
         obj.scale.x = scale[0];
         obj.scale.y = scale[1];
         obj.scale.z = scale[2];
+    }
+
+    set_players(
+        players: InstancePlayerEntity[]
+    ) {
+        this.entities.players = players;
+    }
+
+    set_npcs(
+        npcs: InstanceNpcEntity[]
+    ) {
+        this.entities.npcs = npcs;
+    }
+
+    #updateStatusBars(
+    ) {
+        for(let i = 0; i < this.entities.players.length; i++) {
+            const player = this.entities.players[i];
+            const statusBar = this.statusBars.players[i];
+            if(statusBar) {
+                const healthBar = statusBar.children[0] as THREE.Mesh;
+                const geo = new THREE.BoxGeometry(80.0 * player.health, 10.0, 1.0);
+                healthBar.geometry = geo;
+            }
+        }
+
+        for(let i = 0; i < this.entities.npcs.length; i++) {
+            const npc = this.entities.npcs[i];
+            const statusBar = this.statusBars.npcs[i];
+            if(statusBar) {
+                const healthBar = statusBar.children[0] as THREE.Mesh;
+                const geo = new THREE.BoxGeometry(80.0 * npc.health, 10.0, 1.0);
+                healthBar.geometry = geo;
+            }
+        }
     }
 
     render(
@@ -588,9 +648,11 @@ export class ThreeRenderer {
             return;
         }
 
+        this.#updateStatusBars();
+
         let player: THREE.Object3D<THREE.Object3DEventMap>|undefined = undefined;
         if(this.pov.player_num !== undefined) {
-            const players = this.entities.filter(o => o.userData.isPlayer);
+            const players = this.models.filter(o => o.userData.isPlayer);
             player = players[this.pov.player_num];
 
             if(!this.pov.auto_rotate && this.pov.follow) {
@@ -622,7 +684,7 @@ export class ThreeRenderer {
         let intersections: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[]|undefined = undefined;
 
         if(player !== undefined) {
-            const map = this.entities.find(o => o.userData.isMap);
+            const map = this.models.find(o => o.userData.isMap);
             if(map) {
                 const dir = player.position
                     .clone()
@@ -654,7 +716,7 @@ export class ThreeRenderer {
             }
         }
 
-        for(const obj of this.entities) {
+        for(const obj of this.models) {
             if(obj.userData.anim){
                 obj.userData.anim.update(1.0 / 60.0);
             }
