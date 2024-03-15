@@ -10,6 +10,9 @@ import { GameAssetsLoadingManager, NftAssetsLoadingManager } from '../libs/loadi
 import { principalToString } from '../libs/icp';
 import { InstanceNpcEntity, InstancePlayerEntity } from '../game-engine/game-engine';
 
+const HEALTH_BAR_WIDTH = 100.0;
+const HEALTH_BAR_HEIGHT = 10.0;
+
 export class ThreeRenderer {
     gameAssetLoader: GLTFLoader;
     nftAssetLoader: GLTFLoader;
@@ -427,17 +430,26 @@ export class ThreeRenderer {
         const bar = new THREE.Group();
         
         // health bar
-        const geo = new THREE.BoxGeometry(80.0, 10.0, 1.0);
-        const mat = new THREE.MeshBasicMaterial({
+        const healthGeo = new THREE.BoxGeometry(HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT, 1.0);
+        const healthMat = new THREE.MeshBasicMaterial({
             color: 0x00ff00,
             opacity: 0.5,
             transparent: true,
         });
 
-        const healthBar = new THREE.Mesh(geo, mat);
+        const healthGeoBorder = new THREE.WireframeGeometry(
+            new THREE.BoxGeometry(HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT, 1.0)
+        );
+
+        const healthBar = new THREE.Mesh(healthGeo, healthMat);
         healthBar.position.copy(obj.position);
         healthBar.position.y = 200.0;
         bar.add(healthBar);
+
+        const healthBarBorder = new THREE.LineSegments(healthGeoBorder);
+        healthBarBorder.position.copy(obj.position);
+        healthBarBorder.position.y = 200.0;
+        bar.add(healthBarBorder);
 
         // player id
         if(obj.userData.isPlayer) {
@@ -619,26 +631,37 @@ export class ThreeRenderer {
         this.entities.npcs = npcs;
     }
 
+    #updateStatusBar(
+        bar: THREE.Object3D<THREE.Object3DEventMap>| undefined,
+        health: number
+    ) {
+        if(!bar) {
+            return;
+        }
+        
+        const healthBar = bar.children[0] as THREE.Mesh;
+        if(health > 0.0) {
+            const geo = new THREE.BoxGeometry(HEALTH_BAR_WIDTH * health, HEALTH_BAR_HEIGHT, 1.0);
+            healthBar.geometry = geo;
+            healthBar.position.x = -(HEALTH_BAR_WIDTH/2.0) * (1.0 - health);
+        }
+        else {
+            healthBar.visible = false;
+        }
+    }
+
     #updateStatusBars(
     ) {
         for(let i = 0; i < this.entities.players.length; i++) {
             const player = this.entities.players[i];
-            const statusBar = this.statusBars.players[i];
-            if(statusBar) {
-                const healthBar = statusBar.children[0] as THREE.Mesh;
-                const geo = new THREE.BoxGeometry(80.0 * player.health, 10.0, 1.0);
-                healthBar.geometry = geo;
-            }
+            const bar = this.statusBars.players[i];
+            this.#updateStatusBar(bar, player.health);
         }
 
         for(let i = 0; i < this.entities.npcs.length; i++) {
             const npc = this.entities.npcs[i];
-            const statusBar = this.statusBars.npcs[i];
-            if(statusBar) {
-                const healthBar = statusBar.children[0] as THREE.Mesh;
-                const geo = new THREE.BoxGeometry(80.0 * npc.health, 10.0, 1.0);
-                healthBar.geometry = geo;
-            }
+            const bar = this.statusBars.npcs[i];
+            this.#updateStatusBar(bar, npc.health);
         }
     }
 
