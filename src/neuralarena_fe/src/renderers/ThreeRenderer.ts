@@ -45,6 +45,10 @@ export class ThreeRenderer {
     entities: {
         players: InstancePlayerEntity[],
         npcs: InstanceNpcEntity[],
+        counters: {
+            players: number,
+            npcs: number,
+        },
     };
     statusBars: {
         players: THREE.Object3D[],
@@ -62,6 +66,10 @@ export class ThreeRenderer {
         this.entities = {
             players: [],
             npcs: [],
+            counters: {
+                npcs: 0,
+                players: 0,
+            },
         };
 
         this.staticLoader = new GLTFLoader();
@@ -321,6 +329,11 @@ export class ThreeRenderer {
         }
         this.models = [];
 
+        this.entities.counters = {
+            npcs: 0,
+            players: 0,
+        };
+
         if(reset_cam) {
             this.main.camera.position.set(15.0, 10.0, 15.0);
         }
@@ -514,8 +527,8 @@ export class ThreeRenderer {
                 this.statusBars.players[obj.userData.num] = statusBar;
             }
             else {
-                this.statusBars.npcs[obj.userData.num] = statusBar;
-                obj.userData.num += 1;
+                this.statusBars.npcs[this.entities.counters.npcs] = statusBar;
+                this.entities.counters.npcs += 1;
             }
             cloned.add(statusBar);
         }
