@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Button, Paper, createStyles, rem, Badge, Container, Text, Slider, Space, Grid } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
-import { MatchResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
+import { MatchResponse, MatchStatus } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { matchStatusToString } from "@libs/matches";
 import TimeFromNow from "@components/TimeFromNow";
 import { useGameFindById } from "@hooks/games";
@@ -55,7 +55,20 @@ const useStyles = createStyles((theme) => ({
             textTransform: 'none'
         }
     },
-  }));
+}));
+
+const statusToColor = (status: MatchStatus) => {
+    switch(matchStatusToString(status)) {
+        case 'OPEN':
+            return 'green';
+        case 'FINISHED':
+            return 'blue';
+        case 'CANCELLED':
+            return 'gray';
+        default:
+            return 'yellow';
+    }
+}
 
 interface Props {
     match: MatchResponse;
@@ -98,7 +111,7 @@ export const Card = (props: Props) => {
                 <Grid.Col span={6}>
                     <Badge 
                         className={classes.status} 
-                        color="yellow" 
+                        color={statusToColor(match.status)} 
                         variant="filled"
                         size="xl"
                     >
