@@ -82,6 +82,27 @@ impl MatchesService {
         Ok((*m4tch).clone())
     }
 
+    pub fn find_all(
+        pag: Pagination,
+        db: &DB,
+        _caller: &Principal
+    ) -> Result<Vec<Match>, String> {
+        let matches = db.matches.borrow();
+        
+        let mut arr = matches.data.0.iter()
+            .map(|v| v.1)
+            .cloned()
+            .collect::<Vec<_>>();
+
+        arr.sort_by(|a, b| b.created_at.cmp(&a.created_at));
+        
+        Ok(arr.iter()
+            .skip(pag.offset as usize)
+            .take(pag.limit as usize)
+            .cloned()
+            .collect())
+    }  
+
     pub fn find_open(
         pag: Pagination,
         db: &DB,

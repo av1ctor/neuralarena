@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Button, Avatar as Avatar_, Space, Stack, Title, Tooltip, Container, Center } from "@mantine/core";
+import { Button, Avatar as Avatar_, Space, Stack, Title, Tooltip, Center } from "@mantine/core";
 import { useMatchFindById, useMatch } from "@hooks/matches";
 import { useGameFindById } from "@hooks/games";
-import { Banner } from "@views/games/game/Banner";
 import { matchStatusToString } from "@libs/matches";
 import { useUI } from "@hooks/ui";
 import { Watch } from "./Watch";
@@ -68,27 +67,15 @@ export const Match = (props: Props) => {
         }
     }, [join, id]);
 
-    const handleWatch = useCallback(async () => {
-        if(id) {
-            try {
-                toggleLoading(true);
-            }
-            catch(e) {
-                showError(e);
-            }
-            finally {
-                toggleLoading(false);
-            }
-        }
-    }, [join, id]);
-
     const handleChangePov = useCallback(async (pov: number) => {
         setPov(pov);
     }, []);
 
     const updateStatus = useCallback(async () => {
         try {
-            if(match.data && !('FINISHED' in match.data.status || 'CANCELLED' in match.data.status)) {
+            if(match.data && 
+                !('FINISHED' in match.data.status || 
+                  'CANCELLED' in match.data.status)) {
                 await match.refetch()
             }
         }
@@ -111,19 +98,11 @@ export const Match = (props: Props) => {
     const winner = match.data && match.data.won_by.length > 0?
         match.data.won_by[0]?.toString():
         undefined;
-    const joined = match.data && user && match.data.players.find(p => p.id.compareTo(user.id) === 'eq');
+    const joined = match.data && user && 
+        match.data.players.find(p => p.id.compareTo(user.id) === 'eq');
 
     return (
         <>
-            <div>
-                {match && match.data && game && game.data &&
-                    <Banner 
-                        game={game.data}
-                        isHalf
-                    />
-                }
-            </div>
-            <Space h="xl" />
             <div>
                 <div>
                     <div>Players:</div>

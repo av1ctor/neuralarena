@@ -82,6 +82,27 @@ impl GamesService {
         Ok((*game).clone())
     }
 
+    pub fn find_all(
+        pag: Pagination,
+        db: &DB,
+        _caller: &Principal
+    ) -> Result<Vec<Game>, String> {
+        let games = db.games.borrow();
+        
+        let mut arr = games.data.0.iter()
+            .map(|v| v.1)
+            .cloned()
+            .collect::<Vec<_>>();
+
+        arr.sort_by(|a, b| b.info.name.cmp(&a.info.name));
+        
+        Ok(arr.iter()
+            .skip(pag.offset as usize)
+            .take(pag.limit as usize)
+            .cloned()
+            .collect())
+    }
+
     pub fn find_active(
         pag: Pagination,
         db: &DB,

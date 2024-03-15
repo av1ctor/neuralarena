@@ -3,7 +3,7 @@ import { Carousel } from "@mantine/carousel";
 import { Center, Container, Space, Title, useMantineTheme } from "@mantine/core";
 import { useBrowser } from "@hooks/browser";
 import { useGameFindActive } from "@hooks/games";
-import { Card } from "./game/Card";
+import { GameCard } from "./game/Card";
 
 export const Top = () => {
     const {isMobile} = useBrowser();
@@ -35,7 +35,7 @@ export const Top = () => {
                     {games.data?.pages?.map((page) => (
                         page.map((item) => (
                             <Carousel.Slide key={item.id}>
-                                <Card 
+                                <GameCard 
                                     game={item}
                                     showView
                                 />

@@ -96,6 +96,17 @@ export const matchFindById = async (
     return res.Ok; 
 };
 
+export const matchFindAll = async (
+    main: Main,
+    pag: Pagination
+): Promise<MatchResponse[]> => {
+    const res = await main.match_find_all(pag);
+    if('Err' in res) {
+        throw new Error(res.Err);
+    }
+    return res.Ok; 
+};
+
 export const matchFindOpen = async (
     main: Main,
     pag: Pagination

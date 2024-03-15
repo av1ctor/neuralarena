@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { ActionIcon, Avatar, Box, Burger, Center, Collapse, Divider, Drawer, Group, Header, HoverCard, ScrollArea, UnstyledButton, createStyles, rem, useMantineColorScheme, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconChevronDown, IconHome2, IconMoonStars, IconSun } from '@tabler/icons-react';
+import { IconChevronDown, IconDeviceGamepad, IconGoGame, IconHome2, IconMoonStars, IconSun } from '@tabler/icons-react';
 import { AuthMenu } from './menus/Auth';
 import { UserMenu } from './menus/User';
 import { useAuth } from '@hooks/auth';
 import neuralArenaLogo from "@assets/neuralarena-logo.svg";
+import { Link, useNavigate } from 'react-router-dom';
 
 const useStyles = createStyles((theme) => ({
     link: {
@@ -64,10 +65,10 @@ const ToggleThemeButton = () => {
 };
 
 const AppHeader = (props: Props) => {
-    const {isLogged, user} = useAuth();
+    const {user} = useAuth();
     const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
     const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
-    const { classes, theme } = useStyles();
+    const {classes, theme} = useStyles();
 
     return (
         <Box>
@@ -79,7 +80,15 @@ const AppHeader = (props: Props) => {
                         <a href="#" className={classes.link}>
                             <IconHome2 size="1rem" />&nbsp;Home
                         </a>
-                        
+
+                        <a href="#/games" className={classes.link}>
+                            <IconGoGame size="1rem" />&nbsp;Games
+                        </a>
+
+                        <a href="#/matches" className={classes.link}>
+                            <IconDeviceGamepad size="1rem" />&nbsp;Matches
+                        </a>
+
                         {user && 
                             <HoverCard width={600} position="bottom" radius="md" shadow="md" withinPortal>
                                 <HoverCard.Target>
@@ -125,7 +134,15 @@ const AppHeader = (props: Props) => {
                     <a href="#" className={classes.link} onClick={closeDrawer}>
                         <IconHome2 size="1rem" />&nbsp;Home
                     </a>
-                    
+
+                    <Link to="/games" className={classes.link} onClick={closeDrawer}>
+                        <IconGoGame size="1rem" />&nbsp;Games
+                    </Link>
+
+                    <Link to="/matches" className={classes.link} onClick={closeDrawer}>
+                        <IconDeviceGamepad size="1rem" />&nbsp;Matches
+                    </Link>
+
                     {user && 
                         <>
                             <UnstyledButton className={classes.link} onClick={toggleLinks}>

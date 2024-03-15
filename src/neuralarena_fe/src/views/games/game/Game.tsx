@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import { useGameFindById } from "@hooks/games";
-import { Card } from "./Card";
+import { GameCard } from "./Card";
 import { Space } from "@mantine/core";
 import { Latest } from "@views/matches/Latest";
 
@@ -16,7 +16,7 @@ export const Game = (props: Props) => {
         <>
             <div>
                 {game && game.data &&
-                    <Card 
+                    <GameCard 
                         game={game.data} 
                     />
                 }

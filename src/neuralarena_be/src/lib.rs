@@ -334,6 +334,20 @@ fn game_find_by_id(
 }
 
 #[ic_cdk::query]
+fn game_find_all(
+    pag: Pagination
+) -> Result<Vec<GameResponse>, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        match GamesService::find_all(pag, &db.borrow(), &caller) {
+            Ok(list) => Ok(list.iter().map(|e| e.clone().into()).collect()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+#[ic_cdk::query]
 fn game_find_active(
     pag: Pagination
 ) -> Result<Vec<GameResponse>, String> {
@@ -648,6 +662,20 @@ fn match_find_by_id(
     DB.with(|db| {
         match MatchesService::find_by_id(&id, &db.borrow(), &caller) {
             Ok(m) => Ok(m.into()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+#[ic_cdk::query]
+pub fn match_find_all(
+    pag: Pagination
+) -> Result<Vec<MatchResponse>, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        match MatchesService::find_all(pag, &db.borrow(), &caller) {
+            Ok(list) => Ok(list.iter().map(|e| e.clone().into()).collect()),
             Err(msg) => Err(msg)
         }
     })

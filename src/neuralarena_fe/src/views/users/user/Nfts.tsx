@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Nft } from "@views/nfts/Nft";
 import { useAuth } from "@hooks/auth";
-import { ActionIcon, Button, Card, Divider, Grid, Group, Space, Text } from "@mantine/core";
+import { ActionIcon, Button, Center, Grid, Group, Space } from "@mantine/core";
 import { IconMoneybag, IconTrash } from "@tabler/icons-react";
 import { ConfirmDialog } from "@components/ConfirmDialog";
 import { DrawerPanel } from "@components/DrawerPanel";
@@ -12,6 +12,7 @@ import { useUser } from "@hooks/users";
 import { useUI } from "@hooks/ui";
 import { UserNftRequest } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { AuthActionType, AuthContext } from "@stores/auth";
+import { PageTitle } from "@components/PageTitle";
 
 interface Props {
 }
@@ -35,7 +36,9 @@ export const UserNfts = (props: Props) => {
     const handleAdd = useCallback(async () => {
         if(toAdd && user && nfts) {
             // check for dups
-            if(nfts.find(n => n.collection_id.compareTo(toAdd.collection_id) === 'eq' && n.token_id === toAdd.token_id)) {
+            if(nfts.find(n => 
+                n.collection_id.compareTo(toAdd.collection_id) === 'eq' && 
+                n.token_id === toAdd.token_id)) {
                 showError("Token duplicated");
                 return;
             }
@@ -114,19 +117,12 @@ export const UserNfts = (props: Props) => {
     }, [addOpened]);
 
     return (
-        <Card withBorder radius="md" p="xl" className="main-card card">
-            <Group position="apart" noWrap spacing="xl">
-                <div>
-                    <Text fz="lg" className="card-title" fw={500}>
-                        <IconMoneybag size="1rem" /> NFT's
-                    </Text>
-                    <Text fz="xs" c="dimmed" mt={3} mb="xl">
-                        Edit your NFT's
-                    </Text>
-                </div>
-            </Group>
-
-            <Divider pb="xs" />
+        <>
+            <PageTitle 
+                title="Your NFT's"
+                icon={<IconMoneybag size="4rem" /> }
+            >
+            </PageTitle>
 
             <Grid>
                 {nfts?.map((nft, index) => 
@@ -149,14 +145,13 @@ export const UserNfts = (props: Props) => {
 
             <Space h="lg" />
 
-            <div>
+            <Center>
                 <Button 
-                    fullWidth
                     onClick={addOpen}
                 >
                     Add
                 </Button>
-            </div>
+            </Center>
 
             <DrawerPanel
                 title="Select a NFT to add"
@@ -187,6 +182,6 @@ export const UserNfts = (props: Props) => {
                 onClose={delClose}
                 onConfirm={handleDelete}
             />
-        </Card>
+        </>
     );
 }

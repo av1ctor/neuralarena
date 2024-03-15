@@ -9,7 +9,7 @@ import {
 import { useActors } from "./actors";
 import { 
     matchCreate, matchFindOpen, matchFindById, matchJoin, 
-    matchStart, matchRun, MatchId, matchFindByGame, matchGetSteps 
+    matchStart, matchRun, MatchId, matchFindByGame, matchGetSteps, matchFindAll 
 } from "@libs/matches";
 import { GameId } from "@libs/games";
 
@@ -112,13 +112,30 @@ export const useMatchFindById = (
     );
 }; 
 
-export const useMatchFindOpen = (
+export const useMatchFindAll = (
     limit: number
 ): UseInfiniteQueryResult<MatchResponse[], Error> => {
     const {main} = useActors();
 
     return useInfiniteQuery<MatchResponse[], Error>(
         ['matches', limit], 
+        ({pageParam = 0}) => matchFindAll(main, {offset: pageParam, limit}),
+        {
+            getNextPageParam: (lastPage, pages) => 
+                lastPage.length < limit?
+                    undefined:
+                pages.length * limit
+        }
+    );
+};
+
+export const useMatchFindOpen = (
+    limit: number
+): UseInfiniteQueryResult<MatchResponse[], Error> => {
+    const {main} = useActors();
+
+    return useInfiniteQuery<MatchResponse[], Error>(
+        ['matches-open', limit], 
         ({pageParam = 0}) => matchFindOpen(main, {offset: pageParam, limit}),
         {
             getNextPageParam: (lastPage, pages) => 

@@ -45,7 +45,7 @@ interface Props {
     showView?: boolean;
 }
   
-export const Card = (props: Props) => {
+export const GameCard = (props: Props) => {
     const { classes } = useStyles();
     const navigate = useNavigate();
 

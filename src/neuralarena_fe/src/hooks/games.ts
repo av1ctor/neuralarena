@@ -4,7 +4,7 @@ import {
 } from "react-query";
 import { GameRequest, GameResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { useActors } from "./actors";
-import { GameId, gameCreate, gameFindActive, gameFindById } from "@libs/games";
+import { GameId, gameCreate, gameFindActive, gameFindAll, gameFindById } from "@libs/games";
 
 interface GameMethods {
     create: (req: GameRequest) => Promise<GameResponse>;
@@ -48,13 +48,30 @@ export const useGameFindById = (
     );
 }; 
 
-export const useGameFindActive = (
+export const useGameFindAll = (
     limit: number
 ): UseInfiniteQueryResult<GameResponse[], Error> => {
     const {main} = useActors();
 
     return useInfiniteQuery<GameResponse[], Error>(
         ['games', limit], 
+        ({pageParam = 0}) => gameFindAll(main, {offset: pageParam, limit}),
+        {
+            getNextPageParam: (lastPage, pages) => 
+                lastPage.length < limit?
+                    undefined:
+                pages.length * limit
+        }
+    );
+};
+
+export const useGameFindActive = (
+    limit: number
+): UseInfiniteQueryResult<GameResponse[], Error> => {
+    const {main} = useActors();
+
+    return useInfiniteQuery<GameResponse[], Error>(
+        ['games-active', limit], 
         ({pageParam = 0}) => gameFindActive(main, {offset: pageParam, limit}),
         {
             getNextPageParam: (lastPage, pages) => 

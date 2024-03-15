@@ -58,6 +58,17 @@ export const gameFindById = async (
     return res.Ok; 
 };
 
+export const gameFindAll = async (
+    main: Main,
+    pag: Pagination
+): Promise<GameResponse[]> => {
+    const res = await main.game_find_all(pag);
+    if('Err' in res) {
+        throw new Error(res.Err);
+    }
+    return res.Ok; 
+};
+
 export const gameFindActive = async (
     main: Main,
     pag: Pagination
