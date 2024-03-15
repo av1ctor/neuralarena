@@ -69,19 +69,17 @@ impl TableSubscriber<TableName> for UserMatchesRelTable {
             TableName::Matches => {
                 if let TableEventKey::Text(m4tch_key) = &event.pkey {
                     match event.kind {
-                        TableEventKind::Create => {
+                        TableEventKind::Create | TableEventKind::Update => {
                             for fkey in &event.keys {
                                 if let TableEventKey::Principal(fkey) = &fkey {
                                     if !self.data.0.contains_key(fkey) {
                                         self.data.0.insert(fkey.clone(), BTreeSet::default());
                                     }
 
+                                    //WARNING: assuming users can't leave matches
                                     self.data.0.get_mut(fkey).unwrap().insert(m4tch_key.clone());
                                 }
                             }
-                        },
-                        TableEventKind::Update => {
-                            //WARNING: assuming users can't leave matches
                         },
                         TableEventKind::Delete => {
                             for fkey in &event.keys {

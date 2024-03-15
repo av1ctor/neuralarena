@@ -42,7 +42,6 @@ export const Latest = (props: Props) => {
                             props.game &&
                                 <Carousel.Slide key={item.id}>
                                     <Card 
-                                        game={props.game}
                                         match={item}
                                         showView
                                     />

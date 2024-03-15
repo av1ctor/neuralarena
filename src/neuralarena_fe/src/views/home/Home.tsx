@@ -12,6 +12,7 @@ import { Match } from "@views/matches/match/Match";
 import loadingImage from "@assets/loading.svg";
 import Profile from "@views/users/user/Profile";
 import { UserNfts } from "@views/users/user/Nfts";
+import { UserMatches } from "@views/users/user/Matches";
 
 interface Props {
 }
@@ -45,6 +46,7 @@ const Home = (props: Props) => {
                         <Route path="/user/login" element={<Login authenticateOnly={false} />} />
                         <Route path="/user/signup" element={<Signup />} />
                         <Route path="/user/nfts" element={<UserNfts />} />
+                        <Route path="/user/matches" element={<UserMatches />} />
                         <Route path="/user/profile" element={<Profile />} />
                         <Route path="/" element={<Front />} />
                     </Routes>

@@ -162,12 +162,15 @@ export const userFindById = async (
 
 export const userFindMatches = async (
     main: Main,
-    id: Principal,
+    id: Principal|undefined,
     pag: Pagination
 ): Promise<MatchResponse[]> => {
+    if(!id) {
+        return []
+    };
     const res = await main.user_find_matches(id, pag);
     if('Err' in res) {
         throw new Error(res.Err);
     }
-    return res.Ok;     
+    return res.Ok; 
 }

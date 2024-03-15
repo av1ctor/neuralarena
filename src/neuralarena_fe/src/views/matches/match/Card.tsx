@@ -1,9 +1,10 @@
 import React, { useCallback } from "react";
-import { Button, Paper, createStyles, rem, Badge, Container, Text, Slider, Space } from "@mantine/core";
+import { Button, Paper, createStyles, rem, Badge, Container, Text, Slider, Space, Grid } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
-import { GameResponse, MatchResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
+import { MatchResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { matchStatusToString } from "@libs/matches";
 import TimeFromNow from "@components/TimeFromNow";
+import { useGameFindById } from "@hooks/games";
 
 const useStyles = createStyles((theme) => ({
     card: {
@@ -12,41 +13,51 @@ const useStyles = createStyles((theme) => ({
         flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
+        color: theme.colorScheme === "dark"? theme.white: theme.black,
         backgroundPosition: 'center',
-        backgroundBlendMode: 'soft-light',
+        backgroundBlendMode: theme.colorScheme === "dark"? 'soft-light': 'normal',
         position: 'relative',
 
         ':hover': {
-            backgroundBlendMode: 'normal',
+            backgroundBlendMode: theme.colorScheme === "dark"? 'normal': 'hard-light',
         },
-  
     },
 
-    statusBox: {
-        position: 'absolute',
-        top: '1rem',
-        right: '1rem',
-
+    name: {
+        position: 'relative',
+        color: theme.colorScheme === "dark"? theme.white: theme.black,
+        textTransform: 'uppercase',
+        overflow: 'visible',
         ":before": {
-            content: '"Status"',
+            content: '"Game"',
             position: 'absolute',
-            top: '-0.7rem',
-            left: '0.5rem',
-            fontSize: '0.75rem'
+            top: '-1.0rem',
+            left: '1.0rem',
+            fontSize: '0.66rem',
+            fontWeight: 'normal',
+            textTransform: 'none'
         }
     },
 
     status: {
-        color: theme.white,
-        fontWeight: 900,
+        position: 'relative',
+        color: theme.colorScheme === "dark"? theme.white: theme.black,
+        float: 'right',
         textTransform: 'uppercase',
-        fontSize: '1.5rem',
+        overflow: 'visible',
+        ":before": {
+            content: '"Status"',
+            position: 'absolute',
+            top: '-1.0rem',
+            left: '1.0rem',
+            fontSize: '0.66rem',
+            fontWeight: 'normal',
+            textTransform: 'none'
+        }
     },
-
   }));
 
 interface Props {
-    game: GameResponse;
     match: MatchResponse;
     showView?: boolean;
 }
@@ -59,27 +70,42 @@ export const Card = (props: Props) => {
         navigate(`/matches/${props.match.id}`)
     }, [props.match.id]);
 
-    const {game, match} = props;
+    const {match} = props;
 
-    const min_players = Number(game.info.min_players);
-    const max_players = Number(game.info.max_players);
+    const game = useGameFindById(match.game.id);
+
+    const min_players = game.data? Number(game.data.info.min_players): 1;
+    const max_players = game.data? Number(game.data.info.max_players): 10;
     
     return (
         <Paper
             shadow="md"
             p="xl"
             radius="md"
-            style={{ backgroundImage: `url(${game.info.urls.cover})` }}
+            style={{ backgroundImage: `url(${game.data?.info.urls.cover ?? "game-cover.svg"})` }}
             className={classes.card}
         >
-            <div className={classes.statusBox}>
-                <Badge 
-                    className={classes.status} 
-                    size="xl"
-                >
-                    {matchStatusToString(match.status)}
-                </Badge>
-            </div>
+            <Grid w="100%">
+                <Grid.Col span={6}>
+                    <Badge 
+                        className={classes.name} 
+                        size="xl"
+                        variant="gradient"
+                    >
+                        {game.data?.info.name}
+                    </Badge>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                    <Badge 
+                        className={classes.status} 
+                        color="yellow" 
+                        variant="filled"
+                        size="xl"
+                    >
+                        {matchStatusToString(match.status)}
+                    </Badge>
+                </Grid.Col>
+            </Grid>
             <div>&nbsp;</div>
             <Container w='100%'>
                 <div>

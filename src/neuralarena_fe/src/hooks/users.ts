@@ -126,7 +126,7 @@ export const useUserFindById = (
 }; 
 
 export const useUserFindMatches = (
-    id: Principal,
+    id: Principal|undefined,
     limit: number
 ): UseInfiniteQueryResult<MatchResponse[], Error> => {
     const {main} = useActors();
