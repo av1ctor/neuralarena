@@ -1,7 +1,7 @@
 import { Principal } from "@dfinity/principal";
 import React, {createContext, useReducer} from "react";
-import { ICProvider, ICProviderState } from "../interfaces/icprovider";
-import { UserResponse } from "../../../declarations/neuralarena_be/neuralarena_be.did";
+import { ICProvider, ICProviderState } from "@interfaces/icprovider";
+import { UserResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 
 export interface AuthState {
     state: ICProviderState;

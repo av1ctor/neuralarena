@@ -1,6 +1,10 @@
-import { UseInfiniteQueryResult, UseQueryResult, useInfiniteQuery, useQuery } from "react-query";
+import { 
+    UseInfiniteQueryResult, UseQueryResult, useInfiniteQuery, useQuery 
+} from "react-query";
 import { Principal } from "@dfinity/principal";
-import { Nas1Token, Nas1Collection } from "../../../declarations/nas1_nft/nas1_nft.did";
+import { 
+    Nas1Token, Nas1Collection 
+} from "@declarations/nas1_nft/nas1_nft.did";
 import { 
     nas1FindTokenById, nas1GetCollectionData, nas1GetCollectionLogo, 
     nas1GetCollectionDesc, nas1GetCollectionSymbol, nas1GetTokenOwner, nas1GetTokensOf

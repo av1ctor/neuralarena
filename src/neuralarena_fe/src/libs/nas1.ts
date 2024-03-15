@@ -1,6 +1,6 @@
 import { Principal } from "@dfinity/principal";
-import { Nas1Token, Nas1Collection } from "../../../declarations/nas1_nft/nas1_nft.did";
-import { createActor } from "../../../declarations/nas1_nft";
+import { Nas1Token, Nas1Collection } from "@declarations/nas1_nft/nas1_nft.did";
+import { createActor } from "@declarations/nas1_nft";
 
 export interface NFT {
     collection_id: Principal, 

@@ -3,9 +3,9 @@ import react from '@vitejs/plugin-react';
 import checker from 'vite-plugin-checker';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import environment from 'vite-plugin-environment';
 import { resolve } from 'path';
 import dotenv from 'dotenv';
-import environment from 'vite-plugin-environment';
 import { fileURLToPath, URL } from 'url';
 
 dotenv.config({
@@ -21,9 +21,9 @@ export default defineConfig({
         environment("all", { prefix: "VITE_" }),
         environment("all", { prefix: "CANISTER_" }),
         environment("all", { prefix: "DFX_" }),
+        tsconfigPaths(),
         react(),
         checker({ typescript: true }),
-        tsconfigPaths(),
         viteStaticCopy({
             targets: [
                 {

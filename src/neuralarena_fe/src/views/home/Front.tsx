@@ -1,7 +1,7 @@
 import React from "react";
-import { useAuth } from "../../hooks/auth";
+import { useAuth } from "@hooks/auth";
 import Landing from "./Landing";
-import { Top } from "../games/Top";
+import { Top } from "@views/games/Top";
 
 export const Front = () => {
     const {isLogged} = useAuth();

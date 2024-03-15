@@ -2,9 +2,9 @@ import React, { ReactElement, useCallback } from "react";
 import { Badge, Card, Group, Text, Image, Space } from "@mantine/core";
 import { 
     useNAS1FindTokenById, useNAS1GetCollectionSymbol, useNAS1GetTokenOwner
-} from "../../hooks/nas1";
-import { NFT } from "../../libs/nas1";
-import { principalToString } from "../../libs/icp";
+} from "@hooks/nas1";
+import { NFT } from "@libs/nas1";
+import { principalToString } from "@libs/icp";
 
 interface Props {
     nft: NFT;

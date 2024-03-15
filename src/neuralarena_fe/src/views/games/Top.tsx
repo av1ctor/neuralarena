@@ -1,8 +1,8 @@
 import React from "react";
 import { Carousel } from "@mantine/carousel";
 import { Center, Container, Space, Title, useMantineTheme } from "@mantine/core";
-import { useBrowser } from "../../hooks/browser";
-import { useGameFindActive } from "../../hooks/games";
+import { useBrowser } from "@hooks/browser";
+import { useGameFindActive } from "@hooks/games";
 import { Card } from "./game/Card";
 
 export const Top = () => {

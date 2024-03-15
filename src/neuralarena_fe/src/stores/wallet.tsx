@@ -1,5 +1,5 @@
 import React, {createContext, useReducer} from "react";
-import { ICProvider } from "../interfaces/icprovider";
+import { ICProvider } from "@interfaces/icprovider";
 
 export interface UserBalances {
     icp: bigint;

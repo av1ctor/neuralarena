@@ -1,9 +1,11 @@
 import { 
-    UseInfiniteQueryResult, UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient 
+    UseInfiniteQueryResult, UseQueryResult, useInfiniteQuery, 
+    useMutation, useQuery, useQueryClient 
 } from "react-query";
 import { 
-    InstanceStepsResponse, MatchJoinRequest, MatchRequest, MatchResponse 
-} from "../../../declarations/neuralarena_be/neuralarena_be.did";
+    InstanceStepsResponse, MatchJoinRequest, 
+    MatchRequest, MatchResponse 
+} from "@declarations/neuralarena_be/neuralarena_be.did";
 import { useActors } from "./actors";
 import { 
     matchCreate, matchFindOpen, matchFindById, matchJoin, 

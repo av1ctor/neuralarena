@@ -1,5 +1,8 @@
-import { UseInfiniteQueryResult, UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from "react-query";
-import { GameRequest, GameResponse } from "../../../declarations/neuralarena_be/neuralarena_be.did";
+import { 
+    UseInfiniteQueryResult, UseQueryResult, useInfiniteQuery, 
+    useMutation, useQuery, useQueryClient 
+} from "react-query";
+import { GameRequest, GameResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { useActors } from "./actors";
 import { GameId, gameCreate, gameFindActive, gameFindById } from "../libs/games";
 

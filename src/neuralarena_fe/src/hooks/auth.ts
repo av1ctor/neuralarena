@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 import { Principal } from "@dfinity/principal";
-import { _SERVICE as Main, UserResponse } from "../../../declarations/neuralarena_be/neuralarena_be.did";
-import { canisterId as mainCanisterId } from "../../../declarations/neuralarena_be";
+import { _SERVICE as Main, UserResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
+import { canisterId as mainCanisterId } from "@declarations/neuralarena_be";
 import { ICProvider, ICProviderState, ICProviderType } from "../interfaces/icprovider";
 import { ActorActionType, ActorContext } from "../stores/actor";
 import { AuthActionType, AuthContext } from "../stores/auth";

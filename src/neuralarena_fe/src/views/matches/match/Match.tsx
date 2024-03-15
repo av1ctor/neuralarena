@@ -1,16 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Avatar as Avatar_, Space, Stack, Title, Tooltip, Container, Center } from "@mantine/core";
-import { useMatchFindById, useMatch } from "../../../hooks/matches";
-import { useGameFindById } from "../../../hooks/games";
-import { Banner } from "../../games/game/Banner";
-import { matchStatusToString } from "../../../libs/matches";
-import { useUI } from "../../../hooks/ui";
+import { useMatchFindById, useMatch } from "@hooks/matches";
+import { useGameFindById } from "@hooks/games";
+import { Banner } from "@views/games/game/Banner";
+import { matchStatusToString } from "@libs/matches";
+import { useUI } from "@hooks/ui";
 import { Watch } from "./Watch";
-import { Avatar } from "../../users/user/Avatar";
-import { ListNfts } from "../../nfts/List";
-import { useAuth } from "../../../hooks/auth";
-import { NFT } from "../../../libs/nas1";
+import { Avatar } from "@views/users/user/Avatar";
+import { ListNfts } from "@views/nfts/List";
+import { useAuth } from "@hooks/auth";
+import { NFT } from "@libs/nas1";
 
 interface Props {
 }

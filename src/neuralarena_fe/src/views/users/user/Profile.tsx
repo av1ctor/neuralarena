@@ -2,8 +2,8 @@ import React from "react";
 import { Card, Divider, Group, Text } from "@mantine/core";
 import { IconUserEdit } from "@tabler/icons-react";
 import UserEdit from "./Edit";
-import { userGetKind } from "../../../libs/users";
-import { useAuth } from "../../../hooks/auth";
+import { userGetKind } from "@libs/users";
+import { useAuth } from "@hooks/auth";
 
 const Profile = () => {
     const {user} = useAuth();

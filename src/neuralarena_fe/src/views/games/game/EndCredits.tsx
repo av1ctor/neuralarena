@@ -1,6 +1,6 @@
 import React from "react";
 import { createStyles } from "@mantine/core";
-import { GameEndCredits } from "../../../../../declarations/neuralarena_be/neuralarena_be.did";
+import { GameEndCredits } from "@declarations/neuralarena_be/neuralarena_be.did";
 
 const useStyles = createStyles((theme) => ({
     container: {

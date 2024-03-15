@@ -1,6 +1,6 @@
 import React, {createContext, useReducer} from "react";
-import { _SERVICE as Main } from "../../../declarations/neuralarena_be/neuralarena_be.did";
-import { createActor as mainCreateActor, canisterId as mainCanisterId } from "../../../declarations/neuralarena_be";
+import { _SERVICE as Main } from "@declarations/neuralarena_be/neuralarena_be.did";
+import { createActor as mainCreateActor, canisterId as mainCanisterId } from "@declarations/neuralarena_be";
 import { config } from "../config";
 
 export interface ActorState {

@@ -1,10 +1,10 @@
 import React from "react";
 import { Carousel } from "@mantine/carousel";
 import { Center, Container, Space, Title, useMantineTheme } from "@mantine/core";
-import { useBrowser } from "../../hooks/browser";
-import { useMatchFindByGame } from "../../hooks/matches";
+import { useBrowser } from "@hooks/browser";
+import { useMatchFindByGame } from "@hooks/matches";
 import { Card } from "./match/Card";
-import { GameResponse } from "../../../../declarations/neuralarena_be/neuralarena_be.did";
+import { GameResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 
 interface Props {
     game: GameResponse|undefined;

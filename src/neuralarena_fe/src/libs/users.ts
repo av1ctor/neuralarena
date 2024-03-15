@@ -1,9 +1,11 @@
 import { Principal } from "@dfinity/principal";
 import { 
     _SERVICE as Main, 
+    MatchResponse, 
+    Pagination, 
     UserNftsRequest, UserRequest, 
     UserResponse 
-} from "../../../declarations/neuralarena_be/neuralarena_be.did";
+} from "@declarations/neuralarena_be/neuralarena_be.did";
 
 export enum UserKind {
     Player,
@@ -157,3 +159,15 @@ export const userFindById = async (
     }
     return res.Ok; 
 };
+
+export const userFindMatches = async (
+    main: Main,
+    id: Principal,
+    pag: Pagination
+): Promise<MatchResponse[]> => {
+    const res = await main.user_find_matches(id, pag);
+    if('Err' in res) {
+        throw new Error(res.Err);
+    }
+    return res.Ok;     
+}

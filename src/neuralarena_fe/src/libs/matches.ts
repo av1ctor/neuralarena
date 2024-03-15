@@ -6,7 +6,7 @@ import {
     InstanceStepsResponse, 
     Pagination, 
     MatchJoinRequest
-} from "../../../declarations/neuralarena_be/neuralarena_be.did";
+} from "@declarations/neuralarena_be/neuralarena_be.did";
 import { GameId } from "./games";
 
 export type MatchId = string;

@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
 import { createStyles, Image, Container, Title, Button, Group, Text, List, ThemeIcon, rem, Space } from '@mantine/core';
 import { IconBrandGithub, IconCheck, IconUserPlus } from '@tabler/icons-react';
-import { useBrowser } from "../../hooks/browser";
-import { Top } from "../games/Top";
-import neuralArenaLogo from "../../assets/logo.svg";
+import { useBrowser } from "@hooks/browser";
+import { Top } from "@views/games/Top";
+import neuralArenaLogo from "@assets/logo.svg";
   
 const useStyles = createStyles((theme) => ({
     inner: {

@@ -3,7 +3,7 @@ import {
     _SERVICE as Main, 
     NftCollectionRequest, NftCollectionResponse, 
     Pagination 
-} from "../../../declarations/neuralarena_be/neuralarena_be.did";
+} from "@declarations/neuralarena_be/neuralarena_be.did";
 
 export type NftCollectionId = Principal;
 

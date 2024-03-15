@@ -1,5 +1,5 @@
 import { ActorSubclass, Agent, HttpAgent } from "@dfinity/agent";
-import { idlFactory as mainIdlFactory, canisterId as mainCanisterId } from "../../../declarations/neuralarena_be";
+import { idlFactory as mainIdlFactory, canisterId as mainCanisterId } from "@declarations/neuralarena_be";
 import { ICProvider } from "../interfaces/icprovider";
 import { config } from "../config";
 import { Principal } from "@dfinity/principal";

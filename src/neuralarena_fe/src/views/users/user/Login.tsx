@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect } from "react";
 import { Text, Center, Group, Stack, ThemeIcon, Title, UnstyledButton, createStyles, Grid } from "@mantine/core";
-import { useAuth } from "../../../hooks/auth";
-import { useUI } from "../../../hooks/ui";
-import { ICProviderType } from "../../../interfaces/icprovider";
-import { useBrowser } from "../../../hooks/browser";
+import { useAuth } from "@hooks/auth";
+import { useUI } from "@hooks/ui";
+import { ICProviderType } from "@interfaces/icprovider";
+import { useBrowser } from "@hooks/browser";
 
 const useStyles = createStyles((theme) => ({
     subLink: {

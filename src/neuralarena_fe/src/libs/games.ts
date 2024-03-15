@@ -2,7 +2,7 @@ import {
     _SERVICE as Main, 
     GameRequest, GameResponse, 
     Pagination, Asset, GameEndCredits 
-} from "../../../declarations/neuralarena_be/neuralarena_be.did";
+} from "@declarations/neuralarena_be/neuralarena_be.did";
 
 export type GameId = string;
 

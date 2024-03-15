@@ -1,5 +1,5 @@
 import { UseInfiniteQueryResult, UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from "react-query";
-import { NftCollectionRequest, NftCollectionResponse } from "../../../declarations/neuralarena_be/neuralarena_be.did";
+import { NftCollectionRequest, NftCollectionResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { useActors } from "./actors";
 import { NftCollectionId, nftColCreate, nftColFindActive, nftColFindById } from "../libs/nft_cols";
 

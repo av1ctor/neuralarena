@@ -5,7 +5,7 @@ import { IconChevronDown, IconHome2, IconMoonStars, IconSun } from '@tabler/icon
 import { AuthMenu } from './menus/Auth';
 import { UserMenu } from './menus/User';
 import { useAuth } from '../../hooks/auth';
-import neuralArenaLogo from "../../assets/neuralarena-logo.svg";
+import neuralArenaLogo from "@assets/neuralarena-logo.svg";
 
 const useStyles = createStyles((theme) => ({
     link: {

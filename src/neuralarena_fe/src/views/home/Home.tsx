@@ -1,17 +1,17 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { AppShell, Container, LoadingOverlay, Space, useMantineTheme } from '@mantine/core';
-import { useUI } from "../../hooks/ui";
+import { useUI } from "@hooks/ui";
 import Header from "./Header";
 import Footer from "./Footer";
 import {Front} from "./Front";
-import Login from "../users/user/Login";
-import Signup from "../users/user/Signup";
-import { Game } from "../games/game/Game";
-import { Match } from "../matches/match/Match";
-import loadingImage from "../../assets/loading.svg";
-import Profile from "../users/user/Profile";
-import { UserNfts } from "../users/user/Nfts";
+import Login from "@views/users/user/Login";
+import Signup from "@views/users/user/Signup";
+import { Game } from "@views/games/game/Game";
+import { Match } from "@views/matches/match/Match";
+import loadingImage from "@assets/loading.svg";
+import Profile from "@views/users/user/Profile";
+import { UserNfts } from "@views/users/user/Nfts";
 
 interface Props {
 }

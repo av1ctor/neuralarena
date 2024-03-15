@@ -1,12 +1,12 @@
 import React, { forwardRef, useMemo } from "react";
 import * as yup from 'yup';
 import { Space, Select, Group, Avatar, Text } from "@mantine/core";
-import { useAuth } from "../../hooks/auth";
-import { NFT } from "../../libs/nas1";
+import { useAuth } from "@hooks/auth";
+import { NFT } from "@libs/nas1";
 import { useForm, yupResolver } from "@mantine/form";
 import { Principal } from "@dfinity/principal";
-import { useNftCollectionFindActive } from "../../hooks/nft_cols";
-import { useNAS1FindTokensOf } from "../../hooks/nas1";
+import { useNftCollectionFindActive } from "@hooks/nft_cols";
+import { useNAS1FindTokensOf } from "@hooks/nas1";
 import { ListNfts } from "./List";
 
 interface ItemProps extends React.ComponentPropsWithoutRef<'div'> {

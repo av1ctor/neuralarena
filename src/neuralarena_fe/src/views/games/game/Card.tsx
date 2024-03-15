@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Button, Paper, createStyles, rem, Badge, Container, Text, Center } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
-import { GameResponse } from "../../../../../declarations/neuralarena_be/neuralarena_be.did";
+import { GameResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 
 const useStyles = createStyles((theme) => ({
     card: {

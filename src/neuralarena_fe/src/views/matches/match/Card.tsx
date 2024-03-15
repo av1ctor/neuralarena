@@ -1,9 +1,9 @@
 import React, { useCallback } from "react";
 import { Button, Paper, createStyles, rem, Badge, Container, Text, Slider, Space } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
-import { GameResponse, MatchResponse } from "../../../../../declarations/neuralarena_be/neuralarena_be.did";
-import { matchStatusToString } from "../../../libs/matches";
-import TimeFromNow from "../../../components/TimeFromNow";
+import { GameResponse, MatchResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
+import { matchStatusToString } from "@libs/matches";
+import TimeFromNow from "@components/TimeFromNow";
 
 const useStyles = createStyles((theme) => ({
     card: {

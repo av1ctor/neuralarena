@@ -1,37 +1,48 @@
 {
-    "compilerOptions": {
-        "strict": true,
-        "noImplicitAny": true,
-        "strictNullChecks": true,
-        "strictFunctionTypes": true,
-        "strictPropertyInitialization": true,
-        "strictBindCallApply": true,
-        "noImplicitThis": true,
-        "noImplicitReturns": true,
-        "alwaysStrict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "declaration": false,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "target": "es2020",
-        "lib": ["ES2020", "DOM", "DOM.Iterable"],
-        "allowJs": true,
-        "jsx": "react",
-        "module": "ESNext",
-        "moduleResolution": "Bundler",
-        "noEmit": true,
-        "allowImportingTsExtensions": true,
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "baseUrl": ".",
-        "paths": {
-            "*": [ "src/neuralarena_fe/src/custom-types/*"]
-        }
-      },
-    "include": ["src/neuralarena_fe/**/*"],
-    "exclude": [
-        "src/declarations/**",
-    ],
-    "references": [{ "path": "./tsconfig.node.json" }]
+  "compilerOptions": {
+    "composite": true,
+    "strict": true,
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "strictBindCallApply": true,
+    "noImplicitThis": true,
+    "noImplicitReturns": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "target": "ES2022",
+    "moduleResolution": "bundler",
+    "jsx": "react",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@declarations/*": ["src/declarations/*"],
+      "@assets/*": ["src/neuralarena_fe/src/assets/*"],
+      "@components/*": ["src/neuralarena_fe/src/components/*"],
+      "@game-engine/*": ["src/neuralarena_fe/src/game-engine/*"],
+      "@hooks/*": ["src/neuralarena_fe/src/hooks/*"],
+      "@interfaces/*": ["src/neuralarena_fe/src/interfaces/*"],
+      "@libs/*": ["src/neuralarena_fe/src/libs/*"],
+      "@renderers/*": ["src/neuralarena_fe/src/renderers/*"],
+      "@stores/*": ["src/neuralarena_fe/src/stores/*"],
+      "@views/*": ["src/neuralarena_fe/src/views/*"]
+    }
+  },
+  "include": [
+    "vite.config.ts",
+    "src"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "deps",
+    "src/declarations",
+  ]
 }

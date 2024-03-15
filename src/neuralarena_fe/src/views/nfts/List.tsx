@@ -1,7 +1,7 @@
 import React from "react";
 import { createStyles } from "@mantine/core";
 import { Nft } from "./Nft";
-import { NFT } from "../../libs/nas1";
+import { NFT } from "@libs/nas1";
 
 const useStyles = createStyles((theme) => ({
     container: {

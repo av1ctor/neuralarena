@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect } from "react";
 import * as yup from 'yup';
-import { useAuth } from "../../../hooks/auth";
-import { useUI } from "../../../hooks/ui";
+import { useAuth } from "@hooks/auth";
+import { useUI } from "@hooks/ui";
 import { useForm, yupResolver } from "@mantine/form";
 import { Button, Space, TextInput } from "@mantine/core";
-import { UserKind, userGetKind } from "../../../libs/users";
-import { useActors } from "../../../hooks/actors";
-import { useUser } from "../../../hooks/users";
-import { userGetPrincipal } from "../../../libs/users";
+import { UserKind, userGetKind } from "@libs/users";
+import { useActors } from "@hooks/actors";
+import { useUser } from "@hooks/users";
+import { userGetPrincipal } from "@libs/users";
 
 const schema = {
     nick: yup.string().min(3).max(64),

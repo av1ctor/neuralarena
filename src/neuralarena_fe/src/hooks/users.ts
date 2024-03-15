@@ -1,8 +1,16 @@
-import { UseQueryResult, useMutation, useQuery, useQueryClient } from "react-query";
+import { 
+    UseInfiniteQueryResult, UseQueryResult, useInfiniteQuery, 
+    useMutation, useQuery, useQueryClient 
+} from "react-query";
 import { Principal } from "@dfinity/principal";
-import { UserNftsRequest, UserRequest, UserResponse } from "../../../declarations/neuralarena_be/neuralarena_be.did";
+import { 
+    MatchResponse, UserNftsRequest, UserRequest, UserResponse 
+} from "@declarations/neuralarena_be/neuralarena_be.did";
 import { useActors } from "./actors";
-import { userCreatePlayer, userCreateStaff, userDelete, userFindById, userFindMe, userUpdate, userUpdateNfts } from "../libs/users";
+import { 
+    userCreatePlayer, userCreateStaff, userDelete, 
+    userFindById, userFindMatches, userFindMe, userUpdate, userUpdateNfts 
+} from "../libs/users";
 
 interface UserMethods {
     create: (req: UserRequest) => Promise<UserResponse>;
@@ -114,5 +122,23 @@ export const useUserFindById = (
     return useQuery<UserResponse, Error>(
         ['users', id],
         () => userFindById(main, id)
+    );
+}; 
+
+export const useUserFindMatches = (
+    id: Principal,
+    limit: number
+): UseInfiniteQueryResult<MatchResponse[], Error> => {
+    const {main} = useActors();
+    
+    return useInfiniteQuery<MatchResponse[], Error>(
+        ['user-matches', id, limit], 
+        ({pageParam = 0}) => userFindMatches(main, id, {offset: pageParam, limit}),
+        {
+            getNextPageParam: (lastPage, pages) => 
+                lastPage.length < limit?
+                    undefined:
+                pages.length * limit
+        }
     );
 }; 

@@ -1,9 +1,9 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { useGameFindById } from "../../../hooks/games";
+import { useGameFindById } from "@hooks/games";
 import { Card } from "./Card";
 import { Space } from "@mantine/core";
-import { Latest } from "../../matches/Latest";
+import { Latest } from "@views/matches/Latest";
 
 interface Props {
 }

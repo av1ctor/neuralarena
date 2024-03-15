@@ -1,7 +1,7 @@
 import React from 'react';
 import { Anchor, Center, Container, Divider, Grid, Space, Stack, Text } from '@mantine/core';
 import { IconBrandGithubFilled, IconBrandTwitterFilled } from '@tabler/icons-react';
-import poweredBy from "../../assets/powered-by.svg";
+import poweredBy from "@assets/powered-by.svg";
 
 interface Props {
 }

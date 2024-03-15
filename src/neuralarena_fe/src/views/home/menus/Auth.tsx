@@ -1,10 +1,10 @@
 import React from "react";
 import { Button } from "@mantine/core";
 import { useCallback } from "react";
-import { useAuth } from "../../../hooks/auth";
-import { useUI } from "../../../hooks/ui";
+import { useAuth } from "@hooks/auth";
+import { useUI } from "@hooks/ui";
 import { IconUserBolt, IconUserPlus, IconUserX } from "@tabler/icons-react";
-import { useBrowser } from "../../../hooks/browser";
+import { useBrowser } from "@hooks/browser";
 
 interface Props {
     onClick?: () => void;

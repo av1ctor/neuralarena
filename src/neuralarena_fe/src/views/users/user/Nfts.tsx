@@ -1,17 +1,17 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Nft } from "../../nfts/Nft";
-import { useAuth } from "../../../hooks/auth";
+import { Nft } from "@views/nfts/Nft";
+import { useAuth } from "@hooks/auth";
 import { ActionIcon, Button, Card, Divider, Grid, Group, Space, Text } from "@mantine/core";
 import { IconMoneybag, IconTrash } from "@tabler/icons-react";
-import { ConfirmDialog } from "../../../components/ConfirmDialog";
-import { DrawerPanel } from "../../../components/DrawerPanel";
+import { ConfirmDialog } from "@components/ConfirmDialog";
+import { DrawerPanel } from "@components/DrawerPanel";
 import { useDisclosure } from "@mantine/hooks";
-import { NFT } from "../../../libs/nas1";
-import { SelectNft } from "../../nfts/Select";
-import { useUser } from "../../../hooks/users";
-import { useUI } from "../../../hooks/ui";
-import { UserNftRequest } from "../../../../../declarations/neuralarena_be/neuralarena_be.did";
-import { AuthActionType, AuthContext } from "../../../stores/auth";
+import { NFT } from "@libs/nas1";
+import { SelectNft } from "@views/nfts/Select";
+import { useUser } from "@hooks/users";
+import { useUI } from "@hooks/ui";
+import { UserNftRequest } from "@declarations/neuralarena_be/neuralarena_be.did";
+import { AuthActionType, AuthContext } from "@stores/auth";
 
 interface Props {
 }

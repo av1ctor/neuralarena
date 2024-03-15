@@ -1,8 +1,8 @@
 import React from "react";
 import { Principal } from "@dfinity/principal";
 import { Avatar as Avatar_, Indicator, Tooltip } from "@mantine/core";
-import { useUserFindById } from "../../../hooks/users";
-import { principalToString } from "../../../libs/icp";
+import { useUserFindById } from "@hooks/users";
+import { principalToString } from "@libs/icp";
 
 interface Props {
     id?: Principal;

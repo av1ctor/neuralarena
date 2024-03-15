@@ -3,20 +3,20 @@ import { ActionIcon, Center, Grid, Group, createStyles } from "@mantine/core";
 import { 
     Asset, MatchResponse, InstanceStep, 
     GameResponse, GameEndCredits 
-} from "../../../../../declarations/neuralarena_be/neuralarena_be.did";
-import { useMatchGetSteps } from "../../../hooks/matches";
-import { ThreeRenderer } from "../../../renderers/ThreeRenderer";
-import { matchGetAssets } from "../../../libs/matches";
-import { gameGetEndCredits } from "../../../libs/games";
-import { useActors } from "../../../hooks/actors";
-import { useUI } from "../../../hooks/ui";
-import gameEngineInit, {GameEngine} from "../../../game-engine/game-engine";
+} from "@declarations/neuralarena_be/neuralarena_be.did";
+import { useMatchGetSteps } from "@hooks/matches";
+import { ThreeRenderer } from "@renderers/ThreeRenderer";
+import { matchGetAssets } from "@libs/matches";
+import { gameGetEndCredits } from "@libs/games";
+import { useActors } from "@hooks/actors";
+import { useUI } from "@hooks/ui";
+import gameEngineInit, {GameEngine} from "@game-engine/game-engine";
 import { 
     IconPlayerPause, IconPlayerPlay, IconQuestionMark, 
     IconReload, 
     IconWindowMaximize, IconWindowMinimize, 
 } from "@tabler/icons-react";
-import { EndCredits } from "../../games/game/EndCredits";
+import { EndCredits } from "@views/games/game/EndCredits";
 
 const useStyles = createStyles((theme) => ({
     container: {

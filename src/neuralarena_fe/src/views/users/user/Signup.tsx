@@ -3,12 +3,12 @@ import * as yup from 'yup';
 import { Box, Button, Center, SegmentedControl, Space, Stepper, TextInput } from "@mantine/core";
 import { useForm, yupResolver } from "@mantine/form";
 import { IconUserCog, IconUserShield } from "@tabler/icons-react";
-import { useAuth } from "../../../hooks/auth";
-import { useUI } from "../../../hooks/ui";
-import { useBrowser } from "../../../hooks/browser";
-import { useUser } from "../../../hooks/users";
-import { useActors } from "../../../hooks/actors";
-import { UserKind, userStringToKind } from "../../../libs/users";
+import { useAuth } from "@hooks/auth";
+import { useUI } from "@hooks/ui";
+import { useBrowser } from "@hooks/browser";
+import { useUser } from "@hooks/users";
+import { useActors } from "@hooks/actors";
+import { UserKind, userStringToKind } from "@libs/users";
 import Login from "./Login";
 
 const schema = {
