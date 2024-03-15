@@ -5,7 +5,7 @@ import { IconPhoto } from "@tabler/icons-react";
 import { useUI } from "@hooks/ui";
 import { PageTitle } from "@components/PageTitle";
 import { useNftCollectionFindAll } from "@hooks/nft_cols";
-import { NftCollection } from "./Collection/Collection";
+import { NftCollectionCard } from "./Collection/Card";
 
 interface Props {
 }
@@ -39,9 +39,9 @@ export const NftCollections = (props: Props) => {
                         user &&
                     <Grid.Col 
                         key={index} 
-                        sm={6}
+                        sm={12}
                     >
-                        <NftCollection
+                        <NftCollectionCard
                             col={item}
                         />
                     </Grid.Col>

@@ -38,7 +38,7 @@ const useStyles = createStyles((theme) => ({
         backgroundColor: theme.primaryColor,
         padding: '0 1rem',
     },
-  }));
+}));
 
 interface Props {
     game: GameResponse;

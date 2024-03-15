@@ -7,7 +7,7 @@ import {
 } from "@declarations/nas1_nft/nas1_nft.did";
 import { 
     nas1FindTokenById, nas1GetCollectionData, nas1GetCollectionLogo, 
-    nas1GetCollectionDesc, nas1GetCollectionSymbol, nas1GetTokenOwner, nas1GetTokensOf
+    nas1GetCollectionDesc, nas1GetCollectionSymbol, nas1GetTokenOwner, nas1GetTokensOf, nas1GetTokens
 } from "@libs/nas1";
 
 export const useNAS1GetCollectionData = (
@@ -72,8 +72,26 @@ export const useNAS1FindTokensOf = (
     limit: number
 ): UseInfiniteQueryResult<{tokenId: bigint, data: Nas1Token}[], Error> => {
     return useInfiniteQuery<{tokenId: bigint, data: Nas1Token}[], Error>(
-        ['nft-tokens', canister_id, owner, limit],
+        ['nft-tokens-of', canister_id, owner, limit],
         ({pageParam = undefined}) => nas1GetTokensOf(canister_id, owner, pageParam, limit),
+        {
+            getNextPageParam: (lastPage, pages) => 
+                lastPage.length < limit?
+                    undefined:
+                lastPage.length > 0?
+                    Number(lastPage[lastPage.length-1].tokenId):
+                    undefined
+        }
+    );
+}; 
+
+export const useNAS1FindTokens = (
+    canister_id: Principal|undefined,
+    limit: number
+): UseInfiniteQueryResult<{tokenId: bigint, data: Nas1Token}[], Error> => {
+    return useInfiniteQuery<{tokenId: bigint, data: Nas1Token}[], Error>(
+        ['nft-tokens', canister_id, limit],
+        ({pageParam = undefined}) => nas1GetTokens(canister_id, pageParam, limit),
         {
             getNextPageParam: (lastPage, pages) => 
                 lastPage.length < limit?

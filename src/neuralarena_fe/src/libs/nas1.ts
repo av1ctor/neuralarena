@@ -100,3 +100,27 @@ export const nas1GetTokensOf = async (
 
     return res; 
 };
+
+export const nas1GetTokens = async (
+    canister_id: Principal|undefined,
+    last: number|undefined,
+    limit: number
+): Promise<{tokenId: bigint, data: Nas1Token}[]> => {
+    if(!canister_id) {
+        return []
+    };
+
+    let actor = createActor(canister_id);
+    const tokensIds = await actor.icrc7_tokens(
+        last !== undefined? [BigInt(last)]: [],
+        [BigInt(limit)]
+    );
+
+    const res = Array<{tokenId: bigint, data: Nas1Token}>();
+    for(const tokenId of tokensIds) {
+        const nft = await nas1FindTokenById(canister_id, Number(tokenId));
+        res.push({tokenId, data: nft});
+    }
+
+    return res; 
+};
