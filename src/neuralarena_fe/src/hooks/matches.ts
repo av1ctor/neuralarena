@@ -10,8 +10,8 @@ import { useActors } from "./actors";
 import { 
     matchCreate, matchFindOpen, matchFindById, matchJoin, 
     matchStart, matchRun, MatchId, matchFindByGame, matchGetSteps 
-} from "../libs/matches";
-import { GameId } from "../libs/games";
+} from "@libs/matches";
+import { GameId } from "@libs/games";
 
 interface MatchMethods {
     create: (req: MatchRequest) => Promise<MatchResponse>;

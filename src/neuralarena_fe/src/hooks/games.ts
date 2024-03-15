@@ -4,7 +4,7 @@ import {
 } from "react-query";
 import { GameRequest, GameResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { useActors } from "./actors";
-import { GameId, gameCreate, gameFindActive, gameFindById } from "../libs/games";
+import { GameId, gameCreate, gameFindActive, gameFindById } from "@libs/games";
 
 interface GameMethods {
     create: (req: GameRequest) => Promise<GameResponse>;

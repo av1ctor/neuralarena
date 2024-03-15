@@ -30,6 +30,7 @@
       "@hooks/*": ["src/neuralarena_fe/src/hooks/*"],
       "@interfaces/*": ["src/neuralarena_fe/src/interfaces/*"],
       "@libs/*": ["src/neuralarena_fe/src/libs/*"],
+      "@providers/*": ["src/neuralarena_fe/src/providers/*"],
       "@renderers/*": ["src/neuralarena_fe/src/renderers/*"],
       "@stores/*": ["src/neuralarena_fe/src/stores/*"],
       "@views/*": ["src/neuralarena_fe/src/views/*"]

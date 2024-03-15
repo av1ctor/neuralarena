@@ -1,5 +1,5 @@
 import { useCallback, useContext } from "react";
-import { UIActionType, UIContext } from "../stores/ui";
+import { UIActionType, UIContext } from "@stores/ui";
 import { notifications } from '@mantine/notifications';
 
 interface UIProps {

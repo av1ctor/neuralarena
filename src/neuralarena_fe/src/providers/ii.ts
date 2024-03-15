@@ -2,11 +2,11 @@ import { ActorSubclass, Identity } from "@dfinity/agent";
 import { AuthClient } from "@dfinity/auth-client";
 import { createActor as mainCreateActor, canisterId as mainCanisterId } from "@declarations/neuralarena_be";
 import { canisterId as siteCanisterId } from "@declarations/neuralarena_fe";
-import { ICProvider } from "../interfaces/icprovider";
-import { Result } from "../interfaces/result";
+import { ICProvider } from "@interfaces/icprovider";
+import { Result } from "@interfaces/result";
 import { config } from "../config";
 import { Principal } from "@dfinity/principal";
-import { buildAgentJsOptions } from "../libs/icp";
+import { buildAgentJsOptions } from "@libs/icp";
 
 class InternetIdentityProvider implements ICProvider {
     client?: AuthClient;

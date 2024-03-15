@@ -8,7 +8,7 @@ import {
 import { 
     nas1FindTokenById, nas1GetCollectionData, nas1GetCollectionLogo, 
     nas1GetCollectionDesc, nas1GetCollectionSymbol, nas1GetTokenOwner, nas1GetTokensOf
-} from "../libs/nas1";
+} from "@libs/nas1";
 
 export const useNAS1GetCollectionData = (
     canister_id: Principal

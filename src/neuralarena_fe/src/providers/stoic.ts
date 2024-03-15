@@ -1,10 +1,10 @@
 import {StoicIdentity} from "ic-stoic-identity";
 import { ActorSubclass } from "@dfinity/agent";
 import { createActor as mainCreateActor, canisterId as mainCanisterId } from "@declarations/neuralarena_be";
-import { ICProvider } from "../interfaces/icprovider";
-import { Result } from "../interfaces/result";
+import { ICProvider } from "@interfaces/icprovider";
+import { Result } from "@interfaces/result";
 import { Principal } from "@dfinity/principal";
-import { buildAgentJsOptions, transferErrorToText } from "../libs/icp";
+import { buildAgentJsOptions, transferErrorToText } from "@libs/icp";
 
 class StoicProvider implements ICProvider {
     identity?: StoicIdentity;

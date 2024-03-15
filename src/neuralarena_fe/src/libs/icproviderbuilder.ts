@@ -1,7 +1,7 @@
-import { ICProvider, ICProviderType } from "../interfaces/icprovider";
-import InternetIdentityProvider from "../providers/ii";
-import PlugProvider from "../providers/plug";
-import StoicProvider from "../providers/stoic";
+import { ICProvider, ICProviderType } from "@interfaces/icprovider";
+import InternetIdentityProvider from "@providers/ii";
+import PlugProvider from "@providers/plug";
+import StoicProvider from "@providers/stoic";
 
 export class IcProviderBuider {
     providersList: ICProviderType[] = [];

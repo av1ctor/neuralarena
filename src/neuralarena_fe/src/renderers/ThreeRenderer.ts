@@ -4,11 +4,11 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Font, FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
-import { Asset, GameInfo, MatchPlayerResponse } from '../../../declarations/neuralarena_be/neuralarena_be.did';
-import { gameAssetDataTextValue, gameAssetDataU32Value } from '../libs/games';
-import { GameAssetsLoadingManager, NftAssetsLoadingManager } from '../libs/loadingmanager';
-import { principalToString } from '../libs/icp';
-import { InstanceNpcEntity, InstancePlayerEntity } from '../game-engine/game-engine';
+import { Asset, GameInfo, MatchPlayerResponse } from '@declarations/neuralarena_be/neuralarena_be.did';
+import { gameAssetDataTextValue, gameAssetDataU32Value } from '@libs/games';
+import { GameAssetsLoadingManager, NftAssetsLoadingManager } from '@libs/loadingmanager';
+import { principalToString } from '@libs/icp';
+import { InstanceNpcEntity, InstancePlayerEntity } from '@game-engine/game-engine';
 
 const HEALTH_BAR_WIDTH = 100.0;
 const HEALTH_BAR_HEIGHT = 10.0;

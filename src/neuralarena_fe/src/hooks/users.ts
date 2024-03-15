@@ -10,7 +10,7 @@ import { useActors } from "./actors";
 import { 
     userCreatePlayer, userCreateStaff, userDelete, 
     userFindById, userFindMatches, userFindMe, userUpdate, userUpdateNfts 
-} from "../libs/users";
+} from "@libs/users";
 
 interface UserMethods {
     create: (req: UserRequest) => Promise<UserResponse>;

@@ -4,7 +4,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconChevronDown, IconHome2, IconMoonStars, IconSun } from '@tabler/icons-react';
 import { AuthMenu } from './menus/Auth';
 import { UserMenu } from './menus/User';
-import { useAuth } from '../../hooks/auth';
+import { useAuth } from '@hooks/auth';
 import neuralArenaLogo from "@assets/neuralarena-logo.svg";
 
 const useStyles = createStyles((theme) => ({
