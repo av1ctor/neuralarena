@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { ActionIcon, Avatar, Box, Burger, Center, Collapse, Divider, Drawer, Group, Header, HoverCard, ScrollArea, UnstyledButton, createStyles, rem, useMantineColorScheme, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconChevronDown, IconDeviceGamepad, IconGoGame, IconHome2, IconMoonStars, IconSun } from '@tabler/icons-react';
+import { IconChevronDown, IconDeviceGamepad, IconGoGame, IconHome2, IconMoonStars, IconPhoto, IconSun } from '@tabler/icons-react';
 import { AuthMenu } from './menus/Auth';
 import { UserMenu } from './menus/User';
 import { useAuth } from '@hooks/auth';
@@ -81,6 +81,10 @@ const AppHeader = (props: Props) => {
                             <IconHome2 size="1rem" />&nbsp;Home
                         </a>
 
+                        <a href="#/nfts" className={classes.link}>
+                            <IconPhoto size="1rem" />&nbsp;NFT's
+                        </a>
+
                         <a href="#/games" className={classes.link}>
                             <IconGoGame size="1rem" />&nbsp;Games
                         </a>
@@ -134,6 +138,10 @@ const AppHeader = (props: Props) => {
                     <a href="#" className={classes.link} onClick={closeDrawer}>
                         <IconHome2 size="1rem" />&nbsp;Home
                     </a>
+
+                    <Link to="/nfts" className={classes.link} onClick={closeDrawer}>
+                        <IconGoGame size="1rem" />&nbsp;NFT's
+                    </Link>
 
                     <Link to="/games" className={classes.link} onClick={closeDrawer}>
                         <IconGoGame size="1rem" />&nbsp;Games

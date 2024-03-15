@@ -33,6 +33,17 @@ export const nftColFindById = async (
     return res.Ok; 
 };
 
+export const nftColFindAll = async (
+    main: Main,
+    pag: Pagination
+): Promise<NftCollectionResponse[]> => {
+    const res = await main.nft_col_find_all(pag);
+    if('Err' in res) {
+        throw new Error(res.Err);
+    }
+    return res.Ok; 
+};
+
 export const nftColFindActive = async (
     main: Main,
     pag: Pagination

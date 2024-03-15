@@ -28,9 +28,9 @@ export const Games = (props: Props) => {
         <>
             <PageTitle 
                 title="All Games"
-                icon={<IconGoGame size="4rem" /> }
+                icon={IconGoGame}
             >
-                <Button>New</Button>
+                <Button>Publish</Button>
             </PageTitle>
 
             <Grid>

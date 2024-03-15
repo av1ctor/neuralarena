@@ -1,6 +1,6 @@
 import React from 'react';
 import { Group, UnstyledButton, createStyles, rem, Text, ThemeIcon, Grid } from '@mantine/core';
-import { IconUser, IconKey, IconClipboardList, IconUsersGroup, IconList, IconMoneybag, IconDeviceGamepad } from '@tabler/icons-react';
+import { IconUser, IconDeviceGamepad, IconPhoto } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
 
 const useStyles = createStyles((theme) => ({
@@ -30,7 +30,7 @@ const data = [
         to: "/user/matches"
     },
     {
-        icon: IconMoneybag,
+        icon: IconPhoto,
         title: 'NFTs',
         description: 'Your NFTs',
         to: "/user/nfts"

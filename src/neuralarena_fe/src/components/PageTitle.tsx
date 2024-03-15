@@ -1,22 +1,27 @@
 import React, { ReactElement } from 'react';
-import { Card, Center, Group, Stack, Text } from '@mantine/core';
+import { Card, Center, Group, Stack, Text, ThemeIcon, useMantineTheme } from '@mantine/core';
+import { TablerIconsProps } from '@tabler/icons-react';
 
 interface Props {
     title: string;
-    icon: ReactElement;
+    icon: (props: TablerIconsProps) => JSX.Element;
     children?: ReactElement|ReactElement[];
 };
 
 export const PageTitle = (props: Props) => {
+    const theme = useMantineTheme();
+    
     return (
         <Card withBorder radius="md" p="xl" mb="lg" shadow="sm">
             <Group noWrap spacing="xl" position="apart">
                 <Stack>
                     <Center>
-                        {props.icon} 
+                        <ThemeIcon size="5rem" variant='default' radius="md">
+                            <props.icon size="4rem" color={theme.fn.primaryColor()} />
+                        </ThemeIcon>
                     </Center>
                     <Center>
-                        <Text fz="lg" className="card-title" fw={500}>
+                        <Text fz="lg" fw={500} color={theme.primaryColor}>
                             {props.title}
                         </Text>
                     </Center>

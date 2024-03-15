@@ -115,6 +115,27 @@ impl NftCollectionsService {
         Ok((*nft).clone())
     }
 
+    pub fn find_all(
+        pag: Pagination,
+        db: &DB,
+        _caller: &Principal
+    ) -> Result<Vec<NftCollection>, String> {
+        let nfts = db.nft_cols.borrow();
+        
+        let mut arr = nfts.data.0.iter()
+            .map(|v| v.1)
+            .cloned()
+            .collect::<Vec<_>>();
+
+        arr.sort_by(|a, b| b.meta.name.cmp(&a.meta.name));
+        
+        Ok(arr.iter()
+            .skip(pag.offset as usize)
+            .take(pag.limit as usize)
+            .cloned()
+            .collect())
+    }
+
     pub fn find_active(
         pag: Pagination,
         db: &DB,

@@ -14,7 +14,7 @@ const Profile = () => {
         <>
             <PageTitle 
                 title="Your Profile"
-                icon={<IconUser size="4rem" /> }
+                icon={IconUser}
             >
             </PageTitle>
 

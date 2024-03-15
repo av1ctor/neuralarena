@@ -448,6 +448,20 @@ fn nft_col_find_by_id(
 }
 
 #[ic_cdk::query]
+fn nft_col_find_all(
+    pag: Pagination
+) -> Result<Vec<NftCollectionResponse>, String> {
+    let caller = caller();
+
+    DB.with(|db| {
+        match NftCollectionsService::find_all(pag, &db.borrow(), &caller) {
+            Ok(list) => Ok(list.iter().map(|e| e.clone().into()).collect()),
+            Err(msg) => Err(msg)
+        }
+    })
+}
+
+#[ic_cdk::query]
 fn nft_col_find_active(
     pag: Pagination
 ) -> Result<Vec<NftCollectionResponse>, String> {

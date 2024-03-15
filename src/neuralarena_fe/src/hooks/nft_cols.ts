@@ -1,7 +1,15 @@
-import { UseInfiniteQueryResult, UseQueryResult, useInfiniteQuery, useMutation, useQuery, useQueryClient } from "react-query";
-import { NftCollectionRequest, NftCollectionResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
+import { 
+    UseInfiniteQueryResult, UseQueryResult, useInfiniteQuery, 
+    useMutation, useQuery, useQueryClient 
+} from "react-query";
+import { 
+    NftCollectionRequest, NftCollectionResponse 
+} from "@declarations/neuralarena_be/neuralarena_be.did";
 import { useActors } from "./actors";
-import { NftCollectionId, nftColCreate, nftColFindActive, nftColFindById } from "@libs/nft_cols";
+import { 
+    NftCollectionId, nftColCreate, nftColFindActive, 
+    nftColFindAll, nftColFindById 
+} from "@libs/nft_cols";
 
 interface NftCollectionMethods {
     create: (req: NftCollectionRequest) => Promise<NftCollectionResponse>;
@@ -45,13 +53,29 @@ export const useNftCollectionFindById = (
     );
 }; 
 
-export const useNftCollectionFindActive = (
+export const useNftCollectionFindAll = (
     limit: number
 ): UseInfiniteQueryResult<NftCollectionResponse[], Error> => {
     const {main} = useActors();
 
     return useInfiniteQuery<NftCollectionResponse[], Error>(
         ['nft_cols', limit], 
+        ({pageParam = 0}) => nftColFindAll(main, {offset: pageParam, limit}),
+        {
+            getNextPageParam: (lastPage, pages) => 
+                lastPage.length < limit?
+                    undefined:
+                pages.length * limit
+        }
+    );
+};
+export const useNftCollectionFindActive = (
+    limit: number
+): UseInfiniteQueryResult<NftCollectionResponse[], Error> => {
+    const {main} = useActors();
+
+    return useInfiniteQuery<NftCollectionResponse[], Error>(
+        ['nft_cols-active', limit], 
         ({pageParam = 0}) => nftColFindActive(main, {offset: pageParam, limit}),
         {
             getNextPageParam: (lastPage, pages) => 

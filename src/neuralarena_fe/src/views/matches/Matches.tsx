@@ -28,7 +28,7 @@ export const Matches = (props: Props) => {
         <>
             <PageTitle 
                 title="All Matches"
-                icon={<IconDeviceGamepad size="4rem" /> }
+                icon={IconDeviceGamepad}
             >
                 <Button>New</Button>
             </PageTitle>

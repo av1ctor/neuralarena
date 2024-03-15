@@ -15,6 +15,7 @@ import { UserNfts } from "@views/users/user/Nfts";
 import { UserMatches } from "@views/users/user/Matches";
 import { Matches } from "@views/matches/Matches";
 import { Games } from "@views/games/Games";
+import { NftCollections } from "@views/nft_cols/Collections";
 
 interface Props {
 }
@@ -43,6 +44,7 @@ const Home = (props: Props) => {
 
                 <Container size="md">
                     <Routes>
+                        <Route path="/nfts" element={<NftCollections />} />
                         <Route path="/games" element={<Games />} />
                         <Route path="/games/:id" element={<Game />} />
                         <Route path="/matches" element={<Matches />} />

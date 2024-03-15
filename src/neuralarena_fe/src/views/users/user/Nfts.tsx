@@ -1,8 +1,8 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Nft } from "@views/nfts/Nft";
+import { Nft } from "@views/nfts/nft/Nft";
 import { useAuth } from "@hooks/auth";
 import { ActionIcon, Button, Center, Grid, Group, Space } from "@mantine/core";
-import { IconMoneybag, IconTrash } from "@tabler/icons-react";
+import { IconPhoto, IconTrash } from "@tabler/icons-react";
 import { ConfirmDialog } from "@components/ConfirmDialog";
 import { DrawerPanel } from "@components/DrawerPanel";
 import { useDisclosure } from "@mantine/hooks";
@@ -120,7 +120,7 @@ export const UserNfts = (props: Props) => {
         <>
             <PageTitle 
                 title="Your NFT's"
-                icon={<IconMoneybag size="4rem" /> }
+                icon={IconPhoto}
             >
             </PageTitle>
 
@@ -129,6 +129,7 @@ export const UserNfts = (props: Props) => {
                     <Grid.Col 
                         key={index} 
                         sm={6}
+                        md={4}
                     >
                         <Nft nft={nft}>
                             <Group mt="md" position="right">
