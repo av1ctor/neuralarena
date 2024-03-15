@@ -431,24 +431,27 @@ export class ThreeRenderer {
         
         // health bar
         const healthGeo = new THREE.BoxGeometry(HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT, 1.0);
-        const healthMat = new THREE.MeshBasicMaterial({
-            color: 0x00ff00,
-            opacity: 0.5,
-            transparent: true,
-        });
-
-        const healthGeoBorder = new THREE.WireframeGeometry(
-            new THREE.BoxGeometry(HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT, 1.0)
+        const healthBar = new THREE.Mesh(
+            healthGeo, 
+            new THREE.MeshBasicMaterial({
+                color: 0x00ff00,
+            })
         );
-
-        const healthBar = new THREE.Mesh(healthGeo, healthMat);
         healthBar.position.copy(obj.position);
         healthBar.position.y = 200.0;
         bar.add(healthBar);
 
-        const healthBarBorder = new THREE.LineSegments(healthGeoBorder);
+        const healthBarBorder = new THREE.Mesh(
+            healthGeo,
+            new THREE.MeshBasicMaterial({
+                color: 0xffffff,
+                opacity: 0.5,
+                transparent: true,
+            })
+        );
         healthBarBorder.position.copy(obj.position);
         healthBarBorder.position.y = 200.0;
+        healthBarBorder.position.z = -1.0;
         bar.add(healthBarBorder);
 
         // player id
