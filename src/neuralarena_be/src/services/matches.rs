@@ -46,6 +46,7 @@ impl MatchesService {
             Err(msg) => Err(msg),
             Ok(id) => {
                 m4tch.instance.id = id;
+                m4tch.instance.map_id = m4tch.game.map_id;
                 Ok(m4tch)
             }
         } 

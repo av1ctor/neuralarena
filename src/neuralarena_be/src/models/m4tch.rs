@@ -32,6 +32,7 @@ pub enum MatchStatus {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct MatchGameInstance {
     pub id: String,
+    pub map_id: usize,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -100,6 +101,7 @@ impl Match {
             },
             instance: MatchGameInstance {
                 id: "".to_string(),
+                map_id: 0,
             },
             created_at: ic_cdk::api::time(),
             created_by: caller.clone(),

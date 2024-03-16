@@ -1,6 +1,6 @@
-import React, { forwardRef, useMemo } from "react";
+import React, { useMemo } from "react";
 import * as yup from 'yup';
-import { Space, Select, Group, Avatar, Text } from "@mantine/core";
+import { Space, Select } from "@mantine/core";
 import { useAuth } from "@hooks/auth";
 import { NFT } from "@libs/nas1";
 import { useForm, yupResolver } from "@mantine/form";
@@ -8,29 +8,8 @@ import { Principal } from "@dfinity/principal";
 import { useNftCollectionFindActive } from "@hooks/nft_cols";
 import { useNAS1FindTokensOf } from "@hooks/nas1";
 import { ListNfts } from "./List";
+import { SelectItem } from "@components/SelectItem";
 
-interface ItemProps extends React.ComponentPropsWithoutRef<'div'> {
-    image: string;
-    label: string;
-    description: string;
-}
-  
-const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
-    ({ image, label, description, ...others }: ItemProps, ref) => (
-        <div ref={ref} {...others}>
-            <Group noWrap>
-                <Avatar src={image} />
-                <div>
-                    <Text size="sm">{label}</Text>
-                    <Text size="xs" opacity={0.65}>
-                        {description}
-                    </Text>
-                </div>
-            </Group>
-        </div>
-    )
-);
-  
 const schema = {
     collection_id: yup.object().required(),
 };
@@ -90,17 +69,20 @@ export const SelectNft = (props: Props) => {
             return [];
         }
 
-        return user_tokens.data.pages.flatMap((p) => p);
+        return user_tokens.data.pages
+            .flatMap((p) => p);
     }, [user_tokens.data]);
 
     if(!isLogged) {
         return null;
     }
 
-    const nfts = user_tokens_data.map(token => ({
-        collection_id: Principal.fromText(form.values.collection_id),
-        token_id: token.tokenId
-    }));
+    const nfts = useMemo(() => { 
+        return user_tokens_data.map(token => ({
+            collection_id: Principal.fromText(form.values.collection_id),
+            token_id: token.tokenId
+        }));
+    }, [user_tokens_data, form.values.collection_id]);
     
     return (
         <form>

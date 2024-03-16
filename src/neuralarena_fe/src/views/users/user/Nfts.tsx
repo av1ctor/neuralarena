@@ -39,7 +39,7 @@ export const UserNfts = (props: Props) => {
             if(nfts.find(n => 
                 n.collection_id.compareTo(toAdd.collection_id) === 'eq' && 
                 n.token_id === toAdd.token_id)) {
-                showError("Token duplicated");
+                showError("Duplicated token");
                 return;
             }
             
@@ -105,7 +105,10 @@ export const UserNfts = (props: Props) => {
     useEffect(() => {
         if(user) {
             setNfts(
-                user.nfts.map(n => ({collection_id: n.collection_id, token_id: n.token_id}))
+                user.nfts.map(n => ({
+                    collection_id: n.collection_id, 
+                    token_id: n.token_id
+                }))
             );
         }
     }, [user?.id]);

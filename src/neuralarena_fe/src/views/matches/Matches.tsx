@@ -5,6 +5,9 @@ import { IconDeviceGamepad } from "@tabler/icons-react";
 import { useUI } from "@hooks/ui";
 import { useMatchFindAll } from "@hooks/matches";
 import { PageTitle } from "@components/PageTitle";
+import { DrawerPanel } from "@components/DrawerPanel";
+import { useDisclosure } from "@mantine/hooks";
+import { MatchCreate } from "./match/Create";
 
 interface Props {
 }
@@ -13,6 +16,7 @@ const ITEMS_PER_PAGE = 6;
 
 export const Matches = (props: Props) => {
     const {toggleLoading} = useUI();
+    const [opened, {open, close}] = useDisclosure(false);
 
     const matches = useMatchFindAll(ITEMS_PER_PAGE);
 
@@ -28,7 +32,11 @@ export const Matches = (props: Props) => {
                 title="All Matches"
                 icon={IconDeviceGamepad}
             >
-                <Button>Create</Button>
+                <Button
+                    onClick={open}
+                >
+                    New
+                </Button>
             </PageTitle>
 
             <Grid>
@@ -55,6 +63,16 @@ export const Matches = (props: Props) => {
                     More
                 </Button>
             </Center>
+
+            <DrawerPanel
+                title="Create a new match"
+                opened={opened}
+                onClose={close}
+            >
+                <MatchCreate
+                    onClose={close}
+                />
+            </DrawerPanel>
         </>
     );
   }
