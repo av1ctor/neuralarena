@@ -25,6 +25,7 @@ const useStyles = createStyles((theme) => ({
     name: {
         position: 'relative',
         color: theme.colorScheme === "dark"? theme.white: theme.black,
+        fontSize: '.8rem',
         textTransform: 'uppercase',
         overflow: 'visible',
         ":before": {
@@ -42,6 +43,7 @@ const useStyles = createStyles((theme) => ({
         position: 'relative',
         color: theme.colorScheme === "dark"? theme.white: theme.black,
         float: 'right',
+        fontSize: '.8rem',
         textTransform: 'uppercase',
         overflow: 'visible',
         ":before": {
@@ -102,7 +104,7 @@ export const Card = (props: Props) => {
                     <Badge 
                         className={classes.name} 
                         size="xl"
-                        variant="gradient"
+                        variant="light"
                     >
                         {game.data?.info.name}
                     </Badge>
@@ -121,23 +123,20 @@ export const Card = (props: Props) => {
             <div>&nbsp;</div>
             <Container w='100%'>
                 <div>
-                    <Text>Players:</Text>
-                </div>
-                <div>
                     <Slider
                         value={match.players.length}
-                        label={`Current: ${match.players.length}`}
+                        label={`Players: ${match.players.length}`}
                         min={0}
                         max={16}
                         marks={[
-                            { value: min_players, label: `Min: ${min_players.toString()}` },
-                            { value: max_players, label: `Max: ${max_players.toString()}` },
+                            { value: min_players, label: `Min: ${min_players}` },
+                            { value: max_players, label: `Max: ${max_players}` },
                         ]}
                     />
                 </div>
                 <Space h='xl' />
                 <div>
-                    <Text>Created: <TimeFromNow date={match.created_at} /> ago</Text>
+                    <Text><TimeFromNow date={match.created_at} /> ago</Text>
                 </div>
             </Container>
             <Container>

@@ -75,10 +75,9 @@ const AppHeader = (props: Props) => {
             <Header height={60} px="md" zIndex={101}>
                 <Group position="apart" sx={{ height: '100%' }}>
                     <Group sx={{ height: '100%' }} spacing={0} className={classes.hiddenMobile}>
-                        <img src={neuralArenaLogo} />
 
                         <a href="#" className={classes.link}>
-                            <IconHome2 size="1rem" />&nbsp;Home
+                            <img src={neuralArenaLogo} />
                         </a>
 
                         <a href="#/nfts" className={classes.link}>
@@ -128,17 +127,17 @@ const AppHeader = (props: Props) => {
                 onClose={closeDrawer}
                 size="100%"
                 padding="md"
-                title={<img src={neuralArenaLogo} />}
+                title={
+                    <a href="#" className={classes.link} onClick={closeDrawer}>
+                        <img src={neuralArenaLogo} />
+                    </a>
+                }
                 className={classes.hiddenDesktop}
                 zIndex={1000000}
             >
                 <ScrollArea h={`calc(100vh - ${rem(60)})`} mx="-md">
                     <Divider my="sm" color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'} />
         
-                    <a href="#" className={classes.link} onClick={closeDrawer}>
-                        <IconHome2 size="1rem" />&nbsp;Home
-                    </a>
-
                     <Link to="/nfts" className={classes.link} onClick={closeDrawer}>
                         <IconGoGame size="1rem" />&nbsp;NFT's
                     </Link>

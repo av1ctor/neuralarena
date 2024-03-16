@@ -49,8 +49,6 @@ const useStyles = createStyles((theme) => ({
     },
     canvas: {
         display: 'block',
-        border: '1px solid #ccc',
-        borderRadius: '4px',
         margin: 'auto',
     },
     credits_ctn: {
