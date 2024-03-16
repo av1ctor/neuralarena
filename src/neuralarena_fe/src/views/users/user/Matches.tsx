@@ -6,6 +6,9 @@ import { useUserFindMatches } from "@hooks/users";
 import { IconDeviceGamepad } from "@tabler/icons-react";
 import { useUI } from "@hooks/ui";
 import { PageTitle } from "@components/PageTitle";
+import { DrawerPanel } from "@components/DrawerPanel";
+import { MatchCreate } from "@views/matches/match/Create";
+import { useDisclosure } from "@mantine/hooks";
 
 interface Props {
 }
@@ -15,6 +18,7 @@ const ITEMS_PER_PAGE = 6;
 export const UserMatches = (props: Props) => {
     const {user} = useAuth();
     const {toggleLoading} = useUI();
+    const [opened, {open, close}] = useDisclosure(false);
 
     const matches = useUserFindMatches(user?.id, ITEMS_PER_PAGE);
 
@@ -30,7 +34,11 @@ export const UserMatches = (props: Props) => {
                 title="Your Matches"
                 icon={IconDeviceGamepad}
             >
-                <Button>New</Button>
+                <Button
+                    onClick={open}
+                >
+                    New
+                </Button>
             </PageTitle>
 
             <Grid>
@@ -58,6 +66,16 @@ export const UserMatches = (props: Props) => {
                     More
                 </Button>
             </Center>
+
+            <DrawerPanel
+                title="Create a new match"
+                opened={opened}
+                onClose={close}
+            >
+                <MatchCreate
+                    onClose={close}
+                />
+            </DrawerPanel>
         </>
     );
   }
