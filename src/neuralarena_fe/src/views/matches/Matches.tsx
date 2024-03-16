@@ -28,7 +28,7 @@ export const Matches = (props: Props) => {
                 title="All Matches"
                 icon={IconDeviceGamepad}
             >
-                <Button>New</Button>
+                <Button>Create</Button>
             </PageTitle>
 
             <Grid>

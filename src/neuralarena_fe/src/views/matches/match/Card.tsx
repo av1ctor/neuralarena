@@ -15,11 +15,10 @@ const useStyles = createStyles((theme) => ({
         alignItems: 'flex-start',
         color: theme.colorScheme === "dark"? theme.white: theme.black,
         backgroundPosition: 'center',
-        backgroundBlendMode: theme.colorScheme === "dark"? 'soft-light': 'normal',
+        backgroundBlendMode: theme.colorScheme === "dark"? 'soft-light': 'hard-light',
         position: 'relative',
-
         ':hover': {
-            backgroundBlendMode: theme.colorScheme === "dark"? 'normal': 'hard-light',
+            backgroundBlendMode: 'normal',
         },
     },
 

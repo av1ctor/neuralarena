@@ -12,7 +12,7 @@ export const PageTitle = (props: Props) => {
     const theme = useMantineTheme();
     
     return (
-        <Card withBorder radius="md" p="xl" mb="lg" shadow="sm">
+        <Card radius="md" p="xl" mb="lg" shadow="sm">
             <Group noWrap spacing="xl" position="apart">
                 <Stack>
                     <Center>
