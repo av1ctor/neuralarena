@@ -1,30 +1,23 @@
-import React, { useCallback } from "react";
-import { Grid, Button, Center } from "@mantine/core";
-import { Card as MatchCard } from "@views/matches/match/Card";
+import React from "react";
+import { Button } from "@mantine/core";
 import { IconDeviceGamepad } from "@tabler/icons-react";
-import { useUI } from "@hooks/ui";
 import { useMatchFindAll } from "@hooks/matches";
 import { PageTitle } from "@components/PageTitle";
 import { DrawerPanel } from "@components/DrawerPanel";
 import { useDisclosure } from "@mantine/hooks";
 import { MatchCreate } from "./match/Create";
+import { MatchesGrid } from "./Grid";
+import { InfinitePaging } from "@components/InfinitePaging";
 
 interface Props {
 }
 
 const ITEMS_PER_PAGE = 6;
 
-export const Matches = (props: Props) => {
-    const {toggleLoading} = useUI();
+export const AllMatches = (props: Props) => {
     const [opened, {open, close}] = useDisclosure(false);
 
     const matches = useMatchFindAll(ITEMS_PER_PAGE);
-
-    const handleNextPage = useCallback(() => {
-        toggleLoading(true);
-        matches.fetchNextPage();
-        toggleLoading(false);
-    }, [matches]);
 
     return (
         <>
@@ -39,30 +32,13 @@ export const Matches = (props: Props) => {
                 </Button>
             </PageTitle>
 
-            <Grid>
-                {matches.data?.pages?.map((page) => (
-                    page.map((item, index) => 
-                    <Grid.Col 
-                        key={index} 
-                        sm={6}
-                    >
-                        <MatchCard 
-                            match={item}
-                            showView
-                        />
-                    </Grid.Col>
-                )
-            ))}
-            </Grid>
-
-            <Center mt="lg">
-                <Button
-                    disabled={!matches.hasNextPage || matches.isFetchingNextPage}
-                    onClick={handleNextPage}
-                >
-                    More
-                </Button>
-            </Center>
+            <InfinitePaging
+                query={matches}
+            >
+                <MatchesGrid 
+                    matches={matches.data?.pages.flat()} 
+                />
+            </InfinitePaging>
 
             <DrawerPanel
                 title="Create a new match"
@@ -72,7 +48,7 @@ export const Matches = (props: Props) => {
                 <MatchCreate
                     onClose={close}
                 />
-            </DrawerPanel>
+            </DrawerPanel>        
         </>
     );
   }

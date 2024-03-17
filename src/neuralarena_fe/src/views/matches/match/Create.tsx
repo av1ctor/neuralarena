@@ -64,7 +64,7 @@ export const MatchCreate = (props: Props) => {
         }
 
         return gamesQuery.data.pages
-            .flatMap((p) => p)
+            .flat()
             .map(g => ({
                 label: g.info.name,
                 value: g.id,
@@ -79,7 +79,7 @@ export const MatchCreate = (props: Props) => {
         };
 
         return (gamesQuery.data.pages
-            .flatMap((p) => p)
+            .flat()
             .find(g => g.id === form.values.game_id)
             ?.info.maps || [])
             .map(m => ({

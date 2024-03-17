@@ -697,9 +697,9 @@ export class ThreeRenderer {
             if(!this.pov.auto_rotate && this.pov.follow) {
                 this.main.camera.position.lerp(
                     new THREE.Vector3(
-                        player.position.x + 2.5, 
+                        player.position.x + 0.0, 
                         player.position.y + 3.0, 
-                        player.position.z + 2.5
+                        player.position.z - 2.5
                     ),
                     0.5
                 );

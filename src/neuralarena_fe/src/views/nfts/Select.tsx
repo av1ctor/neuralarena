@@ -55,7 +55,7 @@ export const SelectNft = (props: Props) => {
         }
 
         return nft_cols.data.pages
-            .flatMap(p => p)
+            .flat()
             .map(c => ({
                 label: c.meta.name,
                 value: c.id.toString(),
@@ -70,7 +70,7 @@ export const SelectNft = (props: Props) => {
         }
 
         return user_tokens.data.pages
-            .flatMap((p) => p);
+            .flat();
     }, [user_tokens.data]);
 
     if(!isLogged) {

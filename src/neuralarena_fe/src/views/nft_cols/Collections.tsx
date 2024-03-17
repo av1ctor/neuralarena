@@ -1,10 +1,10 @@
-import React, { useCallback } from "react";
-import { Grid, Button, Center } from "@mantine/core";
+import React from "react";
+import { Button } from "@mantine/core";
 import { IconPhoto } from "@tabler/icons-react";
-import { useUI } from "@hooks/ui";
 import { PageTitle } from "@components/PageTitle";
 import { useNftCollectionFindAll } from "@hooks/nft_cols";
-import { NftCollectionCard } from "./Collection/Card";
+import { NftCollectionGrid } from "./Grid";
+import { InfinitePaging } from "@components/InfinitePaging";
 
 interface Props {
 }
@@ -12,15 +12,7 @@ interface Props {
 const ITEMS_PER_PAGE = 6;
 
 export const NftCollections = (props: Props) => {
-    const {toggleLoading} = useUI();
-
-    const nfts = useNftCollectionFindAll(ITEMS_PER_PAGE);
-
-    const handleNextPage = useCallback(() => {
-        toggleLoading(true);
-        nfts.fetchNextPage();
-        toggleLoading(false);
-    }, [nfts]);
+    const cols = useNftCollectionFindAll(ITEMS_PER_PAGE);
 
     return (
         <>
@@ -31,29 +23,13 @@ export const NftCollections = (props: Props) => {
                 <Button>Publish</Button>
             </PageTitle>
 
-            <Grid>
-                {nfts.data?.pages?.map((page) => (
-                    page.map((item, index) => 
-                    <Grid.Col 
-                        key={index} 
-                        sm={12}
-                    >
-                        <NftCollectionCard
-                            col={item}
-                        />
-                    </Grid.Col>
-                )
-            ))}
-            </Grid>
-
-            <Center mt="lg">
-                <Button
-                    disabled={!nfts.hasNextPage || nfts.isFetchingNextPage}
-                    onClick={handleNextPage}
-                >
-                    More
-                </Button>
-            </Center>
+            <InfinitePaging
+                query={cols}
+            >
+                <NftCollectionGrid
+                    cols={cols.data?.pages.flat() || []}
+                />
+            </InfinitePaging>
         </>
     );
   }

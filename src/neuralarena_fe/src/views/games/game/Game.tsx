@@ -3,9 +3,9 @@ import { useParams } from "react-router-dom";
 import { useGameFindById } from "@hooks/games";
 import { GameCard } from "./Card";
 import { Box, Center, SegmentedControl, Space } from "@mantine/core";
-import { Latest } from "@views/matches/Latest";
-import { IconBook, IconDeviceGamepad, IconList, IconQuestionMark, IconVideo } from "@tabler/icons-react";
+import { IconBook, IconDeviceGamepad, IconList, IconVideo } from "@tabler/icons-react";
 import { useBrowser } from "@hooks/browser";
+import { GameMatches } from "./Matches";
 
 const sections = [
     {
@@ -79,7 +79,7 @@ export const Game = (props: Props) => {
                 <Space h="xl" />
 
                 {section === 'matches' &&
-                    <Latest game={game.data} />
+                    <GameMatches game={game.data} />
                 }
 
                 {section === 'score' &&
