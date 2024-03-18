@@ -51,6 +51,7 @@ const useStyles = createStyles((theme) => ({
     canvas: {
         display: 'block',
         margin: 'auto',
+        borderRadius: '8px',
     },
     credits_ctn: {
         display: 'none',

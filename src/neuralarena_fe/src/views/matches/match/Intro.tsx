@@ -8,6 +8,7 @@ const useStyles = createStyles((theme) => ({
     canvas: {
         display: 'block',
         margin: 'auto',
+        borderRadius: '8px',
     },
 }));
 

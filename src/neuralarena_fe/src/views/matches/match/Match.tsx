@@ -7,11 +7,12 @@ import { matchStatusToString } from "@libs/matches";
 import { useUI } from "@hooks/ui";
 import { Watch } from "./Watch";
 import { Avatar } from "@views/users/user/Avatar";
-import { ListNfts } from "@views/nfts/List";
 import { useAuth } from "@hooks/auth";
-import { NFT } from "@libs/nas1";
 import { Intro } from "./Intro";
 import { GameBanner } from "@views/games/game/Banner";
+import { useDisclosure } from "@mantine/hooks";
+import { JoinMatch } from "./Join";
+import { DrawerPanel } from "@components/DrawerPanel";
 
 interface Props {
 }
@@ -21,36 +22,11 @@ export const Match = (props: Props) => {
     const {user, isLogged} = useAuth();
     const {join, start, run} = useMatch()
     const {toggleLoading, showError, showSuccess} = useUI();
+    const [opened, {open, close}] = useDisclosure(false);
     const [pov, setPov] = useState<number|undefined>(undefined);
-    const [nft, setNft] = useState<NFT|undefined>(undefined);
+
     const match = useMatchFindById(id);
     const game = useGameFindById(match?.data?.game.id);
-
-    const handleSelectNft = useCallback(async (nft: NFT) => {
-        setNft(nft);
-    }, []);
-        
-    const handleJoin = useCallback(async () => {
-        if(id && nft) {
-            try {
-                toggleLoading(true);
-                await join({
-                    id, 
-                    nft: {
-                        token_id: nft.token_id,
-                        collection_id: nft.collection_id
-                    }
-                });
-                showSuccess('You have joined this match!');
-            }
-            catch(e) {
-                showError(e);
-            }
-            finally {
-                toggleLoading(false);
-            }
-        }
-    }, [join, id, nft]);
 
     const handleStartAndRun = useCallback(async () => {
         if(id) {
@@ -93,8 +69,6 @@ export const Match = (props: Props) => {
         
         return () => clearInterval(t);
     }, [updateStatus]);
-
-    const nfts = user?.nfts || [];
 
     const status = matchStatusToString(match.data?.status);
     const winner = match.data && match.data.won_by.length > 0?
@@ -155,28 +129,13 @@ export const Match = (props: Props) => {
                     {isLogged?
                         status === 'OPEN' && !joined &&
                             <div>
-                                <div>
-                                    {nfts.length > 0?
-                                        <Center>Please select a NFT to be your player in this match</Center>
-                                    :
-                                        <Center>You have no NFT's in your account. Please add at least one!</Center>
-                                    }
-                                    <ListNfts  
-                                        nfts={nfts}
-                                        selected={nft}
-                                        onClick={handleSelectNft}
-                                    />
-                                </div>
-                                <div>
-                                    <Button
-                                        variant="gradient"
-                                        fullWidth
-                                        disabled={!nft}
-                                        onClick={handleJoin}
-                                    >
-                                        Join
-                                    </Button>
-                                </div>
+                                <Button
+                                    variant="gradient"
+                                    fullWidth
+                                    onClick={open}
+                                >
+                                    Join
+                                </Button>
                             </div>
                     :
                         status === 'OPEN' &&
@@ -198,6 +157,18 @@ export const Match = (props: Props) => {
                     }
                 </Stack>
             </div>
+
+            <DrawerPanel
+                title="Join match"
+                opened={opened}
+                onClose={close}
+            >
+                <JoinMatch
+                    match={match.data}
+                    onClose={close}
+                />
+            </DrawerPanel>
+
         </>
     );
 };
