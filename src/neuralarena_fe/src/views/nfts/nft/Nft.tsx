@@ -27,7 +27,6 @@ export const Nft = (props: Props) => {
             shadow="sm" 
             padding="lg" 
             radius="md" 
-            withBorder
             onClick={handleClick}
         >
             <Card.Section>

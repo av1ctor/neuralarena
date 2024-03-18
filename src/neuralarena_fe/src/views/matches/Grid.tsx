@@ -2,6 +2,7 @@ import { MatchResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { Grid } from "@mantine/core";
 import React from "react";
 import { MatchCard } from "./match/Card";
+import { MatchItem } from "./match/Item";
 
 interface Props {
     matches: MatchResponse[]|undefined;
@@ -15,9 +16,9 @@ export const MatchesGrid = (props: Props) => {
             {matches?.map((item, index) => (
                 <Grid.Col 
                     key={index} 
-                    sm={6}
+                    sm={12}
                 >
-                    <MatchCard 
+                    <MatchItem
                         match={item}
                         showView
                     />

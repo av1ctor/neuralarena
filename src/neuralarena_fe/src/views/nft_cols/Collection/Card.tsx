@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Button, Container, Paper, Text, createStyles, rem } from "@mantine/core";
+import { Card, Container, Text, createStyles, rem } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { NftCollectionResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 
@@ -13,6 +13,11 @@ export const useStyles = createStyles((theme) => ({
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         position: 'relative',
+        ":hover": {
+            backgroundColor: theme.colors.grape,
+            backgroundBlendMode: theme.colorScheme === "dark"? 'soft-light': 'hard-light',
+            cursor: 'pointer',
+        }
     },
   
     title: {
@@ -43,12 +48,13 @@ export const NftCollectionCard = (props: Props) => {
     const { col } = props;
 
     return (
-        <Paper
+        <Card
             shadow="md"
             p="xl"
             radius="md"
             style={{ backgroundImage: `url(${col.meta.logo})` }}
             className={classes.card}
+            onClick={handleView}
         >
             <Container>
                 <Text
@@ -63,16 +69,6 @@ export const NftCollectionCard = (props: Props) => {
                     {col.meta.desc}
                 </Text>
             </Container>
-
-            <Container mt="lg">
-                <Button
-                    variant="gradient"
-                    size="md"
-                    onClick={handleView}
-                >
-                    View
-                </Button>
-            </Container>
-        </Paper>
+        </Card>
     );
 };

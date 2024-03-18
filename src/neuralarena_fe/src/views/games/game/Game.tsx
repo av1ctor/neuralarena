@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useGameFindById } from "@hooks/games";
 import { GameCard } from "./Card";
 import { Box, Center, SegmentedControl, Space } from "@mantine/core";
-import { IconBook, IconDeviceGamepad, IconList, IconVideo } from "@tabler/icons-react";
+import { IconBook, IconDeviceGamepad, IconGlobe, IconList, IconVideo } from "@tabler/icons-react";
 import { useBrowser } from "@hooks/browser";
 import { GameMatches } from "./Matches";
 
@@ -22,7 +22,16 @@ const sections = [
         label: (
           <Center>
             <IconList size="1rem" />
-            <Box ml={10}>Score</Box>
+            <Box ml={10}>Leaderboard</Box>
+          </Center>
+        ),
+    },
+    {
+        value: 'maps',
+        label: (
+          <Center>
+            <IconGlobe size="1rem" />
+            <Box ml={10}>Maps</Box>
           </Center>
         ),
     },
@@ -84,6 +93,10 @@ export const Game = (props: Props) => {
 
                 {section === 'score' &&
                     <div>Score</div>
+                }
+
+                {section === 'maps' &&
+                    <div>Maps</div>
                 }
 
                 {section === 'demo' &&

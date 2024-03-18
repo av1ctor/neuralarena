@@ -1,7 +1,7 @@
 import { GameResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { Grid } from "@mantine/core";
 import React from "react";
-import { GameCard } from "./game/Card";
+import { GameItem } from "./game/Item";
 
 interface Props {
     games: GameResponse[]|undefined;
@@ -17,7 +17,7 @@ export const GamesGrid = (props: Props) => {
                     key={index} 
                     sm={12}
                 >
-                    <GameCard 
+                    <GameItem
                         game={item}
                         showView
                     />
