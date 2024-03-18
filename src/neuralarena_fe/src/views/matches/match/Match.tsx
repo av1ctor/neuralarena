@@ -1,18 +1,18 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Button, Avatar as Avatar_, Space, Stack, Title, Tooltip, Center } from "@mantine/core";
+import { Button, Space, Stack, Title, Center } from "@mantine/core";
 import { useMatchFindById, useMatch } from "@hooks/matches";
 import { useGameFindById } from "@hooks/games";
 import { matchStatusToString } from "@libs/matches";
 import { useUI } from "@hooks/ui";
 import { Watch } from "./Watch";
-import { Avatar } from "@views/users/user/Avatar";
 import { useAuth } from "@hooks/auth";
 import { Intro } from "./Intro";
 import { GameBanner } from "@views/games/game/Banner";
 import { useDisclosure } from "@mantine/hooks";
 import { JoinMatch } from "./Join";
 import { DrawerPanel } from "@components/DrawerPanel";
+import { MatchPlayers } from "./Players";
 
 interface Props {
 }
@@ -71,9 +71,6 @@ export const Match = (props: Props) => {
     }, [updateStatus]);
 
     const status = matchStatusToString(match.data?.status);
-    const winner = match.data && match.data.won_by.length > 0?
-        match.data.won_by[0]?.toString():
-        undefined;
     const joined = match.data && user && 
         match.data.players.find(p => p.id.compareTo(user.id) === 'eq');
 
@@ -87,22 +84,10 @@ export const Match = (props: Props) => {
                     />
                 }
                 <div>
-                    <div>Players:</div>
-                    <Tooltip.Group 
-                        openDelay={300} 
-                        closeDelay={100}
-                    >
-                        <Avatar_.Group spacing="xs">
-                            {match.data?.players.map((player, index) => 
-                                <Avatar 
-                                    key={player.id.toString()} 
-                                    id={player.id}
-                                    isWinner={winner? player.id.toString() === winner: false}
-                                    onClick={() => handleChangePov(index)}
-                                />
-                            )}
-                        </Avatar_.Group>
-                    </Tooltip.Group>
+                    <MatchPlayers
+                        match={match.data}
+                        onChangePov={handleChangePov}
+                    />
                 </div>
                 <Space h="xl" />
                 <Stack spacing="xl">

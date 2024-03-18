@@ -45,7 +45,6 @@ export const JoinMatch = (props: Props) => {
         }
     }, [join, props.match?.id, nft, props.onClose]);
 
-
     const nfts = user?.nfts || [];
     
     return (
