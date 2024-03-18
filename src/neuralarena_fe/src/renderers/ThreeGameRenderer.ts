@@ -16,7 +16,6 @@ const HEALTH_BAR_HEIGHT = 10.0;
 export class ThreeGameRenderer {
     gameAssetLoader: GLTFLoader;
     nftAssetLoader: GLTFLoader;
-    staticLoader: GLTFLoader;
     renderer: THREE.WebGLRenderer;
     main: {
         scene: THREE.Scene;
@@ -72,7 +71,9 @@ export class ThreeGameRenderer {
             },
         };
 
-        this.staticLoader = new GLTFLoader();
+        this.gameAssetLoader = new GLTFLoader(
+            new GameAssetsLoadingManager(game.urls.assets)
+        );
 
         const main = ThreeGameRenderer.#setupMain(this.width, this.height);
         this.main = {
@@ -85,7 +86,7 @@ export class ThreeGameRenderer {
             this.width, 
             this.height, 
             scenes_urls.get("start"),
-            this.staticLoader
+            this.gameAssetLoader
         );
         this.start = {
             visible: false,
@@ -120,9 +121,6 @@ export class ThreeGameRenderer {
 
         this.skipping = false;
 
-        this.gameAssetLoader = new GLTFLoader(
-            new GameAssetsLoadingManager(game.urls.assets)
-        );
         this.nftAssetLoader = new GLTFLoader(
             new NftAssetsLoadingManager()
         );
