@@ -11,6 +11,7 @@ import { ListNfts } from "@views/nfts/List";
 import { useAuth } from "@hooks/auth";
 import { NFT } from "@libs/nas1";
 import { Intro } from "./Intro";
+import { GameBanner } from "@views/games/game/Banner";
 
 interface Props {
 }
@@ -105,6 +106,12 @@ export const Match = (props: Props) => {
     return (
         <>
             <div>
+                {game.data &&
+                    <GameBanner
+                        game={game.data}
+                        isHalf
+                    />
+                }
                 <div>
                     <div>Players:</div>
                     <Tooltip.Group 
@@ -125,6 +132,26 @@ export const Match = (props: Props) => {
                 </div>
                 <Space h="xl" />
                 <Stack spacing="xl">
+                    {match.data && game.data?
+                        (status === 'FINISHED' || status === 'RUNNING')?
+                            <Watch 
+                                game={game.data}
+                                match={match.data}
+                                pov={pov}
+                            />
+                        :
+                            <Intro
+                                game={game.data}
+                            />
+                    :
+                        null   
+                    }
+                    {status === 'RUNNING' &&
+                        <Title order={1}>
+                            Waiting this match to finish...
+                        </Title>
+                    }
+
                     {isLogged?
                         status === 'OPEN' && !joined &&
                             <div>
@@ -168,25 +195,6 @@ export const Match = (props: Props) => {
                                 Start & Run
                             </Button>
                         </div>
-                    }
-                    {match.data && game.data?
-                        (status === 'FINISHED' || status === 'RUNNING')?
-                            <Watch 
-                                game={game.data}
-                                match={match.data}
-                                pov={pov}
-                            />
-                        :
-                            <Intro
-                                game={game.data}
-                            />
-                    :
-                        null   
-                    }
-                    {status === 'RUNNING' &&
-                        <Title order={1}>
-                            Waiting this match to finish...
-                        </Title>
                     }
                 </Stack>
             </div>

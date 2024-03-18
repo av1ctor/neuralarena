@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Paper, createStyles, rem, Container, Text, Center } from "@mantine/core";
+import { Card, createStyles, rem, Container, Text, Center } from "@mantine/core";
 import { GameResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 
 const useStyles = createStyles((theme) => ({
@@ -27,7 +27,7 @@ interface Props {
     isHalf?: boolean;
 }
   
-export const Banner = (props: Props) => {
+export const GameBanner = (props: Props) => {
     const { classes } = useStyles();
 
     const navigate = useNavigate();
@@ -37,7 +37,7 @@ export const Banner = (props: Props) => {
     }, [props.game.id]);
     
     return (
-        <Paper
+        <Card
             shadow="md"
             radius="md"
             style={{ 
@@ -58,6 +58,6 @@ export const Banner = (props: Props) => {
                     </Text>
                 </Center>
             </Container>
-        </Paper>
+        </Card>
     );
 };

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Button, Paper, createStyles, rem, Badge, Container, Text, Center } from "@mantine/core";
+import { Button, createStyles, rem, Badge, Container, Text, Center, Card } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { GameResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 
@@ -54,9 +54,9 @@ export const GameCard = (props: Props) => {
     }, [props.game.id]);
 
     const {info} = props.game;
-    
+
     return (
-        <Paper
+        <Card
             shadow="md"
             p="xl"
             radius="md"
@@ -100,6 +100,6 @@ export const GameCard = (props: Props) => {
                     </Button>
                 }
             </Container>
-        </Paper>
+        </Card>
     );
 };

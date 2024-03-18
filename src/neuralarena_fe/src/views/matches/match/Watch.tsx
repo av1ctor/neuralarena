@@ -17,6 +17,7 @@ import {
     IconWindowMaximize, IconWindowMinimize, 
 } from "@tabler/icons-react";
 import { EndCredits } from "@views/games/game/EndCredits";
+import { useElementSize } from "@mantine/hooks";
 
 const useStyles = createStyles((theme) => ({
     container: {
@@ -86,14 +87,13 @@ interface Props {
 
 const FPS = 60;
 const STEPS_PER_CALL = FPS*10;
-const CANVAS_DIM = {w: 900, h: 506};
+const CANVAS_DEFAULT_DIM = {w: 450, h: 253};
 
 export const Watch = (props: Props) => {
     const {toggleLoading, showError, showSuccess} = useUI();
     const { main } = useActors();
     const { classes, cx } = useStyles();
     const canvas = useRef<HTMLCanvasElement|null>(null);
-    const fullscreenContainer = useRef<HTMLDivElement|null>(null);
     const [assets, setAssets] = useState<Map<number, Asset>|undefined>();
     const [engine, setEngine] = useState<GameEngine>();
     const [renderer, setRenderer] = useState<ThreeGameRenderer>();
@@ -103,7 +103,8 @@ export const Watch = (props: Props) => {
     const [endCredits, setEndCredits] = useState<GameEndCredits|undefined>();
     const [endCreditsVisible, setEndCreditsVisible] = useState(false);
     const [matchProgress, setMatchProgress] = useState(0.0);
-    const [canvasDim, setCanvasDim] = useState(CANVAS_DIM);
+    const { ref, width } = useElementSize();
+    const [dim, setDim] = useState(CANVAS_DEFAULT_DIM);
 
     const assetsLoading = useRef(false);
     const engineLoading = useRef(false);
@@ -143,8 +144,8 @@ export const Watch = (props: Props) => {
 
     const handleToggleFullscreen = useCallback(() => {
         if(!document.fullscreenElement) {
-            if(fullscreenContainer.current?.requestFullscreen) {
-                fullscreenContainer.current?.requestFullscreen();
+            if(ref.current?.requestFullscreen) {
+                ref.current?.requestFullscreen();
             }
         } 
         else {
@@ -152,7 +153,7 @@ export const Watch = (props: Props) => {
                 document.exitFullscreen();
             }
         }
-    }, [fullscreenContainer])
+    }, [ref])
 
     const handleSkip = useCallback((e: React.MouseEvent) => {
         const rect = e.currentTarget.getBoundingClientRect();
@@ -204,19 +205,22 @@ export const Watch = (props: Props) => {
         }
     };
 
+    const resizeCanvas = (dim: {w: number, h: number}) => {
+        changeCanvasDim(dim);
+        renderer?.resizeCanvas(dim);
+        setDim(dim);
+    };
+
     const handleFullscreenChanged = useCallback(() => {
         if (document.fullscreenElement) {
             const ratio = (canvas.current?.width||0) / (canvas.current?.height||1);
             if(canvas.current) {
                 const h = document.fullscreenElement.clientHeight;
                 const w = h * ratio;
-                setCanvasDim({w, h});
+                resizeCanvas({w, h});
             }
-        }
-        else {
-            setCanvasDim(CANVAS_DIM);
-        }
-    }, [canvas]);
+        }   
+    }, [canvas, renderer]);
 
     useEffect(() => {
         document.addEventListener('fullscreenchange', handleFullscreenChanged);
@@ -224,9 +228,11 @@ export const Watch = (props: Props) => {
     }, [handleFullscreenChanged]);
 
     useEffect(() => {
-        changeCanvasDim(canvasDim);
-        renderer?.resizeCanvas(canvasDim);
-    }, [canvasDim, renderer]);
+        if(!document.fullscreenElement) {
+            const height = width / (16.0/9.0);
+            resizeCanvas({w: width, h: height});
+        }
+    }, [width, renderer]);
 
     useEffect(() => {
         if(canvas.current && !renderer) {
@@ -379,16 +385,17 @@ export const Watch = (props: Props) => {
 
     return (
         <Center                 
-            ref={fullscreenContainer} 
+            ref={ref} 
         >
             <div
-                className={classes.container}>
+                className={classes.container}
+            >
                 <canvas 
                     ref={canvas}
                     className={classes.canvas}
-                    width={canvasDim.w}
-                    height={canvasDim.h}
-                >
+                    width={dim.w}
+                    height={dim.h}
+                    >
                 </canvas>
                 <div 
                     className={cx(classes.credits_ctn, {[classes.visible]: endCreditsVisible})}
