@@ -13,7 +13,7 @@ import { InstanceNpcEntity, InstancePlayerEntity } from '@game-engine/game-engin
 const HEALTH_BAR_WIDTH = 100.0;
 const HEALTH_BAR_HEIGHT = 10.0;
 
-export class ThreeRenderer {
+export class ThreeGameRenderer {
     gameAssetLoader: GLTFLoader;
     nftAssetLoader: GLTFLoader;
     staticLoader: GLTFLoader;
@@ -74,14 +74,14 @@ export class ThreeRenderer {
 
         this.staticLoader = new GLTFLoader();
 
-        const main = ThreeRenderer.#setupMain(this.width, this.height);
+        const main = ThreeGameRenderer.#setupMain(this.width, this.height);
         this.main = {
             scene: main[0],
             camera: main[1]
         };
 
         const scenes_urls = new Map(game.urls.scenes)
-        const start = ThreeRenderer.#setupStart(
+        const start = ThreeGameRenderer.#setupStart(
             this.width, 
             this.height, 
             scenes_urls.get("start"),
@@ -94,7 +94,7 @@ export class ThreeRenderer {
         };
         
         this.renderer = new THREE.WebGLRenderer(
-            canvas? {canvas, antialias: true}: {antialias: true});
+            {canvas, antialias: true});
         this.renderer.autoClear = false;
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.VSMShadowMap;
@@ -127,7 +127,7 @@ export class ThreeRenderer {
             new NftAssetsLoadingManager()
         );
 
-        this.fonts = ThreeRenderer.#loadFonts();
+        this.fonts = ThreeGameRenderer.#loadFonts();
         this.statusBars = {
             players: [],
             npcs: []

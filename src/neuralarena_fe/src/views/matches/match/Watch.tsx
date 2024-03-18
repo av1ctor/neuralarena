@@ -5,7 +5,7 @@ import {
     GameResponse, GameEndCredits 
 } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { useMatchGetSteps } from "@hooks/matches";
-import { ThreeRenderer } from "@renderers/ThreeRenderer";
+import { ThreeGameRenderer } from "@renderers/ThreeGameRenderer";
 import { matchGetAssets } from "@libs/matches";
 import { gameGetEndCredits } from "@libs/games";
 import { useActors } from "@hooks/actors";
@@ -96,7 +96,7 @@ export const Watch = (props: Props) => {
     const fullscreenContainer = useRef<HTMLDivElement|null>(null);
     const [assets, setAssets] = useState<Map<number, Asset>|undefined>();
     const [engine, setEngine] = useState<GameEngine>();
-    const [renderer, setRenderer] = useState<ThreeRenderer>();
+    const [renderer, setRenderer] = useState<ThreeGameRenderer>();
     const [state, setState] = useState<WatchState>(WatchState.LOADING);
     const [, setAssetsLoadingProgress] = useState(0);
     const [, setEngineLoadingProgress] = useState(0);
@@ -230,7 +230,7 @@ export const Watch = (props: Props) => {
 
     useEffect(() => {
         if(canvas.current && !renderer) {
-            const renderer = new ThreeRenderer(
+            const renderer = new ThreeGameRenderer(
                 canvas.current, 
                 props.game.info,
                 props.match.players

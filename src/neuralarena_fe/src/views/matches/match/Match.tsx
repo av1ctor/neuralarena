@@ -10,6 +10,7 @@ import { Avatar } from "@views/users/user/Avatar";
 import { ListNfts } from "@views/nfts/List";
 import { useAuth } from "@hooks/auth";
 import { NFT } from "@libs/nas1";
+import { Intro } from "./Intro";
 
 interface Props {
 }
@@ -168,16 +169,19 @@ export const Match = (props: Props) => {
                             </Button>
                         </div>
                     }
-                    {(status === 'FINISHED' || status === 'RUNNING') &&
-                        <Stack>
-                            {match.data && game.data &&
-                                <Watch 
-                                    game={game.data}
-                                    match={match.data}
-                                    pov={pov}
-                                />
-                            }
-                        </Stack>
+                    {match.data && game.data?
+                        (status === 'FINISHED' || status === 'RUNNING')?
+                            <Watch 
+                                game={game.data}
+                                match={match.data}
+                                pov={pov}
+                            />
+                        :
+                            <Intro
+                                game={game.data}
+                            />
+                    :
+                        null   
                     }
                     {status === 'RUNNING' &&
                         <Title order={1}>
