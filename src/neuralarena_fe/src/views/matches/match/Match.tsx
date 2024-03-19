@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Button, Space, Stack, Title, Center } from "@mantine/core";
+import { Button, Space, Stack, Title, Center, Box, SegmentedControl, createStyles } from "@mantine/core";
 import { useMatchFindById, useMatch } from "@hooks/matches";
 import { useGameFindById } from "@hooks/games";
 import { matchStatusToString } from "@libs/matches";
@@ -13,20 +13,76 @@ import { useDisclosure } from "@mantine/hooks";
 import { JoinMatch } from "./Join";
 import { DrawerPanel } from "@components/DrawerPanel";
 import { MatchPlayers } from "./Players";
+import { IconBook, IconDeviceTv, IconList, IconUsersGroup } from "@tabler/icons-react";
+import { useBrowser } from "@hooks/browser";
+
+const useStyles = createStyles((theme) => ({
+    block: {
+        display: 'block',
+    },
+    none: {
+        display: 'none',
+    }
+}));
 
 interface Props {
 }
 
 export const Match = (props: Props) => {
     const {id} = useParams();
+    const {isMobile} = useBrowser();
     const {user, isLogged} = useAuth();
     const {join, start, run} = useMatch()
     const {toggleLoading, showError, showSuccess} = useUI();
     const [opened, {open, close}] = useDisclosure(false);
     const [pov, setPov] = useState<number|undefined>(undefined);
+    const [section, setSection] = useState('watch');
+    const { classes } = useStyles();
 
     const match = useMatchFindById(id);
     const game = useGameFindById(match?.data?.game.id);
+
+    const joined = match.data && user && 
+        match.data.players.find(p => p.id.compareTo(user.id) === 'eq');
+
+    const sections = useMemo(() => [
+        {
+            value: 'watch',
+            label: (
+              <Center>
+                <IconDeviceTv size="1rem" />
+                <Box ml={10}>{joined? 'Watch': 'Join'}</Box>
+              </Center>
+            ),
+        },
+        {
+            value: 'players',
+            label: (
+              <Center>
+                <IconUsersGroup size="1rem" />
+                <Box ml={10}>Players</Box>
+              </Center>
+            ),
+        },
+        {
+            value: 'result',
+            label: (
+              <Center>
+                <IconList size="1rem" />
+                <Box ml={10}>Result</Box>
+              </Center>
+            ),
+        },
+        {
+            value: 'about',
+            label: (
+              <Center>
+                <IconBook size="1rem" />
+                <Box ml={10}>About</Box>
+              </Center>
+            ),
+        },
+    ], [joined]);
 
     const handleStartAndRun = useCallback(async () => {
         if(id) {
@@ -71,8 +127,6 @@ export const Match = (props: Props) => {
     }, [updateStatus]);
 
     const status = matchStatusToString(match.data?.status);
-    const joined = match.data && user && 
-        match.data.players.find(p => p.id.compareTo(user.id) === 'eq');
 
     return (
         <>
@@ -83,15 +137,21 @@ export const Match = (props: Props) => {
                         isHalf
                     />
                 }
-                <div>
-                    <MatchPlayers
-                        match={match.data}
-                        game={game.data}
-                        onChangePov={status === 'FINISHED'? handleChangePov: undefined}
-                    />
-                </div>
+                
                 <Space h="xl" />
-                <Stack spacing="xl">
+
+                <SegmentedControl
+                    orientation={isMobile? "vertical": "horizontal"}
+                    fullWidth
+                    color="magenta"
+                    data={sections}
+                    value={section}
+                    onChange={setSection}
+                />
+
+                <Space h="xl" />
+
+                <Stack className={section === 'watch'? classes.block: classes.none}>
                     {match.data && game.data?
                         (status === 'FINISHED' || status === 'RUNNING')?
                             <Watch 
@@ -106,15 +166,10 @@ export const Match = (props: Props) => {
                     :
                         null   
                     }
-                    {status === 'RUNNING' &&
-                        <Title order={1}>
-                            Waiting this match to finish...
-                        </Title>
-                    }
 
                     {isLogged?
                         status === 'OPEN' && !joined &&
-                            <div>
+                            <Box mt="xl">
                                 <Button
                                     variant="gradient"
                                     fullWidth
@@ -122,16 +177,17 @@ export const Match = (props: Props) => {
                                 >
                                     Join
                                 </Button>
-                            </div>
+                            </Box>
                     :
                         status === 'OPEN' &&
                             <Center>
                                 Please log in or sign up to be able to participate!
                             </Center>
                     }
-                    {isLogged &&
+
+                    {isLogged && joined &&
                         status === 'OPEN' &&
-                        <div>
+                        <Box mt="xl">
                             <Button
                                 variant="gradient"
                                 fullWidth
@@ -139,9 +195,31 @@ export const Match = (props: Props) => {
                             >
                                 Start & Run
                             </Button>
-                        </div>
+                        </Box>
                     }
                 </Stack>
+
+                {section === 'players' && 
+                    <div>
+                        <MatchPlayers
+                            match={match.data}
+                            game={game.data}
+                            onChangePov={status === 'FINISHED'? handleChangePov: undefined}
+                        />
+                    </div>
+                }
+
+                {section === 'result' && 
+                    <div>
+                        Result
+                    </div>
+                }
+
+                {section === 'about' && 
+                    <div>
+                        About
+                    </div>
+                }
             </div>
 
             <DrawerPanel
