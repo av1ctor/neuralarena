@@ -29,14 +29,28 @@ export class LoadingBar {
 
     static #buildIndicator(
     ): THREE.Mesh {
-        const geo = new THREE.BoxGeometry(0.0, 0.25, 0.1);
-        const bar = new THREE.Mesh(
-            geo, 
+        const bb = new THREE.Mesh(
+            new THREE.BoxGeometry(2.0, 0.1, 0.1), 
+            new THREE.MeshBasicMaterial({
+                color: 0xffffff,
+                opacity: 0.5,
+                transparent: true,
+            })
+
+        );
+        //bb.position.x = -1.0;
+
+        const fb = new THREE.Mesh(
+            new THREE.BoxGeometry(0.0, 0.1, 0.1), 
             new THREE.MeshBasicMaterial({
                 color: 0xff00ff,
             })
         );
-        return bar;
+        fb.position.z = 0.1;
+
+        bb.add(fb);
+
+        return bb;
     }
 
     onProgress(
@@ -46,9 +60,10 @@ export class LoadingBar {
     ) {
         const progress = loaded / total;
         const w = 2.0 * progress;
-        const geo = new THREE.BoxGeometry(w, 0.25, 0.1);
-        this.bar.geometry = geo;
-        this.bar.position.x = -1.0 + w / 2.0;
+        const geo = new THREE.BoxGeometry(w, 0.1, 0.1);
+        const fb = (this.bar.children[0] as THREE.Mesh);
+        fb.geometry = geo;
+        fb.position.x = -1.0 + w / 2.0;
     }
 
     render(
