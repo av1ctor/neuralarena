@@ -18,10 +18,8 @@ export class ThreeGameRenderer {
     gameAssetLoader: GLTFLoader;
     nftAssetLoader: GLTFLoader;
     renderer: THREE.WebGLRenderer;
-    main: {
-        scene: THREE.Scene;
-        camera: THREE.PerspectiveCamera;
-    };
+    scene: THREE.Scene;
+    camera: THREE.PerspectiveCamera;
     start: AnimScene;
     raycaster: THREE.Raycaster;
     controls?: OrbitControls;
@@ -72,11 +70,9 @@ export class ThreeGameRenderer {
             new GameAssetsLoadingManager(game.urls.assets)
         );
 
-        const main = ThreeGameRenderer.#setupMain(this.width, this.height);
-        this.main = {
-            scene: main[0],
-            camera: main[1]
-        };
+        const main = ThreeGameRenderer.#setup(this.width, this.height);
+        this.scene = main[0];
+        this.camera = main[1];
 
         const scenes_urls = new Map(game.urls.scenes)
         this.start = new AnimScene(
@@ -96,7 +92,7 @@ export class ThreeGameRenderer {
         this.renderer.setSize(this.width, this.height);
 
         this.controls = this.renderer.domElement?
-            new OrbitControls(this.main.camera, this.renderer.domElement):
+            new OrbitControls(this.camera, this.renderer.domElement):
             undefined;
         this.raycaster = new THREE.Raycaster();
 
@@ -124,7 +120,7 @@ export class ThreeGameRenderer {
         };
     }
 
-    static #setupMain(
+    static #setup(
         width: number,
         height: number
     ): [THREE.Scene, THREE.PerspectiveCamera] {
@@ -182,7 +178,7 @@ export class ThreeGameRenderer {
             if(player_num >= 0 && player_num < players.length) {
                 if(player_num !== this.pov.player_num || rotate_cam !== this.pov.auto_rotate) {
                     const player = players[player_num];
-                    this.main.camera.position.set(
+                    this.camera.position.set(
                         player.position.x + 0.0, 
                         player.position.y + 5.0, 
                         player.position.z + 5.0
@@ -217,8 +213,8 @@ export class ThreeGameRenderer {
         this.width = dim.w;
         this.height = dim.h;
         this.renderer.setSize(dim.w, dim.h);
-        this.main.camera.aspect = dim.w / dim.h;
-        this.main.camera.updateProjectionMatrix();
+        this.camera.aspect = dim.w / dim.h;
+        this.camera.updateProjectionMatrix();
     }
 
     reset(
@@ -236,7 +232,7 @@ export class ThreeGameRenderer {
         };
 
         if(reset_cam) {
-            this.main.camera.position.set(15.0, 10.0, 15.0);
+            this.camera.position.set(15.0, 10.0, 15.0);
         }
 
         if(reset_pov) {
@@ -329,7 +325,7 @@ export class ThreeGameRenderer {
             const mesh = new THREE.Mesh(geometry, material);
             mesh.visible = false;
             
-            this.main.scene.add(mesh);
+            this.scene.add(mesh);
             this.assets.set(asset_ref, mesh);
         }
         else {
@@ -435,7 +431,7 @@ export class ThreeGameRenderer {
         }
 
         this.models[model_ref] = cloned;
-        this.main.scene.add(cloned)
+        this.scene.add(cloned)
         return model_ref;
     }
 
@@ -596,7 +592,7 @@ export class ThreeGameRenderer {
             player = players[this.pov.player_num];
 
             if(!this.pov.auto_rotate && this.pov.follow) {
-                this.main.camera.position.lerp(
+                this.camera.position.lerp(
                     new THREE.Vector3(
                         player.position.x + 0.0, 
                         player.position.y + 3.0, 
@@ -628,12 +624,12 @@ export class ThreeGameRenderer {
             if(map) {
                 const dir = player.position
                     .clone()
-                    .sub(this.main.camera.position)
+                    .sub(this.camera.position)
                     .normalize()
 
-                this.raycaster.set(this.main.camera.position.clone(), dir);
+                this.raycaster.set(this.camera.position.clone(), dir);
 
-                const maxDistance = this.main.camera.position.distanceTo(player.position);
+                const maxDistance = this.camera.position.distanceTo(player.position);
 
                 intersections = this.raycaster.intersectObject(map);
                 for(const intersection of intersections) {
@@ -663,7 +659,7 @@ export class ThreeGameRenderer {
         }
 
         this.renderer.clear();
-        this.renderer.render(this.main.scene, this.main.camera);
+        this.renderer.render(this.scene, this.camera);
         this.start.render(this.renderer);
 
         if(intersections) {
