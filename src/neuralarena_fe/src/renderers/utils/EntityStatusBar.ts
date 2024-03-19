@@ -1,8 +1,8 @@
 import * as THREE from 'three';
-import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { principalToString } from '@libs/icp';
 import { Font } from 'three/examples/jsm/loaders/FontLoader.js';
 import { Principal } from '@dfinity/principal';
+import { fontBuildText } from '@hooks/font';
 
 export class EntityStatusBar {
     bar: THREE.Object3D<THREE.Object3DEventMap>;
@@ -69,33 +69,8 @@ export class EntityStatusBar {
         font: Font
     ): THREE.Object3D {
         
-        const name = principalToString(playerId);
-        const geo = new TextGeometry(
-            name, 
-            {
-                font,
-                size: 14.0,
-                height: 1.0,
-                curveSegments: 4,
-                bevelThickness: 2,
-                bevelSize: 1.5,
-                bevelEnabled: false
-
-            }
-        );
-        
-        geo.computeBoundingBox();
-
-        const centerOffset = -0.5 * (geo.boundingBox!.max.x - geo.boundingBox!.min.x);
-        const mesh = new THREE.Mesh(
-            geo,
-            new THREE.MeshBasicMaterial({
-                color: 0xffffff,
-            })
-        );
-        mesh.position.x = centerOffset;
+        const mesh = fontBuildText(principalToString(playerId), font);
         mesh.position.y = 20.0;
-
         return mesh;
     }
 

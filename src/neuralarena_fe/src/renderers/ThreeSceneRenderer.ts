@@ -3,6 +3,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { GameInfo } from '@declarations/neuralarena_be/neuralarena_be.did';
 import { GameAssetsLoadingManager } from '@libs/loadingmanager';
 import { LoadingBar } from './utils/LoadingBar';
+import { Font } from 'three/examples/jsm/loaders/FontLoader.js';
 
 export class ThreeSceneRenderer {
     assetLoader: GLTFLoader;
@@ -17,7 +18,8 @@ export class ThreeSceneRenderer {
 
     constructor(
         canvas: HTMLCanvasElement,
-        game: GameInfo
+        game: GameInfo,
+        font: Font
     ) {
         this.width = canvas.width;
         this.height = canvas.height;
@@ -31,7 +33,7 @@ export class ThreeSceneRenderer {
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(this.width, this.height);
 
-        this.loadingBar = new LoadingBar();
+        this.loadingBar = new LoadingBar(font);
 
         this.assetLoader = new GLTFLoader(new GameAssetsLoadingManager(
             game.urls.assets,

@@ -6,7 +6,7 @@ import { MatchPlayerResponse } from "@declarations/neuralarena_be/neuralarena_be
 export class EntityStatusBarManager {
     width: number;
     height: number;
-    fonts: Map<string, Font>;
+    font: Font;
     bars: {
         players: EntityStatusBar[],
         npcs: EntityStatusBar[],
@@ -18,11 +18,11 @@ export class EntityStatusBarManager {
     constructor(
         width: number,
         height: number,
-        fonts: Map<string, Font>
+        font: Font
     ) {
         this.width = width;
         this.height = height;
-        this.fonts = fonts;
+        this.font = font;
         this.bars = {
             players: [],
             npcs: []
@@ -49,7 +49,7 @@ export class EntityStatusBarManager {
         const bar = new EntityStatusBar(
             this.width, 
             this.height, 
-            this.fonts.get('gentilis')!, 
+            this.font, 
             obj, 
             obj.userData.isPlayer? 
                 players[obj.userData.num].id: 

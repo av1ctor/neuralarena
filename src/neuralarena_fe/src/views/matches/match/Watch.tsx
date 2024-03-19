@@ -18,6 +18,7 @@ import {
 } from "@tabler/icons-react";
 import { EndCredits } from "@views/games/game/EndCredits";
 import { useElementSize } from "@mantine/hooks";
+import { useFont } from "@hooks/font";
 
 const useStyles = createStyles((theme) => ({
     container: {
@@ -104,6 +105,7 @@ export const Watch = (props: Props) => {
     const [matchProgress, setMatchProgress] = useState(0.0);
     const { ref, width } = useElementSize();
     const [dim, setDim] = useState(CANVAS_DEFAULT_DIM);
+    const font = useFont('gentilis');
 
     const assetsLoading = useRef(false);
     const engineLoading = useRef(false);
@@ -238,11 +240,12 @@ export const Watch = (props: Props) => {
             const renderer = new ThreeGameRenderer(
                 canvas.current, 
                 props.game.info,
-                props.match.players
+                props.match.players,
+                font
             );
             setRenderer(renderer);
         }
-    }, [canvas.current, renderer, props.game.info, props.match.players]);
+    }, [canvas.current, renderer, props.game.info, props.match.players, font]);
 
     const loadAssets = useCallback(async () => {
         if(renderer && !assetsLoading.current) {

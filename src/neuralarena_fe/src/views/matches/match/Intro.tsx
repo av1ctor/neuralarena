@@ -3,6 +3,7 @@ import { Center, createStyles } from "@mantine/core";
 import { GameResponse} from "@declarations/neuralarena_be/neuralarena_be.did";
 import { ThreeSceneRenderer } from "@renderers/ThreeSceneRenderer";
 import { useElementSize } from "@mantine/hooks";
+import { useFont } from "@hooks/font";
 
 const useStyles = createStyles((theme) => ({
     canvas: {
@@ -24,6 +25,7 @@ export const Intro = (props: Props) => {
     const [renderer, setRenderer] = useState<ThreeSceneRenderer>();
     const [dim, setDim] = useState(CANVAS_DEFAULT_DIM);
     const { ref, width } = useElementSize();
+    const font = useFont('gentilis');
 
     const changeCanvasDim = (dim: {w: number, h: number}) => {
         if(canvas.current) {
@@ -46,11 +48,12 @@ export const Intro = (props: Props) => {
         if(canvas.current && !renderer) {
             const renderer = new ThreeSceneRenderer(
                 canvas.current, 
-                props.game.info
+                props.game.info,
+                font
             );
             setRenderer(renderer);
         }
-    }, [canvas.current, renderer, props.game.info]);
+    }, [canvas.current, renderer, props.game.info, font]);
 
     useLayoutEffect(() => {
         if(renderer) {

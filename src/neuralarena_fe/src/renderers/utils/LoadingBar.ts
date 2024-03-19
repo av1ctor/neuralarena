@@ -1,12 +1,18 @@
 import * as THREE from 'three';
+import { Font } from 'three/examples/jsm/loaders/FontLoader.js';
 
 export class LoadingBar {
     scene: THREE.Scene;
     camera: THREE.Camera;
     bar: THREE.Mesh;
+    font: Font;
+    lastUrl: string|undefined;
 
     constructor(
+        font: Font
     ) {
+        this.font = font;
+
         this.scene = new THREE.Scene();
         this.camera = new THREE.OrthographicCamera(
             -1.0, 1.0, 1.0, -1.0, 0.1, 1.0
@@ -34,7 +40,7 @@ export class LoadingBar {
     }
 
     onProgress(
-        url: string,
+        _url: string,
         loaded: number,
         total: number
     ) {

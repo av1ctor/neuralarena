@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { Font, FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { Font } from 'three/addons/loaders/FontLoader.js';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
 import { Asset, GameInfo, MatchPlayerResponse } from '@declarations/neuralarena_be/neuralarena_be.did';
 import { gameAssetDataTextValue, gameAssetDataU32Value } from '@libs/games';
@@ -34,7 +34,7 @@ export class ThreeGameRenderer {
         auto_rotate: boolean,
     };
     skipping: boolean;
-    fonts: Map<string, Font>;
+    font: Font;
     players: MatchPlayerResponse[];
     entities: {
         players: InstancePlayerEntity[],
@@ -47,7 +47,8 @@ export class ThreeGameRenderer {
     constructor(
         canvas: HTMLCanvasElement,
         game: GameInfo,
-        players: MatchPlayerResponse[]
+        players: MatchPlayerResponse[],
+        font: Font
     ) {
         this.width = canvas.width;
         this.height = canvas.height;
@@ -58,7 +59,7 @@ export class ThreeGameRenderer {
         };
 
         this.loading = true;
-        this.loadingBar = new LoadingBar();
+        this.loadingBar = new LoadingBar(font);
 
         this.gameAssetLoader = new GLTFLoader(
             new GameAssetsLoadingManager(
@@ -112,11 +113,11 @@ export class ThreeGameRenderer {
             )
         );
 
-        this.fonts = ThreeGameRenderer.#loadFonts();
+        this.font = font;
         this.statusMng = new EntityStatusBarManager(
             HEALTH_BAR_WIDTH, 
             HEALTH_BAR_HEIGHT, 
-            this.fonts
+            this.font
         );
     }
 
@@ -154,17 +155,6 @@ export class ThreeGameRenderer {
         scene.add(directionalLight);
 
         return [scene, camera];
-    }
-
-    static #loadFonts(
-    ): Map<string, Font> {
-        const fonts = new Map<string, any>();
-        const loader = new FontLoader();
-        loader.load("/fonts/gentilis.typeface.json", (font) => {
-            fonts.set('gentilis', font);
-        });
-        
-        return fonts;
     }
 
     toggleLoading(
