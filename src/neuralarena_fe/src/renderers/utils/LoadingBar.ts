@@ -1,6 +1,9 @@
 import * as THREE from 'three';
 import { Font } from 'three/examples/jsm/loaders/FontLoader.js';
 
+const BAR_WIDTH = 1.5;
+const BAR_HEIGHT = 0.1;
+
 export class LoadingBar {
     scene: THREE.Scene;
     camera: THREE.Camera;
@@ -14,6 +17,8 @@ export class LoadingBar {
         this.font = font;
 
         this.scene = new THREE.Scene();
+        this.scene.background = new THREE.Color(0x88ccee);
+
         this.camera = new THREE.OrthographicCamera(
             -1.0, 1.0, 1.0, -1.0, 0.1, 1.0
         );
@@ -30,7 +35,7 @@ export class LoadingBar {
     static #buildIndicator(
     ): THREE.Mesh {
         const bb = new THREE.Mesh(
-            new THREE.BoxGeometry(2.0, 0.1, 0.1), 
+            new THREE.BoxGeometry(BAR_WIDTH, BAR_HEIGHT, 0.1), 
             new THREE.MeshBasicMaterial({
                 color: 0xffffff,
                 opacity: 0.5,
@@ -38,10 +43,9 @@ export class LoadingBar {
             })
 
         );
-        //bb.position.x = -1.0;
 
         const fb = new THREE.Mesh(
-            new THREE.BoxGeometry(0.0, 0.1, 0.1), 
+            new THREE.BoxGeometry(0.0, BAR_HEIGHT, 0.1), 
             new THREE.MeshBasicMaterial({
                 color: 0xff00ff,
             })
@@ -59,11 +63,11 @@ export class LoadingBar {
         total: number
     ) {
         const progress = loaded / total;
-        const w = 2.0 * progress;
-        const geo = new THREE.BoxGeometry(w, 0.1, 0.1);
+        const w = BAR_WIDTH * progress;
+        const geo = new THREE.BoxGeometry(w, BAR_HEIGHT, 0.1);
         const fb = (this.bar.children[0] as THREE.Mesh);
         fb.geometry = geo;
-        fb.position.x = -1.0 + w / 2.0;
+        fb.position.x = -(BAR_WIDTH / 2.0) + w / 2.0;
     }
 
     render(

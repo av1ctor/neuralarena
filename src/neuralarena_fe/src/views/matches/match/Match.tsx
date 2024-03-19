@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Button, Space, Stack, Title, Center, Box, SegmentedControl, createStyles } from "@mantine/core";
+import { Button, Space, Stack, Center, Box, SegmentedControl, createStyles, Indicator } from "@mantine/core";
 import { useMatchFindById, useMatch } from "@hooks/matches";
 import { useGameFindById } from "@hooks/games";
 import { matchStatusToString } from "@libs/matches";
@@ -13,7 +13,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { JoinMatch } from "./Join";
 import { DrawerPanel } from "@components/DrawerPanel";
 import { MatchPlayers } from "./Players";
-import { IconBook, IconDeviceTv, IconList, IconUsersGroup } from "@tabler/icons-react";
+import { IconBook, IconDeviceTv, IconDoorEnter, IconList, IconUsersGroup } from "@tabler/icons-react";
 import { useBrowser } from "@hooks/browser";
 
 const useStyles = createStyles((theme) => ({
@@ -50,8 +50,14 @@ export const Match = (props: Props) => {
             value: 'watch',
             label: (
               <Center>
-                <IconDeviceTv size="1rem" />
-                <Box ml={10}>{joined? 'Watch': 'Join'}</Box>
+                {joined? 
+                    <IconDeviceTv size="1rem" />
+                :
+                    <IconDoorEnter size="1rem" />
+                }
+                <Box ml={10}>
+                    {joined? 'Watch': 'Join'}
+                </Box>
               </Center>
             ),
         },
@@ -59,8 +65,19 @@ export const Match = (props: Props) => {
             value: 'players',
             label: (
               <Center>
-                <IconUsersGroup size="1rem" />
-                <Box ml={10}>Players</Box>
+                    {match.data && match.data.players.length > 0 &&
+                        <Indicator
+                            color="blue"
+                            label={match.data.players.length}
+                            position="top-end"
+                            radius={4}
+                        >
+                            <IconUsersGroup size="1rem" />
+                        </Indicator>
+                    }
+                    <Box ml={10}>
+                        Players
+                    </Box>
               </Center>
             ),
         },
@@ -82,7 +99,7 @@ export const Match = (props: Props) => {
               </Center>
             ),
         },
-    ], [joined]);
+    ], [joined, match.data?.players]);
 
     const handleStartAndRun = useCallback(async () => {
         if(id) {

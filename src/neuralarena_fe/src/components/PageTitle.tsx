@@ -12,16 +12,16 @@ export const PageTitle = (props: Props) => {
     const theme = useMantineTheme();
     
     return (
-        <Card radius="md" p="xl" mb="lg" shadow="sm">
+        <Card radius="md" p="md" mb="lg" shadow="sm">
             <Group noWrap spacing="xl" position="apart">
                 <Stack>
                     <Center>
-                        <ThemeIcon size="5rem" variant='default' radius="md">
-                            <props.icon size="4rem" color={theme.fn.primaryColor()} />
+                        <ThemeIcon size="3rem" variant='light' radius="md">
+                            <props.icon size="3rem" color={theme.fn.primaryColor()} />
                         </ThemeIcon>
                     </Center>
                     <Center>
-                        <Text fz="lg" fw={500} color={theme.primaryColor}>
+                        <Text fz="md" fw={500} color={theme.primaryColor}>
                             {props.title}
                         </Text>
                     </Center>
