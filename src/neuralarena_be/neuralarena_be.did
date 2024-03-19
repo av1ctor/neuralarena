@@ -58,6 +58,7 @@ type HashMap = vec record {
   };
 };
 type InstanceAssetsResponse = record { assets : vec record { nat64; Asset } };
+type InstanceRunSlice = record { seed : nat64; first_step : nat64 };
 type InstanceStep = record { entities : vec nat8; events : vec nat8 };
 type InstanceStepsResponse = record { steps : vec InstanceStep };
 type MatchGame = record {
@@ -80,7 +81,12 @@ type MatchResponse = record {
   started_at : opt nat64;
   started_by : opt principal;
 };
-type MatchStateResponse = record { status : MatchStatus; num_steps : nat64 };
+type MatchStateResponse = record {
+  status : MatchStatus;
+  initial_seed : opt nat64;
+  slices : vec InstanceRunSlice;
+  num_steps : nat64;
+};
 type MatchStatus = variant {
   CANCELLED;
   RUNNING;

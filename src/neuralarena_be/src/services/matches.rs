@@ -3,8 +3,11 @@ use candid::Principal;
 use neuralarena_cdk::{
     db::traits::crud::{Crud, CrudSubscribable, Pagination},
     models::{
-        ic_asset_types::{GetRequest, GetResponse}, instance::{
-            InstanceAssetsResponse, InstanceId, InstancePlayer, InstancePlayerState, InstanceRunRequest, InstanceRunResponse, InstanceStepsResponse
+        ic_asset_types::{GetRequest, GetResponse}, 
+        instance::{
+            InstanceAssetsResponse, InstanceId, InstancePlayer, 
+            InstancePlayerState, InstanceRunRequest, InstanceRunResponse, 
+            InstanceRunSlice, InstanceStepsResponse
         }
     },
     utils::uniqueid
@@ -287,16 +290,29 @@ impl MatchesService {
 
     pub async fn run_step2(
         m4tch: &mut Match,
-        game: &Game
+        game: &Game,
+        initial_seed: u64
     ) -> Result<(), String> {
 
+        m4tch.state.initial_seed = Some(initial_seed);
+
+        let mut slice = 0;
         let res = loop {
+            let seed = initial_seed ^ m4tch.state.num_steps as u64;
+
+            m4tch.state.slices.push(InstanceRunSlice { 
+                first_step: m4tch.state.num_steps, 
+                seed
+            });
+
             let (res, ): (Result<InstanceRunResponse, String>, ) = ic_cdk::call(
                 game.canister_id, 
                 "instance_run",
                 (
                     m4tch.instance.id.clone(),
                     InstanceRunRequest{
+                        slice,
+                        seed,
                         max_instructions: 500_000_000,
                     }
                 )
@@ -312,6 +328,8 @@ impl MatchesService {
             else {
                 break res;
             }
+
+            slice += 1;
         };
 
         match res {

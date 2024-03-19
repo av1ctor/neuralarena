@@ -62,7 +62,15 @@ export const AboutMatch = (props: Props) => {
                 />
             </Grid.Col>
 
-            <Grid.Col span={12}>
+            <Grid.Col md={6}>
+                <TextInput
+                    label="Initial seed"
+                    value={match? match.state.initial_seed[0]?.toString(16): ''}
+                    readOnly
+                />
+            </Grid.Col>
+
+            <Grid.Col span={6}>
                 <TextInput
                     label="Started at"
                     value={match && match.started_at.length > 0? timeToNow(match.started_at[0]!)[1].toLocaleString(): ''}

@@ -577,7 +577,9 @@ async fn _run_match(
         MatchesService::update(m4tch, &mut db.borrow_mut())
     })?;
 
-    MatchesService::run_step2(m4tch, game).await?;
+    let initial_seed = random::next_u64();
+
+    MatchesService::run_step2(m4tch, game, initial_seed).await?;
 
     DB.with(|db| {
         MatchesService::update(m4tch, &mut db.borrow_mut())

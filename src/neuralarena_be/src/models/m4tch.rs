@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use candid::{CandidType, Principal};
 use neuralarena_cdk::models::{
     nas1_types::Nas1Token,
-    instance::InstancePlayer,
+    instance::{InstanceRunSlice, InstancePlayer},
     game::GameMapId
 };
 use serde::{Serialize, Deserialize};
@@ -40,6 +40,8 @@ pub struct MatchState {
     pub status: MatchStatus,
     pub players: Vec<InstancePlayer>,
     pub num_steps: usize,
+    pub initial_seed: Option<u64>,
+    pub slices: Vec<InstanceRunSlice>,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -71,6 +73,8 @@ pub struct MatchPlayerResponse {
 pub struct MatchStateResponse {
     pub status: MatchStatus,
     pub num_steps: usize,
+    pub initial_seed: Option<u64>,
+    pub slices: Vec<InstanceRunSlice>,
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
@@ -106,6 +110,8 @@ impl Match {
                 status: MatchStatus::CREATED,
                 players: vec![],
                 num_steps: 0,
+                initial_seed: None,
+                slices: vec![],
             },
             instance: MatchGameInstance {
                 id: "".to_string(),
@@ -130,6 +136,8 @@ impl From<Match> for MatchResponse {
             state: MatchStateResponse {
                 status: e.state.status,
                 num_steps: e.state.num_steps,
+                initial_seed: e.state.initial_seed,
+                slices: e.state.slices,
             },
             game: e.game,
             players: e.state.players.iter().map(|p| MatchPlayerResponse {
