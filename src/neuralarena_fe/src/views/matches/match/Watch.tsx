@@ -91,7 +91,7 @@ const STEPS_PER_CALL = FPS*10;
 const CANVAS_DEFAULT_DIM = {w: 450, h: 253};
 
 export const Watch = (props: Props) => {
-    const {toggleLoading, showError, showSuccess} = useUI();
+    const {showError} = useUI();
     const { main } = useActors();
     const { classes, cx } = useStyles();
     const canvas = useRef<HTMLCanvasElement|null>(null);
@@ -99,8 +99,6 @@ export const Watch = (props: Props) => {
     const [engine, setEngine] = useState<GameEngine>();
     const [renderer, setRenderer] = useState<ThreeGameRenderer>();
     const [state, setState] = useState<WatchState>(WatchState.LOADING);
-    const [, setAssetsLoadingProgress] = useState(0);
-    const [, setEngineLoadingProgress] = useState(0);
     const [endCredits, setEndCredits] = useState<GameEndCredits|undefined>();
     const [endCreditsVisible, setEndCreditsVisible] = useState(false);
     const [matchProgress, setMatchProgress] = useState(0.0);
@@ -250,8 +248,6 @@ export const Watch = (props: Props) => {
         if(renderer && !assetsLoading.current) {
             try {
                 assetsLoading.current = true;
-                setAssetsLoadingProgress(5);
-                toggleLoading(true);
                 renderer.toggleLoading(true);
                 const assets = await matchGetAssets(main, props.match.id);
                 for(const e of assets.entries()) {
@@ -265,8 +261,6 @@ export const Watch = (props: Props) => {
             }
             finally {
                 renderer.toggleLoading(false);
-                toggleLoading(false);
-                setAssetsLoadingProgress(100);
                 assetsLoading.current = false;
             }
         }
@@ -309,8 +303,6 @@ export const Watch = (props: Props) => {
         if(!engineLoading.current && !engine) {
             try {
                 engineLoading.current = true;
-                setEngineLoadingProgress(5);
-                toggleLoading(true);
                 await gameEngineInit(props.game.info.urls.engine_wasm);
                 setEngine(new GameEngine());
             }
@@ -319,8 +311,6 @@ export const Watch = (props: Props) => {
                 showError(e);
             }
             finally {
-                toggleLoading(false);
-                setEngineLoadingProgress(100);
                 engineLoading.current = false;
             }
         }

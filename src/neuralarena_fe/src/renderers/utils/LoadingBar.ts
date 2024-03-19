@@ -3,7 +3,7 @@ import * as THREE from 'three';
 export class LoadingBar {
     scene: THREE.Scene;
     camera: THREE.Camera;
-    indicator: THREE.Mesh;
+    bar: THREE.Mesh;
 
     constructor(
     ) {
@@ -17,8 +17,8 @@ export class LoadingBar {
         fillLight1.position.set(0.0, 2.0, -2.0);
         this.scene.add(fillLight1);
 
-        this.indicator = LoadingBar.#buildIndicator();
-        this.scene.add(this.indicator);
+        this.bar = LoadingBar.#buildIndicator();
+        this.scene.add(this.bar);
     }
 
     static #buildIndicator(
@@ -39,8 +39,10 @@ export class LoadingBar {
         total: number
     ) {
         const progress = loaded / total;
-        const geo = new THREE.BoxGeometry(2.0 * progress, 0.25, 0.1);
-        this.indicator.geometry = geo;
+        const w = 2.0 * progress;
+        const geo = new THREE.BoxGeometry(w, 0.25, 0.1);
+        this.bar.geometry = geo;
+        this.bar.position.x = -1.0 + w / 2.0;
     }
 
     render(
