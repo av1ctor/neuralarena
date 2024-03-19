@@ -117,13 +117,16 @@ export class ThreeGameRenderer {
         scene.background = new THREE.Color(0x88ccee);
         scene.fog = new THREE.Fog(0x88ccee, 0, 100)
 
+        //FIXME: this should be defined at the GLTF
         const camera = new THREE.PerspectiveCamera(75.0, width / height, 0.1, 1000.0);
         camera.position.set(15.0, 10.0, 15.0);
 
+        //FIXME: this should be defined at the GLTF
         const fillLight1 = new THREE.HemisphereLight(0xffffff, 0x444444, 2.0);
         fillLight1.position.set(0.0, 300.0, 0.0);
         scene.add(fillLight1);
 
+        //FIXME: this should be defined at the GLTF
         const directionalLight = new THREE.DirectionalLight(0xffffff, 7.0);
         directionalLight.position.set(15.0, 30.0, 10.0);
         directionalLight.castShadow = true;

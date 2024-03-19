@@ -15,13 +15,16 @@ export class AnimScene {
         this.visible = false;
         this.scene = new THREE.Scene();
 
+        //FIXME: this should be defined at the GLTF
         this.camera = new THREE.PerspectiveCamera(75.0, width / height, 0.1, 100.0);
         this.camera.position.set(0.0, 0.0, 2.0);
 
+        //FIXME: this should be defined at the GLTF
         const fillLight1 = new THREE.HemisphereLight(0xffffff, 0x444444, 2.0);
         fillLight1.position.set(0.0, 300.0, 100.0);
         this.scene.add(fillLight1);
 
+        //FIXME: this should be defined at the GLTF
         const directionalLight = new THREE.DirectionalLight(0xffffff, 7.0);
         directionalLight.position.set(5.0, 3.0, 3.0);
         directionalLight.castShadow = true;
