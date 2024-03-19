@@ -2,14 +2,13 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Font, FontLoader } from 'three/addons/loaders/FontLoader.js';
-import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
 import { Asset, GameInfo, MatchPlayerResponse } from '@declarations/neuralarena_be/neuralarena_be.did';
 import { gameAssetDataTextValue, gameAssetDataU32Value } from '@libs/games';
 import { GameAssetsLoadingManager, NftAssetsLoadingManager } from '@libs/loadingmanager';
-import { principalToString } from '@libs/icp';
 import { InstanceNpcEntity, InstancePlayerEntity } from '@game-engine/game-engine';
 import { AnimScene } from './utils/AnimScene';
+import { EntityStatusBarManager } from './utils/EntityStatusBarMng';
 
 const HEALTH_BAR_WIDTH = 100.0;
 const HEALTH_BAR_HEIGHT = 10.0;
@@ -39,15 +38,8 @@ export class ThreeGameRenderer {
     entities: {
         players: InstancePlayerEntity[],
         npcs: InstanceNpcEntity[],
-        counters: {
-            players: number,
-            npcs: number,
-        },
     };
-    statusBars: {
-        players: THREE.Object3D[],
-        npcs: THREE.Object3D[],
-    };
+    statusMng: EntityStatusBarManager;
 
     constructor(
         canvas: HTMLCanvasElement,
@@ -60,10 +52,6 @@ export class ThreeGameRenderer {
         this.entities = {
             players: [],
             npcs: [],
-            counters: {
-                npcs: 0,
-                players: 0,
-            },
         };
 
         this.gameAssetLoader = new GLTFLoader(
@@ -114,10 +102,11 @@ export class ThreeGameRenderer {
         );
 
         this.fonts = ThreeGameRenderer.#loadFonts();
-        this.statusBars = {
-            players: [],
-            npcs: []
-        };
+        this.statusMng = new EntityStatusBarManager(
+            HEALTH_BAR_WIDTH, 
+            HEALTH_BAR_HEIGHT, 
+            this.fonts
+        );
     }
 
     static #setup(
@@ -226,10 +215,7 @@ export class ThreeGameRenderer {
         }
         this.models = [];
 
-        this.entities.counters = {
-            npcs: 0,
-            players: 0,
-        };
+        this.statusMng.reset();
 
         if(reset_cam) {
             this.camera.position.set(15.0, 10.0, 15.0);
@@ -334,66 +320,6 @@ export class ThreeGameRenderer {
         }
     }
 
-    #buildStatusBar(
-        obj: THREE.Object3D
-    ): THREE.Object3D {
-        const bar = new THREE.Group();
-        
-        // health bar
-        const healthGeo = new THREE.BoxGeometry(HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT, 1.0);
-        const healthBar = new THREE.Mesh(
-            healthGeo, 
-            new THREE.MeshBasicMaterial({
-                color: 0x00ff00,
-            })
-        );
-        healthBar.position.copy(obj.position);
-        healthBar.position.y = 200.0;
-        bar.add(healthBar);
-
-        const healthBarBorder = new THREE.Mesh(
-            healthGeo,
-            new THREE.MeshBasicMaterial({
-                color: 0xffffff,
-                opacity: 0.5,
-                transparent: true,
-            })
-        );
-        healthBarBorder.position.copy(obj.position);
-        healthBarBorder.position.y = 200.0;
-        healthBarBorder.position.z = -1.0;
-        bar.add(healthBarBorder);
-
-        // player id
-        if(obj.userData.isPlayer) {
-            const name = principalToString(this.players[obj.userData.num].id);
-            const textGeo = new TextGeometry(name, {
-                font: this.fonts.get('gentilis')!,
-                size: 14.0,
-                height: 1.0,
-                curveSegments: 4,
-                bevelThickness: 2,
-                bevelSize: 1.5,
-                bevelEnabled: false
-
-            });
-            textGeo.computeBoundingBox();
-
-            const textMat = new THREE.MeshBasicMaterial({
-                color: 0xffffff,
-            })
-
-            const centerOffset = -0.5 * (textGeo.boundingBox!.max.x - textGeo.boundingBox!.min.x);
-            const playerName = new THREE.Mesh(textGeo, textMat);
-            playerName.position.x = centerOffset;
-            playerName.position.y = healthBar.position.y + 20.0;
-
-            bar.add(playerName);
-        }
-
-        return bar;
-    }
-
     add_model(
         asset_ref: number,
         model_ref: number
@@ -419,14 +345,7 @@ export class ThreeGameRenderer {
             cloned.userData.action = 'Idle';
             (cloned.userData.actions as any)[cloned.userData.action]?.play();
 
-            const statusBar = this.#buildStatusBar(cloned);
-            if(cloned.userData.isPlayer) {
-                this.statusBars.players[obj.userData.num] = statusBar;
-            }
-            else {
-                this.statusBars.npcs[this.entities.counters.npcs] = statusBar;
-                this.entities.counters.npcs += 1;
-            }
+            const statusBar = this.statusMng.add(cloned, this.players);
             cloned.add(statusBar);
         }
 
@@ -468,8 +387,9 @@ export class ThreeGameRenderer {
         if(obj.userData.actions && to) {
             to = to[0].toUpperCase() + to.substring(1);
 
-            const fromAction = (obj.userData.actions as Record<string, THREE.AnimationAction>)[obj.userData.action];
-            const toAction = (obj.userData.actions as Record<string, THREE.AnimationAction>)[to];
+            const actions = (obj.userData.actions as Record<string, THREE.AnimationAction>);
+            const fromAction = actions[obj.userData.action];
+            const toAction = actions[to];
             if(obj.userData.action !== to) {
                 if(toAction) {
                     if(fromAction) {
@@ -544,47 +464,13 @@ export class ThreeGameRenderer {
         this.entities.npcs = npcs;
     }
 
-    #updateStatusBar(
-        bar: THREE.Object3D<THREE.Object3DEventMap>| undefined,
-        health: number
-    ) {
-        if(!bar) {
-            return;
-        }
-        
-        const healthBar = bar.children[0] as THREE.Mesh;
-        if(health > 0.0) {
-            const geo = new THREE.BoxGeometry(HEALTH_BAR_WIDTH * health, HEALTH_BAR_HEIGHT, 1.0);
-            healthBar.geometry = geo;
-            healthBar.position.x = -(HEALTH_BAR_WIDTH/2.0) * (1.0 - health);
-        }
-        else {
-            healthBar.visible = false;
-        }
-    }
-
-    #updateStatusBars(
-    ) {
-        for(let i = 0; i < this.entities.players.length; i++) {
-            const player = this.entities.players[i];
-            const bar = this.statusBars.players[i];
-            this.#updateStatusBar(bar, player.health);
-        }
-
-        for(let i = 0; i < this.entities.npcs.length; i++) {
-            const npc = this.entities.npcs[i];
-            const bar = this.statusBars.npcs[i];
-            this.#updateStatusBar(bar, npc.health);
-        }
-    }
-
     render(
     ) {
         if(this.skipping) {
             return;
         }
 
-        this.#updateStatusBars();
+        this.statusMng.update(this.entities.players, this.entities.npcs);
 
         let player: THREE.Object3D<THREE.Object3DEventMap>|undefined = undefined;
         if(this.pov.player_num !== undefined) {
