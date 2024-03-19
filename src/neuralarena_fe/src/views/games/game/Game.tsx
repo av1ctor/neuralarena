@@ -6,6 +6,7 @@ import { Box, Center, SegmentedControl, Space } from "@mantine/core";
 import { IconBook, IconDeviceGamepad, IconGlobe, IconList, IconVideo } from "@tabler/icons-react";
 import { useBrowser } from "@hooks/browser";
 import { GameMatches } from "./Matches";
+import { useUI } from "@hooks/ui";
 
 const sections = [
     {
@@ -61,6 +62,7 @@ interface Props {
 export const Game = (props: Props) => {
     const {id} = useParams();
     const {isMobile} = useBrowser();
+    const {classes} = useUI();
     const [section, setSection] = useState('matches');
     
     const game = useGameFindById(id);
@@ -87,25 +89,25 @@ export const Game = (props: Props) => {
                 
                 <Space h="xl" />
 
-                {section === 'matches' &&
+                <Box className={section === 'matches'? classes.block: classes.none}>
                     <GameMatches game={game.data} />
-                }
+                </Box>
 
-                {section === 'score' &&
-                    <div>Score</div>
-                }
+                <Box className={section === 'score'? classes.block: classes.none}>
+                    Score
+                </Box>
 
-                {section === 'maps' &&
-                    <div>Maps</div>
-                }
+                <Box className={section === 'maps'? classes.block: classes.none}>
+                    Maps
+                </Box>
 
-                {section === 'demo' &&
-                    <div>Demo</div>
-                }
+                <Box className={section === 'demo'? classes.block: classes.none}>
+                    Demo
+                </Box>
 
-                {section === 'about' &&
-                    <div>About</div>
-                }
+                <Box className={section === 'about'? classes.block: classes.none}>
+                    About
+                </Box>
             </div>
         </>
     );

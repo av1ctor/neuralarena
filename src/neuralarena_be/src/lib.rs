@@ -551,13 +551,13 @@ async fn _start_match(
     game: &Game,
     user: &User
 ) -> Result<(), String> {
-    MatchesService::start_step1(m4tch, game, user)?;
+    MatchesService::setup_step1(m4tch, game, user)?;
 
     DB.with(|db| {
         MatchesService::update(m4tch, &mut db.borrow_mut())
     })?;
 
-    MatchesService::start_step2(m4tch, game).await?;
+    MatchesService::setup_step2(m4tch, game).await?;
 
     DB.with(|db| {
         MatchesService::update(m4tch, &mut db.borrow_mut())

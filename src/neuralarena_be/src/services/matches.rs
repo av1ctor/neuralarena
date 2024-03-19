@@ -3,11 +3,9 @@ use candid::Principal;
 use neuralarena_cdk::{
     db::traits::crud::{Crud, CrudSubscribable, Pagination},
     models::{
-        instance::{
-            InstanceAssetsResponse, InstanceId, InstancePlayer, 
-            InstanceRunResponse, InstanceStepsResponse
-        },
-        ic_asset_types::{GetRequest, GetResponse}
+        ic_asset_types::{GetRequest, GetResponse}, instance::{
+            InstanceAssetsResponse, InstanceId, InstancePlayer, InstancePlayerState, InstanceRunRequest, InstanceRunResponse, InstanceStepsResponse
+        }
     },
     utils::uniqueid
 };
@@ -212,6 +210,11 @@ impl MatchesService {
                 nft: user_nft.data.clone(),
                 nft_col: nft_col.meta.clone(),
                 tensors,
+                state: InstancePlayerState {
+                    active: true,
+                    last_thought: 0,
+                    obs: vec![],
+                }
             });
 
             let ok_to_run = m4tch.state.players.len() == game.info.max_players;
@@ -222,7 +225,7 @@ impl MatchesService {
         }
     }
 
-    pub fn start_step1(
+    pub fn setup_step1(
         m4tch: &mut Match,
         game: &Game,
         user: &User
@@ -241,13 +244,13 @@ impl MatchesService {
         Ok(())
     }
 
-    pub async fn start_step2(
+    pub async fn setup_step2(
         m4tch: &mut Match,
         game: &Game
     ) -> Result<(), String> {
         let (res, ): (Result<(), String>, ) = ic_cdk::call(
             game.canister_id, 
-            "instance_start",
+            "instance_setup",
             (
                 m4tch.instance.id.clone(), 
                 m4tch.state.players.clone()
@@ -287,15 +290,29 @@ impl MatchesService {
         game: &Game
     ) -> Result<(), String> {
 
-        let (res, ): (Result<InstanceRunResponse, String>, ) = ic_cdk::call(
-            game.canister_id, 
-            "instance_run",
-            (
-                m4tch.instance.id.clone(),
-            )
-        ).await.map_err(|e| e.1)?;
-        
-        m4tch.state.status = MatchStatus::FINISHED;
+        let res = loop {
+            let (res, ): (Result<InstanceRunResponse, String>, ) = ic_cdk::call(
+                game.canister_id, 
+                "instance_run",
+                (
+                    m4tch.instance.id.clone(),
+                    InstanceRunRequest{
+                        max_instructions: 500_000_000,
+                    }
+                )
+            ).await.map_err(|e| e.1)?;
+
+            if let Ok(res) = res {
+                if res.terminated || res.timedout {
+                    m4tch.state.status = MatchStatus::FINISHED;
+                    m4tch.state.num_steps = res.steps;
+                    break Ok(res);
+                }
+            }
+            else {
+                break res;
+            }
+        };
 
         match res {
             Ok(result) => {

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Button, Space, Stack, Center, Box, SegmentedControl, createStyles, Indicator } from "@mantine/core";
+import { Button, Space, Stack, Center, Box, SegmentedControl, Indicator } from "@mantine/core";
 import { useMatchFindById, useMatch } from "@hooks/matches";
 import { useGameFindById } from "@hooks/games";
 import { matchStatusToString } from "@libs/matches";
@@ -15,15 +15,7 @@ import { DrawerPanel } from "@components/DrawerPanel";
 import { MatchPlayers } from "./Players";
 import { IconBook, IconDeviceTv, IconDoorEnter, IconList, IconUsersGroup } from "@tabler/icons-react";
 import { useBrowser } from "@hooks/browser";
-
-const useStyles = createStyles((theme) => ({
-    block: {
-        display: 'block',
-    },
-    none: {
-        display: 'none',
-    }
-}));
+import { AboutMatch } from "./About";
 
 interface Props {
 }
@@ -32,12 +24,12 @@ export const Match = (props: Props) => {
     const {id} = useParams();
     const {isMobile} = useBrowser();
     const {user, isLogged} = useAuth();
+    const {classes} = useUI();
     const {join, start, run} = useMatch()
     const {toggleLoading, showError, showSuccess} = useUI();
     const [opened, {open, close}] = useDisclosure(false);
     const [pov, setPov] = useState<number|undefined>(undefined);
     const [section, setSection] = useState('watch');
-    const { classes } = useStyles();
 
     const match = useMatchFindById(id);
     const game = useGameFindById(match?.data?.game.id);
@@ -65,16 +57,14 @@ export const Match = (props: Props) => {
             value: 'players',
             label: (
               <Center>
-                    {match.data && match.data.players.length > 0 &&
-                        <Indicator
-                            color="blue"
-                            label={match.data.players.length}
-                            position="top-end"
-                            radius={4}
-                        >
-                            <IconUsersGroup size="1rem" />
-                        </Indicator>
-                    }
+                    <Indicator
+                        color="blue"
+                        label={(match.data?.players.length || 0).toString()}
+                        position="top-end"
+                        radius={4}
+                    >
+                        <IconUsersGroup size="1rem" />
+                    </Indicator>
                     <Box ml={10}>
                         Players
                     </Box>
@@ -125,8 +115,8 @@ export const Match = (props: Props) => {
     const updateStatus = useCallback(async () => {
         try {
             if(match.data && 
-                !('FINISHED' in match.data.status || 
-                  'CANCELLED' in match.data.status)) {
+                !('FINISHED' in match.data.state.status || 
+                  'CANCELLED' in match.data.state.status)) {
                 await match.refetch()
             }
         }
@@ -143,7 +133,7 @@ export const Match = (props: Props) => {
         return () => clearInterval(t);
     }, [updateStatus]);
 
-    const status = matchStatusToString(match.data?.status);
+    const status = matchStatusToString(match.data?.state.status);
 
     return (
         <>
@@ -216,27 +206,24 @@ export const Match = (props: Props) => {
                     }
                 </Stack>
 
-                {section === 'players' && 
-                    <div>
-                        <MatchPlayers
-                            match={match.data}
-                            game={game.data}
-                            onChangePov={status === 'FINISHED'? handleChangePov: undefined}
-                        />
-                    </div>
-                }
+                <Box className={section === 'players'? classes.block: classes.none}>
+                    <MatchPlayers
+                        match={match.data}
+                        game={game.data}
+                        onChangePov={status === 'FINISHED'? handleChangePov: undefined}
+                    />
+                </Box>
 
-                {section === 'result' && 
-                    <div>
-                        Result
-                    </div>
-                }
+                <Box className={section === 'result'? classes.block: classes.none}>
+                    Result
+                </Box>
 
-                {section === 'about' && 
-                    <div>
-                        About
-                    </div>
-                }
+                <Box className={section === 'about'? classes.block: classes.none}>
+                    <AboutMatch 
+                        match={match.data}
+                        game={game.data}
+                    />
+                </Box>
             </div>
 
             <DrawerPanel

@@ -1,12 +1,26 @@
 import { useCallback, useContext } from "react";
 import { UIActionType, UIContext } from "@stores/ui";
 import { notifications } from '@mantine/notifications';
+import { createStyles } from "@mantine/core";
+
+const useStyles = createStyles((theme) => ({
+    block: {
+        display: 'block',
+    },
+    none: {
+        display: 'none',
+    }
+}));
 
 interface UIProps {
     isLoading: boolean;
     toggleLoading: (to: boolean) => void;
     showSuccess: (text: string) => void
     showError: (e: any) => void;
+    classes: {
+        block: string,
+        none: string,
+    };
 };
 
 const showError = (e: any) => {
@@ -53,11 +67,14 @@ export const useUI = (): UIProps => {
             payload: to
         });
     }, []);
+
+    const {classes} = useStyles();
     
     return {
         isLoading: state.isLoading,
         toggleLoading,
         showSuccess,
         showError,
+        classes
     };
 };

@@ -114,13 +114,7 @@ export const Watch = (props: Props) => {
     const step = useRef(0);
 
     const frames = useMemo((): InstanceStep[] => {
-        const res = new Array<InstanceStep>();
-
-        steps.data?.pages.forEach(p => 
-            p.steps.forEach(s => res.push(s))
-        );
-
-        return res;
+        return steps.data?.pages.flat().map(s => s.steps).flat() || [];
     }, [steps.data?.pages.length]);
 
     const handleTogglePlay = useCallback(() => {

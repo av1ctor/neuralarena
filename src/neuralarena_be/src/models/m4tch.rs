@@ -39,6 +39,7 @@ pub struct MatchGameInstance {
 pub struct MatchState {
     pub status: MatchStatus,
     pub players: Vec<InstancePlayer>,
+    pub num_steps: usize,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -67,9 +68,15 @@ pub struct MatchPlayerResponse {
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
+pub struct MatchStateResponse {
+    pub status: MatchStatus,
+    pub num_steps: usize,
+}
+
+#[derive(Clone, Serialize, Deserialize, CandidType)]
 pub struct MatchResponse {
     pub id: String,
-    pub status: MatchStatus,
+    pub state: MatchStateResponse,
     pub game: MatchGame,
     pub players: Vec<MatchPlayerResponse>,
     pub created_at: u64,
@@ -98,6 +105,7 @@ impl Match {
             state: MatchState { 
                 status: MatchStatus::CREATED,
                 players: vec![],
+                num_steps: 0,
             },
             instance: MatchGameInstance {
                 id: "".to_string(),
@@ -117,10 +125,12 @@ impl From<Match> for MatchResponse {
     fn from(
         e: Match
     ) -> Self {
-        
         Self { 
             id: e.id,
-            status: e.state.status,
+            state: MatchStateResponse {
+                status: e.state.status,
+                num_steps: e.state.num_steps,
+            },
             game: e.game,
             players: e.state.players.iter().map(|p| MatchPlayerResponse {
                 id: p.id,

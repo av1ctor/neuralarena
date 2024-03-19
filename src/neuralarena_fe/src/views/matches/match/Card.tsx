@@ -112,11 +112,11 @@ export const MatchCard = (props: Props) => {
                 <Grid.Col span={6}>
                     <Badge 
                         className={classes.status} 
-                        color={statusToColor(match.status)} 
+                        color={statusToColor(match.state.status)} 
                         variant="filled"
                         size="xl"
                     >
-                        {matchStatusToString(match.status)}
+                        {matchStatusToString(match.state.status)}
                     </Badge>
                 </Grid.Col>
             </Grid>

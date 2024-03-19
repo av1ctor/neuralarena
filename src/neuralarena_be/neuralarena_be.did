@@ -58,12 +58,7 @@ type HashMap = vec record {
   };
 };
 type InstanceAssetsResponse = record { assets : vec record { nat64; Asset } };
-type InstanceStep = record {
-  terminated : bool;
-  entities : vec nat8;
-  events : vec nat8;
-  timedout : bool;
-};
+type InstanceStep = record { entities : vec nat8; events : vec nat8 };
 type InstanceStepsResponse = record { steps : vec InstanceStep };
 type MatchGame = record {
   id : text;
@@ -75,16 +70,17 @@ type MatchPlayerResponse = record { id : principal; nft : Nas1Token };
 type MatchRequest = record { game : MatchGame };
 type MatchResponse = record {
   id : text;
-  status : MatchStatus;
   game : MatchGame;
   created_at : nat64;
   created_by : principal;
+  state : MatchStateResponse;
   players : vec MatchPlayerResponse;
   won_at : opt nat64;
   won_by : opt principal;
   started_at : opt nat64;
   started_by : opt principal;
 };
+type MatchStateResponse = record { status : MatchStatus; num_steps : nat64 };
 type MatchStatus = variant {
   CANCELLED;
   RUNNING;
