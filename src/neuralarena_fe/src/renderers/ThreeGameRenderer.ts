@@ -9,6 +9,7 @@ import { gameAssetDataTextValue, gameAssetDataU32Value } from '@libs/games';
 import { GameAssetsLoadingManager, NftAssetsLoadingManager } from '@libs/loadingmanager';
 import { principalToString } from '@libs/icp';
 import { InstanceNpcEntity, InstancePlayerEntity } from '@game-engine/game-engine';
+import { AnimScene } from './utils/AnimScene';
 
 const HEALTH_BAR_WIDTH = 100.0;
 const HEALTH_BAR_HEIGHT = 10.0;
@@ -21,11 +22,7 @@ export class ThreeGameRenderer {
         scene: THREE.Scene;
         camera: THREE.PerspectiveCamera;
     };
-    start: {
-        visible: boolean;
-        scene: THREE.Scene;
-        camera: THREE.PerspectiveCamera;
-    };
+    start: AnimScene;
     raycaster: THREE.Raycaster;
     controls?: OrbitControls;
     clock: THREE.Clock;
@@ -82,17 +79,12 @@ export class ThreeGameRenderer {
         };
 
         const scenes_urls = new Map(game.urls.scenes)
-        const start = ThreeGameRenderer.#setupStart(
+        this.start = new AnimScene(
             this.width, 
             this.height, 
-            scenes_urls.get("start"),
+            scenes_urls.get("start") ?? "/scenes/start.glb",
             this.gameAssetLoader
         );
-        this.start = {
-            visible: false,
-            scene: start[0],
-            camera: start[1]
-        };
         
         this.renderer = new THREE.WebGLRenderer(
             {canvas, antialias: true});
@@ -165,64 +157,6 @@ export class ThreeGameRenderer {
         return [scene, camera];
     }
 
-    static #setupStart(
-        width: number,
-        height: number,
-        start_url: string|undefined,
-        loader: GLTFLoader
-    ): [THREE.Scene, THREE.PerspectiveCamera] {
-        const scene = new THREE.Scene();
-
-        const camera = new THREE.PerspectiveCamera(75.0, width / height, 0.1, 100.0);
-        camera.position.set(0.0, 0.0, 2.0);
-
-        const fillLight1 = new THREE.HemisphereLight(0xffffff, 0x444444, 2.0);
-        fillLight1.position.set(0.0, 300.0, 100.0);
-        scene.add(fillLight1);
-
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 7.0);
-        directionalLight.position.set(5.0, 3.0, 3.0);
-        directionalLight.castShadow = true;
-        directionalLight.shadow.camera.near = 0.01;
-        directionalLight.shadow.camera.far = 100.0;
-        directionalLight.shadow.camera.right = 10.0;
-        directionalLight.shadow.camera.left = -10.0;
-        directionalLight.shadow.camera.top = 10.0;
-        directionalLight.shadow.camera.bottom = -10.0;
-        directionalLight.shadow.mapSize.width = 4096;
-        directionalLight.shadow.mapSize.height = 4096;
-        directionalLight.shadow.radius = 4;
-        directionalLight.shadow.bias = -0.00006;
-        scene.add(directionalLight);
-
-        loader.load(start_url ?? "/scenes/start.glb", (gltf) => {
-            const obj = gltf.scene;
-
-            obj.traverse(child => {
-                if((child as any).isMesh) {
-                    const mesh = child as THREE.Mesh;
-                    mesh.castShadow = true;
-                    mesh.receiveShadow = true;
-                }
-            });
-            
-            const anim = new THREE.AnimationMixer(obj);
-            const action = anim.clipAction(
-                THREE.AnimationClip.findByName(gltf.animations, 'Animation'));
-            action.clampWhenFinished = true;
-            action.loop = THREE.LoopOnce;
-            action.enabled = false;
-
-            obj.userData.anim = anim;
-            obj.userData.action = action;
-
-            scene.add(obj);
-            scene.userData.root = obj;
-        });
-    
-        return [scene, camera];
-    }
-
     static #loadFonts(
     ): Map<string, Font> {
         const fonts = new Map<string, any>();
@@ -236,38 +170,7 @@ export class ThreeGameRenderer {
 
     showStart(
     ) {
-        if(this.start.visible) {
-            return;
-        }
-
-        const obj = this.start.scene.userData.root as THREE.Group<THREE.Object3DEventMap>;
-
-        //
-        const anim = obj.userData.anim as THREE.AnimationMixer;
-        
-        const self = this;
-        const hideWhenFinished = () => {
-            self.start.visible = false;
-            anim.removeEventListener('finished', hideWhenFinished);
-        };
-
-        anim.addEventListener('finished', hideWhenFinished);
-
-        //
-        const action = obj.userData.action as THREE.AnimationAction;
-        action.reset();
-        action.play();
-        action.enabled = true;
-        
-        this.start.visible = true;
-    }
-
-    #animStart(
-    ) {
-        const obj = this.start.scene.userData.root as THREE.Group<THREE.Object3DEventMap>;
-
-        const anim = obj.userData.anim as THREE.AnimationMixer;
-        anim.update(1.0 / 60.0);
+        this.start.show();
     }
 
     changePOV(
@@ -761,11 +664,7 @@ export class ThreeGameRenderer {
 
         this.renderer.clear();
         this.renderer.render(this.main.scene, this.main.camera);
-        if(this.start.visible) {
-            this.#animStart();
-            this.renderer.clearDepth();
-            this.renderer.render(this.start.scene, this.start.camera);
-        }
+        this.start.render(this.renderer);
 
         if(intersections) {
             for(const intersection of intersections) {

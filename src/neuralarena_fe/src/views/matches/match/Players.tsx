@@ -1,16 +1,17 @@
-import { MatchResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
-import { Avatar as Avatar_, Tooltip } from "@mantine/core";
-import { Avatar } from "@views/users/user/Avatar";
 import React from "react";
+import { GameResponse, MatchResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
+import { Avatar as Avatar_, Box, Tooltip } from "@mantine/core";
+import { Avatar } from "@views/users/user/Avatar";
 
 interface Props {
     match: MatchResponse|undefined;
-    onChangePov: (index: number) => void;
+    game: GameResponse|undefined;
+    onChangePov?: (index: number) => void;
 }
 
 export const MatchPlayers = (props: Props) => {
-    const {match} = props;
-    if(!match) {
+    const {match, game} = props;
+    if(!match || !game) {
         return null;
     }
 
@@ -18,9 +19,13 @@ export const MatchPlayers = (props: Props) => {
         match.won_by[0]?.toString():
         undefined;
 
+    const slots = new Array(
+            Number(game.info.max_players || 10n) - match.players.length
+        )
+        .fill({});
+
     return (
-        <>
-            <div>Players:</div>
+        <Box mt="xl" w="100%">
             <Tooltip.Group 
                 openDelay={300} 
                 closeDelay={100}
@@ -31,11 +36,16 @@ export const MatchPlayers = (props: Props) => {
                             key={player.id.toString()} 
                             id={player.id}
                             isWinner={winner? player.id.toString() === winner: false}
-                            onClick={() => props.onChangePov(index)}
+                            onClick={props.onChangePov? () => props.onChangePov!(index): undefined}
+                        />
+                    )}
+                    {slots.map((_, index) => 
+                        <Avatar 
+                            key={index} 
                         />
                     )}
                 </Avatar_.Group>
             </Tooltip.Group>
-        </>
+        </Box>
     );
 };

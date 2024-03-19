@@ -105,7 +105,7 @@ export class ThreeSceneRenderer {
     
                 resolve([camera, anim]);
             }, 
-            () => null,
+            (e) => console.log(e.loaded, e.total),
             (err) => reject(err)
         )});
         

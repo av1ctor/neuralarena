@@ -68,7 +68,7 @@ export const JoinMatch = (props: Props) => {
                     disabled={!nft}
                     onClick={handleJoin}
                 >
-                    Join
+                    Submit
                 </Button>
             </div>
         </>

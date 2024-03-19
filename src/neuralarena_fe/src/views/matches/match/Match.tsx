@@ -86,7 +86,8 @@ export const Match = (props: Props) => {
                 <div>
                     <MatchPlayers
                         match={match.data}
-                        onChangePov={handleChangePov}
+                        game={game.data}
+                        onChangePov={status === 'FINISHED'? handleChangePov: undefined}
                     />
                 </div>
                 <Space h="xl" />

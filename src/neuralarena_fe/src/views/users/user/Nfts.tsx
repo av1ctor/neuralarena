@@ -176,7 +176,7 @@ export const UserNfts = (props: Props) => {
                     disabled={!toAdd}
                     onClick={handleAdd}
                 >
-                    Add
+                    Submit
                 </Button>
             </DrawerPanel>
 

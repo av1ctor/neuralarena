@@ -15,7 +15,7 @@ export const DrawerPanel = (props: Props) => {
     return (
         <Drawer 
             opened={props.opened} 
-            title={props.title}
+            title={<b>{props.title}</b>}
             position={props.position}
             size="xl"
             onClose={props.onClose} 

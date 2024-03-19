@@ -3,11 +3,10 @@ import { Principal } from "@dfinity/principal";
 import { Avatar as Avatar_, Indicator, Tooltip } from "@mantine/core";
 import { useUserFindById } from "@hooks/users";
 import { principalToString } from "@libs/icp";
+import { IconHourglassEmpty, IconX } from "@tabler/icons-react";
 
 interface Props {
     id?: Principal;
-    size?: string;
-    noName?: boolean;
     isWinner?: boolean;
     onClick?: () => void;
 };
@@ -15,7 +14,9 @@ interface Props {
 export const Avatar = (props: Props) => {
     const profile = useUserFindById(props.id);
 
-    const title = `${profile.data?.nick}\n(${principalToString(profile.data?.id)}) ${props.isWinner? '🏆': ''}`;
+    const title = props.id? 
+        `${profile.data?.nick}\n(${principalToString(profile.data?.id)}) ${props.isWinner? '🏆': ''}`:
+        'Empty';
     
     return (
         <Tooltip 
@@ -36,9 +37,10 @@ export const Avatar = (props: Props) => {
                     color="primary" 
                     radius="xl"
                     size="lg"
+                    style={{'cursor': props.onClick? 'pointer': undefined}}
                     onClick={props.onClick}
                 >
-                    {profile.data?.nick.substring(0, 2).toLocaleUpperCase()}
+                    {props.id? profile.data?.nick.substring(0, 2).toLocaleUpperCase(): <IconX/>}
                 </Avatar_>
             </Indicator>
         </Tooltip>
