@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { GameInfo } from '@declarations/neuralarena_be/neuralarena_be.did';
 import { GameAssetsLoadingManager } from '@libs/loadingmanager';
+import { LoadingBar } from './utils/LoadingBar';
 
 export class ThreeSceneRenderer {
     assetLoader: GLTFLoader;
@@ -12,6 +13,7 @@ export class ThreeSceneRenderer {
     width: number;
     height: number;
     loading: boolean;
+    loadingBar: LoadingBar;
 
     constructor(
         canvas: HTMLCanvasElement,
@@ -20,12 +22,6 @@ export class ThreeSceneRenderer {
         this.width = canvas.width;
         this.height = canvas.height;
         
-        this.assetLoader = new GLTFLoader(
-            new GameAssetsLoadingManager(game.urls.assets)
-        );
-
-        this.scene = ThreeSceneRenderer.#setupScene();
-
         this.renderer = new THREE.WebGLRenderer(
             {canvas, antialias: true});
         this.renderer.autoClear = true;
@@ -34,6 +30,15 @@ export class ThreeSceneRenderer {
         this.renderer.toneMapping = THREE.LinearToneMapping;    
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(this.width, this.height);
+
+        this.loadingBar = new LoadingBar();
+
+        this.assetLoader = new GLTFLoader(new GameAssetsLoadingManager(
+            game.urls.assets,
+            (url, loaded, total) => this.loadingBar.onProgress(url, loaded, total)
+        ));
+
+        this.scene = ThreeSceneRenderer.#setupScene();
 
         this.loading = true;
         const scenes_urls = new Map(game.urls.scenes);
@@ -45,6 +50,8 @@ export class ThreeSceneRenderer {
             this.camera = res[0];
             this.anim = res[1];
             this.loading = false;
+        }).catch(err => {
+            console.error(err)
         });
     }
 
@@ -105,7 +112,7 @@ export class ThreeSceneRenderer {
     
                 resolve([camera, anim]);
             }, 
-            (e) => console.log(e.loaded, e.total),
+            () => null,
             (err) => reject(err)
         )});
         
@@ -130,6 +137,9 @@ export class ThreeSceneRenderer {
         if(!this.loading) {
             this.anim?.update(1.0 / 60.0);
             this.renderer.render(this.scene, this.camera!);
+        }
+        else {
+            this.loadingBar.render(this.renderer);
         }
     }
 };

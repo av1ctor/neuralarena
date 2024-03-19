@@ -3,8 +3,11 @@ import { LoadingManager } from "three/src/loaders/LoadingManager.js";
 export class GameAssetsLoadingManager extends LoadingManager {
     game_assets_url: string;
     
-    constructor(game_assets_url: string) {
-        super();
+    constructor(
+        game_assets_url: string,
+        onProgress?: (url: string, loaded: number, total: number) => void,
+    ) {
+        super(undefined, onProgress, undefined);
         this.game_assets_url = game_assets_url;
 
         this.resolveURL = (
@@ -20,8 +23,10 @@ export class GameAssetsLoadingManager extends LoadingManager {
 export class NftAssetsLoadingManager extends LoadingManager {
     nft_assets_url?: URL;
     
-    constructor() {
-        super();
+    constructor(
+        onProgress?: (url: string, loaded: number, total: number) => void
+    ) {
+        super(undefined, onProgress, undefined);
 
         this.resolveURL = (
             url: string

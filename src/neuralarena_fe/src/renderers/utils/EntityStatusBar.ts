@@ -25,7 +25,6 @@ export class EntityStatusBar {
         // player id
         if(playerId !== undefined) {
             const playerName = EntityStatusBar.#buildPlayerName(playerId, font);
-            console.log(playerName)
             healthBar.add(playerName);
         }
 

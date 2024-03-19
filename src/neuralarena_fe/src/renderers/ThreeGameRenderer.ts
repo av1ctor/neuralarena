@@ -9,6 +9,7 @@ import { GameAssetsLoadingManager, NftAssetsLoadingManager } from '@libs/loading
 import { InstanceNpcEntity, InstancePlayerEntity } from '@game-engine/game-engine';
 import { AnimScene } from './utils/AnimScene';
 import { EntityStatusBarManager } from './utils/EntityStatusBarMng';
+import { LoadingBar } from './utils/LoadingBar';
 
 const HEALTH_BAR_WIDTH = 100.0;
 const HEALTH_BAR_HEIGHT = 10.0;
@@ -40,6 +41,8 @@ export class ThreeGameRenderer {
         npcs: InstanceNpcEntity[],
     };
     statusMng: EntityStatusBarManager;
+    loading: boolean;
+    loadingBar: LoadingBar;
 
     constructor(
         canvas: HTMLCanvasElement,
@@ -54,8 +57,14 @@ export class ThreeGameRenderer {
             npcs: [],
         };
 
+        this.loading = true;
+        this.loadingBar = new LoadingBar();
+
         this.gameAssetLoader = new GLTFLoader(
-            new GameAssetsLoadingManager(game.urls.assets)
+            new GameAssetsLoadingManager(
+                game.urls.assets,
+                (url, loaded, total) => this.loadingBar.onProgress(url, loaded, total)
+            )
         );
 
         const main = ThreeGameRenderer.#setup(this.width, this.height);
@@ -98,7 +107,9 @@ export class ThreeGameRenderer {
         this.skipping = false;
 
         this.nftAssetLoader = new GLTFLoader(
-            new NftAssetsLoadingManager()
+            new NftAssetsLoadingManager(
+                (url, loaded, total) => this.loadingBar.onProgress(url, loaded, total)
+            )
         );
 
         this.fonts = ThreeGameRenderer.#loadFonts();
@@ -154,6 +165,12 @@ export class ThreeGameRenderer {
         });
         
         return fonts;
+    }
+
+    toggleLoading(
+        to: boolean
+    ) {
+        this.loading = to;
     }
 
     showStart(
@@ -469,6 +486,11 @@ export class ThreeGameRenderer {
 
     render(
     ) {
+        if(this.loading) {
+            this.loadingBar.render(this.renderer);
+            return;
+        }
+        
         if(this.skipping) {
             return;
         }

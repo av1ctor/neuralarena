@@ -252,6 +252,7 @@ export const Watch = (props: Props) => {
                 assetsLoading.current = true;
                 setAssetsLoadingProgress(5);
                 toggleLoading(true);
+                renderer.toggleLoading(true);
                 const assets = await matchGetAssets(main, props.match.id);
                 for(const e of assets.entries()) {
                     await renderer.load_asset(e[0], e[1]);
@@ -263,6 +264,7 @@ export const Watch = (props: Props) => {
                 showError(e);
             }
             finally {
+                renderer.toggleLoading(false);
                 toggleLoading(false);
                 setAssetsLoadingProgress(100);
                 assetsLoading.current = false;
@@ -311,7 +313,6 @@ export const Watch = (props: Props) => {
                 toggleLoading(true);
                 await gameEngineInit(props.game.info.urls.engine_wasm);
                 setEngine(new GameEngine());
-                setState(WatchState.PLAYING);
             }
             catch(e) {
                 console.log(e);
@@ -329,60 +330,67 @@ export const Watch = (props: Props) => {
         load_engine();
     }, [load_engine]);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if(engine && assets && frames.length > 0) {
-            let timerId: number = 0;
+            setState(WatchState.PLAYING);
+        }
+    }, [engine, assets, frames.length]);
 
-            const animate = () => {
-                switch(state) {
-                    case WatchState.PLAYING:
-                        if(step.current === 0) {
-                            renderer?.showStart();
-                        }
-                        if(step.current < frames.length) {
-                            const frame = frames[step.current];
-                            try {
-                                engine.render(
-                                    frame.entities as Uint8Array,
-                                    frame.events as Uint8Array, 
-                                    renderer
-                                );
-                            }
-                            catch(e) {
-                                console.error(e);
-                            }
-                            setMatchProgress(step.current / frames.length * 100.0);
-                            ++step.current;
-                            if(step.current >= frames.length) {
-                                setState(WatchState.FINISHED);
-                            }
-                        }
-                        break;
-                    case WatchState.PAUSED:
-                        engine.render(Uint8Array.from([]), Uint8Array.from([]), renderer);
-                        break;
-                    case WatchState.FINISHED:
-                        if(props.match.won_by.length > 0) {
-                            const winnerPrincipal = props.match.won_by[0]?.toString();
-                            const winner = props.match.players
-                                .findIndex(p => p.id.toString() === winnerPrincipal);
-                            renderer?.changePOV(winner, true);
-                        }
+    useLayoutEffect(() => {
+        let timerId: number = 0;
 
-                        engine.render(Uint8Array.from([]), Uint8Array.from([]), renderer);
-                        break;
-                }
+        const animate = () => {
+            switch(state) {
+                case WatchState.LOADING:
+                    renderer?.render();
+                    break;
 
-                timerId = requestAnimationFrame(animate);
+                case WatchState.PLAYING:
+                    if(step.current === 0) {
+                        renderer?.showStart();
+                    }
+                    if(step.current < frames.length) {
+                        const frame = frames[step.current];
+                        try {
+                            engine?.render(
+                                frame.entities as Uint8Array,
+                                frame.events as Uint8Array, 
+                                renderer
+                            );
+                        }
+                        catch(e) {
+                            console.error(e);
+                        }
+                        setMatchProgress(step.current / frames.length * 100.0);
+                        ++step.current;
+                        if(step.current >= frames.length) {
+                            setState(WatchState.FINISHED);
+                        }
+                    }
+                    break;
+
+                case WatchState.PAUSED:
+                    engine?.render(Uint8Array.from([]), Uint8Array.from([]), renderer);
+                    break;
+
+                case WatchState.FINISHED:
+                    if(props.match.won_by.length > 0) {
+                        const winnerPrincipal = props.match.won_by[0]?.toString();
+                        const winner = props.match.players
+                            .findIndex(p => p.id.toString() === winnerPrincipal);
+                        renderer?.changePOV(winner, true);
+                    }
+
+                    engine?.render(Uint8Array.from([]), Uint8Array.from([]), renderer);
+                    break;
             }
 
-            timerId = requestAnimationFrame(animate)
-            return () => cancelAnimationFrame(timerId)
+            timerId = requestAnimationFrame(animate);
         }
-        else {
-            return () => {};
-        };
-    }, [engine, assets, steps, frames, state, renderer, props.match]);
+
+        timerId = requestAnimationFrame(animate)
+        return () => cancelAnimationFrame(timerId)
+    }, [engine, frames.length, state, renderer, props.match]);
 
     return (
         <Center                 
