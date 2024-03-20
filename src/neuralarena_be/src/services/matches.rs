@@ -5,18 +5,19 @@ use neuralarena_cdk::{
     models::{
         ic_asset_types::{GetRequest, GetResponse}, 
         instance::{
-            InstanceAssetsResponse, InstanceId, InstancePlayer, 
-            InstancePlayerState, InstanceRunRequest, InstanceRunResponse, 
-            InstanceRunSlice, InstanceStepsResponse
+            InstanceAssetsResponse, InstanceId, InstancePlayer, InstancePlayerNft, InstancePlayerState, InstanceRunRequest, InstanceRunResponse, InstanceRunSlice, InstanceStepsResponse
         }
     },
     utils::uniqueid
 };
-use crate::models::{
-    game::{Game, GameId}, 
-    m4tch::{Match, MatchId, MatchRequest, MatchStatus}, 
-    nftcol::NftCollection, 
-    user::{User, UserNftRequest}
+use crate::{
+    models::{
+        game::{Game, GameId}, 
+        m4tch::{Match, MatchId, MatchRequest, MatchStatus}, 
+        nftcol::NftCollection, 
+        user::{User, UserNftRequest}
+    }, 
+    utils::icrc7
 };
 use crate::db::DB;
 use crate::models::user::UserKind;
@@ -30,6 +31,20 @@ impl MatchesService {
         user: &User
     ) -> Result<Match, String> {
         Self::authorize(user)?;
+
+        // validations
+        if req.game.min_players > req.game.max_players {
+            return Err("Min number of players can't be greater than max number of players".to_string());
+        }
+        else if req.game.min_players < game.info.min_players {
+            return Err("Min number of players can't be lower than game's min number of players".to_string());
+        }
+        else if req.game.min_players > game.info.max_players {
+            return Err("Min number of players can't be greater than game's max number of players".to_string());
+        }
+        else if req.game.max_players > game.info.max_players {
+            return Err("Max number of players can't be greater than game's max number of players".to_string());
+        }
 
         let id = uniqueid::generate();
         let mut m4tch = Match::new(&id, &req, &user.id);
@@ -161,7 +176,7 @@ impl MatchesService {
         Self::authorize(user)?;
         
         let num_players = m4tch.state.players.len();
-        if  num_players >= game.info.max_players {
+        if  num_players >= m4tch.game.max_players {
             return Err("Too many players".to_string());
         }
 
@@ -210,7 +225,11 @@ impl MatchesService {
             
             m4tch.state.players.push(InstancePlayer {
                 id: user.id.clone(),
-                nft: user_nft.data.clone(),
+                nft: InstancePlayerNft {
+                    collection_id: user_nft.collection_id,
+                    token_id: user_nft.token_id,
+                    props: user_nft.props.clone(),
+                },
                 nft_col: nft_col.meta.clone(),
                 tensors,
                 state: InstancePlayerState {
@@ -230,12 +249,12 @@ impl MatchesService {
 
     pub fn setup_step1(
         m4tch: &mut Match,
-        game: &Game,
+        _game: &Game,
         user: &User
     ) -> Result<(), String> {
         Self::authorize(user)?;
         
-        if m4tch.state.players.len() < game.info.min_players {
+        if m4tch.state.players.len() < m4tch.game.min_players {
             return Err("Too few players".to_string());
         }
 
@@ -271,12 +290,12 @@ impl MatchesService {
 
     pub fn run_step1(
         m4tch: &mut Match,
-        game: &Game,
+        _game: &Game,
         user: &User
     ) -> Result<(), String> {
         Self::authorize(user)?;
         
-        if m4tch.state.players.len() < game.info.min_players {
+        if m4tch.state.players.len() < m4tch.game.min_players {
             return Err("Too few players".to_string());
         }
 
@@ -288,11 +307,39 @@ impl MatchesService {
         Ok(())
     }
 
+    async fn verify_players(
+        players: &Vec<InstancePlayer>
+    ) -> Result<(), String> {
+        // revalidate NFT's, because they may have been transfered
+        let mut nfts_by_canister = HashMap::<Principal, (Vec<u128>, Vec<Principal>)>::new();
+        for player in players {
+            if let Some(tokens_owners) = nfts_by_canister.get_mut(&player.nft.collection_id) {
+                tokens_owners.0.push(player.nft.token_id);
+                tokens_owners.1.push(player.id.clone());
+            }
+            else {
+                nfts_by_canister.insert(
+                    player.nft.collection_id.clone(),
+                    (
+                        vec![player.nft.token_id],
+                        vec![player.id.clone()]
+                    )
+                );
+            }
+        }
+
+        icrc7::ICRC7Utils::verify_owners(&nfts_by_canister).await?;
+
+        Ok(())
+    }
+
     pub async fn run_step2(
         m4tch: &mut Match,
         game: &Game,
         initial_seed: u64
     ) -> Result<(), String> {
+
+        Self::verify_players(&m4tch.state.players).await?;
 
         m4tch.state.initial_seed = Some(initial_seed);
 

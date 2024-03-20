@@ -143,7 +143,7 @@ impl UsersService {
 
             for (i, acc) in accounts.iter().enumerate() {
                 if let Some(acc) = acc {
-                    if acc.owner != user.id {
+                    if !acc.owner.eq(&user.id) {
                         return Err(format!("User {} isn't the owner of {}[{}]", user.id, canister_id, token_ids[i]));
                     }
                 }
@@ -163,7 +163,7 @@ impl UsersService {
                     nfts.push(UserNft { 
                         collection_id: canister_id.clone(), 
                         token_id,
-                        data: token_data,
+                        props: token_data,
                     });
                 }
                 else {

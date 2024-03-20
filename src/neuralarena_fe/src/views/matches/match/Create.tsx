@@ -10,6 +10,8 @@ import { useMatch } from "@hooks/matches";
 const schema = {
     game_id: yup.string().required(),
     map_id: yup.string().required(),
+    min_players: yup.number().required().min(1),
+    max_players: yup.number().required().min(1),
 };
 
 interface Props {
@@ -26,6 +28,8 @@ export const MatchCreate = (props: Props) => {
         initialValues: {
             game_id: '',
             map_id: '',
+            min_players: 1,
+            max_players: 10,
         },
 
         validate: yupResolver(
@@ -44,6 +48,8 @@ export const MatchCreate = (props: Props) => {
                 game: {
                     id: values.game_id,
                     map_id: BigInt(values.map_id),
+                    min_players: values.min_players,
+                    max_players: values.max_players,
                     options: []
                 }
             })

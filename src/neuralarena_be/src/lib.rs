@@ -37,6 +37,7 @@ use services::users::UsersService;
 mod models;
 mod db;
 mod services;
+mod utils;
 
 const STATE_VERSION: f32 = 0.1;
 

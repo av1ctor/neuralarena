@@ -15,6 +15,8 @@ pub type MatchId = String;
 pub struct MatchGame {
     pub id: GameId,
     pub map_id: GameMapId,
+    pub min_players: usize,
+    pub max_players: usize,
     pub options: HashMap<String, String>,
 }
 
@@ -64,9 +66,16 @@ pub struct MatchRequest {
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
+pub struct MatchPlayerNftResponse {
+    pub collection_id: Principal,
+    pub token_id: u128,
+    pub props: Nas1Token,
+}
+
+#[derive(Clone, Serialize, Deserialize, CandidType)]
 pub struct MatchPlayerResponse {
     pub id: Principal,
-    pub nft: Nas1Token,
+    pub nft: MatchPlayerNftResponse,
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
@@ -142,7 +151,11 @@ impl From<Match> for MatchResponse {
             game: e.game,
             players: e.state.players.iter().map(|p| MatchPlayerResponse {
                 id: p.id,
-                nft: p.nft.clone(),
+                nft: MatchPlayerNftResponse{
+                    collection_id: p.nft.collection_id,
+                    token_id: p.nft.token_id,
+                    props: p.nft.props.clone(),
+                },
             }).collect(),
             created_at: e.created_at,
             created_by: e.created_by,

@@ -20,7 +20,7 @@ pub enum UserKind {
 pub struct UserNft {
     pub collection_id: Principal,
     pub token_id: u128,
-    pub data: Nas1Token,
+    pub props: Nas1Token,
 }
 
 impl PartialEq for UserNft {
@@ -156,7 +156,7 @@ impl From<User> for UserResponse {
             nfts: e.nfts.iter().map(|n| UserNftResponse { 
                 collection_id: n.collection_id, 
                 token_id: n.token_id, 
-                data: n.data.clone(),
+                data: n.props.clone(),
             }).collect(),
             created_at: e.created_at,
             updated_at: e.updated_at,

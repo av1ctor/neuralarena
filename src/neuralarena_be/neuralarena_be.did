@@ -63,11 +63,21 @@ type InstanceStep = record { entities : vec nat8; events : vec nat8 };
 type InstanceStepsResponse = record { steps : vec InstanceStep };
 type MatchGame = record {
   id : text;
+  min_players : nat64;
+  max_players : nat64;
   map_id : nat64;
   options : vec record { text; text };
 };
 type MatchJoinRequest = record { id : text; nft : UserNftRequest };
-type MatchPlayerResponse = record { id : principal; nft : Nas1Token };
+type MatchPlayerNftResponse = record {
+  token_id : nat;
+  collection_id : principal;
+  props : Nas1Token;
+};
+type MatchPlayerResponse = record {
+  id : principal;
+  nft : MatchPlayerNftResponse;
+};
 type MatchRequest = record { game : MatchGame };
 type MatchResponse = record {
   id : text;
