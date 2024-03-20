@@ -1,17 +1,19 @@
 import React, { useCallback, useMemo } from "react";
-import { Button, Select, Space } from "@mantine/core";
+import { Button, NumberInput, Select, Space } from "@mantine/core";
 import * as yup from 'yup';
 import { useUI } from "@hooks/ui";
 import { useForm, yupResolver } from "@mantine/form";
 import { useGameFindActive } from "@hooks/games";
 import { SelectItem } from "@components/SelectItem";
 import { useMatch } from "@hooks/matches";
+import { FPS } from "@libs/games";
 
 const schema = {
     game_id: yup.string().required(),
     map_id: yup.string().required(),
     min_players: yup.number().required().min(1),
     max_players: yup.number().required().min(1),
+    max_duration: yup.number().required().min(1).max(60*10),
 };
 
 interface Props {
@@ -30,6 +32,7 @@ export const MatchCreate = (props: Props) => {
             map_id: '',
             min_players: 1,
             max_players: 10,
+            max_duration: 60 * 10
         },
 
         validate: yupResolver(
@@ -50,6 +53,7 @@ export const MatchCreate = (props: Props) => {
                     map_id: BigInt(values.map_id),
                     min_players: values.min_players,
                     max_players: values.max_players,
+                    max_steps: BigInt(values.max_duration * FPS),
                     options: []
                 }
             })
@@ -113,6 +117,29 @@ export const MatchCreate = (props: Props) => {
                 itemComponent={SelectItem}
                 data={maps}
                 disabled={!form.values.game_id}
+            />
+
+            <NumberInput
+                label="Min players"
+                placeholder="Select mininum number of players"
+                {...form.getInputProps('min_players')}
+                min={1}
+            />
+
+            <NumberInput
+                label="Max players"
+                placeholder="Select maximum number of players"
+                {...form.getInputProps('max_players')}
+                min={1}
+                max={100}
+            />
+
+            <NumberInput
+                label="Max duration (in secs)"
+                placeholder="Select maximum duration"
+                {...form.getInputProps('max_duration')}
+                min={1}
+                max={60*10}
             />
 
             <Space h="lg"/>

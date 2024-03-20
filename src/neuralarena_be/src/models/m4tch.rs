@@ -17,6 +17,7 @@ pub struct MatchGame {
     pub map_id: GameMapId,
     pub min_players: usize,
     pub max_players: usize,
+    pub max_steps: usize,
     pub options: HashMap<String, String>,
 }
 

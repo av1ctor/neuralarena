@@ -5,7 +5,9 @@ use neuralarena_cdk::{
     models::{
         ic_asset_types::{GetRequest, GetResponse}, 
         instance::{
-            InstanceAssetsResponse, InstanceId, InstancePlayer, InstancePlayerNft, InstancePlayerState, InstanceRunRequest, InstanceRunResponse, InstanceRunSlice, InstanceStepsResponse
+            InstanceAssetsResponse, InstanceId, InstancePlayer, 
+            InstancePlayerNft, InstancePlayerState, InstanceRunRequest, 
+            InstanceRunResponse, InstanceRunSlice, InstanceStepsResponse
         }
     },
     utils::uniqueid
@@ -33,7 +35,13 @@ impl MatchesService {
         Self::authorize(user)?;
 
         // validations
-        if req.game.min_players > req.game.max_players {
+        if req.game.map_id >= game.info.maps.len() {
+            return Err("Invalid map id".to_string());
+        }
+        else if req.game.max_steps == 0 || req.game.max_steps > (60 * 10) * 60 {
+            return Err("Invalid duration".to_string());
+        }
+        else if req.game.min_players > req.game.max_players {
             return Err("Min number of players can't be greater than max number of players".to_string());
         }
         else if req.game.min_players < game.info.min_players {
@@ -304,6 +312,7 @@ impl MatchesService {
         }
 
         m4tch.state.status = MatchStatus::RUNNING;
+        m4tch.started_at = Some(ic_cdk::api::time());
         Ok(())
     }
 
@@ -361,6 +370,7 @@ impl MatchesService {
                         slice,
                         seed,
                         max_instructions: 500_000_000,
+                        max_steps: m4tch.game.max_steps,
                     }
                 )
             ).await.map_err(|e| e.1)?;

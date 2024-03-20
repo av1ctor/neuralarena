@@ -65,6 +65,7 @@ type MatchGame = record {
   id : text;
   min_players : nat64;
   max_players : nat64;
+  max_steps : nat64;
   map_id : nat64;
   options : vec record { text; text };
 };

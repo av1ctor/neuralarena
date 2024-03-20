@@ -88,9 +88,6 @@ export const MatchCard = (props: Props) => {
 
     const game = useGameFindById(match.game.id);
 
-    const min_players = game.data? Number(game.data.info.min_players): 1;
-    const max_players = game.data? Number(game.data.info.max_players): 10;
-    
     return (
         <Paper
             shadow="md"
@@ -129,8 +126,8 @@ export const MatchCard = (props: Props) => {
                         min={0}
                         max={16}
                         marks={[
-                            { value: min_players, label: `Min: ${min_players}` },
-                            { value: max_players, label: `Max: ${max_players}` },
+                            { value: Number(match.game.min_players), label: `Min: ${match.game.min_players}` },
+                            { value: Number(match.game.max_players), label: `Max: ${match.game.max_players}` },
                         ]}
                     />
                 </div>

@@ -81,7 +81,7 @@ export const AboutMatch = (props: Props) => {
             <Grid.Col md={6}>
                 <TextInput
                     label="Max Duration"
-                    value={"0"}
+                    value={match? (match.game.max_steps / 60n).toString() + 's': ''}
                     readOnly
                 />
             </Grid.Col>
