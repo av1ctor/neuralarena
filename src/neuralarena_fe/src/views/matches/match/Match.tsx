@@ -209,7 +209,6 @@ export const Match = (props: Props) => {
                 <Box className={section === 'players'? classes.block: classes.none}>
                     <MatchPlayers
                         match={match.data}
-                        game={game.data}
                         onChangePov={status === 'FINISHED'? handleChangePov: undefined}
                     />
                 </Box>

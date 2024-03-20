@@ -5,13 +5,12 @@ import { Avatar } from "@views/users/user/Avatar";
 
 interface Props {
     match: MatchResponse|undefined;
-    game: GameResponse|undefined;
     onChangePov?: (index: number) => void;
 }
 
 export const MatchPlayers = (props: Props) => {
-    const {match, game} = props;
-    if(!match || !game) {
+    const {match} = props;
+    if(!match) {
         return null;
     }
 
@@ -20,7 +19,7 @@ export const MatchPlayers = (props: Props) => {
         undefined;
 
     const slots = new Array(
-            Number(game.info.max_players || 10n) - match.players.length
+            Number(match.game.max_players || 10n) - match.players.length
         )
         .fill({});
 

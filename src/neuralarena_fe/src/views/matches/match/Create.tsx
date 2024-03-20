@@ -7,13 +7,14 @@ import { useGameFindActive } from "@hooks/games";
 import { SelectItem } from "@components/SelectItem";
 import { useMatch } from "@hooks/matches";
 import { FPS } from "@libs/games";
+import { MAX_DURATION, MAX_PLAYERS, MIN_PLAYERS } from "@libs/matches";
 
 const schema = {
     game_id: yup.string().required(),
     map_id: yup.string().required(),
-    min_players: yup.number().required().min(1),
-    max_players: yup.number().required().min(1),
-    max_duration: yup.number().required().min(1).max(60*10),
+    min_players: yup.number().required().min(MIN_PLAYERS),
+    max_players: yup.number().required().min(MIN_PLAYERS).max(MAX_PLAYERS),
+    max_duration: yup.number().required().min(1).max(MAX_DURATION),
 };
 
 interface Props {
@@ -30,9 +31,9 @@ export const MatchCreate = (props: Props) => {
         initialValues: {
             game_id: '',
             map_id: '',
-            min_players: 1,
-            max_players: 10,
-            max_duration: 60 * 10
+            min_players: MIN_PLAYERS,
+            max_players: MAX_PLAYERS,
+            max_duration: MAX_DURATION / 2,
         },
 
         validate: yupResolver(

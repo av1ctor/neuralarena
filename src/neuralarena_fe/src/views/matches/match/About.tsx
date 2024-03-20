@@ -3,6 +3,7 @@ import { GameResponse, MatchResponse } from "@declarations/neuralarena_be/neural
 import { Grid, TextInput } from "@mantine/core";
 import { principalToString, timeToNow } from "@libs/icp";
 import { matchStatusToString } from "@libs/matches";
+import { FPS } from "@libs/games";
 
 interface Props {
     match: MatchResponse|undefined;
@@ -57,7 +58,10 @@ export const AboutMatch = (props: Props) => {
             <Grid.Col md={6}>
                 <TextInput
                     label="Created at"
-                    value={match? timeToNow(match.created_at)[1].toLocaleString(): ''}
+                    value={match? 
+                        timeToNow(match.created_at)[1].toLocaleString(): 
+                        ''
+                    }
                     readOnly
                 />
             </Grid.Col>
@@ -65,7 +69,10 @@ export const AboutMatch = (props: Props) => {
             <Grid.Col md={6}>
                 <TextInput
                     label="Initial seed"
-                    value={match? match.state.initial_seed[0]?.toString(16): ''}
+                    value={match? 
+                        match.state.initial_seed[0]?.toString(16): 
+                        ''
+                    }
                     readOnly
                 />
             </Grid.Col>
@@ -73,7 +80,10 @@ export const AboutMatch = (props: Props) => {
             <Grid.Col span={6}>
                 <TextInput
                     label="Started at"
-                    value={match && match.started_at.length > 0? timeToNow(match.started_at[0]!)[1].toLocaleString(): ''}
+                    value={match && match.started_at.length > 0? 
+                        timeToNow(match.started_at[0]!)[1].toLocaleString(): 
+                        ''
+                    }
                     readOnly
                 />
             </Grid.Col>
@@ -81,7 +91,10 @@ export const AboutMatch = (props: Props) => {
             <Grid.Col md={6}>
                 <TextInput
                     label="Max Duration"
-                    value={match? (match.game.max_steps / 60n).toString() + 's': ''}
+                    value={match? 
+                        (Number(match.game.max_steps) / FPS).toString() + 's': 
+                        ''
+                    }
                     readOnly
                 />
             </Grid.Col>
@@ -89,7 +102,10 @@ export const AboutMatch = (props: Props) => {
             <Grid.Col md={6}>
                 <TextInput
                     label="Total Duration"
-                    value={match? (match.state.num_steps / 60n).toString() + 's': ''}
+                    value={match? 
+                        (Number(match.state.num_steps) / FPS).toString() + 's': 
+                        ''
+                    }
                     readOnly
                 />
             </Grid.Col>
@@ -97,7 +113,10 @@ export const AboutMatch = (props: Props) => {
             <Grid.Col md={6}>
                 <TextInput
                     label="Won by"
-                    value={match && match.won_by.length > 0? principalToString(match.won_by[0]): ''}
+                    value={match && match.won_by.length > 0? 
+                        principalToString(match.won_by[0]): 
+                        ''
+                    }
                     readOnly
                 />
             </Grid.Col>
@@ -105,7 +124,10 @@ export const AboutMatch = (props: Props) => {
             <Grid.Col md={6}>
                 <TextInput
                     label="Won at"
-                    value={match && match.won_at.length > 0? timeToNow(match.won_at[0]!)[1].toLocaleString(): ''}
+                    value={match && match.won_at.length > 0? 
+                        timeToNow(match.won_at[0]!)[1].toLocaleString(): 
+                        ''
+                    }
                     readOnly
                 />
             </Grid.Col>

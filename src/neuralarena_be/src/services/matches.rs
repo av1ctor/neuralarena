@@ -24,6 +24,9 @@ use crate::{
 use crate::db::DB;
 use crate::models::user::UserKind;
 
+const MIN_PLAYERS: usize = 2;
+const MAX_STEPS: usize = (60 * 10) * 60;
+
 pub struct MatchesService {}
 
 impl MatchesService {
@@ -38,13 +41,13 @@ impl MatchesService {
         if req.game.map_id >= game.info.maps.len() {
             return Err("Invalid map id".to_string());
         }
-        else if req.game.max_steps == 0 || req.game.max_steps > (60 * 10) * 60 {
+        else if req.game.max_steps == 0 || req.game.max_steps > MAX_STEPS {
             return Err("Invalid duration".to_string());
         }
         else if req.game.min_players > req.game.max_players {
             return Err("Min number of players can't be greater than max number of players".to_string());
         }
-        else if req.game.min_players < game.info.min_players {
+        else if req.game.min_players < game.info.min_players.max(MIN_PLAYERS) {
             return Err("Min number of players can't be lower than game's min number of players".to_string());
         }
         else if req.game.min_players > game.info.max_players {

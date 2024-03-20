@@ -11,6 +11,10 @@ import { GameId } from "./games";
 
 export type MatchId = string;
 
+export const MIN_PLAYERS: number = 2;
+export const MAX_PLAYERS: number = 10;
+export const MAX_DURATION: number = 60*10; // in secs
+
 export const matchStatusToString = (
     status: MatchStatus|undefined
 ): string => {
