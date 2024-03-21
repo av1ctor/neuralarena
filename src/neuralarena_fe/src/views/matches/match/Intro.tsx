@@ -63,7 +63,6 @@ const useStyles = createStyles((theme) => {
                 }
             }
         },
-        
     };
 });
 
@@ -120,7 +119,7 @@ export const Intro = (props: Props) => {
                 secondsCounter.current += 1;
                 if(secondsCounter.current >= 60) {
                     secondsCounter.current = 0;
-                    const timeLeft = new Date(Number((props.match.created_at / 1_000_000n) + props.match.opened_for * 1_000n) - Date.now());
+                    const timeLeft = new Date(Number((props.match.created_at / 1_000_000n) + props.match.deadline * 1_000n) - Date.now());
                     setTimeLeft(timeLeft);
                 }
                         
@@ -165,15 +164,15 @@ export const Intro = (props: Props) => {
                     >
                         {status === 'OPEN'?
                             joined?
-                                "Waiting for another players to join or the period to expire!"
+                                "Waiting for players to join or for the deadline..."
                             :
                                 user?
-                                    "Join now before the period expires!"
+                                    "Join now before the deadline ends!"
                                 :
                                     "Please log in or sign up to be able to join!"
                         :
                             status === 'RUNNING'?
-                                "Matching is running. Waiting for the results!"
+                                "This match is running. Waiting for the results!"
                             :
                                 `This match is ${status}.`
                         }
@@ -182,7 +181,7 @@ export const Intro = (props: Props) => {
 
                 {status === 'OPEN' &&
                     <div className={classes.countdown_container}>
-                        ⏰ {timeLeft && timeLeftToString(timeLeft)}
+                        ⛹️‍♀️ {match.players.length}/{match.game.max_players.toString()} ⏰ {timeLeft && timeLeftToString(timeLeft)}
                     </div>
                 }
             </div>

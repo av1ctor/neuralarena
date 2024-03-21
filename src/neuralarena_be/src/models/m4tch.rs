@@ -53,7 +53,7 @@ pub struct Match {
     pub state: MatchState,
     pub instance: MatchGameInstance,
     pub timer_id: Option<TimerId>,
-    pub opened_for: u64, // seconds
+    pub deadline: u64, // seconds
     pub created_at: u64,
     pub created_by: UserId,
     pub started_at: Option<u64>,
@@ -65,7 +65,7 @@ pub struct Match {
 #[derive(Clone, Serialize, Deserialize, CandidType)]
 pub struct MatchRequest {
     pub game: MatchGame,
-    pub opened_for: u64, // seconds
+    pub deadline: u64, // seconds
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
@@ -97,7 +97,7 @@ pub struct MatchResponse {
     pub players: Vec<MatchPlayerResponse>,
     pub created_at: u64,
     pub created_by: UserId,
-    pub opened_for: u64,
+    pub deadline: u64,
     pub started_at: Option<u64>,
     pub started_by: Option<UserId>,
     pub won_at: Option<u64>,
@@ -131,7 +131,7 @@ impl Match {
                 map_id: 0,
             },
             timer_id: None,
-            opened_for: req.opened_for,
+            deadline: req.deadline,
             created_at: ic_cdk::api::time(),
             created_by: caller.clone(),
             started_at: None,
@@ -165,7 +165,7 @@ impl From<Match> for MatchResponse {
             }).collect(),
             created_at: e.created_at,
             created_by: e.created_by,
-            opened_for: e.opened_for,
+            deadline: e.deadline,
             started_at: e.started_at,
             started_by: e.started_by,
             won_at: e.won_at,

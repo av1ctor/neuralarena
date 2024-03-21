@@ -8,7 +8,7 @@ import { SelectItem } from "@components/SelectItem";
 import { useMatch } from "@hooks/matches";
 import { FPS } from "@libs/games";
 import { 
-    MAX_DURATION, MAX_OPENED, MAX_PLAYERS, MIN_OPENED, MIN_PLAYERS 
+    MAX_DURATION, MAX_DEADLINE, MAX_PLAYERS, MIN_DEADLINE, MIN_PLAYERS 
 } from "@libs/matches";
 
 const schema = {
@@ -17,7 +17,7 @@ const schema = {
     min_players: yup.number().required().min(MIN_PLAYERS),
     max_players: yup.number().required().min(MIN_PLAYERS).max(MAX_PLAYERS),
     max_duration: yup.number().required().min(1).max(MAX_DURATION),
-    opened_for: yup.number().required().min(MIN_OPENED).max(MAX_OPENED),
+    deadline: yup.number().required().min(MIN_DEADLINE).max(MAX_DEADLINE),
 };
 
 interface Props {
@@ -37,7 +37,7 @@ export const MatchCreate = (props: Props) => {
             min_players: MIN_PLAYERS,
             max_players: MAX_PLAYERS,
             max_duration: MAX_DURATION / 2,
-            opened_for: 60*60*24,
+            deadline: 60*60*24,
         },
 
         validate: yupResolver(
@@ -61,7 +61,7 @@ export const MatchCreate = (props: Props) => {
                     max_steps: BigInt(values.max_duration * FPS),
                     options: []
                 },
-                opened_for: BigInt(values.opened_for)
+                deadline: BigInt(values.deadline)
             })
             showSuccess('Match created!');
             props.onClose()
@@ -130,6 +130,7 @@ export const MatchCreate = (props: Props) => {
                 placeholder="Set mininum number of players"
                 {...form.getInputProps('min_players')}
                 min={1}
+                disabled={form.values.map_id === ''}
             />
 
             <NumberInput
@@ -138,6 +139,7 @@ export const MatchCreate = (props: Props) => {
                 {...form.getInputProps('max_players')}
                 min={1}
                 max={100}
+                disabled={form.values.map_id === ''}
             />
 
             <NumberInput
@@ -146,14 +148,16 @@ export const MatchCreate = (props: Props) => {
                 {...form.getInputProps('max_duration')}
                 min={1}
                 max={MAX_DURATION}
+                disabled={form.values.map_id === ''}
             />
 
             <NumberInput
-                label="Remain opened for (in secs)"
-                placeholder="Set how long to wait for player to join"
-                {...form.getInputProps('opened_for')}
-                min={MIN_OPENED}
-                max={MAX_OPENED}
+                label="Deadline (in secs)"
+                placeholder="Set how long to wait for players to join"
+                {...form.getInputProps('deadline')}
+                min={MIN_DEADLINE}
+                max={MAX_DEADLINE}
+                disabled={form.values.map_id === ''}
             />
 
             <Space h="lg"/>

@@ -14,8 +14,8 @@ export type MatchId = string;
 export const MIN_PLAYERS: number = 2;
 export const MAX_PLAYERS: number = 10;
 export const MAX_DURATION: number = 60*10;      // in seconds
-export const MIN_OPENED: number = 60/**60*01*/; // ditto
-export const MAX_OPENED: number = 60*60*24*7;   // ditto
+export const MIN_DEADLINE: number = 60/**60*01*/; // ditto
+export const MAX_DEADLINE: number = 60*60*24*7;   // ditto
 
 export const matchStatusToString = (
     status: MatchStatus|undefined

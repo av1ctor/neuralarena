@@ -79,11 +79,11 @@ type MatchPlayerResponse = record {
   id : principal;
   nft : MatchPlayerNftResponse;
 };
-type MatchRequest = record { game : MatchGame; opened_for : nat64 };
+type MatchRequest = record { game : MatchGame; deadline : nat64 };
 type MatchResponse = record {
   id : text;
   game : MatchGame;
-  opened_for : nat64;
+  deadline : nat64;
   created_at : nat64;
   created_by : principal;
   state : MatchStateResponse;

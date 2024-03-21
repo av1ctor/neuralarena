@@ -139,11 +139,11 @@ fn _restart_timers(
                 TimerTarget::Match(match_id) => {
                     if let Ok(m4tch) = MatchesService::find_by_id(&match_id, &db.borrow()) {
                         let elapsed = (ic_cdk::api::time() - m4tch.created_at) / 1_000_000_000;
-                        let remaining = if elapsed >= m4tch.opened_for {
+                        let remaining = if elapsed >= m4tch.deadline {
                             delay
                         } 
                         else {
-                            (m4tch.opened_for - elapsed).max(delay)
+                            (m4tch.deadline - elapsed).max(delay)
                         };
 
                         delay += 4;
@@ -550,7 +550,7 @@ pub async fn match_create(
     let mut m4tch = MatchesService::create(&req, &game, &user).await?;
     
     let mut timer = TimersService::create(
-        m4tch.opened_for, 
+        m4tch.deadline, 
         TimerTarget::Match(m4tch.id.clone())
     );
 
@@ -559,7 +559,7 @@ pub async fn match_create(
     let match_id = m4tch.id.clone();
 
     timer.timer_id = Some(ic_cdk_timers::set_timer(
-        Duration::from_secs(m4tch.opened_for), 
+        Duration::from_secs(m4tch.deadline), 
         || ic_cdk::spawn(_run_match_after_time_expired(match_id))
     ));
 

@@ -67,6 +67,28 @@ export const AboutMatch = (props: Props) => {
                 />
             </Grid.Col>
 
+            <Grid.Col span={6}>
+                <TextInput
+                    label="Deadline"
+                    value={match? 
+                        match.deadline.toString() + 's': 
+                        ''
+                    }
+                    readOnly
+                />
+            </Grid.Col>
+
+            <Grid.Col span={6}>
+                <TextInput
+                    label="Started at"
+                    value={match && match.started_at.length > 0? 
+                        timeToNow(match.started_at[0]!)[1].toLocaleString(): 
+                        ''
+                    }
+                    readOnly
+                />
+            </Grid.Col>
+
             <Grid.Col md={6}>
                 <TextInput
                     label="Initial seed"
@@ -84,28 +106,6 @@ export const AboutMatch = (props: Props) => {
                     value={match? 
                         match.state.run_slices.length: 
                         '0'
-                    }
-                    readOnly
-                />
-            </Grid.Col>
-
-            <Grid.Col span={6}>
-                <TextInput
-                    label="Remain opened for"
-                    value={match? 
-                        match.opened_for.toString() + 's': 
-                        ''
-                    }
-                    readOnly
-                />
-            </Grid.Col>
-
-            <Grid.Col span={6}>
-                <TextInput
-                    label="Started at"
-                    value={match && match.started_at.length > 0? 
-                        timeToNow(match.started_at[0]!)[1].toLocaleString(): 
-                        ''
                     }
                     readOnly
                 />

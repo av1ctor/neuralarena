@@ -61,10 +61,10 @@ impl MatchesService {
             return Err("Max number of players can't be greater than game's max number of players".to_string());
         }
         
-        if req.opened_for < MIN_OPENED {
+        if req.deadline < MIN_OPENED {
             return Err(format!("Match can't be open for less than {} seconds", MIN_OPENED));
         }
-        else if req.opened_for > MAX_OPENED {
+        else if req.deadline > MAX_OPENED {
             return Err(format!("Match can't be open for more than {} seconds", MAX_OPENED));
         }
 
@@ -257,7 +257,7 @@ impl MatchesService {
                 }
             });
 
-            let ok_to_run = m4tch.state.players.len() == game.info.max_players;
+            let ok_to_run = m4tch.state.players.len() == m4tch.game.max_players;
             Ok(ok_to_run)
         }
         else {
