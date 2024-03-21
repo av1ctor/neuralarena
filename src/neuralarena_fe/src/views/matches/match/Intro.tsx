@@ -1,30 +1,88 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Center, createStyles } from "@mantine/core";
-import { GameResponse} from "@declarations/neuralarena_be/neuralarena_be.did";
+import { Center, createStyles, rem } from "@mantine/core";
+import { GameResponse, MatchResponse} from "@declarations/neuralarena_be/neuralarena_be.did";
 import { ThreeSceneRenderer } from "@renderers/ThreeSceneRenderer";
 import { useElementSize } from "@mantine/hooks";
 import { useFont } from "@hooks/font";
+import { matchStatusToString } from "@libs/matches";
+import { useAuth } from "@hooks/auth";
+import { useBrowser } from "@hooks/browser";
+import { timeLeftToString } from "@libs/time";
 
-const useStyles = createStyles((theme) => ({
-    canvas: {
-        display: 'block',
-        margin: 'auto',
-        borderRadius: '8px',
-    },
-}));
+const useStyles = createStyles((theme) => {
+    const {isMobile} = useBrowser();
+    
+    return {
+        container: {
+            position: 'relative',
+            margin: 'auto',
+        },
+        canvas: {
+            display: 'block',
+            margin: 'auto',
+            borderRadius: '8px',
+        },
+
+        message_container: {
+            position: 'absolute',
+            left: '10px',
+            right: '10px',
+            bottom: "45%",
+            padding: '8px',
+            overflowY: 'hidden',
+            backgroundColor: '#0009',
+            borderRadius: rem(isMobile? 6: 8),
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+
+        },
+        message: {
+            position: 'relative',
+            fontSize: rem(isMobile? 12: 18),
+            fontWeight: 700,
+            color: theme.primaryColor,
+        },
+
+        countdown_container: {
+            position: 'absolute',
+            right: '10px',
+            bottom: '10px',
+            margin: 0,
+            padding: '8px',
+            backgroundColor: '#0009',
+            borderRadius: rem(isMobile? 6: 8),
+            color: theme.primaryColor,
+            fontSize: rem(isMobile? 14: 20),
+            fontWeight: 700,
+            animation: 'blinker 1s linear infinite',
+
+            '@keyframes blinker': {
+                '50%': {
+                    opacity: 0,
+                }
+            }
+        },
+        
+    };
+});
 
 interface Props {
+    match: MatchResponse,
     game: GameResponse
 }
 
 const CANVAS_DEFAULT_DIM = {w: 450, h: 253};
 
 export const Intro = (props: Props) => {
-    const { classes } = useStyles();
+    const {user} = useAuth();
+    const {classes} = useStyles();
     const canvas = useRef<HTMLCanvasElement|null>(null);
     const [renderer, setRenderer] = useState<ThreeSceneRenderer>();
     const [dim, setDim] = useState(CANVAS_DEFAULT_DIM);
-    const { ref, width } = useElementSize();
+    const {ref, width} = useElementSize();
+    const [timeLeft, setTimeLeft] = useState<Date|undefined>();
+    const secondsCounter = useRef(0);
     const font = useFont('gentilis');
 
     const changeCanvasDim = (dim: {w: number, h: number}) => {
@@ -59,6 +117,13 @@ export const Intro = (props: Props) => {
         if(renderer) {
             let timerId = 0;
             const animate = () => {
+                secondsCounter.current += 1;
+                if(secondsCounter.current >= 60) {
+                    secondsCounter.current = 0;
+                    const timeLeft = new Date(Number((props.match.created_at / 1_000_000n) + props.match.opened_for * 1_000n) - Date.now());
+                    setTimeLeft(timeLeft);
+                }
+                        
                 renderer.render();
                 timerId = requestAnimationFrame(animate);
             }
@@ -69,19 +134,59 @@ export const Intro = (props: Props) => {
         else {
             return () => {};
         };
-    }, [renderer]);
+    }, [renderer, secondsCounter, props.match]);
+
+    const {match} = props;
+
+    const status = matchStatusToString(match.state.status);
+    const joined = user && 
+        match.players.find(p => p.id.compareTo(user.id) === 'eq');
 
     return (
         <Center
             ref={ref} 
         >
-            <canvas 
-                ref={canvas}
-                className={classes.canvas}
-                width={dim.w}
-                height={dim.h}
+            <div
+                className={classes.container}
             >
-            </canvas>
+                <canvas 
+                    ref={canvas}
+                    className={classes.canvas}
+                    width={dim.w}
+                    height={dim.h}
+                >
+                </canvas>
+
+                <div 
+                    className={classes.message_container}
+                >
+                    <div 
+                        className={classes.message}
+                    >
+                        {status === 'OPEN'?
+                            joined?
+                                "Waiting for another players to join or the period to expire!"
+                            :
+                                user?
+                                    "Join now before the period expires!"
+                                :
+                                    "Please log in or sign up to be able to join!"
+                        :
+                            status === 'RUNNING'?
+                                "Matching is running. Waiting for the results!"
+                            :
+                                `This match is ${status}.`
+                        }
+                    </div>
+                </div>
+
+                {status === 'OPEN' &&
+                    <div className={classes.countdown_container}>
+                        ⏰ {timeLeft && timeLeftToString(timeLeft)}
+                    </div>
+                }
+            </div>
+
         </Center>
     );
 };

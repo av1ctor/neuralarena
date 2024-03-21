@@ -146,13 +146,14 @@ export const Match = (props: Props) => {
                             />
                         :
                             <Intro
+                                match={match.data}
                                 game={game.data}
                             />
                     :
                         null   
                     }
 
-                    {isLogged?
+                    {isLogged &&
                         status === 'OPEN' && !joined &&
                             <Box mt="xl">
                                 <Button
@@ -163,11 +164,6 @@ export const Match = (props: Props) => {
                                     Join
                                 </Button>
                             </Box>
-                    :
-                        status === 'OPEN' &&
-                            <Center>
-                                Please log in or sign up to be able to participate!
-                            </Center>
                     }
                 </Stack>
 

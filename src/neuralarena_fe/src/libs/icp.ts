@@ -4,7 +4,6 @@ import crc from "crc";
 import { Principal } from "@dfinity/principal";
 import { HttpAgentOptions, Identity } from "@dfinity/agent";
 import { config } from "../config";
-import dayjs from "dayjs";
 
 export const buildAgentJsOptions = (
     identity?: Identity
@@ -26,50 +25,6 @@ export const principalToString = (
         return s;
     }
     return `${s.substr(0, 5)}...${s.substr(60, 3)}`
-};
-
-export const timeToNow = (
-    value: Date | number | bigint | string
-): [string, Date] => {
-    const date = (value.constructor === Date?
-        value:
-        value.constructor === Number?
-            new Date(value):
-                value.constructor === BigInt?
-                    new Date(Number(value / 1000000n)):
-                    Date.parse(value as string)) as Date;
-
-    const now = Date.now();
-    const diff = (now - date.valueOf()) / 1000;
-    
-    let str = '';
-    if(diff < 1) {
-        str = 'now';
-    }
-    if(diff < 60) {
-        str = Math.floor(diff) + 's';
-    }
-    else if(diff < 60 * 60) {
-        str = Math.floor(diff / (60)) + 'm';
-    }
-    else if(diff < 60 * 60 * 24) {
-        str = Math.floor(diff / (60 * 60)) + 'h';
-    }
-    else if(diff < 60 * 60 * 24 * 30) {
-        str = Math.ceil(diff / (60 * 60 * 24)) + 'd';
-    }
-    else {
-        const then = dayjs(date);
-        const diff = dayjs(now).diff(then, 'month');
-        if(diff < 12) {
-            str = then.format('MMM DD');
-        }
-        else {
-            str = Math.ceil(diff / 12) + 'y';
-        }
-    }
-
-    return [str, date];
 };
 
 export const toHexString = (

@@ -1,7 +1,8 @@
 import React from "react";
 import { GameResponse, MatchResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { Grid, TextInput } from "@mantine/core";
-import { principalToString, timeToNow } from "@libs/icp";
+import { principalToString } from "@libs/icp";
+import { timeToNow } from "@libs/time";
 import { matchStatusToString } from "@libs/matches";
 import { FPS } from "@libs/games";
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { timeToNow } from '@libs/icp';
+import { timeToNow } from '@libs/time';
 
 interface Props {
     date: Date | number | bigint | string;
