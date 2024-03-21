@@ -351,7 +351,9 @@ export const Watch = (props: Props) => {
                         setMatchProgress(step.current / frames.length * 100.0);
                         ++step.current;
                         if(step.current >= frames.length) {
-                            setState(WatchState.FINISHED);
+                            if('FINISHED' in props.match.state.status) {
+                                setState(WatchState.FINISHED);
+                            }
                         }
                     }
                     break;

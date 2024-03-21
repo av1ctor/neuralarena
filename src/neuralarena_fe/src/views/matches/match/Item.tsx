@@ -140,7 +140,12 @@ export const MatchItem = (props: Props) => {
                             ⏰ {status === 'OPEN'? timeLeftToString(matchCalcTimeLeft(match)): '00:00:00'}
                         </div>
                         <div>
-                            🏆 {match.won_by.length > 0? principalToString(match.won_by[0]): 'how about you?'}
+                            🏆 {match.won_by.length > 0? 
+                                    principalToString(match.won_by[0]): 
+                                    status === 'OPEN'?
+                                        'how about you?':
+                                        'nobody 😥'
+                                }
                         </div>
                     </Container>
                 </Grid.Col>
