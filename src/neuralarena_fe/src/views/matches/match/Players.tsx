@@ -5,9 +5,6 @@ import { Nft } from "@views/nfts/nft/Nft";
 import { principalToString } from "@libs/icp";
 
 const useStyles = createStyles((them) => ({
-    grid: {
-        gap: '0rem'
-    },
     player: {
         border: '1px solid #333',
         borderRadius: '8px',
