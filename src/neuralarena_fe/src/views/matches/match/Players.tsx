@@ -1,7 +1,8 @@
 import React from "react";
-import { GameResponse, MatchResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
-import { Avatar as Avatar_, Box, Tooltip } from "@mantine/core";
-import { Avatar } from "@views/users/user/Avatar";
+import { MatchResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
+import { Center, Grid, Stack, Text } from "@mantine/core";
+import { Nft } from "@views/nfts/nft/Nft";
+import { principalToString } from "@libs/icp";
 
 interface Props {
     match: MatchResponse|undefined;
@@ -18,33 +19,32 @@ export const MatchPlayers = (props: Props) => {
         match.won_by[0]?.toString():
         undefined;
 
-    const slots = new Array(
-            Number(match.game.max_players || 10n) - match.players.length
-        )
-        .fill({});
-
     return (
-        <Box mt="xl" w="100%">
-            <Tooltip.Group 
-                openDelay={300} 
-                closeDelay={100}
-            >
-                <Avatar_.Group spacing="xs">
-                    {match.players.map((player, index) => 
-                        <Avatar 
-                            key={player.id.toString()} 
-                            id={player.id}
-                            isWinner={winner? player.id.toString() === winner: false}
+        <Grid>
+            {match.players.map((player, index) => 
+                <Grid.Col 
+                    key={index} 
+                    span={6}
+                    md={3}
+                >
+                    <Stack spacing={0}>
+                        <Center>
+                            <Text>
+                                {winner && player.id.toString() === winner? '🏆': ''}
+                                <b>{principalToString(player.id)}</b>
+                                {winner && player.id.toString() === winner? '🏆': ''}
+                            </Text>
+                        </Center>
+                        <Center>
+                            <small>with</small>
+                        </Center>
+                        <Nft
+                            nft={player.nft}
                             onClick={props.onChangePov? () => props.onChangePov!(index): undefined}
                         />
-                    )}
-                    {slots.map((_, index) => 
-                        <Avatar 
-                            key={index} 
-                        />
-                    )}
-                </Avatar_.Group>
-            </Tooltip.Group>
-        </Box>
+                    </Stack>
+                </Grid.Col>
+            )}
+        </Grid>
     );
 };
