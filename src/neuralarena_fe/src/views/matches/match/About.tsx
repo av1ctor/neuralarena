@@ -18,7 +18,7 @@ export const AboutMatch = (props: Props) => {
             <Grid.Col span={6}>
                 <TextInput
                     label="Id"
-                    value={match?.id}
+                    value={match?.id || ''}
                     readOnly
                 />
             </Grid.Col>
@@ -34,7 +34,7 @@ export const AboutMatch = (props: Props) => {
             <Grid.Col span={6}>
                 <TextInput
                     label="Game id"
-                    value={match?.game.id}
+                    value={match?.game.id || ''}
                     readOnly
                 />
             </Grid.Col>
@@ -42,7 +42,7 @@ export const AboutMatch = (props: Props) => {
             <Grid.Col span={6}>
                 <TextInput
                     label="Game name"
-                    value={game?.info.name}
+                    value={game?.info.name || ''}
                     readOnly
                 />
             </Grid.Col>
@@ -59,7 +59,7 @@ export const AboutMatch = (props: Props) => {
                 <TextInput
                     label="Created at"
                     value={match? 
-                        timeToNow(match.created_at)[1].toLocaleString(): 
+                        timeToNow(match.created_at)[1].toLocaleString():
                         ''
                     }
                     readOnly
@@ -70,7 +70,7 @@ export const AboutMatch = (props: Props) => {
                 <TextInput
                     label="Initial seed"
                     value={match? 
-                        match.state.initial_seed[0]?.toString(16): 
+                        match.state.initial_seed[0]?.toString(16) || '': 
                         ''
                     }
                     readOnly
@@ -82,7 +82,7 @@ export const AboutMatch = (props: Props) => {
                     label="Run slices"
                     value={match? 
                         match.state.run_slices.length: 
-                        "0"
+                        '0'
                     }
                     readOnly
                 />
@@ -137,7 +137,7 @@ export const AboutMatch = (props: Props) => {
                     label="Min players"
                     value={match? 
                         match.game.min_players.toString(): 
-                        "0"
+                        '0'
                     }
                     readOnly
                 />
@@ -148,7 +148,7 @@ export const AboutMatch = (props: Props) => {
                     label="Total players"
                     value={match? 
                         match.players.length: 
-                        "0"
+                        '0'
                     }
                     readOnly
                 />
