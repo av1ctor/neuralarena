@@ -1,9 +1,18 @@
 import React from "react";
 import { MatchResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
-import { Center, Grid, Rating, Slider, Stack, Text, rem } from "@mantine/core";
+import { Box, Center, Grid, Rating, Stack, Text, createStyles } from "@mantine/core";
 import { Nft } from "@views/nfts/nft/Nft";
 import { principalToString } from "@libs/icp";
-import { IconHeart } from "@tabler/icons-react";
+
+const useStyles = createStyles((them) => ({
+    grid: {
+        gap: '0rem'
+    },
+    player: {
+        border: '1px solid #333',
+        borderRadius: '8px',
+    },
+}));
 
 interface Props {
     match: MatchResponse|undefined;
@@ -11,6 +20,8 @@ interface Props {
 }
 
 export const MatchPlayers = (props: Props) => {
+    const {classes} = useStyles();
+    
     const {match} = props;
     if(!match) {
         return null;
@@ -21,47 +32,49 @@ export const MatchPlayers = (props: Props) => {
         undefined;
 
     return (
-        <Grid>
+        <Grid gutter="md">
             {match.players.map((player, index) => 
                 <Grid.Col 
-                    key={index} 
+                    key={index}
                     span={6}
                     md={3}
                 >
-                    <Stack spacing={0}>
-                        <Center>
-                            <Text>
-                                {winner && player.id.toString() === winner? '🏆': ''}
-                                <b>{principalToString(player.id)}</b>
-                                {winner && player.id.toString() === winner? '🏆': ''}
-                            </Text>
-                        </Center>
-                        <Center>
-                            <small>with</small>
-                        </Center>
-                        <Nft
-                            nft={player.nft}
-                            onClick={props.onChangePov? () => props.onChangePov!(index): undefined}
-                        />
-                        <Center>
-                            <Text>
-                                Score: <b>{player.score.toFixed(2)}</b>
-                            </Text>
-                        </Center>
-                        <Center>
-                            <Text size={10}>
-                                <Rating 
-                                    title={`Health: ${player.health.toFixed(2)}`}
-                                    value={player.health / 10.0} 
-                                    fractions={2} 
-                                    count={10}
-                                    emptySymbol={'🤍'} 
-                                    fullSymbol={'💖'}
-                                    readOnly 
-                                />
-                            </Text>
-                        </Center>
-                    </Stack>
+                    <Box className={classes.player} p="sm">
+                        <Stack spacing={0}>
+                            <Center>
+                                <Text>
+                                    {winner && player.id.toString() === winner? '🏆': ''}
+                                    <b>{principalToString(player.id)}</b>
+                                    {winner && player.id.toString() === winner? '🏆': ''}
+                                </Text>
+                            </Center>
+                            <Center>
+                                <small>with</small>
+                            </Center>
+                            <Nft
+                                nft={player.nft}
+                                onClick={props.onChangePov? () => props.onChangePov!(index): undefined}
+                            />
+                            <Center>
+                                <Text>
+                                    Score: <b>{player.score.toFixed(2)}</b>
+                                </Text>
+                            </Center>
+                            <Center>
+                                <Text size={10}>
+                                    <Rating 
+                                        title={`Health: ${player.health.toFixed(2)}`}
+                                        value={player.health / 10.0} 
+                                        fractions={2} 
+                                        count={10}
+                                        emptySymbol={'🤍'} 
+                                        fullSymbol={'💖'}
+                                        readOnly 
+                                    />
+                                </Text>
+                            </Center>
+                        </Stack>
+                    </Box>
                 </Grid.Col>
             )}
         </Grid>
