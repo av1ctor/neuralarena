@@ -89,8 +89,8 @@ export const GameCard = (props: Props) => {
                     </Text>
                 </Center>
             </Container>
-            <Container>
-                {props.showView &&
+            {props.showView &&
+                <Container>
                     <Button 
                         variant="gradient"
                         size="md" 
@@ -98,8 +98,8 @@ export const GameCard = (props: Props) => {
                     >
                         View
                     </Button>
-                }
-            </Container>
+                </Container>
+            }
         </Card>
     );
 };

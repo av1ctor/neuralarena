@@ -56,6 +56,7 @@ export const NftCollectionCard = (props: Props) => {
             className={classes.card}
             onClick={handleView}
         >
+            <Container/>
             <Container>
                 <Text
                     className={classes.title}

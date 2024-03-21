@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Button, createStyles, rem, Badge, Container, Text, Center, Card } from "@mantine/core";
+import { createStyles, rem, Badge, Container, Text, Center, Card } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { GameResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 
