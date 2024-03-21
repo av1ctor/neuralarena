@@ -47,7 +47,7 @@ const AppFooter = (props: Props) => {
                     <Grid>
                         <Grid.Col span={6}>
                             <Anchor 
-                                href="https://twitter.com/neuralarena_app"
+                                href="https://twitter.com/neuralarena"
                                 target="_blank"
                             >
                                 <IconBrandTwitterFilled size="2rem" />
