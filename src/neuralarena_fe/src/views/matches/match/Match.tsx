@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button, Space, Stack, Center, Box, SegmentedControl, Indicator } from "@mantine/core";
-import { useMatchFindById, useMatch } from "@hooks/matches";
+import { useMatchFindById } from "@hooks/matches";
 import { useGameFindById } from "@hooks/games";
 import { matchStatusToString } from "@libs/matches";
 import { useUI } from "@hooks/ui";
@@ -25,8 +25,7 @@ export const Match = (props: Props) => {
     const {isMobile} = useBrowser();
     const {user, isLogged} = useAuth();
     const {classes} = useUI();
-    const {join, start, run} = useMatch()
-    const {toggleLoading, showError, showSuccess} = useUI();
+    const {showError} = useUI();
     const [opened, {open, close}] = useDisclosure(false);
     const [pov, setPov] = useState<number|undefined>(undefined);
     const [section, setSection] = useState('watch');
@@ -42,13 +41,9 @@ export const Match = (props: Props) => {
             value: 'watch',
             label: (
               <Center>
-                {joined? 
-                    <IconDeviceTv size="1rem" />
-                :
-                    <IconDoorEnter size="1rem" />
-                }
+                <IconDeviceTv size="1rem" />
                 <Box ml={10}>
-                    {joined? 'Watch': 'Join'}
+                    Watch
                 </Box>
               </Center>
             ),
@@ -90,23 +85,6 @@ export const Match = (props: Props) => {
             ),
         },
     ], [joined, match.data?.players]);
-
-    const handleStartAndRun = useCallback(async () => {
-        if(id) {
-            try {
-                toggleLoading(true);
-                await start(id);
-                run(id);
-                showSuccess('This match is running!');
-            }
-            catch(e) {
-                showError(e);
-            }
-            finally {
-                toggleLoading(false);
-            }
-        }
-    }, [join, id]);
 
     const handleChangePov = useCallback(async (pov: number) => {
         setPov(pov);
@@ -190,19 +168,6 @@ export const Match = (props: Props) => {
                             <Center>
                                 Please log in or sign up to be able to participate!
                             </Center>
-                    }
-
-                    {isLogged && joined &&
-                        status === 'OPEN' &&
-                        <Box mt="xl">
-                            <Button
-                                variant="gradient"
-                                fullWidth
-                                onClick={handleStartAndRun}
-                            >
-                                Start & Run
-                            </Button>
-                        </Box>
                     }
                 </Stack>
 

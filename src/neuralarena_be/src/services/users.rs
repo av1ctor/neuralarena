@@ -112,7 +112,8 @@ impl UsersService {
                 nft_by_id.push(nft.token_id);
             }
             else {
-                nfts_by_canister.insert(nft.collection_id.clone(), vec![nft.token_id]);
+                nfts_by_canister.insert(
+                    nft.collection_id.clone(), vec![nft.token_id]);
             }
         }
 
@@ -144,11 +145,20 @@ impl UsersService {
             for (i, acc) in accounts.iter().enumerate() {
                 if let Some(acc) = acc {
                     if !acc.owner.eq(&user.id) {
-                        return Err(format!("User {} isn't the owner of {}[{}]", user.id, canister_id, token_ids[i]));
+                        return Err(format!(
+                            "User {} isn't the owner of {}[{}]", 
+                            user.id, 
+                            canister_id, 
+                            token_ids[i]
+                        ));
                     }
                 }
                 else {
-                    return Err(format!("Token not found {}[{}]", canister_id, token_ids[i]));
+                    return Err(format!(
+                        "Token not found {}[{}]", 
+                        canister_id, 
+                        token_ids[i]
+                    ));
                 }
             }
 
@@ -196,8 +206,7 @@ impl UsersService {
 
     pub fn find_by_id(
         id: &UserId,
-        db: &DB,
-        _caller: &Principal
+        db: &DB
     ) -> Result<User, String> {
         let users = db.users.borrow();
 

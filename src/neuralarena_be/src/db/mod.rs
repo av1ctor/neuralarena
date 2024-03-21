@@ -5,14 +5,17 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use ic_cdk::api::stable::{StableWriter, StableReader};
 use self::tables::{
-    game_matches_rel::GameMatchesRelTable,
-    games::GamesTable,
-    user_matches_rel::UserMatchesRelTable,
-    users::UsersTable,
-    matches::MatchesTable,
-    nftcols::NftCollectionsTable,
+    game_matches_rel::GameMatchesRelTable, 
+    games::GamesTable, 
+    matches::MatchesTable, 
+    nftcols::NftCollectionsTable, 
+    timers::TimersTable, 
+    user_matches_rel::UserMatchesRelTable, 
+    users::UsersTable
 };
-use neuralarena_cdk::db::traits::table::{TableSerializable, TableDeserializable, Table, TableSubscribable};
+use neuralarena_cdk::db::traits::table::{
+    TableSerializable, TableDeserializable, Table, TableSubscribable
+};
 
 #[derive(Clone, Debug)]
 pub enum TableName {
@@ -20,6 +23,7 @@ pub enum TableName {
     Matches,
     Games,
     NftCollections,
+    Timers,
     UserMatchesRel,
     GameMatchesRel,
 }
@@ -29,6 +33,7 @@ pub struct DB {
     pub matches: Rc<RefCell<MatchesTable>>,
     pub games: Rc<RefCell<GamesTable>>,
     pub nft_cols: Rc<RefCell<NftCollectionsTable>>,
+    pub timers: Rc<RefCell<TimersTable>>,
     pub user_matches_rel: Rc<RefCell<UserMatchesRelTable>>,
     pub game_matches_rel: Rc<RefCell<GameMatchesRelTable>>,
 }
@@ -40,6 +45,7 @@ impl DB {
         let matches = Rc::new(RefCell::new(MatchesTable::new()));
         let games = Rc::new(RefCell::new(GamesTable::new()));
         let nft_cols = Rc::new(RefCell::new(NftCollectionsTable::new()));
+        let timers = Rc::new(RefCell::new(TimersTable::new()));
         let user_matches_rel = Rc::new(RefCell::new(UserMatchesRelTable::new()));
         let game_matches_rel = Rc::new(RefCell::new(GameMatchesRelTable::new()));
 
@@ -52,6 +58,7 @@ impl DB {
             matches,
             games,
             nft_cols,
+            timers,
             user_matches_rel,
             game_matches_rel,
         }
@@ -65,6 +72,7 @@ impl DB {
         self.matches.borrow().serialize(writer)?;
         self.games.borrow().serialize(writer)?;
         self.nft_cols.borrow().serialize(writer)?;
+        self.timers.borrow().serialize(writer)?;
         self.user_matches_rel.borrow().serialize(writer)?;
         self.game_matches_rel.borrow().serialize(writer)?;
         Ok(())
@@ -78,6 +86,7 @@ impl DB {
         self.matches.borrow_mut().deserialize(reader, true)?;
         self.games.borrow_mut().deserialize(reader, true)?;
         self.nft_cols.borrow_mut().deserialize(reader, true)?;
+        self.timers.borrow_mut().deserialize(reader, true)?;
         self.user_matches_rel.borrow_mut().deserialize(reader, true)?;
         self.game_matches_rel.borrow_mut().deserialize(reader, true)?;
         Ok(())

@@ -79,10 +79,11 @@ type MatchPlayerResponse = record {
   id : principal;
   nft : MatchPlayerNftResponse;
 };
-type MatchRequest = record { game : MatchGame };
+type MatchRequest = record { game : MatchGame; opened_for : nat64 };
 type MatchResponse = record {
   id : text;
   game : MatchGame;
+  opened_for : nat64;
   created_at : nat64;
   created_by : principal;
   state : MatchStateResponse;
@@ -95,17 +96,10 @@ type MatchResponse = record {
 type MatchStateResponse = record {
   status : MatchStatus;
   initial_seed : opt nat64;
-  slices : vec InstanceRunSlice;
+  run_slices : vec InstanceRunSlice;
   num_steps : nat64;
 };
-type MatchStatus = variant {
-  CANCELLED;
-  RUNNING;
-  CREATED;
-  STARTING;
-  STARTED;
-  FINISHED;
-};
+type MatchStatus = variant { CANCELLED; OPEN; RUNNING; EXPIRED; FINISHED };
 type Nas1Collection = record {
   assets_canister_id : principal;
   version : float32;
@@ -216,8 +210,6 @@ service : () -> {
   match_get_assets : (text) -> (Result_5) composite_query;
   match_get_steps : (text, Pagination) -> (Result_6) composite_query;
   match_join : (MatchJoinRequest) -> (Result_7);
-  match_run : (text) -> (Result_7);
-  match_start : (text) -> (Result_7);
   nft_col_create : (NftCollectionRequest) -> (Result_8);
   nft_col_find_active : (Pagination) -> (Result_9) query;
   nft_col_find_all : (Pagination) -> (Result_9) query;

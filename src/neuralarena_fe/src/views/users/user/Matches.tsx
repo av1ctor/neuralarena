@@ -28,6 +28,7 @@ export const UserMatches = (props: Props) => {
                 icon={IconDeviceGamepad}
             >
                 <Button
+                    disabled={!user}
                     onClick={open}
                 >
                     New

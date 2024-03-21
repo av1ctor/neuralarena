@@ -13,7 +13,9 @@ export type MatchId = string;
 
 export const MIN_PLAYERS: number = 2;
 export const MAX_PLAYERS: number = 10;
-export const MAX_DURATION: number = 60*10; // in secs
+export const MAX_DURATION: number = 60*10;      // in seconds
+export const MIN_OPENED: number = 60/**60*01*/; // ditto
+export const MAX_OPENED: number = 60*60*24*7;   // ditto
 
 export const matchStatusToString = (
     status: MatchStatus|undefined
@@ -23,19 +25,19 @@ export const matchStatusToString = (
     }
     
     if('CANCELLED' in status) {
-        return 'CANCELLED'
+        return 'CANCELLED';
+    }
+    else if('EXPIRED' in status) {
+        return 'EXPIRED';
     }
     else if('RUNNING' in status) {
-        return 'RUNNING'
+        return 'RUNNING';
     }
-    else if('CREATED' in status) {
-        return 'OPEN'
-    }
-    else if('STARTED' in status) {
-        return 'STARTED'
+    else if('OPEN' in status) {
+        return 'OPEN';
     }
     else if('FINISHED' in status) {
-        return 'FINISHED'
+        return 'FINISHED';
     }
 
     return 'UNKNOWN';
@@ -57,28 +59,6 @@ export const matchJoin = async (
     req: MatchJoinRequest
 ): Promise<void> => {
     const res = await main.match_join(req);
-    if('Err' in res) {
-        throw new Error(res.Err);
-    }
-    return; 
-};
-
-export const matchStart = async (
-    main: Main,
-    id: MatchId
-): Promise<void> => {
-    const res = await main.match_start(id);
-    if('Err' in res) {
-        throw new Error(res.Err);
-    }
-    return; 
-};
-
-export const matchRun = async (
-    main: Main,
-    id: MatchId
-): Promise<void> => {
-    const res = await main.match_run(id);
     if('Err' in res) {
         throw new Error(res.Err);
     }

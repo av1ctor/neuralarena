@@ -6,7 +6,7 @@ use neuralarena_cdk::models::{
     game::GameMapId
 };
 use serde::{Serialize, Deserialize};
-use super::game::GameId;
+use super::{game::GameId, timer::TimerId};
 use super::user::{UserId, UserNftRequest};
 
 pub type MatchId = String;
@@ -24,11 +24,10 @@ pub struct MatchGame {
 #[derive(PartialEq, Clone, Copy, Serialize, Deserialize, CandidType)]
 #[repr(C)]
 pub enum MatchStatus {
-    CREATED,
-    STARTING,
-    STARTED,
-    RUNNING,
+    OPEN,
     CANCELLED,
+    EXPIRED,
+    RUNNING,
     FINISHED,
 }
 
@@ -44,7 +43,7 @@ pub struct MatchState {
     pub players: Vec<InstancePlayer>,
     pub num_steps: usize,
     pub initial_seed: Option<u64>,
-    pub slices: Vec<InstanceRunSlice>,
+    pub run_slices: Vec<InstanceRunSlice>,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -53,6 +52,8 @@ pub struct Match {
     pub game: MatchGame,
     pub state: MatchState,
     pub instance: MatchGameInstance,
+    pub timer_id: Option<TimerId>,
+    pub opened_for: u64, // seconds
     pub created_at: u64,
     pub created_by: UserId,
     pub started_at: Option<u64>,
@@ -63,7 +64,8 @@ pub struct Match {
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
 pub struct MatchRequest {
-    pub game: MatchGame
+    pub game: MatchGame,
+    pub opened_for: u64, // seconds
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
@@ -84,7 +86,7 @@ pub struct MatchStateResponse {
     pub status: MatchStatus,
     pub num_steps: usize,
     pub initial_seed: Option<u64>,
-    pub slices: Vec<InstanceRunSlice>,
+    pub run_slices: Vec<InstanceRunSlice>,
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
@@ -95,6 +97,7 @@ pub struct MatchResponse {
     pub players: Vec<MatchPlayerResponse>,
     pub created_at: u64,
     pub created_by: UserId,
+    pub opened_for: u64,
     pub started_at: Option<u64>,
     pub started_by: Option<UserId>,
     pub won_at: Option<u64>,
@@ -117,16 +120,18 @@ impl Match {
             id: id.clone(),
             game: req.game.clone(), 
             state: MatchState { 
-                status: MatchStatus::CREATED,
+                status: MatchStatus::OPEN,
                 players: vec![],
                 num_steps: 0,
                 initial_seed: None,
-                slices: vec![],
+                run_slices: vec![],
             },
             instance: MatchGameInstance {
                 id: "".to_string(),
                 map_id: 0,
             },
+            timer_id: None,
+            opened_for: req.opened_for,
             created_at: ic_cdk::api::time(),
             created_by: caller.clone(),
             started_at: None,
@@ -147,7 +152,7 @@ impl From<Match> for MatchResponse {
                 status: e.state.status,
                 num_steps: e.state.num_steps,
                 initial_seed: e.state.initial_seed,
-                slices: e.state.slices,
+                run_slices: e.state.run_slices,
             },
             game: e.game,
             players: e.state.players.iter().map(|p| MatchPlayerResponse {
@@ -160,6 +165,7 @@ impl From<Match> for MatchResponse {
             }).collect(),
             created_at: e.created_at,
             created_by: e.created_by,
+            opened_for: e.opened_for,
             started_at: e.started_at,
             started_by: e.started_by,
             won_at: e.won_at,

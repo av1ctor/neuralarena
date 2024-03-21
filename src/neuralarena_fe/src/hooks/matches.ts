@@ -9,15 +9,13 @@ import {
 import { useActors } from "./actors";
 import { 
     matchCreate, matchFindOpen, matchFindById, matchJoin, 
-    matchStart, matchRun, MatchId, matchFindByGame, matchGetSteps, matchFindAll 
+    MatchId, matchFindByGame, matchGetSteps, matchFindAll 
 } from "@libs/matches";
 import { GameId } from "@libs/games";
 
 interface MatchMethods {
     create: (req: MatchRequest) => Promise<MatchResponse>;
     join: (req: MatchJoinRequest) => Promise<void>;
-    start: (id: MatchId) => Promise<void>;
-    run: (id: MatchId) => Promise<void>;
 }
 
 export const useMatch = (
@@ -59,45 +57,9 @@ export const useMatch = (
         return joinMut.mutateAsync({req});
     };
 
-    const startMut = useMutation(
-        async (options: {id: string}) => {
-            return matchStart(main, options.id);
-        },
-        {
-            onSuccess: (_, vars) => {
-                queryClient.invalidateQueries(['matches', vars.id]);
-            }   
-        }
-    );
-
-    const start = (
-        id: string
-    ): Promise<void> => {
-        return startMut.mutateAsync({id});
-    };
-
-    const runMut = useMutation(
-        async (options: {id: string}) => {
-            return matchRun(main, options.id);
-        },
-        {
-            onSuccess: (_, vars) => {
-                queryClient.invalidateQueries(['matches', vars.id]);
-            }   
-        }
-    );
-
-    const run = (
-        id: string
-    ): Promise<void> => {
-        return runMut.mutateAsync({id});
-    };
-    
     return {
         create,
         join,
-        start,
-        run,
     }
 };
 

@@ -69,8 +69,7 @@ impl GamesService {
 
     pub fn find_by_id(
         id: &GameId,
-        db: &DB,
-        _caller: &Principal
+        db: &DB
     ) -> Result<Game, String> {
         let games = db.games.borrow();
 
@@ -84,8 +83,7 @@ impl GamesService {
 
     pub fn find_all(
         pag: Pagination,
-        db: &DB,
-        _caller: &Principal
+        db: &DB
     ) -> Result<Vec<Game>, String> {
         let games = db.games.borrow();
         
@@ -105,8 +103,7 @@ impl GamesService {
 
     pub fn find_active(
         pag: Pagination,
-        db: &DB,
-        _caller: &Principal
+        db: &DB
     ) -> Result<Vec<Game>, String> {
         let games = db.games.borrow();
         

@@ -102,8 +102,7 @@ impl NftCollectionsService {
 
     pub fn find_by_id(
         id: &NftCollectionId,
-        db: &DB,
-        _caller: &Principal
+        db: &DB
     ) -> Result<NftCollection, String> {
         let nfts = db.nft_cols.borrow();
 
@@ -117,8 +116,7 @@ impl NftCollectionsService {
 
     pub fn find_all(
         pag: Pagination,
-        db: &DB,
-        _caller: &Principal
+        db: &DB
     ) -> Result<Vec<NftCollection>, String> {
         let nfts = db.nft_cols.borrow();
         
@@ -138,8 +136,7 @@ impl NftCollectionsService {
 
     pub fn find_active(
         pag: Pagination,
-        db: &DB,
-        _caller: &Principal
+        db: &DB
     ) -> Result<Vec<NftCollection>, String> {
         let nfts = db.nft_cols.borrow();
         

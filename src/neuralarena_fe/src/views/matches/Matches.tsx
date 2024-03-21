@@ -8,6 +8,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { MatchCreate } from "./match/Create";
 import { MatchesGrid } from "./Grid";
 import { InfinitePaging } from "@components/InfinitePaging";
+import { useAuth } from "@hooks/auth";
 
 interface Props {
 }
@@ -15,6 +16,7 @@ interface Props {
 const ITEMS_PER_PAGE = 6;
 
 export const AllMatches = (props: Props) => {
+    const {user} = useAuth();
     const [opened, {open, close}] = useDisclosure(false);
 
     const matches = useMatchFindAll(ITEMS_PER_PAGE);
@@ -26,6 +28,7 @@ export const AllMatches = (props: Props) => {
                 icon={IconDeviceGamepad}
             >
                 <Button
+                    disabled={!user}
                     onClick={open}
                 >
                     New

@@ -26,6 +26,8 @@ use crate::models::user::UserKind;
 
 const MIN_PLAYERS: usize = 2;
 const MAX_STEPS: usize = (60 * 10) * 60;
+const MIN_OPENED: u64 = 60/* * 60 * 01*/; // one hour
+const MAX_OPENED: u64 = 60 * 60 * 24 * 7; // one week
 
 pub struct MatchesService {}
 
@@ -41,10 +43,12 @@ impl MatchesService {
         if req.game.map_id >= game.info.maps.len() {
             return Err("Invalid map id".to_string());
         }
-        else if req.game.max_steps == 0 || req.game.max_steps > MAX_STEPS {
+        
+        if req.game.max_steps == 0 || req.game.max_steps > MAX_STEPS {
             return Err("Invalid duration".to_string());
         }
-        else if req.game.min_players > req.game.max_players {
+        
+        if req.game.min_players > req.game.max_players {
             return Err("Min number of players can't be greater than max number of players".to_string());
         }
         else if req.game.min_players < game.info.min_players.max(MIN_PLAYERS) {
@@ -55,6 +59,13 @@ impl MatchesService {
         }
         else if req.game.max_players > game.info.max_players {
             return Err("Max number of players can't be greater than game's max number of players".to_string());
+        }
+        
+        if req.opened_for < MIN_OPENED {
+            return Err(format!("Match can't be open for less than {} seconds", MIN_OPENED));
+        }
+        else if req.opened_for > MAX_OPENED {
+            return Err(format!("Match can't be open for more than {} seconds", MAX_OPENED));
         }
 
         let id = uniqueid::generate();
@@ -97,8 +108,7 @@ impl MatchesService {
 
     pub fn find_by_id(
         id: &MatchId,
-        db: &DB,
-        _caller: &Principal
+        db: &DB
     ) -> Result<Match, String> {
         let matches = db.matches.borrow();
 
@@ -112,8 +122,7 @@ impl MatchesService {
 
     pub fn find_all(
         pag: Pagination,
-        db: &DB,
-        _caller: &Principal
+        db: &DB
     ) -> Result<Vec<Match>, String> {
         let matches = db.matches.borrow();
         
@@ -133,14 +142,13 @@ impl MatchesService {
 
     pub fn find_open(
         pag: Pagination,
-        db: &DB,
-        _caller: &Principal
+        db: &DB
     ) -> Result<Vec<Match>, String> {
         let matches = db.matches.borrow();
         
         let mut arr = matches.data.0.iter()
             .map(|v| v.1)
-            .filter(|m| m.state.status == MatchStatus::CREATED)
+            .filter(|m| m.state.status == MatchStatus::OPEN)
             .cloned()
             .collect::<Vec<_>>();
 
@@ -156,8 +164,7 @@ impl MatchesService {
     pub fn find_by_game(
         game_id: GameId,
         pag: Pagination,
-        db: &DB,
-        _caller: &Principal
+        db: &DB
     ) -> Result<Vec<Match>, String> {
         let matches_rel = db.game_matches_rel.borrow();
         
@@ -191,7 +198,7 @@ impl MatchesService {
             return Err("Too many players".to_string());
         }
 
-        if m4tch.state.status != MatchStatus::CREATED {
+        if m4tch.state.status != MatchStatus::OPEN {
             return Err("Invalid match state".to_string());
         }
 
@@ -258,67 +265,6 @@ impl MatchesService {
         }
     }
 
-    pub fn setup_step1(
-        m4tch: &mut Match,
-        _game: &Game,
-        user: &User
-    ) -> Result<(), String> {
-        Self::authorize(user)?;
-        
-        if m4tch.state.players.len() < m4tch.game.min_players {
-            return Err("Too few players".to_string());
-        }
-
-        if m4tch.state.status != MatchStatus::CREATED {
-            return Err("Invalid match state".to_string());
-        }
-
-        m4tch.state.status = MatchStatus::STARTING;
-        Ok(())
-    }
-
-    pub async fn setup_step2(
-        m4tch: &mut Match,
-        game: &Game
-    ) -> Result<(), String> {
-        let (res, ): (Result<(), String>, ) = ic_cdk::call(
-            game.canister_id, 
-            "instance_setup",
-            (
-                m4tch.instance.id.clone(), 
-                m4tch.state.players.clone()
-            )
-        ).await.map_err(|e| e.1)?;
-
-        if let Err(msg) = res {
-            Err(msg)
-        }
-        else {
-            m4tch.state.status = MatchStatus::STARTED;
-            Ok(())
-        }
-    }
-
-    pub fn run_step1(
-        m4tch: &mut Match,
-        _game: &Game,
-        user: &User
-    ) -> Result<(), String> {
-        Self::authorize(user)?;
-        
-        if m4tch.state.players.len() < m4tch.game.min_players {
-            return Err("Too few players".to_string());
-        }
-
-        if m4tch.state.status != MatchStatus::STARTED {
-            return Err("Invalid match state".to_string());
-        }
-
-        m4tch.state.status = MatchStatus::RUNNING;
-        m4tch.started_at = Some(ic_cdk::api::time());
-        Ok(())
-    }
-
     async fn verify_players(
         players: &Vec<InstancePlayer>
     ) -> Result<(), String> {
@@ -345,7 +291,23 @@ impl MatchesService {
         Ok(())
     }
 
-    pub async fn run_step2(
+    async fn instance_start(
+        m4tch: &mut Match,
+        game: &Game
+    ) -> Result<(), String> {
+        let (res, ): (Result<(), String>, ) = ic_cdk::call(
+            game.canister_id, 
+            "instance_setup",
+            (
+                m4tch.instance.id.clone(), 
+                m4tch.state.players.clone()
+            )
+        ).await.map_err(|e| e.1)?;
+
+        res
+    }
+
+    pub async fn run(
         m4tch: &mut Match,
         game: &Game,
         initial_seed: u64
@@ -353,13 +315,15 @@ impl MatchesService {
 
         Self::verify_players(&m4tch.state.players).await?;
 
+        Self::instance_start(m4tch, game).await?;
+
         m4tch.state.initial_seed = Some(initial_seed);
 
         let mut slice = 0;
         let res = loop {
             let seed = initial_seed ^ m4tch.state.num_steps as u64;
 
-            m4tch.state.slices.push(InstanceRunSlice { 
+            m4tch.state.run_slices.push(InstanceRunSlice { 
                 first_step: m4tch.state.num_steps, 
                 seed
             });
@@ -420,7 +384,7 @@ impl MatchesService {
             return Err("Forbidden".to_string());
         }
 
-        if m4tch.state.status != MatchStatus::CREATED {
+        if m4tch.state.status != MatchStatus::OPEN {
             return Err("Invalid match state".to_string());
         }
         
@@ -445,7 +409,7 @@ impl MatchesService {
         game: &Game,
         pag: Pagination
     ) -> Result<InstanceStepsResponse, String> {
-        if ![MatchStatus::STARTED, MatchStatus::FINISHED]
+        if ![MatchStatus::RUNNING, MatchStatus::FINISHED]
             .contains(&m4tch.state.status) {
             return Err("Invalid match state".to_string());
         }
