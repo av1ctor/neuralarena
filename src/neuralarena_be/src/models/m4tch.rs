@@ -78,6 +78,8 @@ pub struct MatchPlayerNftResponse {
 #[derive(Clone, Serialize, Deserialize, CandidType)]
 pub struct MatchPlayerResponse {
     pub id: Principal,
+    pub score: f32,
+    pub health: f32,
     pub nft: MatchPlayerNftResponse,
 }
 
@@ -157,6 +159,8 @@ impl From<Match> for MatchResponse {
             game: e.game,
             players: e.state.players.iter().map(|p| MatchPlayerResponse {
                 id: p.id,
+                score: p.state.score,
+                health: p.state.health,
                 nft: MatchPlayerNftResponse{
                     collection_id: p.nft.collection_id,
                     token_id: p.nft.token_id,

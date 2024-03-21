@@ -253,6 +253,8 @@ impl MatchesService {
                 state: InstancePlayerState {
                     active: true,
                     last_thought: 0,
+                    score: 0.0,
+                    health: 100.0,
                     obs: vec![],
                 }
             });
@@ -343,6 +345,11 @@ impl MatchesService {
             ).await.map_err(|e| e.1)?;
 
             if let Ok(res) = res {
+                for (i, player) in m4tch.state.players.iter_mut().enumerate() {
+                    player.state.score = res.players[i].score;
+                    player.state.health = res.players[i].health;
+                }
+
                 if res.terminated || res.timedout {
                     m4tch.state.status = MatchStatus::FINISHED;
                     m4tch.state.num_steps = res.steps;

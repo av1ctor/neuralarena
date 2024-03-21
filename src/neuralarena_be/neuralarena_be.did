@@ -78,6 +78,8 @@ type MatchPlayerNftResponse = record {
 type MatchPlayerResponse = record {
   id : principal;
   nft : MatchPlayerNftResponse;
+  score : float32;
+  health : float32;
 };
 type MatchRequest = record { game : MatchGame; deadline : nat64 };
 type MatchResponse = record {

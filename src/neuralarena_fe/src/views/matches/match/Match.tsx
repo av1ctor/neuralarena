@@ -13,7 +13,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { JoinMatch } from "./Join";
 import { DrawerPanel } from "@components/DrawerPanel";
 import { MatchPlayers } from "./Players";
-import { IconBook, IconDeviceTv, IconDoorEnter, IconList, IconUsersGroup } from "@tabler/icons-react";
+import { IconBook, IconDeviceTv, IconList, IconUsersGroup } from "@tabler/icons-react";
 import { useBrowser } from "@hooks/browser";
 import { AboutMatch } from "./About";
 
@@ -63,15 +63,6 @@ export const Match = (props: Props) => {
                     <Box ml={10}>
                         Players
                     </Box>
-              </Center>
-            ),
-        },
-        {
-            value: 'result',
-            label: (
-              <Center>
-                <IconList size="1rem" />
-                <Box ml={10}>Result</Box>
               </Center>
             ),
         },
@@ -172,10 +163,6 @@ export const Match = (props: Props) => {
                         match={match.data}
                         onChangePov={status === 'FINISHED'? handleChangePov: undefined}
                     />
-                </Box>
-
-                <Box className={section === 'result'? classes.block: classes.none}>
-                    Result
                 </Box>
 
                 <Box className={section === 'about'? classes.block: classes.none}>

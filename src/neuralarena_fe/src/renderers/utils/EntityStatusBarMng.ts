@@ -74,13 +74,13 @@ export class EntityStatusBarManager {
         for(let i = 0; i < players.length; i++) {
             const player = players[i];
             const bar = this.bars.players[i];
-            bar.update(player.health);
+            bar.update(player.health / 100.0);
         }
 
         for(let i = 0; i < npcs.length; i++) {
             const npc = npcs[i];
             const bar = this.bars.npcs[i];
-            bar.update(npc.health);
+            bar.update(npc.health / 100.0);
         }
     }
 }
