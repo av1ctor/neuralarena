@@ -169,7 +169,7 @@ export const Intro = (props: Props) => {
                                 user?
                                     "Join now before the deadline ends!"
                                 :
-                                    "Please log in or sign up to be able to join!"
+                                    "Please log in or sign up to be able to join this match!"
                         :
                             status === 'RUNNING'?
                                 "This match is running. Waiting for the results!"

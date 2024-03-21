@@ -17,6 +17,12 @@ export const MAX_DURATION: number = 60*10;      // in seconds
 export const MIN_DEADLINE: number = 60/**60*01*/; // ditto
 export const MAX_DEADLINE: number = 60*60*24*7;   // ditto
 
+export const matchCalcTimeLeft = (
+    match: MatchResponse
+): Date => {
+    return new Date(Number((match.created_at / 1_000_000n) + match.deadline * 1_000n) - Date.now());
+};
+
 export const matchStatusToString = (
     status: MatchStatus|undefined
 ): string => {

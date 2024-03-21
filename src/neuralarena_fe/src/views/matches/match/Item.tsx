@@ -2,10 +2,12 @@ import React, { useCallback } from "react";
 import { createStyles, rem, Badge, Container, Text, Slider, Space, Grid, Card, Image } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { MatchResponse, MatchStatus } from "@declarations/neuralarena_be/neuralarena_be.did";
-import { matchStatusToString } from "@libs/matches";
+import { matchCalcTimeLeft, matchStatusToString } from "@libs/matches";
 import TimeFromNow from "@components/TimeFromNow";
 import { useGameFindById } from "@hooks/games";
 import { useBrowser } from "@hooks/browser";
+import { timeLeftToString } from "@libs/time";
+import { principalToString } from "@libs/icp";
 
 const useStyles = createStyles((theme) => ({
     card: {
@@ -15,7 +17,7 @@ const useStyles = createStyles((theme) => ({
         color: theme.colorScheme === "dark"? theme.white: theme.black,
         position: 'relative',
         ':hover': {
-            backgroundColor: theme.colors.grape,
+            backgroundColor: theme.colorScheme === "dark"? theme.colors.grape: '#dad',
             cursor: 'pointer',
         },
     },
@@ -84,6 +86,7 @@ export const MatchItem = (props: Props) => {
     }, [props.match.id]);
 
     const {match} = props;
+    const status = matchStatusToString(match.state.status);
 
     const game = useGameFindById(match.game.id);
 
@@ -96,7 +99,7 @@ export const MatchItem = (props: Props) => {
             onClick={handleView}
         >
             <Grid w="100%">
-                <Grid.Col span={3} md={2}>
+                <Grid.Col span={4}>
                     <Image
                         width={96}
                         height={128}
@@ -106,7 +109,7 @@ export const MatchItem = (props: Props) => {
                         src={game.data?.info.urls.cover}
                     />
                 </Grid.Col>
-                <Grid.Col span={9} md={10}>
+                <Grid.Col span={8}>
                     <Grid w="100%">
                         <Grid.Col span={6}>
                             <Badge 
@@ -131,20 +134,13 @@ export const MatchItem = (props: Props) => {
                     <Space h='xl' />
                     <Container w='100%'>
                         <div>
-                            <Slider
-                                value={match.players.length}
-                                label={`Players: ${match.players.length}`}
-                                min={0}
-                                max={16}
-                                marks={[
-                                    { value: Number(match.game.min_players), label: `Min: ${match.game.min_players}` },
-                                    { value: Number(match.game.max_players), label: `Max: ${match.game.max_players}` },
-                                ]}
-                            />
+                            🕹 {match.players.length}/{match.game.max_players.toString()}
                         </div>
-                        <Space h='xl' />
                         <div>
-                            <Text><TimeFromNow date={match.created_at} /> ago</Text>
+                            ⏰ {status === 'OPEN'? timeLeftToString(matchCalcTimeLeft(match)): '00:00:00'}
+                        </div>
+                        <div>
+                            🏆 {match.won_by.length > 0? principalToString(match.won_by[0]): 'how about you?'}
                         </div>
                     </Container>
                 </Grid.Col>

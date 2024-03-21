@@ -115,7 +115,7 @@ export const AboutMatch = (props: Props) => {
                 <TextInput
                     label="Max Duration"
                     value={match? 
-                        (Number(match.game.max_steps) / FPS).toString() + 's': 
+                        (Number(match.game.max_steps) / FPS).toFixed(0).toString() + 's': 
                         ''
                     }
                     readOnly
@@ -126,7 +126,7 @@ export const AboutMatch = (props: Props) => {
                 <TextInput
                     label="Total Duration"
                     value={match? 
-                        (Number(match.state.num_steps) / FPS).toString() + 's': 
+                        (Number(match.state.num_steps) / FPS).toFixed(2).toString() + 's': 
                         ''
                     }
                     readOnly
