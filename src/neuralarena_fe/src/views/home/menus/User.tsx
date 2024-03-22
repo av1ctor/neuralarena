@@ -10,7 +10,9 @@ const useStyles = createStyles((theme) => ({
         borderRadius: theme.radius.md,
     
         ...theme.fn.hover({
-            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[0],
+            backgroundColor: theme.colorScheme === 'dark'? 
+                theme.colors.dark[7]: 
+                theme.colors.gray[0],
         }),
     
         '&:active': theme.activeStyles,
@@ -27,19 +29,19 @@ const data = [
         icon: IconDeviceGamepad,
         title: 'Matches',
         description: 'Your matches',
-        to: "/user/matches"
+        to: "/users/matches"
     },
     {
         icon: IconPhoto,
         title: 'NFTs',
         description: 'Your NFTs',
-        to: "/user/nfts"
+        to: "/users/nfts"
     },
     {
         icon: IconUser,
         title: 'Profile',
         description: 'Your profile',
-        to: "/user/profile"
+        to: "/users/profile"
     },
 ];
 

@@ -98,7 +98,7 @@ const AppHeader = (props: Props) => {
                         {user && 
                             <HoverCard width={600} position="bottom" radius="md" shadow="md" withinPortal>
                                 <HoverCard.Target>
-                                    <a href="#" className={classes.link}>
+                                    <a href="#/users" className={classes.link}>
                                         <Center inline>
                                             <Avatar color="cyan" radius="xl" size="sm">
                                                 {user.nick.substr(0, 2).toUpperCase()}

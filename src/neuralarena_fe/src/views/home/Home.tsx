@@ -19,6 +19,7 @@ import { NftCollections } from "@views/nft_cols/Collections";
 import bgBlack from "@assets/bg-black.svg";
 import bgWhite from "@assets/bg-white.svg";
 import { NftCollection } from "@views/nft_cols/Collection/Collection";
+import { UserPage } from "@views/users/user/Page";
 
 interface Props {
 }
@@ -31,7 +32,7 @@ const Home = (props: Props) => {
         <>
             <AppShell
                 styles={{
-                    main: {
+                    root: {
                         background: theme.colorScheme === 'dark' ? 
                             theme.colors.dark[8]
                         : 
@@ -40,12 +41,16 @@ const Home = (props: Props) => {
                             `url(${bgBlack})`
                         :
                             `url(${bgWhite})`,
+                        minHeight: '40rem',
                     },
                 }}
                 navbarOffsetBreakpoint="sm"
                 asideOffsetBreakpoint="sm"
                 header={
                     <Header />
+                }
+                footer={
+                    <Footer />
                 }
             >
                 <Space h="4rem" />
@@ -58,18 +63,15 @@ const Home = (props: Props) => {
                         <Route path="/games/:id" element={<Game />} />
                         <Route path="/matches" element={<AllMatches />} />
                         <Route path="/matches/:id" element={<Match />} />
-                        <Route path="/user/login" element={<Login authenticateOnly={false} />} />
-                        <Route path="/user/signup" element={<Signup />} />
-                        <Route path="/user/nfts" element={<UserNfts />} />
-                        <Route path="/user/matches" element={<UserMatches />} />
-                        <Route path="/user/profile" element={<Profile />} />
+                        <Route path="/users" element={<UserPage />} />
+                        <Route path="/users/login" element={<Login authenticateOnly={false} />} />
+                        <Route path="/users/signup" element={<Signup />} />
+                        <Route path="/users/nfts" element={<UserNfts />} />
+                        <Route path="/users/matches" element={<UserMatches />} />
+                        <Route path="/users/profile" element={<Profile />} />
                         <Route path="/" element={<Front />} />
                     </Routes>
                 </Container>
-
-                <Space h="4rem" />
-                
-                <Footer />
             </AppShell>
             
             <LoadingOverlay loader={<img src={loadingImage} />} visible={isLoading}  />
