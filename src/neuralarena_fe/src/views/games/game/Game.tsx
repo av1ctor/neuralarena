@@ -9,6 +9,7 @@ import { GameMatches } from "./Matches";
 import { useUI } from "@hooks/ui";
 import { GameLeaderboard } from "./Leaderboard";
 import { GameMaps } from "./Maps";
+import { GameBanner } from "./Banner";
 
 const sections = [
     {
@@ -73,8 +74,9 @@ export const Game = (props: Props) => {
         <>
             <div>
                 {game && game.data &&
-                    <GameCard 
+                    <GameBanner
                         game={game.data} 
+                        isHalf
                     />
                 }
             </div>

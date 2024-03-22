@@ -37,7 +37,7 @@ export const Top = () => {
                             <Carousel.Slide key={item.id}>
                                 <GameCard 
                                     game={item}
-                                    showView
+                                    navigate
                                 />
                             </Carousel.Slide>
                         ))

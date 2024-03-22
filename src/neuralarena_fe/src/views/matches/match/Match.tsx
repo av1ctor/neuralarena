@@ -110,6 +110,7 @@ export const Match = (props: Props) => {
                 {game.data &&
                     <GameBanner
                         game={game.data}
+                        navigate
                         isHalf
                     />
                 }

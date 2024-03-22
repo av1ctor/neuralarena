@@ -18,6 +18,7 @@ import { Games } from "@views/games/Games";
 import { NftCollections } from "@views/nft_cols/Collections";
 import bgBlack from "@assets/bg-black.svg";
 import bgWhite from "@assets/bg-white.svg";
+import { NftCollection } from "@views/nft_cols/Collection/Collection";
 
 interface Props {
 }
@@ -52,6 +53,7 @@ const Home = (props: Props) => {
                 <Container size="md">
                     <Routes>
                         <Route path="/nfts" element={<NftCollections />} />
+                        <Route path="/nfts/:id" element={<NftCollection />} />
                         <Route path="/games" element={<Games />} />
                         <Route path="/games/:id" element={<Game />} />
                         <Route path="/matches" element={<AllMatches />} />

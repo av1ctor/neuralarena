@@ -19,7 +19,7 @@ export const GamesGrid = (props: Props) => {
                 >
                     <GameItem
                         game={item}
-                        showView
+                        navigate
                     />
                 </Grid.Col>
         ))}

@@ -1,20 +1,9 @@
-import React, { useCallback } from "react";
-import { Button, createStyles, rem, Badge, Container, Text, Center, Card } from "@mantine/core";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import { createStyles, rem, Badge, Container, Text, Center } from "@mantine/core";
 import { GameResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
+import { Banner } from "@components/Banner";
 
 const useStyles = createStyles((theme) => ({
-    card: {
-        height: rem(440),
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        position: 'relative',
-    },
-  
     title: {
         fontWeight: 900,
         color: theme.white,
@@ -42,26 +31,19 @@ const useStyles = createStyles((theme) => ({
 
 interface Props {
     game: GameResponse;
-    showView?: boolean;
+    navigate?: boolean;
 }
   
 export const GameCard = (props: Props) => {
     const { classes } = useStyles();
-    const navigate = useNavigate();
-
-    const handleView = useCallback(() => {
-        navigate(`/games/${props.game.id}`)
-    }, [props.game.id]);
 
     const {info} = props.game;
 
     return (
-        <Card
-            shadow="md"
-            p="xl"
-            radius="md"
-            style={{ backgroundImage: `url(${info.urls.cover})` }}
-            className={classes.card}
+        <Banner
+            cover={info.urls.cover}
+            navigateTo={props.navigate? `/games/${props.game.id}`: undefined}
+            height={440}
         >
             <Container className={classes.categoryBox}>
                 <Badge 
@@ -89,17 +71,6 @@ export const GameCard = (props: Props) => {
                     </Text>
                 </Center>
             </Container>
-            {props.showView &&
-                <Container>
-                    <Button 
-                        variant="gradient"
-                        size="md" 
-                        onClick={handleView}
-                    >
-                        View
-                    </Button>
-                </Container>
-            }
-        </Card>
+        </Banner>
     );
 };

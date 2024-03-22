@@ -1,9 +1,8 @@
 import React, { useCallback } from "react";
-import { createStyles, rem, Badge, Container, Text, Slider, Space, Grid, Card, Image } from "@mantine/core";
+import { createStyles, rem, Badge, Container, Space, Grid, Card, Image } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { MatchResponse, MatchStatus } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { matchCalcTimeLeft, matchStatusToString } from "@libs/matches";
-import TimeFromNow from "@components/TimeFromNow";
 import { useGameFindById } from "@hooks/games";
 import { useBrowser } from "@hooks/browser";
 import { timeLeftToString } from "@libs/time";

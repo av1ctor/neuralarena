@@ -1,20 +1,9 @@
-import React, { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { Card, createStyles, rem, Container, Text, Center } from "@mantine/core";
+import React from "react";
+import { createStyles, rem, Container, Text, Center } from "@mantine/core";
 import { GameResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
+import { Banner } from "@components/Banner";
 
 const useStyles = createStyles((theme) => ({
-    card: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        position: 'relative',
-        cursor: 'pointer',
-    },
-  
     title: {
         fontWeight: 900,
         color: theme.white,
@@ -24,28 +13,18 @@ const useStyles = createStyles((theme) => ({
 
 interface Props {
     game: GameResponse;
+    navigate?: boolean;
     isHalf?: boolean;
 }
   
 export const GameBanner = (props: Props) => {
     const { classes } = useStyles();
-
-    const navigate = useNavigate();
-
-    const handleView = useCallback(() => {
-        navigate(`/games/${props.game.id}`)
-    }, [props.game.id]);
     
     return (
-        <Card
-            shadow="md"
-            radius="md"
-            style={{ 
-                backgroundImage: `url(${props.game.info.urls.cover})`,
-                height: props.isHalf? rem(110): rem(220),
-            }}
-            className={classes.card}
-            onClick={handleView}
+        <Banner
+            cover={props.game.info.urls.cover}
+            navigateTo={props.navigate? `/games/${props.game.id}`: undefined}
+            height={props.isHalf? 121: 121*2}
         >
             <Container>
                 <Center>
@@ -58,6 +37,6 @@ export const GameBanner = (props: Props) => {
                     </Text>
                 </Center>
             </Container>
-        </Card>
+        </Banner>
     );
 };
