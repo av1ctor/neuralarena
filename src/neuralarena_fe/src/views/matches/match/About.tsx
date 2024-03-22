@@ -48,6 +48,22 @@ export const AboutMatch = (props: Props) => {
                 />
             </Grid.Col>
 
+            <Grid.Col span={6}>
+                <TextInput
+                    label="Map id"
+                    value={match?.game.map_id.toString() || ''}
+                    readOnly
+                />
+            </Grid.Col>
+
+            <Grid.Col span={6}>
+                <TextInput
+                    label="Map name"
+                    value={(match && game?.info.maps[Number(match.game.map_id)].name) || ''}
+                    readOnly
+                />
+            </Grid.Col>
+
             <Grid.Col md={6}>
                 <TextInput
                     label="Created by"
@@ -135,10 +151,10 @@ export const AboutMatch = (props: Props) => {
             
             <Grid.Col md={6}>
                 <TextInput
-                    label="Min players"
+                    label="Min/Max players"
                     value={match? 
-                        match.game.min_players.toString(): 
-                        '0'
+                        `${match.game.min_players}/${match.game.max_players}`: 
+                        '0/0'
                     }
                     readOnly
                 />

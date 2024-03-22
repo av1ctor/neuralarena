@@ -8,6 +8,7 @@ import { useBrowser } from "@hooks/browser";
 import { GameMatches } from "./Matches";
 import { useUI } from "@hooks/ui";
 import { GameLeaderboard } from "./Leaderboard";
+import { GameMaps } from "./Maps";
 
 const sections = [
     {
@@ -101,7 +102,9 @@ export const Game = (props: Props) => {
                 </Box>
 
                 <Box className={section === 'maps'? classes.block: classes.none}>
-                    Maps
+                    <GameMaps
+                        game={game.data}
+                    />
                 </Box>
 
                 <Box className={section === 'demo'? classes.block: classes.none}>

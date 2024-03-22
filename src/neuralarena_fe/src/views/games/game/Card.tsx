@@ -63,14 +63,14 @@ export const GameCard = (props: Props) => {
             style={{ backgroundImage: `url(${info.urls.cover})` }}
             className={classes.card}
         >
-            <div className={classes.categoryBox}>
+            <Container className={classes.categoryBox}>
                 <Badge 
                     className={classes.category} 
                     size="xs"
                 >
                     {info.category}
                 </Badge>
-            </div>
+            </Container>
             <Container/>
             <Container>
                 <Center>

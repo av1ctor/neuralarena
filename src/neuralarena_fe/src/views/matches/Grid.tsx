@@ -22,7 +22,7 @@ export const MatchesGrid = (props: Props) => {
                         showView
                     />
                 </Grid.Col>
-        ))}
+            ))}
         </Grid>
     );
 }

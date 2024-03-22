@@ -69,15 +69,17 @@ export const GameItem = (props: Props) => {
             className={classes.card}
             onClick={handleView}
         >
-            <div className={classes.categoryBox}>
+            <Container className={classes.categoryBox}>
                 <Badge 
                     className={classes.category} 
                     size="xs"
                 >
                     {info.category}
                 </Badge>
-            </div>
+            </Container>
+
             <Container/>
+            
             <Container>
                 <Center>
                     <Text 
