@@ -28,7 +28,7 @@ interface Props {
     children?: ReactElement | ReactElement[];
 }
   
-export const Banner = (props: Props) => {
+export const CoverCard = (props: Props) => {
     const { classes, cx } = useStyles();
     const navigate = useNavigate();
 

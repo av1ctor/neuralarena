@@ -1,18 +1,9 @@
 import React from "react";
 import { GameMap } from "@declarations/neuralarena_be/neuralarena_be.did";
-import { Badge, Card, Center, Container, Text, createStyles, rem } from "@mantine/core";
+import { Badge, Center, Container, Text, createStyles, rem } from "@mantine/core";
+import { CoverCard } from "@components/CoverCard";
 
 const useStyles = createStyles((theme) => ({
-    card: {
-        height: rem(440),
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        position: 'relative',
-    },
     title: {
         fontWeight: 900,
         color: theme.white,
@@ -39,12 +30,9 @@ export const GameMap_ = (props: Props) => {
     const {map} = props;
 
     return (
-        <Card
-            shadow="md"
-            p="xl"
-            radius="md"
-            style={{ backgroundImage: `url(${map.image_url})` }}
-            className={classes.card}
+        <CoverCard
+            cover={map.image_url}
+            height={440}
         >
             <Container
                 className={classes.versionBox}
@@ -69,6 +57,6 @@ export const GameMap_ = (props: Props) => {
                 </Center>
             </Container>
 
-        </Card>
+        </CoverCard>
     );
 };

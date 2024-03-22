@@ -1,7 +1,7 @@
 import React from "react";
 import { createStyles, rem, Container, Text, Center } from "@mantine/core";
 import { GameResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
-import { Banner } from "@components/Banner";
+import { CoverCard } from "@components/CoverCard";
 
 const useStyles = createStyles((theme) => ({
     title: {
@@ -21,7 +21,7 @@ export const GameBanner = (props: Props) => {
     const { classes } = useStyles();
     
     return (
-        <Banner
+        <CoverCard
             cover={props.game.info.urls.cover}
             navigateTo={props.navigate? `/games/${props.game.id}`: undefined}
             height={props.isHalf? 121: 121*2}
@@ -37,6 +37,6 @@ export const GameBanner = (props: Props) => {
                     </Text>
                 </Center>
             </Container>
-        </Banner>
+        </CoverCard>
     );
 };

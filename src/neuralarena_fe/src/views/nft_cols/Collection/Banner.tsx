@@ -1,6 +1,6 @@
 import React from "react";
 import { createStyles, rem, Container, Text, Center } from "@mantine/core";
-import { Banner } from "@components/Banner";
+import { CoverCard } from "@components/CoverCard";
 import { NftCollectionResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 
 const useStyles = createStyles((theme) => ({
@@ -20,7 +20,7 @@ export const NftCollectionBanner = (props: Props) => {
     const { classes } = useStyles();
     
     return (
-        <Banner
+        <CoverCard
             cover={props.col.meta.logo}
             height={props.isHalf? 121: 121*2}
         >
@@ -35,6 +35,6 @@ export const NftCollectionBanner = (props: Props) => {
                     </Text>
                 </Center>
             </Container>
-        </Banner>
+        </CoverCard>
     );
 };

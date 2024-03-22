@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Text, createStyles, rem } from "@mantine/core";
 import { NftCollectionResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
-import { Banner } from "@components/Banner";
+import { CoverCard } from "@components/CoverCard";
 
 export const useStyles = createStyles((theme) => ({
     title: {
@@ -27,7 +27,7 @@ export const NftCollectionCard = (props: Props) => {
     const { col } = props;
 
     return (
-        <Banner
+        <CoverCard
             cover={col.meta.logo}
             navigateTo={`/nfts/${props.col.id}`}
             height={440}
@@ -46,6 +46,6 @@ export const NftCollectionCard = (props: Props) => {
                     {col.meta.desc}
                 </Text>
             </Container>
-        </Banner>
+        </CoverCard>
     );
 };
