@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { createStyles, Image, Container, Title, Button, Group, Text, List, ThemeIcon, rem, Space } from '@mantine/core';
 import { IconBrandGithub, IconCheck, IconUserPlus } from '@tabler/icons-react';
 import { useBrowser } from "@hooks/browser";
-import { Top } from "@views/games/Top";
+import { TopGames } from "@views/games/Top";
 import logo from "@assets/logo-vert.svg";
   
 const useStyles = createStyles((theme) => ({
@@ -137,7 +137,7 @@ const Landing = () => {
             <Space h="4rem" />
 
             <div>
-                <Top/>
+                <TopGames/>
             </div>
         </Container>
     );

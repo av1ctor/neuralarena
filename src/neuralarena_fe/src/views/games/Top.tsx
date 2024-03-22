@@ -5,7 +5,7 @@ import { useBrowser } from "@hooks/browser";
 import { useGameFindActive } from "@hooks/games";
 import { GameCard } from "./game/Card";
 
-export const Top = () => {
+export const TopGames = () => {
     const {isMobile} = useBrowser();
     const theme = useMantineTheme();
 

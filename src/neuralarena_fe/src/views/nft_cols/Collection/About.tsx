@@ -1,7 +1,11 @@
 import React from "react";
 import { NftCollectionResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { Grid, TextInput, Textarea, Chip, Group, Input } from "@mantine/core";
-import { useIcrc7GetCollectionSupplyCap, useIcrc7GetCollectionSupportedStandards, useIcrc7GetCollectionTotalSupply } from "@hooks/nas1";
+import { 
+    useIcrc7GetCollectionSupplyCap, 
+    useIcrc7GetCollectionSupportedStandards, 
+    useIcrc7GetCollectionTotalSupply 
+} from "@hooks/nas1";
 
 interface Props {
     col: NftCollectionResponse|undefined;

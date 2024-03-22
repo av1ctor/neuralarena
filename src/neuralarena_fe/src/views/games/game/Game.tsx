@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useGameFindById } from "@hooks/games";
-import { GameCard } from "./Card";
 import { Box, Center, SegmentedControl, Space } from "@mantine/core";
 import { IconBook, IconDeviceGamepad, IconGlobe, IconList, IconVideo } from "@tabler/icons-react";
 import { useBrowser } from "@hooks/browser";
@@ -10,6 +9,7 @@ import { useUI } from "@hooks/ui";
 import { GameLeaderboard } from "./Leaderboard";
 import { GameMaps } from "./Maps";
 import { GameBanner } from "./Banner";
+import { GameAbout } from "./About";
 
 const sections = [
     {
@@ -114,7 +114,9 @@ export const Game = (props: Props) => {
                 </Box>
 
                 <Box className={section === 'about'? classes.block: classes.none}>
-                    About
+                    <GameAbout
+                        game={game.data}
+                    />
                 </Box>
             </div>
         </>
