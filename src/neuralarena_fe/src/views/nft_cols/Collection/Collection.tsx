@@ -8,6 +8,7 @@ import { useNftCollectionFindById } from "@hooks/nft_cols";
 import { Principal } from "@dfinity/principal";
 import { NftCollectionCard } from "./Card";
 import { NftCollectionBanner } from "./Banner";
+import { NftCollectionTokens } from "./Tokens";
 
 const sections = [
     {
@@ -74,19 +75,11 @@ export const NftCollection = (props: Props) => {
                 <Space h="xl" />
 
                 <Box className={section === 'tokens'? classes.block: classes.none}>
-                    Tokens
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
+                    {id &&
+                        <NftCollectionTokens 
+                            collectionId={Principal.fromText(id)}
+                        />
+                    }
                 </Box>
 
                 <Box className={section === 'marketplace'? classes.block: classes.none}>

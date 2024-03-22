@@ -80,6 +80,26 @@ export const nas1GetTokensOf = async (
     owner: Principal|undefined,
     last: number|undefined,
     limit: number
+): Promise<bigint[]> => {
+    if(!canister_id || !owner) {
+        return []
+    };
+
+    let actor = createActor(canister_id);
+    const tokensIds = await actor.icrc7_tokens_of(
+        {owner, subaccount: [new Uint8Array(32)]},
+        last !== undefined? [BigInt(last)]: [],
+        [BigInt(limit)]
+    );
+
+    return tokensIds; 
+};
+
+export const nas1GetTokensOfEx = async (
+    canister_id: Principal|undefined,
+    owner: Principal|undefined,
+    last: number|undefined,
+    limit: number
 ): Promise<{tokenId: bigint, data: Nas1Token}[]> => {
     if(!canister_id || !owner) {
         return []
@@ -102,6 +122,24 @@ export const nas1GetTokensOf = async (
 };
 
 export const nas1GetTokens = async (
+    canister_id: Principal|undefined,
+    last: number|undefined,
+    limit: number
+): Promise<bigint[]> => {
+    if(!canister_id) {
+        return []
+    };
+
+    let actor = createActor(canister_id);
+    const tokensIds = await actor.icrc7_tokens(
+        last !== undefined? [BigInt(last)]: [],
+        [BigInt(limit)]
+    );
+
+    return tokensIds; 
+};
+
+export const nas1GetTokensEx = async (
     canister_id: Principal|undefined,
     last: number|undefined,
     limit: number
