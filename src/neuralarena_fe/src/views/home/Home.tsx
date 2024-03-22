@@ -16,6 +16,8 @@ import { UserMatches } from "@views/users/user/Matches";
 import { AllMatches } from "@views/matches/Matches";
 import { Games } from "@views/games/Games";
 import { NftCollections } from "@views/nft_cols/Collections";
+import bgBlack from "@assets/bg-black.svg";
+import bgWhite from "@assets/bg-white.svg";
 
 interface Props {
 }
@@ -30,8 +32,13 @@ const Home = (props: Props) => {
                 styles={{
                     main: {
                         background: theme.colorScheme === 'dark' ? 
-                            theme.colors.dark[8] : 
+                            theme.colors.dark[8]
+                        : 
                             theme.white,
+                        backgroundImage: theme.colorScheme === 'dark'?
+                            `url(${bgBlack})`
+                        :
+                            `url(${bgWhite})`,
                     },
                 }}
                 navbarOffsetBreakpoint="sm"

@@ -1,6 +1,5 @@
 import React, { ReactElement } from "react";
 import { Drawer } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 
 interface Props {
     opened: boolean,
@@ -16,7 +15,7 @@ export const DrawerPanel = (props: Props) => {
         <Drawer 
             opened={props.opened} 
             title={<b>{props.title}</b>}
-            position={props.position}
+            position={props.position || 'right'}
             size="xl"
             onClose={props.onClose} 
         >

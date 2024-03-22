@@ -1,14 +1,17 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { ActionIcon, Avatar, Box, Burger, Center, Collapse, Divider, Drawer, Group, Header, HoverCard, ScrollArea, UnstyledButton, createStyles, rem, useMantineColorScheme, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconChevronDown, IconDeviceGamepad, IconGoGame, IconHome2, IconMoonStars, IconPhoto, IconSun } from '@tabler/icons-react';
+import { IconChevronDown, IconDeviceGamepad, IconGoGame, IconMoonStars, IconPhoto, IconSun } from '@tabler/icons-react';
 import { AuthMenu } from './menus/Auth';
 import { UserMenu } from './menus/User';
 import { useAuth } from '@hooks/auth';
-import neuralArenaLogo from "@assets/neuralarena-logo.svg";
-import { Link, useNavigate } from 'react-router-dom';
+import logo from "@assets/logo-horz.svg";
+import { Link } from 'react-router-dom';
 
 const useStyles = createStyles((theme) => ({
+    header: {
+    },
+    
     link: {
         display: 'flex',
         alignItems: 'center',
@@ -72,12 +75,12 @@ const AppHeader = (props: Props) => {
 
     return (
         <Box>
-            <Header height={60} px="md" zIndex={101}>
+            <Header height={60} px="md" zIndex={101} className={classes.header}>
                 <Group position="apart" sx={{ height: '100%' }}>
                     <Group sx={{ height: '100%' }} spacing={0} className={classes.hiddenMobile}>
 
                         <a href="#" className={classes.link}>
-                            <img src={neuralArenaLogo} />
+                            <img src={logo} />
                         </a>
 
                         <a href="#/nfts" className={classes.link}>
@@ -129,7 +132,7 @@ const AppHeader = (props: Props) => {
                 padding="md"
                 title={
                     <a href="#" className={classes.link} onClick={closeDrawer}>
-                        <img src={neuralArenaLogo} />
+                        <img src={logo} />
                     </a>
                 }
                 className={classes.hiddenDesktop}

@@ -1,6 +1,16 @@
 import React, { ReactElement } from 'react';
-import { Card, Center, Group, Stack, Text, ThemeIcon, useMantineTheme } from '@mantine/core';
+import { Card, Center, Group, Stack, Text, ThemeIcon, createStyles, useMantineTheme } from '@mantine/core';
 import { TablerIconsProps } from '@tabler/icons-react';
+import logo from "@assets/logo-mini-bg.svg";
+
+const useStyles = createStyles((theme) => ({
+    card: {
+        backgroundRepeat: 'repeat-x',
+        backgroundPositionX: 'center',
+        backgroundPositionY: '-128px',
+        backgroundImage: `url(${logo})`
+    }
+}));
 
 interface Props {
     title: string;
@@ -10,9 +20,16 @@ interface Props {
 
 export const PageTitle = (props: Props) => {
     const theme = useMantineTheme();
+    const {classes} = useStyles();
     
     return (
-        <Card radius="md" p="md" mb="lg" shadow="sm">
+        <Card 
+            className={classes.card}    
+            radius="md" 
+            p="md" 
+            mb="lg" 
+            shadow="sm"
+        >
             <Group noWrap spacing="xl" position="apart">
                 <Stack>
                     <Center>
