@@ -9,6 +9,7 @@ import { Principal } from "@dfinity/principal";
 import { NftCollectionBanner } from "./Banner";
 import { NftCollectionTokens } from "./Tokens";
 import { NftCollectionAbout } from "./About";
+import { NftCollectionMarketplace } from "./Marketplace";
 
 const sections = [
     {
@@ -83,7 +84,9 @@ export const NftCollection = (props: Props) => {
                 </Box>
 
                 <Box className={section === 'marketplace'? classes.block: classes.none}>
-                    Marketplace
+                    <NftCollectionMarketplace
+                        col={query.data}
+                    />
                 </Box>
 
                 <Box className={section === 'about'? classes.block: classes.none}>
