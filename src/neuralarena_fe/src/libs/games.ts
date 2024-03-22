@@ -85,8 +85,16 @@ export const gameFindActive = async (
 
 export const gameGetEndCredits = async (
     main: Main,
-    id: GameId
+    id: GameId|undefined
 ): Promise<GameEndCredits> => {
+    if(!id) {
+        return {
+            title: '',
+            sub: [],
+            people: []
+        };
+    }
+    
     const res = await main.game_get_end_credits(id);
     if('Err' in res) {
         throw new Error(res.Err);

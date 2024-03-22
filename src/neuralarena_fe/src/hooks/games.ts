@@ -2,9 +2,9 @@ import {
     UseInfiniteQueryResult, UseQueryResult, useInfiniteQuery, 
     useMutation, useQuery, useQueryClient 
 } from "react-query";
-import { GameRequest, GameResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
+import { GameEndCredits, GameRequest, GameResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { useActors } from "./actors";
-import { GameId, gameCreate, gameFindActive, gameFindAll, gameFindById, gameGetLeaderboard } from "@libs/games";
+import { GameId, gameCreate, gameFindActive, gameFindAll, gameFindById, gameGetEndCredits, gameGetLeaderboard } from "@libs/games";
 import { Principal } from "@dfinity/principal";
 
 interface GameMethods {
@@ -92,5 +92,16 @@ export const useGameGetLeaderboard = (
     return useQuery<[Principal, number][], Error>(
         ['leaderboard', id, limit],
         () => gameGetLeaderboard(main, id, limit)
+    );
+}; 
+
+export const useGameGetEndCredits = (
+    id: GameId|undefined,
+): UseQueryResult<GameEndCredits, Error> => {
+    const {main} = useActors();
+    
+    return useQuery<GameEndCredits, Error>(
+        ['game-credits', id],
+        () => gameGetEndCredits(main, id)
     );
 }; 

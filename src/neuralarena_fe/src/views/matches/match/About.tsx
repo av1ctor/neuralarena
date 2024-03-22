@@ -16,7 +16,7 @@ export const MatchAbout = (props: Props) => {
 
     return (
         <Grid>
-            <Grid.Col span={6}>
+            <Grid.Col md={6}>
                 <TextInput
                     label="Id"
                     value={match?.id || ''}
@@ -24,7 +24,7 @@ export const MatchAbout = (props: Props) => {
                 />
             </Grid.Col>
 
-            <Grid.Col span={6}>
+            <Grid.Col md={6}>
                 <TextInput
                     label="Status"
                     value={matchStatusToString(match?.state.status)}
@@ -32,7 +32,7 @@ export const MatchAbout = (props: Props) => {
                 />
             </Grid.Col>
 
-            <Grid.Col span={6}>
+            <Grid.Col md={6}>
                 <TextInput
                     label="Game id"
                     value={match?.game.id || ''}
@@ -40,7 +40,7 @@ export const MatchAbout = (props: Props) => {
                 />
             </Grid.Col>
 
-            <Grid.Col span={6}>
+            <Grid.Col md={6}>
                 <TextInput
                     label="Game name"
                     value={game?.info.name || ''}
@@ -48,7 +48,7 @@ export const MatchAbout = (props: Props) => {
                 />
             </Grid.Col>
 
-            <Grid.Col span={6}>
+            <Grid.Col md={6}>
                 <TextInput
                     label="Map id"
                     value={match?.game.map_id.toString() || ''}
@@ -56,7 +56,7 @@ export const MatchAbout = (props: Props) => {
                 />
             </Grid.Col>
 
-            <Grid.Col span={6}>
+            <Grid.Col md={6}>
                 <TextInput
                     label="Map name"
                     value={(match && game?.info.maps[Number(match.game.map_id)].name) || ''}
@@ -83,7 +83,7 @@ export const MatchAbout = (props: Props) => {
                 />
             </Grid.Col>
 
-            <Grid.Col span={6}>
+            <Grid.Col md={6}>
                 <TextInput
                     label="Deadline"
                     value={match? 
@@ -94,7 +94,7 @@ export const MatchAbout = (props: Props) => {
                 />
             </Grid.Col>
 
-            <Grid.Col span={6}>
+            <Grid.Col md={6}>
                 <TextInput
                     label="Started at"
                     value={match && match.started_at.length > 0? 

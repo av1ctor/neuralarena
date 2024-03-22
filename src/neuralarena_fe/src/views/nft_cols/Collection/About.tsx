@@ -20,7 +20,7 @@ export const NftCollectionAbout = (props: Props) => {
 
     return (
         <Grid>
-            <Grid.Col span={6}>
+            <Grid.Col md={6}>
                 <TextInput
                     label="Id/Canister id"
                     value={col?.id.toString() || ''}
@@ -28,7 +28,7 @@ export const NftCollectionAbout = (props: Props) => {
                 />
             </Grid.Col>
 
-            <Grid.Col span={6}>
+            <Grid.Col md={6}>
                 <TextInput
                     label="Asset canister id"
                     value={col?.meta.nas1.assets_canister_id.toString() || ''}
@@ -36,7 +36,7 @@ export const NftCollectionAbout = (props: Props) => {
                 />
             </Grid.Col>
 
-            <Grid.Col span={12}>
+            <Grid.Col md={12}>
                 <Input.Wrapper label="Supported standards">
                     <Chip.Group>
                         <Group>
@@ -50,7 +50,7 @@ export const NftCollectionAbout = (props: Props) => {
                 </Input.Wrapper>
             </Grid.Col>
 
-            <Grid.Col span={6}>
+            <Grid.Col md={6}>
                 <TextInput
                     label="Supply cap"
                     value={supplyCap.data?.toString() || ''}
@@ -58,7 +58,7 @@ export const NftCollectionAbout = (props: Props) => {
                 />
             </Grid.Col>
 
-            <Grid.Col span={6}>
+            <Grid.Col md={6}>
                 <TextInput
                     label="Total supply"
                     value={totalSupply.data?.toString() || ''}
@@ -66,7 +66,7 @@ export const NftCollectionAbout = (props: Props) => {
                 />
             </Grid.Col>
 
-            <Grid.Col span={6}>
+            <Grid.Col md={6}>
                 <TextInput
                     label="Name"
                     value={col?.meta.name || ''}
@@ -74,7 +74,7 @@ export const NftCollectionAbout = (props: Props) => {
                 />
             </Grid.Col>
 
-            <Grid.Col span={6}>
+            <Grid.Col md={6}>
                 <TextInput
                     label="Version"
                     value={col?.meta.nas1.version.toFixed(2) || ''}
@@ -82,7 +82,7 @@ export const NftCollectionAbout = (props: Props) => {
                 />
             </Grid.Col>
 
-            <Grid.Col span={12}>
+            <Grid.Col md={12}>
                 <Textarea
                     label="Description"
                     value={col?.meta.desc || ''}
@@ -91,7 +91,7 @@ export const NftCollectionAbout = (props: Props) => {
                 />
             </Grid.Col>
 
-            <Grid.Col span={12}>
+            <Grid.Col md={12}>
                 <Input.Wrapper label="Trained skills">
                     <Chip.Group>
                         <Group>
@@ -105,7 +105,7 @@ export const NftCollectionAbout = (props: Props) => {
                 </Input.Wrapper>
             </Grid.Col>
 
-            <Grid.Col span={12}>
+            <Grid.Col md={12}>
                 <Input.Wrapper label="Known animations">
                     <Chip.Group>
                         <Group>

@@ -19,6 +19,7 @@ import {
 import { EndCredits } from "@views/games/game/EndCredits";
 import { useElementSize } from "@mantine/hooks";
 import { useFont } from "@hooks/font";
+import { useGameGetEndCredits } from "@hooks/games";
 
 const useStyles = createStyles((theme) => ({
     container: {
@@ -100,7 +101,6 @@ export const MatchWatch = (props: Props) => {
     const [engine, setEngine] = useState<GameEngine>();
     const [renderer, setRenderer] = useState<ThreeGameRenderer>();
     const [state, setState] = useState<WatchState>(WatchState.LOADING);
-    const [endCredits, setEndCredits] = useState<GameEndCredits|undefined>();
     const [endCreditsVisible, setEndCreditsVisible] = useState(false);
     const [matchProgress, setMatchProgress] = useState(0.0);
     const { ref, width } = useElementSize();
@@ -111,6 +111,7 @@ export const MatchWatch = (props: Props) => {
     const engineLoading = useRef(false);
 
     const steps = useMatchGetSteps(props.match.id, STEPS_PER_CALL)
+    const credits = useGameGetEndCredits(props.game.id);
     const step = useRef(0);
 
     const frames = useMemo((): InstanceStep[] => {
@@ -267,21 +268,6 @@ export const MatchWatch = (props: Props) => {
         loadAssets();
     }, [loadAssets]);
 
-    const loadEndCredits = useCallback(async () => {
-        try {
-            const credits = await gameGetEndCredits(main, props.game.id);
-            setEndCredits(credits);
-        }
-        catch(e) {
-            console.log(e);
-            showError(e);
-        }
-    }, [props.game.id]);
-
-    useEffect(() => {
-        loadEndCredits();
-    }, [loadEndCredits]);
-
     useEffect(() => {
         if(props.pov !== undefined) {
             renderer?.changePOV(props.pov);
@@ -399,7 +385,10 @@ export const MatchWatch = (props: Props) => {
                     className={cx(classes.credits_ctn, {[classes.visible]: endCreditsVisible})}
                 >
                     <div className={classes.credits}>
-                        <EndCredits credits={endCredits} level={0} />
+                        <EndCredits 
+                            credits={credits.data} 
+                            level={0} 
+                        />
                     </div>
                 </div>
                 <Grid className={classes.controls}>

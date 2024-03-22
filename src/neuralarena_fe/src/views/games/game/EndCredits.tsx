@@ -1,5 +1,5 @@
 import React from "react";
-import { createStyles } from "@mantine/core";
+import { Space, createStyles } from "@mantine/core";
 import { GameEndCredits } from "@declarations/neuralarena_be/neuralarena_be.did";
 
 const useStyles = createStyles((theme) => ({
@@ -9,28 +9,14 @@ const useStyles = createStyles((theme) => ({
         alignItems: 'center',
         width: '100%',
     },
-    level_0: {
-        fontSize: '2rem',
-    },
-    level_1: {
-        fontSize: '1.5rem',
-    },
-    level_2: {
-        fontSize: '1.25rem',
-    },
-    level_3: {
-        fontSize: '1rem',
-    },
-    level_4: {
-        fontSize: '0.75rem',
-    },
     title: {
         fontVariant: 'small-caps',
         fontWeight: 'bold',
     },
     line: {
         marginTop: '0.25rem',
-        borderTop: '2px solid #fff1',
+        borderTop: '2px solid',
+        borderTopColor: theme.colorScheme === 'dark'? '#fff1': '#0001',
         width: '33%',
         maxWidth: '350px',
     },
@@ -54,9 +40,6 @@ const useStyles = createStyles((theme) => ({
         overflow: 'hidden',
         fontWeight: 'bold',
     },
-    divisor: {
-        height: '4rem',
-    }
 }));
 
 interface Props {
@@ -65,22 +48,18 @@ interface Props {
 }
 
 export const EndCredits = (props: Props) => {
-    const {classes, cx} = useStyles();
+    const {classes} = useStyles();
     const {credits, level} = props;
+
+    const fontSize = 2.0 / ((level+1) * 0.75);
 
     return (
         credits && 
-            <div className={cx(
-                classes.container, 
-                {
-                    [classes.level_0]: level === 0,
-                    [classes.level_1]: level === 1,
-                    [classes.level_2]: level === 2,
-                    [classes.level_3]: level === 3,
-                    [classes.level_4]: level === 4,
-                }
-            )}>
-                <div className={classes.title}>
+            <div className={classes.container}>
+                <div 
+                    className={classes.title} 
+                    style={{fontSize:`${fontSize}rem`}}
+                >
                     {credits.title}
                 </div>
                 <div className={classes.line}>
@@ -88,15 +67,8 @@ export const EndCredits = (props: Props) => {
                 {credits.people.map((people, index) => 
                     <div 
                         key={index} 
-                        className={cx(
-                            classes.people,
-                            {
-                                [classes.level_1]: level === 0,
-                                [classes.level_2]: level === 1,
-                                [classes.level_3]: level === 2,
-                                [classes.level_4]: level >= 3,
-                            }
-                        )}
+                        className={classes.people}
+                        style={{fontSize:`${fontSize * 0.8}rem`}}
                     >
                         <div className={classes.role}>
                             {people[0]}
@@ -108,8 +80,7 @@ export const EndCredits = (props: Props) => {
                         </div>
                     </div>
                 )}
-                <div className={classes.divisor}>
-                </div>
+                <Space h={`${fontSize*1.5}rem`} />
                 {credits.sub.map((sub, index) => 
                     <EndCredits 
                         key={index} 
