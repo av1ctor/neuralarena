@@ -1,7 +1,7 @@
 import React from "react";
 import { GameId } from "@libs/games";
 import { useGameGetLeaderboard } from "@hooks/games";
-import { Box, Grid, Group, Stack } from "@mantine/core";
+import { Table } from "@mantine/core";
 import { principalToString } from "@libs/icp";
 
 interface Props {
@@ -12,17 +12,29 @@ export const GameLeaderboard = (props: Props) => {
     const query = useGameGetLeaderboard(props.id, 20);
     
     return (
-        <Stack align="stretch" spacing="md">
-            {query.data?.map((e, index) => 
-                <Group key={index} grow>
-                    <Box>
-                        {principalToString(e[0])}
-                    </Box>
-                    <Box>
-                        {e[1].toFixed(2)}
-                    </Box>
-                </Group>
-            )}
-        </Stack>
+        <Table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Player</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                {query.data?.map((e, index) =>
+                    <tr key={index}>
+                        <td>
+                            <b>{1+index}</b>
+                        </td>
+                        <td>
+                            {principalToString(e[0])}
+                        </td>
+                        <td>
+                            {e[1].toFixed(2)}
+                        </td>
+                    </tr>
+                )}
+            </tbody>
+        </Table>
     );
 };
