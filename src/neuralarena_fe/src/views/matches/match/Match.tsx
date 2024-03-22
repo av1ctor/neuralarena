@@ -13,7 +13,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { JoinMatch } from "./Join";
 import { DrawerPanel } from "@components/DrawerPanel";
 import { MatchPlayers } from "./Players";
-import { IconBook, IconDeviceTv, IconList, IconUsersGroup } from "@tabler/icons-react";
+import { IconBook, IconDeviceTv, IconUsersGroup } from "@tabler/icons-react";
 import { useBrowser } from "@hooks/browser";
 import { AboutMatch } from "./About";
 

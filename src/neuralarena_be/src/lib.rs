@@ -32,6 +32,7 @@ use neuralarena_cdk::{
 };
 use serde::{Deserialize, Serialize};
 use services::games::GamesService;
+use services::leaderboards::LeaderboardsService;
 use services::matches::MatchesService;
 use services::nftcols::NftCollectionsService;
 use services::timers::TimersService;
@@ -408,6 +409,17 @@ fn game_find_active(
     })
 }
 
+#[ic_cdk::query]
+fn game_get_leaderboard(
+    game_id: GameId,
+    limit: u32
+) -> Result<Vec<(UserId, f32)>, String> {
+
+    DB.with(|db| {
+        LeaderboardsService::find_top(&game_id, limit.max(100) as _, &db.borrow())
+    })
+}
+
 #[ic_cdk::query(composite = true)]
 pub async fn game_get_end_credits(
     id: GameId
@@ -662,8 +674,19 @@ async fn _run_match(
     let initial_seed = random::next_u64();
     MatchesService::run(m4tch, game, initial_seed).await?;
 
-    DB.with(|db| {
-        MatchesService::update(m4tch, &mut db.borrow_mut())
+    DB.with(|db| -> Result<(), String> {
+        MatchesService::update(m4tch, &mut db.borrow_mut())?;
+
+        // update game's leader board
+        let mut db_ref = db.borrow_mut();
+        let leaderboard = LeaderboardsService::find_by_id_mut(
+            &m4tch.game.id, &mut db_ref)?;
+
+        for player in &m4tch.state.players {
+            *leaderboard.entry(player.id).or_insert(0.0) += player.state.score;
+        }
+
+        Ok(())
     })?;
 
     Ok(())

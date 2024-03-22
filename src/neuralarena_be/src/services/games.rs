@@ -133,6 +133,7 @@ impl GamesService {
 
         res
     }
+
     fn authorize(
         user: &User
     ) -> Result<(), String> {

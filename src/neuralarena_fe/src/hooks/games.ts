@@ -4,7 +4,8 @@ import {
 } from "react-query";
 import { GameRequest, GameResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { useActors } from "./actors";
-import { GameId, gameCreate, gameFindActive, gameFindAll, gameFindById } from "@libs/games";
+import { GameId, gameCreate, gameFindActive, gameFindAll, gameFindById, gameGetLeaderboard } from "@libs/games";
+import { Principal } from "@dfinity/principal";
 
 interface GameMethods {
     create: (req: GameRequest) => Promise<GameResponse>;
@@ -81,3 +82,15 @@ export const useGameFindActive = (
         }
     );
 };
+
+export const useGameGetLeaderboard = (
+    id: GameId|undefined,
+    limit: number
+): UseQueryResult<[Principal, number][], Error> => {
+    const {main} = useActors();
+    
+    return useQuery<[Principal, number][], Error>(
+        ['leaderboard', id, limit],
+        () => gameGetLeaderboard(main, id, limit)
+    );
+}; 

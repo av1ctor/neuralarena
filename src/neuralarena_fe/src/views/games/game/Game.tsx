@@ -7,6 +7,7 @@ import { IconBook, IconDeviceGamepad, IconGlobe, IconList, IconVideo } from "@ta
 import { useBrowser } from "@hooks/browser";
 import { GameMatches } from "./Matches";
 import { useUI } from "@hooks/ui";
+import { GameLeaderboard } from "./Leaderboard";
 
 const sections = [
     {
@@ -94,7 +95,9 @@ export const Game = (props: Props) => {
                 </Box>
 
                 <Box className={section === 'score'? classes.block: classes.none}>
-                    Score
+                    <GameLeaderboard
+                        id={game.data?.id}
+                    />
                 </Box>
 
                 <Box className={section === 'maps'? classes.block: classes.none}>

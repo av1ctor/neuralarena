@@ -57,7 +57,6 @@ pub struct Match {
     pub created_at: u64,
     pub created_by: UserId,
     pub started_at: Option<u64>,
-    pub started_by: Option<UserId>,
     pub won_at: Option<u64>,
     pub won_by: Option<UserId>,
 }
@@ -101,7 +100,6 @@ pub struct MatchResponse {
     pub created_by: UserId,
     pub deadline: u64,
     pub started_at: Option<u64>,
-    pub started_by: Option<UserId>,
     pub won_at: Option<u64>,
     pub won_by: Option<UserId>,
 }
@@ -137,7 +135,6 @@ impl Match {
             created_at: ic_cdk::api::time(),
             created_by: caller.clone(),
             started_at: None,
-            started_by: None,
             won_at: None,
             won_by: None,
         }
@@ -167,11 +164,10 @@ impl From<Match> for MatchResponse {
                     props: p.nft.props.clone(),
                 },
             }).collect(),
+            deadline: e.deadline,
             created_at: e.created_at,
             created_by: e.created_by,
-            deadline: e.deadline,
             started_at: e.started_at,
-            started_by: e.started_by,
             won_at: e.won_at,
             won_by: e.won_by,
             

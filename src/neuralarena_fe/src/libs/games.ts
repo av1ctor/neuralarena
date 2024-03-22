@@ -3,6 +3,7 @@ import {
     GameRequest, GameResponse, 
     Pagination, Asset, GameEndCredits 
 } from "@declarations/neuralarena_be/neuralarena_be.did";
+import { Principal } from "@dfinity/principal";
 
 export type GameId = string;
 
@@ -91,5 +92,21 @@ export const gameGetEndCredits = async (
         throw new Error(res.Err);
     }
 
+    return res.Ok; 
+};
+
+export const gameGetLeaderboard = async (
+    main: Main,
+    id: GameId|undefined,
+    limit: number
+): Promise<[Principal, number][]> => {
+    if(!id) {
+        return [];
+    }
+    
+    const res = await main.game_get_leaderboard(id, limit);
+    if('Err' in res) {
+        throw new Error(res.Err);
+    }
     return res.Ok; 
 };
