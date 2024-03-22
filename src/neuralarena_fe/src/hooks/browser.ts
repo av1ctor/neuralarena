@@ -28,11 +28,11 @@ export const useBrowser = (): BrowserProps => {
     }, []);
 
     const redirectToLogin = useCallback(() => {
-        navigate(`/user/login?return=${window.location.hash.replace('#', '')}`);
+        navigate(`/users/login?return=${window.location.hash.replace('#', '')}`);
     }, []);
 
     const redirectToSignup = useCallback(() => {
-        navigate(`/user/signup?return=${window.location.hash.replace('#', '')}`);
+        navigate(`/users/signup?return=${window.location.hash.replace('#', '')}`);
     }, []);
 
     const redirectToHome = useCallback(() => {

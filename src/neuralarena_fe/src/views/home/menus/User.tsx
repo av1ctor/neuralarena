@@ -1,6 +1,6 @@
 import React from 'react';
 import { Group, UnstyledButton, createStyles, rem, Text, ThemeIcon, Grid } from '@mantine/core';
-import { IconUser, IconDeviceGamepad, IconPhoto } from '@tabler/icons-react';
+import { IconUser, IconDeviceGamepad, IconPhoto, IconWallet } from '@tabler/icons-react';
 import { Link } from 'react-router-dom';
 
 const useStyles = createStyles((theme) => ({
@@ -24,7 +24,7 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-const data = [
+const items = [
     {
         icon: IconDeviceGamepad,
         title: 'Matches',
@@ -36,6 +36,12 @@ const data = [
         title: 'NFTs',
         description: 'Your NFTs',
         to: "/users/nfts"
+    },
+    {
+        icon: IconWallet,
+        title: 'Wallet',
+        description: 'Your wallet',
+        to: "/users/wallet"
     },
     {
         icon: IconUser,
@@ -54,7 +60,7 @@ export const UserMenu = (props: Props) => {
 
     return (
         <Grid>
-            {data.map((item) => 
+            {items.map((item) => 
                 <Grid.Col md={6} key={item.title}>
                     <UnstyledButton 
                         className={classes.subLink} 
