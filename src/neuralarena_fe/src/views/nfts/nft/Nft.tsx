@@ -1,7 +1,7 @@
 import React, { ReactElement, useCallback } from "react";
 import { Badge, Card, Group, Text, Image, Space } from "@mantine/core";
 import { 
-    useNAS1FindTokenById, useNAS1GetCollectionSymbol
+    useNAS1FindTokenById, useIcrc7GetCollectionSymbol
 } from "@hooks/nas1";
 import { NFT } from "@libs/nas1";
 
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export const Nft = (props: Props) => {
-    const symbol = useNAS1GetCollectionSymbol(props.nft.collection_id);
+    const symbol = useIcrc7GetCollectionSymbol(props.nft.collection_id);
     const token = useNAS1FindTokenById(props.nft.collection_id, Number(props.nft.token_id));
 
     const handleClick = useCallback(() => {

@@ -11,7 +11,7 @@ interface Props {
     game: GameResponse|undefined;
 }
 
-export const AboutMatch = (props: Props) => {
+export const MatchAbout = (props: Props) => {
     const {match, game} = props;
 
     return (

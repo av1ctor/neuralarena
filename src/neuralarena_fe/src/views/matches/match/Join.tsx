@@ -12,7 +12,7 @@ interface Props {
     onClose: () => void;
 }
 
-export const JoinMatch = (props: Props) => {
+export const MatchJoin = (props: Props) => {
     const {user, isLogged} = useAuth();
     const {toggleLoading, showError, showSuccess} = useUI();
     const [nft, setNft] = useState<NFT|undefined>(undefined);

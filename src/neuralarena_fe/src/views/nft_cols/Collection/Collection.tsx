@@ -6,9 +6,9 @@ import { useBrowser } from "@hooks/browser";
 import { useUI } from "@hooks/ui";
 import { useNftCollectionFindById } from "@hooks/nft_cols";
 import { Principal } from "@dfinity/principal";
-import { NftCollectionCard } from "./Card";
 import { NftCollectionBanner } from "./Banner";
 import { NftCollectionTokens } from "./Tokens";
+import { NftCollectionAbout } from "./About";
 
 const sections = [
     {
@@ -49,14 +49,14 @@ export const NftCollection = (props: Props) => {
     const {classes} = useUI();
     const [section, setSection] = useState('tokens');
     
-    const col = useNftCollectionFindById(id? Principal.fromText(id): undefined);
+    const query = useNftCollectionFindById(id? Principal.fromText(id): undefined);
 
     return (
         <>
             <div>
-                {col && col.data &&
+                {query && query.data &&
                     <NftCollectionBanner
-                        col={col.data}
+                        col={query.data}
                         isHalf 
                     />
                 }
@@ -87,7 +87,9 @@ export const NftCollection = (props: Props) => {
                 </Box>
 
                 <Box className={section === 'about'? classes.block: classes.none}>
-                    About
+                    <NftCollectionAbout
+                        col={query.data}
+                    />
                 </Box>
             </div>
         </>

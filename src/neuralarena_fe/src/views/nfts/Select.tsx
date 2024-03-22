@@ -6,7 +6,7 @@ import { NFT } from "@libs/nas1";
 import { useForm, yupResolver } from "@mantine/form";
 import { Principal } from "@dfinity/principal";
 import { useNftCollectionFindActive } from "@hooks/nft_cols";
-import { useNAS1FindTokensOfEx } from "@hooks/nas1";
+import { useNAS1FindTokensOf } from "@hooks/nas1";
 import { ListNfts } from "./List";
 import { SelectItem } from "@components/SelectItem";
 
@@ -41,7 +41,7 @@ export const SelectNft = (props: Props) => {
 
     const nft_cols = useNftCollectionFindActive(100);
 
-    const user_tokens = useNAS1FindTokensOfEx(
+    const user_tokens = useNAS1FindTokensOf(
         form.values.collection_id?
             Principal.fromText(form.values.collection_id):
             undefined, 

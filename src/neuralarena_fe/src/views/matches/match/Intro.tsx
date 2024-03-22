@@ -73,7 +73,7 @@ interface Props {
 
 const CANVAS_DEFAULT_DIM = {w: 450, h: 253};
 
-export const Intro = (props: Props) => {
+export const MatchIntro = (props: Props) => {
     const {user} = useAuth();
     const {classes} = useStyles();
     const canvas = useRef<HTMLCanvasElement|null>(null);

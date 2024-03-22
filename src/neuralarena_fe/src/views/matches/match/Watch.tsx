@@ -91,7 +91,7 @@ const FPS = 60;
 const STEPS_PER_CALL = FPS*10;
 const CANVAS_DEFAULT_DIM = {w: 450, h: 253};
 
-export const Watch = (props: Props) => {
+export const MatchWatch = (props: Props) => {
     const {showError} = useUI();
     const { main } = useActors();
     const { classes, cx } = useStyles();

@@ -1,7 +1,7 @@
 import React from "react";
 import { NftsGrid } from "../../nfts/Grid";
 import { InfinitePaging } from "@components/InfinitePaging";
-import { useNAS1FindTokens } from "@hooks/nas1";
+import { useIcrc7FindTokens } from "@hooks/nas1";
 import { Principal } from "@dfinity/principal";
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 const ITEMS_PER_PAGE = 4;
 
 export const NftCollectionTokens = (props: Props) => {
-    const query = useNAS1FindTokens(props.collectionId, ITEMS_PER_PAGE);
+    const query = useIcrc7FindTokens(props.collectionId, ITEMS_PER_PAGE);
 
     return (
         <InfinitePaging

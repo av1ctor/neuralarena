@@ -5,17 +5,17 @@ import { useMatchFindById } from "@hooks/matches";
 import { useGameFindById } from "@hooks/games";
 import { matchStatusToString } from "@libs/matches";
 import { useUI } from "@hooks/ui";
-import { Watch } from "./Watch";
+import { MatchWatch } from "./Watch";
 import { useAuth } from "@hooks/auth";
-import { Intro } from "./Intro";
+import { MatchIntro } from "./Intro";
 import { GameBanner } from "@views/games/game/Banner";
 import { useDisclosure } from "@mantine/hooks";
-import { JoinMatch } from "./Join";
+import { MatchJoin } from "./Join";
 import { DrawerPanel } from "@components/DrawerPanel";
 import { MatchPlayers } from "./Players";
 import { IconBook, IconDeviceTv, IconUsersGroup } from "@tabler/icons-react";
 import { useBrowser } from "@hooks/browser";
-import { AboutMatch } from "./About";
+import { MatchAbout } from "./About";
 
 interface Props {
 }
@@ -131,13 +131,13 @@ export const Match = (props: Props) => {
                 <Stack className={section === 'watch'? classes.block: classes.none}>
                     {match.data && game.data?
                         (status === 'FINISHED' || status === 'RUNNING')?
-                            <Watch 
+                            <MatchWatch 
                                 game={game.data}
                                 match={match.data}
                                 pov={pov}
                             />
                         :
-                            <Intro
+                            <MatchIntro
                                 match={match.data}
                                 game={game.data}
                             />
@@ -167,7 +167,7 @@ export const Match = (props: Props) => {
                 </Box>
 
                 <Box className={section === 'about'? classes.block: classes.none}>
-                    <AboutMatch 
+                    <MatchAbout 
                         match={match.data}
                         game={game.data}
                     />
@@ -179,7 +179,7 @@ export const Match = (props: Props) => {
                 opened={opened}
                 onClose={close}
             >
-                <JoinMatch
+                <MatchJoin
                     match={match.data}
                     onClose={close}
                 />

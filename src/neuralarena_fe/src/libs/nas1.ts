@@ -1,5 +1,5 @@
 import { Principal } from "@dfinity/principal";
-import { Nas1Token, Nas1Collection } from "@declarations/nas1_nft/nas1_nft.did";
+import { Nas1Token, Nas1Collection, Standard } from "@declarations/nas1_nft/nas1_nft.did";
 import { createActor } from "@declarations/nas1_nft";
 
 export interface NFT {
@@ -14,7 +14,44 @@ export const nas1GetCollectionData = async (
     return await actor.nas1_collection_data();
 };
 
-export const nas1GetCollectionLogo = async (
+export const icrc7GetSupplyCap = async (
+    canister_id: Principal|undefined
+): Promise<number> => {
+    if(!canister_id) {
+        return 0;
+    }
+    let actor = createActor(canister_id);
+    let res = await actor.icrc7_supply_cap();
+    if(res.length === 0) {
+        return 0;
+    }
+
+    return Number(res[0]);
+};
+
+export const icrc7GetTotalSupply = async (
+    canister_id: Principal|undefined
+): Promise<number> => {
+    if(!canister_id) {
+        return 0;
+    }
+    let actor = createActor(canister_id);
+    let res = await actor.icrc7_total_supply();
+    return Number(res);
+};
+
+export const icrc7GetSupportedStandards = async (
+    canister_id: Principal|undefined
+): Promise<Standard[]> => {
+    if(!canister_id) {
+        return [];
+    }
+    let actor = createActor(canister_id);
+    let res = await actor.icrc7_supported_standards();
+    return res;
+};
+
+export const icrc7GetCollectionLogo = async (
     canister_id: Principal
 ): Promise<string> => {
     let actor = createActor(canister_id);
@@ -26,7 +63,7 @@ export const nas1GetCollectionLogo = async (
     return res[0];
 };
 
-export const nas1GetCollectionSymbol = async (
+export const icrc7GetCollectionSymbol = async (
     canister_id: Principal
 ): Promise<string> => {
     let actor = createActor(canister_id);
@@ -34,7 +71,7 @@ export const nas1GetCollectionSymbol = async (
     return res;
 };
 
-export const nas1GetCollectionDesc = async (
+export const icrc7GetCollectionDesc = async (
     canister_id: Principal
 ): Promise<string> => {
     let actor = createActor(canister_id);
@@ -59,7 +96,7 @@ export const nas1FindTokenById = async (
     return res[0]; 
 };
 
-export const nas1GetTokenOwner = async (
+export const icrc7GetTokenOwner = async (
     canister_id?: Principal,
     id?: number,
 ): Promise<Principal|undefined> => {
@@ -75,7 +112,7 @@ export const nas1GetTokenOwner = async (
     return res[0][0]?.owner; 
 };
 
-export const nas1GetTokensOf = async (
+export const icrc7GetTokensOf = async (
     canister_id: Principal|undefined,
     owner: Principal|undefined,
     last: number|undefined,
@@ -95,7 +132,7 @@ export const nas1GetTokensOf = async (
     return tokensIds; 
 };
 
-export const nas1GetTokensOfEx = async (
+export const nas1GetTokensOf = async (
     canister_id: Principal|undefined,
     owner: Principal|undefined,
     last: number|undefined,
@@ -121,7 +158,7 @@ export const nas1GetTokensOfEx = async (
     return res; 
 };
 
-export const nas1GetTokens = async (
+export const icrc7GetTokens = async (
     canister_id: Principal|undefined,
     last: number|undefined,
     limit: number
@@ -139,7 +176,7 @@ export const nas1GetTokens = async (
     return tokensIds; 
 };
 
-export const nas1GetTokensEx = async (
+export const nas1GetTokens = async (
     canister_id: Principal|undefined,
     last: number|undefined,
     limit: number
