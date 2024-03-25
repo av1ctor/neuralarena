@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CANISTER_ID=$(dfx canister id brains_be)
+CANISTER_ID=$(dfx canister id rcircuit_be)
 GAME_ID=$1
 
 dfx identity use deployer

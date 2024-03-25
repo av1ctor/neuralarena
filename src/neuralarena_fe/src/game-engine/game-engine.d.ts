@@ -19,8 +19,9 @@ export class GameEngine {
 * @param {Uint8Array} entities
 * @param {Uint8Array} events
 * @param {any} renderer
+* @param {boolean} update_only
 */
-  render(entities: Uint8Array, events: Uint8Array, renderer: any): void;
+  render(entities: Uint8Array, events: Uint8Array, renderer: any, update_only: boolean): void;
 /**
 * @param {any} renderer
 */
@@ -57,7 +58,7 @@ export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly __wbg_gameengine_free: (a: number) => void;
   readonly gameengine_new: () => number;
-  readonly gameengine_render: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => void;
+  readonly gameengine_render: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => void;
   readonly gameengine_reset: (a: number, b: number) => void;
   readonly __wbg_instanceplayerentity_free: (a: number) => void;
   readonly __wbg_get_instanceplayerentity_score: (a: number) => number;
