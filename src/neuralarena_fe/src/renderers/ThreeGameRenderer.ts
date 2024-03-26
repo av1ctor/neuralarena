@@ -474,17 +474,40 @@ export class ThreeGameRenderer {
         this.entities.npcs = npcs;
     }
 
+    update(
+        deltaTime: number
+    ) {
+        if(this.controls) {
+            this.controls.autoRotate = this.pov.auto_rotate;
+            this.controls.update(deltaTime / 1000.0);
+        }
+
+        this.statusMng.update(this.entities.players, this.entities.npcs);
+
+        for(const obj of this.models) {
+            if(obj.userData.anim){
+                obj.userData.anim.update(deltaTime / 1000.0);
+            }
+        }
+
+        this.start.update(deltaTime);
+    }
+
     render(
     ) {
+        if(this.skipping) {
+            return;
+        }
+                
         if(this.loading) {
             this.loadingBar.render(this.renderer);
             return;
         }
-        
-        if(this.skipping) {
-            return;
-        }
 
+
+        this.statusMng.update(this.entities.players, this.entities.npcs);
+
+        
         this.statusMng.update(this.entities.players, this.entities.npcs);
 
         let player: THREE.Object3D<THREE.Object3DEventMap>|undefined = undefined;
@@ -511,11 +534,6 @@ export class ThreeGameRenderer {
                 ),
                 0.5
             );
-        }
-
-        if(this.controls) {
-            this.controls.autoRotate = this.pov.auto_rotate;
-            this.controls.update();
         }
 
         let intersections: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[]|undefined = undefined;
@@ -550,12 +568,6 @@ export class ThreeGameRenderer {
                         }
                     }
                 }
-            }
-        }
-
-        for(const obj of this.models) {
-            if(obj.userData.anim){
-                obj.userData.anim.update(1.0 / 60.0);
             }
         }
 

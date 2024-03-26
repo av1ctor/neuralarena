@@ -134,10 +134,16 @@ export class ThreeSceneRenderer {
         }
     }
 
+    update(
+        deltaTime: number
+    ) {
+        this.anim?.update(deltaTime / 1000.0);
+        this.loadingBar.update(deltaTime);
+    }
+
     render(
     ) {
         if(!this.loading) {
-            this.anim?.update(1.0 / 60.0);
             this.renderer.render(this.scene, this.camera!);
         }
         else {

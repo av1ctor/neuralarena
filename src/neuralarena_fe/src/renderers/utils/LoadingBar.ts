@@ -70,6 +70,11 @@ export class LoadingBar {
         fb.position.x = -(BAR_WIDTH / 2.0) + w / 2.0;
     }
 
+    update(
+        deltaTime: number
+    ) {
+    }
+
     render(
         renderer: THREE.WebGLRenderer
     ) {

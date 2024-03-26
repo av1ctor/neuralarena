@@ -14,6 +14,7 @@ type GameEndCredits = record {
   people : vec record { text; text };
 };
 type GameInfo = record {
+  fps : nat32;
   min_players : nat64;
   maps : vec GameMap;
   name : text;

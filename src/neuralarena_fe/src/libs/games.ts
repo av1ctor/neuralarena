@@ -7,8 +7,6 @@ import { Principal } from "@dfinity/principal";
 
 export type GameId = string;
 
-export const FPS: number = 60;
-
 export const gameAssetDataTextValue = (
     asset: Asset,
     key: string

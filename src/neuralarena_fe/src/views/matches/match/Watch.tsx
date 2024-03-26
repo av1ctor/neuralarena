@@ -7,7 +7,6 @@ import {
 import { useMatchGetSteps } from "@hooks/matches";
 import { ThreeGameRenderer } from "@renderers/ThreeGameRenderer";
 import { matchGetAssets } from "@libs/matches";
-import { gameGetEndCredits } from "@libs/games";
 import { useActors } from "@hooks/actors";
 import { useUI } from "@hooks/ui";
 import gameEngineInit, {GameEngine} from "@game-engine/game-engine";
@@ -88,8 +87,7 @@ interface Props {
     pov: number|undefined,
 }
 
-const FPS = 60;
-const STEPS_PER_CALL = FPS*10;
+const SECONDS_PER_CALL = 10;
 const CANVAS_DEFAULT_DIM = {w: 450, h: 253};
 
 export const MatchWatch = (props: Props) => {
@@ -110,9 +108,10 @@ export const MatchWatch = (props: Props) => {
     const assetsLoading = useRef(false);
     const engineLoading = useRef(false);
 
-    const steps = useMatchGetSteps(props.match.id, STEPS_PER_CALL)
+    const steps = useMatchGetSteps(props.match.id, SECONDS_PER_CALL * props.game.info.fps)
     const credits = useGameGetEndCredits(props.game.id);
     const step = useRef(0);
+    const timerId = useRef(0);
 
     const frames = useMemo((): InstanceStep[] => {
         return steps.data?.pages.flat().map(s => s.steps).flat() || [];
@@ -173,7 +172,8 @@ export const MatchWatch = (props: Props) => {
                     engine?.render(
                         frame.entities as Uint8Array,
                         frame.events as Uint8Array, 
-                        renderer
+                        renderer,
+                        1000.0 / props.game.info.fps
                     );
                 }
                 catch(e) {
@@ -309,63 +309,85 @@ export const MatchWatch = (props: Props) => {
         }
     }, [engine, assets, frames.length]);
 
+    const then = useRef(performance.now());
+    
     useLayoutEffect(() => {
-        let timerId: number = 0;
-
         const animate = () => {
-            switch(state) {
-                case WatchState.LOADING:
-                    renderer?.render();
-                    break;
+            const interval = 1000.0 / props.game.info.fps;
+            const now = performance.now();
+            const deltaTime = now - then.current;
+            if(deltaTime >= interval) {
+                then.current = now - (deltaTime % interval);
 
-                case WatchState.PLAYING:
-                    if(step.current === 0) {
-                        renderer?.showStart();
-                    }
-                    if(step.current < frames.length) {
-                        const frame = frames[step.current];
-                        try {
-                            engine?.render(
-                                frame.entities as Uint8Array,
-                                frame.events as Uint8Array, 
-                                renderer
-                            );
-                        }
-                        catch(e) {
-                            console.error(e);
-                        }
-                        setMatchProgress(step.current / frames.length * 100.0);
-                        ++step.current;
-                        if(step.current >= frames.length) {
-                            if('FINISHED' in props.match.state.status) {
-                                setState(WatchState.FINISHED);
+                try {
+                    switch(state) {
+                        case WatchState.LOADING:
+                            renderer?.update(deltaTime);
+                            renderer?.render();
+                            break;
+
+                        case WatchState.PLAYING:
+                            if(step.current === 0) {
+                                renderer?.showStart();
                             }
-                        }
+
+                            if(step.current < frames.length) {
+                                const frame = frames[step.current];
+                                engine?.render(
+                                    frame.entities as Uint8Array,
+                                    frame.events as Uint8Array, 
+                                    renderer,
+                                    deltaTime
+                                );
+                                
+                                setMatchProgress(step.current / frames.length * 100.0);
+                                ++step.current;
+                                if(step.current >= frames.length) {
+                                    if('FINISHED' in props.match.state.status) {
+                                        setState(WatchState.FINISHED);
+                                    }
+                                }
+                            }
+                            break;
+
+                        case WatchState.PAUSED:
+                            engine?.render(
+                                Uint8Array.from([]), 
+                                Uint8Array.from([]), 
+                                renderer,
+                                deltaTime
+                            );
+                            break;
+
+                        case WatchState.FINISHED:
+                            if(props.match.won_by.length > 0) {
+                                const winnerPrincipal = props.match.won_by[0]?.toString();
+                                const winner = props.match.players
+                                    .findIndex(p => p.id.toString() === winnerPrincipal);
+                                renderer?.changePOV(winner, true);
+                            }
+
+                            engine?.render(
+                                Uint8Array.from([]), 
+                                Uint8Array.from([]), 
+                                renderer,
+                                deltaTime
+                            );
+                            break;
                     }
-                    break;
-
-                case WatchState.PAUSED:
-                    engine?.render(Uint8Array.from([]), Uint8Array.from([]), renderer);
-                    break;
-
-                case WatchState.FINISHED:
-                    if(props.match.won_by.length > 0) {
-                        const winnerPrincipal = props.match.won_by[0]?.toString();
-                        const winner = props.match.players
-                            .findIndex(p => p.id.toString() === winnerPrincipal);
-                        renderer?.changePOV(winner, true);
-                    }
-
-                    engine?.render(Uint8Array.from([]), Uint8Array.from([]), renderer);
-                    break;
+                }
+                catch(e) {
+                    console.error(e);
+                }
             }
-
-            timerId = requestAnimationFrame(animate);
+            
+            timerId.current = requestAnimationFrame(animate);
         }
 
-        timerId = requestAnimationFrame(animate)
-        return () => cancelAnimationFrame(timerId)
-    }, [engine, frames.length, state, renderer, props.match]);
+        then.current = performance.now();
+        timerId.current = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(timerId.current)
+    }, [engine, frames.length, state, renderer, props.match, props.game]);
 
     return (
         <Center                 

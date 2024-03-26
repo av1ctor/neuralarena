@@ -19,9 +19,9 @@ export class GameEngine {
 * @param {Uint8Array} entities
 * @param {Uint8Array} events
 * @param {any} renderer
-* @param {boolean} update_only
+* @param {number} delta_time
 */
-  render(entities: Uint8Array, events: Uint8Array, renderer: any, update_only: boolean): void;
+  render(entities: Uint8Array, events: Uint8Array, renderer: any, delta_time: number): void;
 /**
 * @param {any} renderer
 */

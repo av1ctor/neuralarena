@@ -82,6 +82,7 @@ export const MatchIntro = (props: Props) => {
     const {ref, width} = useElementSize();
     const [timeLeft, setTimeLeft] = useState<Date|undefined>();
     const secondsCounter = useRef(0);
+    const timerId = useRef(0);
     const font = useFont('gentilis');
 
     const changeCanvasDim = (dim: {w: number, h: number}) => {
@@ -112,28 +113,40 @@ export const MatchIntro = (props: Props) => {
         }
     }, [canvas.current, renderer, props.game.info, font]);
 
+    const then = useRef(performance.now());
+
     useLayoutEffect(() => {
         if(renderer) {
-            let timerId = 0;
-            const animate = () => {
-                secondsCounter.current += 1;
-                if(secondsCounter.current >= 60) {
+            const animate = (timeStamp: number) => {
+                secondsCounter.current += timeStamp;
+                if(secondsCounter.current >= 1000.0) {
                     secondsCounter.current = 0;
                     const timeLeft = new Date(Number((props.match.created_at / 1_000_000n) + props.match.deadline * 1_000n) - Date.now());
                     setTimeLeft(timeLeft);
                 }
-                        
-                renderer.render();
-                timerId = requestAnimationFrame(animate);
+
+                const now = performance.now();
+                const interval = 1000.0 / props.game.info.fps;
+                const deltaTime = now - then.current;
+
+                if(deltaTime >= interval) {
+                    then.current = now - (deltaTime % interval);
+
+                    renderer.update(deltaTime);
+                    renderer.render();
+                }
+                
+                timerId.current = requestAnimationFrame(animate);
             }
 
-            timerId = requestAnimationFrame(animate)
-            return () => cancelAnimationFrame(timerId)
+            then.current = performance.now();
+            timerId.current = requestAnimationFrame(animate)
+            return () => cancelAnimationFrame(timerId.current)
         }
         else {
             return () => {};
         };
-    }, [renderer, secondsCounter, props.match]);
+    }, [renderer, props.match, props.game]);
 
     const {match} = props;
 

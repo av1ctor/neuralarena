@@ -4,7 +4,6 @@ import { Grid, TextInput } from "@mantine/core";
 import { principalToString } from "@libs/icp";
 import { timeToNow } from "@libs/time";
 import { matchStatusToString } from "@libs/matches";
-import { FPS } from "@libs/games";
 
 interface Props {
     match: MatchResponse|undefined;
@@ -85,6 +84,17 @@ export const MatchAbout = (props: Props) => {
 
             <Grid.Col md={6}>
                 <TextInput
+                    label="FPS"
+                    value={game? 
+                        game.info.fps:
+                        '60'
+                    }
+                    readOnly
+                />
+            </Grid.Col>
+
+            <Grid.Col md={6}>
+                <TextInput
                     label="Deadline"
                     value={match? 
                         match.deadline.toString() + 's': 
@@ -118,20 +128,9 @@ export const MatchAbout = (props: Props) => {
 
             <Grid.Col md={6}>
                 <TextInput
-                    label="Run slices"
-                    value={match? 
-                        match.state.run_slices.length: 
-                        '0'
-                    }
-                    readOnly
-                />
-            </Grid.Col>
-
-            <Grid.Col md={6}>
-                <TextInput
                     label="Max Duration"
                     value={match? 
-                        (Number(match.game.max_steps) / FPS).toFixed(0).toString() + 's': 
+                        (Number(match.game.max_steps) / (game?.info.fps ?? 1)).toFixed(0).toString() + 's': 
                         ''
                     }
                     readOnly
@@ -142,7 +141,7 @@ export const MatchAbout = (props: Props) => {
                 <TextInput
                     label="Total Duration"
                     value={match? 
-                        (Number(match.state.num_steps) / FPS).toFixed(2).toString() + 's': 
+                        (Number(match.state.num_steps) / (game?.info.fps ?? 1)).toFixed(2).toString() + 's': 
                         ''
                     }
                     readOnly

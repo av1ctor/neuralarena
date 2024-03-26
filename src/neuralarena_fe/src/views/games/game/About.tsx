@@ -67,16 +67,24 @@ export const GameAbout = (props: Props) => {
 
                     <Grid.Col md={6}>
                         <TextInput
-                            label="Category"
-                            value={game?.info.category || ''}
+                            label="Min/Max players"
+                            value={`${game?.info.min_players||0}/${game?.info.max_players||0}`}
                             readOnly
                         />
                     </Grid.Col>
 
                     <Grid.Col md={6}>
                         <TextInput
-                            label="Min/Max players"
-                            value={`${game?.info.min_players||0}/${game?.info.max_players||0}`}
+                            label="FPS"
+                            value={game?.info.fps||60}
+                            readOnly
+                        />
+                    </Grid.Col>
+
+                    <Grid.Col md={12}>
+                        <TextInput
+                            label="Category"
+                            value={game?.info.category || ''}
                             readOnly
                         />
                     </Grid.Col>

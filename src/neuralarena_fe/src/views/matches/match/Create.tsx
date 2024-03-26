@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Button, NumberInput, Select, Space } from "@mantine/core";
 import * as yup from 'yup';
 import { useUI } from "@hooks/ui";
@@ -6,10 +6,12 @@ import { useForm, yupResolver } from "@mantine/form";
 import { useGameFindActive } from "@hooks/games";
 import { SelectItem } from "@components/SelectItem";
 import { useMatch } from "@hooks/matches";
-import { FPS } from "@libs/games";
 import { 
     MAX_DURATION, MAX_DEADLINE, MAX_PLAYERS, MIN_DEADLINE, MIN_PLAYERS 
 } from "@libs/matches";
+import { GameResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
+import { gameFindById } from "@libs/games";
+import { useActors } from "@hooks/actors";
 
 const schema = {
     game_id: yup.string().required(),
@@ -25,7 +27,9 @@ interface Props {
 }
 
 export const MatchCreate = (props: Props) => {
+    const {main} = useActors();
     const {toggleLoading, showError, showSuccess} = useUI();
+    const [game, setGame] = useState<GameResponse|undefined>();
 
     const gamesQuery = useGameFindActive(32);
     const {create} = useMatch()
@@ -52,13 +56,18 @@ export const MatchCreate = (props: Props) => {
     const handleCreate = useCallback(async (values: any) => {
         try {
             toggleLoading(true);
+            
+            if(!game) {
+                throw new Error("Game not found");
+            }
+
             await create({
                 game: {
                     id: values.game_id,
                     map_id: BigInt(values.map_id),
                     min_players: values.min_players,
                     max_players: values.max_players,
-                    max_steps: BigInt(values.max_duration * FPS),
+                    max_steps: BigInt(values.max_duration * game.info.fps),
                     options: []
                 },
                 deadline: BigInt(values.deadline)
@@ -72,7 +81,7 @@ export const MatchCreate = (props: Props) => {
         finally {
             toggleLoading(false);
         }
-    }, [props.onClose]);
+    }, [props.onClose, game]);
 
     const games = useMemo(() => {
         if(!gamesQuery.data) {
@@ -105,6 +114,21 @@ export const MatchCreate = (props: Props) => {
                 image: m.image_url,
             }));
     }, [gamesQuery, form.values.game_id]);
+
+    useEffect(() => {
+        const {game_id} = form.values;
+        if(game_id) {
+            (async () => {
+                try {
+                    const game = await gameFindById(main, game_id);
+                    setGame(game);
+                }
+                catch(e) {
+                    console.error(e);
+                }
+            })();
+        }
+    }, [form.values.game_id]);
 
     return (
         <form onSubmit={form.onSubmit(handleCreate)}>

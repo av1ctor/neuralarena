@@ -92,12 +92,17 @@ export class AnimScene {
         this.visible = true;
     }
 
-    #update(
+    update(
+        deltaTime: number
     ) {
+        if(!this.visible) {
+            return;
+        }
+
         const obj = this.scene.userData.root as THREE.Group<THREE.Object3DEventMap>;
 
         const anim = obj.userData.anim as THREE.AnimationMixer;
-        anim.update(1.0 / 60.0);
+        anim.update(deltaTime / 1000.0);
     }
 
     render(
@@ -107,7 +112,6 @@ export class AnimScene {
             return;
         }
 
-        this.#update();
         renderer.clearDepth();
         renderer.render(this.scene, this.camera);
     }

@@ -127,16 +127,16 @@ export class GameEngine {
     * @param {Uint8Array} entities
     * @param {Uint8Array} events
     * @param {any} renderer
-    * @param {boolean} update_only
+    * @param {number} delta_time
     */
-    render(entities, events, renderer, update_only) {
+    render(entities, events, renderer, delta_time) {
         try {
             const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
             const ptr0 = passArray8ToWasm0(entities, wasm.__wbindgen_malloc);
             const len0 = WASM_VECTOR_LEN;
             const ptr1 = passArray8ToWasm0(events, wasm.__wbindgen_malloc);
             const len1 = WASM_VECTOR_LEN;
-            wasm.gameengine_render(retptr, this.__wbg_ptr, ptr0, len0, ptr1, len1, addHeapObject(renderer), update_only);
+            wasm.gameengine_render(retptr, this.__wbg_ptr, ptr0, len0, ptr1, len1, addHeapObject(renderer), delta_time);
             var r0 = getInt32Memory0()[retptr / 4 + 0];
             var r1 = getInt32Memory0()[retptr / 4 + 1];
             if (r1) {
@@ -347,6 +347,9 @@ function __wbg_get_imports() {
         var v0 = getArrayJsValueFromWasm0(arg1, arg2).slice();
         wasm.__wbindgen_free(arg1, arg2 * 4, 4);
         getObject(arg0).set_npcs(v0);
+    };
+    imports.wbg.__wbg_update_7a75fd9dce3e09ca = function(arg0, arg1) {
+        getObject(arg0).update(arg1);
     };
     imports.wbg.__wbg_render_12c25d7ca4a88162 = function(arg0) {
         getObject(arg0).render();
