@@ -1,3 +1,5 @@
+import { Principal } from "@dfinity/principal";
+
 const isProduction = process.env.DFX_NETWORK === 'ic';
 
 export const config = {
@@ -14,4 +16,8 @@ export const config = {
     APP_URL: isProduction?
         process.env.VITE_APP_URL:
         process.env.VITE_APP_URL_LOCAL,
+    ICP_LEDGER_CANISTER_ID: 
+        process.env.VITE_ICP_LEDGER_CANISTER_ID?
+            Principal.fromText(process.env.VITE_ICP_LEDGER_CANISTER_ID):
+            Principal.anonymous()
 }

@@ -1,12 +1,13 @@
 import { ActorSubclass, Identity } from "@dfinity/agent";
 import { AuthClient } from "@dfinity/auth-client";
-import { createActor as mainCreateActor, canisterId as mainCanisterId } from "@declarations/neuralarena_be";
+import { canisterId as mainCanisterId, idlFactory as mainIdlFactory } from "@declarations/neuralarena_be";
 import { canisterId as siteCanisterId } from "@declarations/neuralarena_fe";
 import { ICProvider } from "@interfaces/icprovider";
 import { Result } from "@interfaces/result";
 import { config } from "../config";
 import { Principal } from "@dfinity/principal";
-import { buildAgentJsOptions } from "@libs/icp";
+import { buildAgentJsOptions, createActor } from "@libs/icp";
+import { IDL } from "@dfinity/candid";
 
 class InternetIdentityProvider implements ICProvider {
     client?: AuthClient;
@@ -40,14 +41,16 @@ class InternetIdentityProvider implements ICProvider {
     }
 
     public async createActor(
-        id?: string
+        id: string,
+        idl: IDL.InterfaceFactory
     ): Promise<any> {
-        switch(id) {
-            case mainCanisterId:
-                return this._createMainActor();
-            default:
-                return undefined;
-        }
+        return createActor(
+            id, 
+            idl,
+            {
+                agentOptions: buildAgentJsOptions(this.identity)
+            }
+        )
     }
 
     public getPrincipal(
@@ -91,15 +94,6 @@ class InternetIdentityProvider implements ICProvider {
     public async logout(
     ): Promise<void> {
         await this.client?.logout();
-    }
-
-    private _createMainActor(
-    ): ActorSubclass<any> {
-        if(!mainCanisterId) {
-            throw Error('Main canister is undefined');
-        }
-    
-        return mainCreateActor(mainCanisterId, {agentOptions: buildAgentJsOptions(this.identity)})
     }
 };
 

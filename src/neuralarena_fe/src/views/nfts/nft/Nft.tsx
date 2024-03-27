@@ -1,8 +1,7 @@
 import React, { ReactElement, useCallback } from "react";
 import { Badge, Card, Group, Text, Image, Space } from "@mantine/core";
-import { 
-    useNAS1FindTokenById, useIcrc7GetCollectionSymbol
-} from "@hooks/nas1";
+import { useNAS1FindTokenById } from "@hooks/nas1";
+import {  useIcrc7GetCollectionSymbol } from "@hooks/icrc7";
 import { NFT } from "@libs/nas1";
 
 interface Props {

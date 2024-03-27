@@ -2,8 +2,9 @@ import { sha224 } from "js-sha256";
 import { Buffer } from "buffer";
 import crc from "crc";
 import { Principal } from "@dfinity/principal";
-import { HttpAgentOptions, Identity } from "@dfinity/agent";
+import { Actor, HttpAgent, HttpAgentOptions, Identity } from "@dfinity/agent";
 import { config } from "../config";
+import { IDL } from "@dfinity/candid";
 
 export const buildAgentJsOptions = (
     identity?: Identity
@@ -135,8 +136,9 @@ export const accountIdentifierFromBytes = (
     return Buffer.from(accountIdentifier).toString("hex");
 };
 
-export const principalToAccountDefaultIdentifier = (
-    principal: Principal,
+export const principalToAccountId = (
+    principal: Principal|undefined,
+    subAccount?: Uint8Array
 ): Uint8Array => {
     // Hash (sha224) the principal, the subAccount and some padding
     const padding = asciiStringToByteArray("\x0Aaccount-id");
@@ -144,8 +146,8 @@ export const principalToAccountDefaultIdentifier = (
     const shaObj = sha224.create();
     shaObj.update([
         ...padding,
-        ...principal.toUint8Array(),
-        ...(Array(32).fill(0)),
+        ...(principal ?? Principal.anonymous()).toUint8Array(),
+        ...(subAccount ?? Array(32).fill(0)),
     ]);
     const hash = new Uint8Array(shaObj.array());
 
@@ -155,10 +157,16 @@ export const principalToAccountDefaultIdentifier = (
     return bytes;
 };
 
-export const principalToSubAccount = (
-    principal: Principal
+export const principalToAccountDefaultId = (
+    principal: Principal|undefined,
 ): Uint8Array => {
-    const bytes = principal.toUint8Array();
+    return principalToAccountId(principal);
+};
+
+export const principalToSubAccount = (
+    principal: Principal|undefined
+): Uint8Array => {
+    const bytes = (principal ?? Principal.anonymous()).toUint8Array();
     const subAccount = new Uint8Array(32);
     subAccount[0] = bytes.length;
     subAccount.set(bytes, 1);
@@ -209,25 +217,28 @@ export const decimalToE8s = (
     return int * BigInt(1e8) + BigInt(Math.ceil(dec * 1e8)|0); 
 }
 
-export const transferErrorToText = (
-    err: any /* TransferError */
-): string => {
-
-    if('TxTooOld' in err) {
-        return 'Transaction too old';
+export const createActor = <T>(
+    canisterId: string,
+    idlFactory: IDL.InterfaceFactory, 
+    options: any
+): T => {
+    const agent = options.agent || new HttpAgent({ ...options.agentOptions });
+  
+    if (process.env.DFX_NETWORK !== "ic") {
+        agent.fetchRootKey().catch((err: any) => {
+            console.warn(
+            "Unable to fetch root key. Check to ensure that your local replica is running"
+            );
+            console.error(err);
+        });
     }
-    else if('BadFee' in err) {
-        return `Bad fee: expected ${err.BadFee.expected_fee.e8s.toString()}`;
-    }
-    else if('TxDuplicate' in err) {
-        return `Transaction duplicated at block ${err.TxDuplicate.duplicate_of}`;
-    }
-    else if('TxCreatedInFuture' in err) {
-        return 'Bad date';
-    }
-    else if('InsufficientFunds' in err) {
-        return `Insufficient funds: ${err.InsufficientFunds.balance.e8s.toString()}`
-    }
-
-    return 'Unknown';
-};
+  
+    return Actor.createActor<T>(
+        idlFactory, 
+        {
+            agent,
+            canisterId,
+            ...options.actorOptions,
+        }
+    );
+  };

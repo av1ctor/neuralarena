@@ -1,5 +1,6 @@
 import { Principal } from "@dfinity/principal";
 import { Result } from "./result";
+import { IDL } from "@dfinity/candid";
 
 export enum ICProviderType {
     InternetIdentity,
@@ -22,7 +23,7 @@ export interface ICProvider {
     initialize: () => Promise<boolean>;
     connect: (options?: any) => Promise<Result<any, string>>;
     isAuthenticated: () => Promise<boolean>;
-    createActor: (id?: string) => Promise<any>;
+    createActor: (id: string, idl: IDL.InterfaceFactory) => Promise<any>;
     getPrincipal: () => Principal | undefined;
     login: () => Promise<Result<any, string>>;
     logout: () => Promise<void>;

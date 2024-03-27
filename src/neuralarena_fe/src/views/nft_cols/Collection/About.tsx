@@ -5,7 +5,7 @@ import {
     useIcrc7GetCollectionSupplyCap, 
     useIcrc7GetCollectionSupportedStandards, 
     useIcrc7GetCollectionTotalSupply 
-} from "@hooks/nas1";
+} from "@hooks/icrc7";
 
 interface Props {
     col: NftCollectionResponse|undefined;

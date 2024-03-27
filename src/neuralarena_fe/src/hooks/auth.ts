@@ -1,14 +1,15 @@
 import { useContext, useEffect } from "react";
 import { Principal } from "@dfinity/principal";
-import { _SERVICE as Main, UserResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
-import { canisterId as mainCanisterId } from "@declarations/neuralarena_be";
+import { _SERVICE as Main, idlFactory as mainIdlFactory, UserResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
+import { idlFactory as icpLedgerIdlFactory } from "@declarations/icp_ledger_canister/icp_ledger_canister.did";
 import { ICProvider, ICProviderState, ICProviderType } from "@interfaces/icprovider";
 import { ActorActionType, ActorContext } from "@stores/actor";
 import { AuthActionType, AuthContext } from "@stores/auth";
 import { Result } from "@interfaces/result";
 import { IcProviderBuider } from "@libs/icproviderbuilder";
-import { accountIdentifierFromBytes, principalToAccountDefaultIdentifier } from "@libs/icp";
+import { accountIdentifierFromBytes, principalToAccountDefaultId } from "@libs/icp";
 import { userFindMe } from "@libs/users";
+import { useActors } from "./actors";
 
 interface AuthResponse {
     isAuthenticated: boolean;
@@ -31,16 +32,24 @@ export const useAuth = (
 ): AuthResponse => {
     const [auth, authDisp] = useContext(AuthContext);
     const [, actorsDisp] = useContext(ActorContext);
+    const {ids} = useActors();
 
     const _createActors = async (
         provider: ICProvider
     ): Promise<Main> => {
         const actors = await Promise.all([
-            provider.createActor(mainCanisterId),
+            provider.createActor(ids.main.toText(), mainIdlFactory),
+            provider.createActor(ids.icpLedger.toText(), icpLedgerIdlFactory),
         ]);
+
         actorsDisp({
             type: ActorActionType.SET_MAIN,
             payload: actors[0]
+        });
+
+        actorsDisp({
+            type: ActorActionType.SET_ICP_LEDGER,
+            payload: actors[1]
         });
 
         return actors[0];
@@ -50,6 +59,11 @@ export const useAuth = (
     ) => {
         actorsDisp({
             type: ActorActionType.RESET_MAIN,
+            payload: undefined
+        });
+
+        actorsDisp({
+            type: ActorActionType.RESET_ICP_LEDGER,
             payload: undefined
         });
     }
@@ -72,7 +86,7 @@ export const useAuth = (
             type: AuthActionType.SET_ACCOUNT_ID,
             payload: principal?
                 accountIdentifierFromBytes(
-                    principalToAccountDefaultIdentifier(principal)):
+                    principalToAccountDefaultId(principal)):
                 undefined
         });
         

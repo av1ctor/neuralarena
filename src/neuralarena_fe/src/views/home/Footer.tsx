@@ -26,20 +26,20 @@ const AppFooter = (props: Props) => {
                 <Grid.Col span={4}>
                     <Stack>
                         <Anchor href="#/about">
-                            👨‍👩‍👧‍👧 About us
+                            About us
                         </Anchor>
                         <Anchor href="#/whitepaper">
-                            📖 Whitepaper
+                            Whitepaper
                         </Anchor>
                     </Stack>
                 </Grid.Col>
                 <Grid.Col span={4}>
                     <Stack>
                         <Anchor href="#/policies">
-                            👮‍♂️ Policies
+                            Policies
                         </Anchor>
                         <Anchor href="#/privacy">
-                            🔏 Privacy
+                            Privacy
                         </Anchor>
                     </Stack>
                 </Grid.Col>

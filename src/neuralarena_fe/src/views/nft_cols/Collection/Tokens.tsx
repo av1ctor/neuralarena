@@ -1,7 +1,7 @@
 import React from "react";
 import { NftsGrid } from "../../nfts/Grid";
 import { InfinitePaging } from "@components/InfinitePaging";
-import { useIcrc7FindTokens } from "@hooks/nas1";
+import { useIcrc7FindTokens } from "@hooks/icrc7";
 import { Principal } from "@dfinity/principal";
 
 interface Props {

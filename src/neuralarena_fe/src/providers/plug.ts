@@ -1,5 +1,5 @@
 import { ActorSubclass, Agent, HttpAgent } from "@dfinity/agent";
-import { idlFactory as mainIdlFactory, canisterId as mainCanisterId } from "@declarations/neuralarena_be";
+import { canisterId as mainCanisterId } from "@declarations/neuralarena_be";
 import { ICProvider } from "@interfaces/icprovider";
 import { config } from "../config";
 import { Principal } from "@dfinity/principal";
@@ -95,7 +95,8 @@ class PlugProvider implements ICProvider {
     }
 
     public async createActor(
-        id?: string
+        id: string,
+        idl: IDL.InterfaceFactory
     ): Promise<any> {
         if(!config.isProduction) {
             if(this.plug?.agent) {
@@ -103,12 +104,11 @@ class PlugProvider implements ICProvider {
             }
         }
 
-        switch(id) {
-            case mainCanisterId:
-                return await this._createMainActor();
-            default:
-                return undefined;
-        }
+        return await this.plug?.createActor({
+            canisterId: id,
+            interfaceFactory: idl,
+        });
+
     }
 
     public getPrincipal(
@@ -146,18 +146,6 @@ class PlugProvider implements ICProvider {
     public async logout(
     ): Promise<void> {
         this.plug?.disconnect();
-    }
-
-    private async _createMainActor(
-    ): Promise<ActorSubclass<any>> {
-        if(!mainCanisterId) {
-            throw Error('Main canister is undefined');
-        }
-
-        return await this.plug?.createActor({
-            canisterId: mainCanisterId,
-            interfaceFactory: mainIdlFactory,
-        });
     }
 };
 

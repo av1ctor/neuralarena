@@ -55,7 +55,6 @@ const useStyles = createStyles((theme) => ({
         borderRadius: '8px',
     },
     credits_ctn: {
-        display: 'none',
         position: 'absolute',
         top: '12px',
         left: '12px',
@@ -68,9 +67,6 @@ const useStyles = createStyles((theme) => ({
         display: 'block',
         position: 'relative',
         width: '100%',
-    },
-    visible: {
-        display: 'block',
     }
 }));
 
@@ -104,7 +100,6 @@ export const MatchWatch = (props: Props) => {
     const { ref, width } = useElementSize();
     const [dim, setDim] = useState(CANVAS_DEFAULT_DIM);
     const font = useFont('gentilis');
-
     const assetsLoading = useRef(false);
     const engineLoading = useRef(false);
 
@@ -403,16 +398,16 @@ export const MatchWatch = (props: Props) => {
                     height={dim.h}
                     >
                 </canvas>
-                <div 
-                    className={cx(classes.credits_ctn, {[classes.visible]: endCreditsVisible})}
-                >
-                    <div className={classes.credits}>
-                        <EndCredits 
-                            credits={credits.data} 
-                            level={0} 
-                        />
+                {endCreditsVisible && 
+                    <div className={classes.credits_ctn}>
+                        <div className={classes.credits}>
+                            <EndCredits 
+                                credits={credits.data} 
+                                level={0} 
+                            />
+                        </div>
                     </div>
-                </div>
+                }
                 <Grid className={classes.controls}>
                     <div 
                         className={classes.progress_container}

@@ -24,6 +24,7 @@ import { AboutUs } from "./AboutUs";
 import { Whitepaper } from "./Whitepaper";
 import { Policies } from "./Policies";
 import { Privacy } from "./Privacy";
+import { UserWallet } from "@views/users/user/Wallet";
 
 interface Props {
 }
@@ -73,6 +74,7 @@ const Home = (props: Props) => {
                         <Route path="/users/nfts" element={<UserNfts />} />
                         <Route path="/users/matches" element={<UserMatches />} />
                         <Route path="/users/profile" element={<Profile />} />
+                        <Route path="/users/wallet" element={<UserWallet />} />
                         <Route path="/about" element={<AboutUs />} />
                         <Route path="/whitepaper" element={<Whitepaper />} />
                         <Route path="/policies" element={<Policies />} />
