@@ -1,11 +1,17 @@
 use candid::Principal;
-use neuralarena_cdk::models::game::{GameEndCredits, GameInfo, GameInfoResponse};
-use neuralarena_cdk::utils::uniqueid;
+use neuralarena_cdk::{
+    models::game::{
+        GameCost, GameEndCredits, GameInfo, GameInfoResponse
+    },
+    db::traits::crud::{Crud, CrudSubscribable, Pagination},
+    utils::uniqueid
+};
 use crate::db::DB;
-use neuralarena_cdk::db::traits::crud::{Crud, CrudSubscribable, Pagination};
-use crate::models::game::{Game, GameId, GameRequest, GameStatus};
-use crate::models::staff::StaffRole;
-use crate::models::user::{User, UserKind};
+use crate::models::{
+    game::{Game, GameId, GameRequest, GameStatus},
+    staff::StaffRole,
+    user::{User, UserKind}
+};
 
 pub struct GamesService {}
 
@@ -132,6 +138,15 @@ impl GamesService {
         ).await.map_err(|e| e.1)?;
 
         res
+    }
+
+    pub fn get_cost_to_play(
+        game: &Game
+    ) -> Result<u128, String> {
+        match game.info.costs.to_play {
+            GameCost::USD(_) => Err("Currency USD is not supported yet".to_string()),
+            GameCost::ICP(value) => Ok(value),
+        }
     }
 
     fn authorize(

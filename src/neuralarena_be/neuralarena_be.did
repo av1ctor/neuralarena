@@ -8,6 +8,8 @@ type AssetValue = variant {
   Text : text;
 };
 type DeveloperRequest = record { url : opt text };
+type GameCost = variant { ICP : nat; USD : nat64 };
+type GameCosts = record { to_play : GameCost };
 type GameEndCredits = record {
   sub : vec GameEndCredits;
   title : text;
@@ -18,6 +20,7 @@ type GameInfo = record {
   min_players : nat64;
   maps : vec GameMap;
   name : text;
+  costs : GameCosts;
   urls : GameURLs;
   description : text;
   max_players : nat64;
@@ -58,6 +61,7 @@ type HashMap = vec record {
     Array : vec Nas1Value;
   };
 };
+type InitArg = record { icp_ledger_canister_id : principal };
 type InstanceAssetsResponse = record { assets : vec record { nat64; Asset } };
 type InstanceRunSlice = record { seed : nat64; first_step : nat64 };
 type InstanceStep = record { entities : vec nat8; events : vec nat8 };
@@ -198,7 +202,7 @@ type UserResponse = record {
   created_at : nat64;
   email : opt text;
 };
-service : () -> {
+service : (InitArg) -> {
   game_create : (GameRequest) -> (Result);
   game_find_active : (Pagination) -> (Result_1) query;
   game_find_all : (Pagination) -> (Result_1) query;

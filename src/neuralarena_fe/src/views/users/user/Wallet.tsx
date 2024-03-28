@@ -107,6 +107,7 @@ export const UserWallet = (props: Props) => {
                 <WalletDeposit 
                     from={icpLedgerAccountId}
                     to={neuralArenaAccountId}
+                    onClose={close}
                 />
             </DrawerPanel>    
 

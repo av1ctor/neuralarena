@@ -15,6 +15,7 @@ const schema = {
 interface Props {
     from: string,
     to: string,
+    onClose: () => void;
 }
 
 export const WalletDeposit = (props: Props) => {
@@ -56,6 +57,7 @@ export const WalletDeposit = (props: Props) => {
             });
 
             showSuccess('Deposit successful!');
+            props.onClose()
         }
         catch(e: any) {
             showError(e);
@@ -63,7 +65,7 @@ export const WalletDeposit = (props: Props) => {
         finally {
             toggleLoading(false);
         }
-    }, [user, ids, transfer]);
+    }, [user, ids, transfer, props.onClose]);
 
     if(!user) {
         return null;

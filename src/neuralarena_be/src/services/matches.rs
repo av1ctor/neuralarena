@@ -19,15 +19,18 @@ use crate::{
         nftcol::NftCollection, 
         user::{User, UserNftRequest}
     }, 
+    services::wallets::Wallets, 
     utils::icrc7
 };
 use crate::db::DB;
 use crate::models::user::UserKind;
+use super::{games::GamesService, wallets::TRANSFER_FEE};
 
 const MIN_PLAYERS: usize = 2;
-const MAX_STEPS: usize = (60 * 10) * 60;
-const MIN_OPENED: u64 = 60/* * 60 * 01*/; // one hour
-const MAX_OPENED: u64 = 60 * 60 * 24 * 7; // one week
+const MAX_STEPS: usize = (60 * 10) * 60;    // 10 minutes at 60 FPS, 20 minutes at 30 FPS, etc
+const MIN_OPENED: u64 = 60 * 60 * 01;       // one hour
+const MAX_OPENED: u64 = 60 * 60 * 24 * 7;   // one week
+const FEE: u128 = 30;                       // %
 
 pub struct MatchesService {}
 
@@ -189,7 +192,8 @@ impl MatchesService {
         game: &Game,
         user: &User,
         nft: &UserNftRequest,
-        nft_col: &NftCollection
+        nft_col: &NftCollection,
+        icp_ledger_canister_id: Principal
     ) -> Result<bool, String> {
         Self::authorize(user)?;
         
@@ -206,6 +210,7 @@ impl MatchesService {
             return Err("Already part of the match".to_string());
         }
 
+        // verify the NFT's
         if let Some(user_nft) = user.nfts.iter()
             .find(|n| n.collection_id == nft.collection_id && n.token_id == nft.token_id) {
             
@@ -241,6 +246,14 @@ impl MatchesService {
                 tensors.insert(skill.clone(), res.content);
             }
             
+            // reserve the amount needed to play
+            let amount = GamesService::get_cost_to_play(game)?;
+            
+            Wallets::from_main_to_reserved(
+                &user.id, amount, &icp_ledger_canister_id
+            ).await?;
+            
+            // add player
             m4tch.state.players.push(InstancePlayer {
                 id: user.id.clone(),
                 nft: InstancePlayerNft {
@@ -293,7 +306,34 @@ impl MatchesService {
         Ok(())
     }
 
-    async fn instance_start(
+    async fn transfer_balances(
+        icp_ledger_canister_id: &Principal,
+        players: &Vec<InstancePlayer>,
+        game: &Game
+    ) -> Result<(), String> {
+        let amount = GamesService::get_cost_to_play(game)?;
+        
+        // transfer from players' reserved accounts to game's main account and the fee to treasury's main account
+        for player in players {
+            Wallets::from_reserved_to_main(
+                &player.id, 
+                Some(&game.canister_id), 
+                (amount * (100 - FEE)) / 100,
+                icp_ledger_canister_id
+            ).await?;
+            
+            Wallets::from_reserved_to_main(
+                &player.id, 
+                None, 
+                (amount * FEE) / 100,
+                icp_ledger_canister_id
+            ).await?;
+        }
+
+        Ok(())
+    }
+
+    async fn start(
         m4tch: &mut Match,
         game: &Game
     ) -> Result<(), String> {
@@ -312,12 +352,19 @@ impl MatchesService {
     pub async fn run(
         m4tch: &mut Match,
         game: &Game,
-        initial_seed: u64
+        initial_seed: u64,
+        icp_ledger_canister_id: &Principal
     ) -> Result<(), String> {
 
         Self::verify_players(&m4tch.state.players).await?;
 
-        Self::instance_start(m4tch, game).await?;
+        Self::start(m4tch, game).await?;
+
+        Self::transfer_balances(
+            icp_ledger_canister_id,
+            &m4tch.state.players,
+            game
+        ).await?;
 
         m4tch.state.initial_seed = Some(initial_seed);
 
@@ -428,6 +475,25 @@ impl MatchesService {
         ).await.map_err(|e| e.1)?;
 
         res
+    }
+
+    pub async fn reimburse(
+        m4tch: &Match,
+        game: &Game,
+        icp_ledger_canister_id: &Principal
+    ) -> Result<(), String> {
+        let amount = GamesService::get_cost_to_play(game)?;
+        
+        for player in &m4tch.state.players {
+            Wallets::from_reserved_to_main(
+                &player.id, 
+                Some(&player.id), 
+                amount - (TRANSFER_FEE*2),
+                icp_ledger_canister_id
+            ).await?;
+        }
+
+        Ok(())
     }
 
     fn authorize(

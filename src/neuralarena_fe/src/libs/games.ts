@@ -7,6 +7,28 @@ import { Principal } from "@dfinity/principal";
 
 export type GameId = string;
 
+export const gameCostToPlay = (
+    game: GameResponse
+): {value: bigint; currency: string} => {
+    const {to_play} = game.info.costs;
+    
+    if('ICP' in to_play) {
+        return {
+            value: to_play['ICP'],
+            currency: 'ICP'
+        }
+    }
+    else if('USD' in to_play) {
+        return {
+            value: to_play['USD'],
+            currency: 'USD'
+        }
+    }
+    else {
+        throw new Error("Unknown currency");
+    }
+};
+
 export const gameAssetDataTextValue = (
     asset: Asset,
     key: string

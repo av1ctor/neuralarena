@@ -4,6 +4,8 @@ import { Grid, TextInput, Textarea, Chip, Group, Input, Box, createStyles, Tabs 
 import { useGameGetEndCredits } from "@hooks/games";
 import { EndCredits } from "./EndCredits";
 import { IconList, IconUsersGroup } from "@tabler/icons-react";
+import { gameCostToPlay } from "@libs/games";
+import { e8sToDecimal } from "@libs/icp";
 
 const useStyles = createStyles((theme) => ({
     inputbox: {
@@ -23,6 +25,10 @@ export const GameAbout = (props: Props) => {
     const {game} = props;
 
     const credits = useGameGetEndCredits(game?.id);
+
+    const costToPlay = game? 
+        gameCostToPlay(game): 
+        {value: 0n, currency: ''};
 
     return (
         <Tabs defaultValue="info">
@@ -81,10 +87,18 @@ export const GameAbout = (props: Props) => {
                         />
                     </Grid.Col>
 
-                    <Grid.Col md={12}>
+                    <Grid.Col md={6}>
                         <TextInput
                             label="Category"
                             value={game?.info.category || ''}
+                            readOnly
+                        />
+                    </Grid.Col>
+
+                    <Grid.Col md={6}>
+                        <TextInput
+                            label="Cost to play"
+                            value={`${e8sToDecimal(costToPlay.value)} ${costToPlay.currency}`}
                             readOnly
                         />
                     </Grid.Col>

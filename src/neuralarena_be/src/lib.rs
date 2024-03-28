@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::time::Duration;
 use crate::db::DB;
-use candid::Principal;
+use candid::{CandidType, Principal};
 use ic_cdk::api::stable;
 use ic_cdk::{caller, trap};
 use models::game::{GameRequest, Game, GameResponse, GameId};
@@ -48,6 +48,7 @@ const STATE_VERSION: f32 = 0.1;
 #[derive(Default, Serialize, Deserialize)]
 struct State {
     owner: Option<Principal>,
+    icp_ledger_canister_id: Option<Principal>,
 }
 
 thread_local! {
@@ -55,14 +56,21 @@ thread_local! {
     static DB: RefCell<DB> = RefCell::new(DB::new());    
 }
 
+#[derive(Clone, CandidType, Deserialize)]
+struct InitArg {
+    icp_ledger_canister_id: Principal,
+}
+
 #[ic_cdk::init]
 fn init(
+    arg: InitArg
 ) {
     ic_cdk::setup();
 
     STATE.with(|r| {
         let mut state = r.borrow_mut();
         state.owner = Some(caller());
+        state.icp_ledger_canister_id = Some(arg.icp_ledger_canister_id);
     });
 
     random::init();
@@ -619,8 +627,18 @@ pub async fn match_join(
         Ok((user, m4tch, game, nft_col, timer))
     })?;
 
+    let icp_ledger_canister_id = STATE.with(
+        |state| state.borrow().icp_ledger_canister_id.unwrap()
+    );
+
     match MatchesService::join(
-        &mut m4tch, &game, &user, &req.nft, &nft_col).await {
+        &mut m4tch, 
+        &game, 
+        &user, 
+        &req.nft, 
+        &nft_col,
+        icp_ledger_canister_id
+    ).await {
         Ok(start) => {
             DB.with(|db| {
                 MatchesService::update(&m4tch, &mut db.borrow_mut())
@@ -629,7 +647,7 @@ pub async fn match_join(
             // max number of players reached?
             if start {
                 // NOTE: must reload from DB because we called an async fn above and the match timer
-                //       can have been expired already
+                //       could have been expired already
                 let m4tch = DB.with(|db| -> Result<Match, String> {
                     MatchesService::find_by_id(&req.id, &db.borrow())
                 })?;
@@ -670,9 +688,14 @@ async fn _run_match(
         MatchesService::update(m4tch, &mut db.borrow_mut())
     })?;
 
+    let icp_ledger_canister_id = STATE.with(
+        |state| state.borrow().icp_ledger_canister_id.unwrap()
+    );
+
     // run and save the result
     let initial_seed = random::next_u64();
-    MatchesService::run(m4tch, game, initial_seed).await?;
+    MatchesService::run(
+        m4tch, game, initial_seed, &icp_ledger_canister_id).await?;
 
     DB.with(|db| -> Result<(), String> {
         MatchesService::update(m4tch, &mut db.borrow_mut())?;
@@ -712,12 +735,20 @@ async fn _run_match_after_time_expired(
         Ok((m4tch, game))
     }).unwrap();
 
-    // not enough players? cancel it..
+    // not enough players? cancel it and return the money to players
     if m4tch.state.players.len() < m4tch.game.min_players {        
         m4tch.state.status = MatchStatus::EXPIRED;
         DB.with(|db| {
             MatchesService::update(&mut m4tch, &mut db.borrow_mut())
         }).unwrap();
+
+        let icp_ledger_canister_id = STATE.with(
+            |state| state.borrow().icp_ledger_canister_id.unwrap()
+        );
+
+        MatchesService::reimburse(
+            &m4tch, &game, &icp_ledger_canister_id
+        ).await.unwrap();
     }
     else {
         _run_match(&mut m4tch, &game).await.unwrap();
