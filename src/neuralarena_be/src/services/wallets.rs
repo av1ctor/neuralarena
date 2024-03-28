@@ -28,7 +28,7 @@ impl Wallets {
         ICRC1Utils::transfer(icp_ledger_canister_id, TransferArg { 
             from_subaccount, 
             to, 
-            amount: Nat::from(amount),
+            amount: Nat::from(amount + TRANSFER_FEE * 3),
             created_at_time: Some(ic_cdk::api::time()), 
             fee: None, 
             memo: None, 
