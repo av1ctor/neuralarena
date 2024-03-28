@@ -5,7 +5,7 @@ use crate::utils::icrc1::ICRC1Utils;
 pub const MAIN_SUBSUB_ACCOUNT: u8 = 0;
 pub const RESERVED_SUBSUB_ACCOUNT: u8 = 1;
 
-pub const TRANSFER_FEE: u128 = 1000;
+pub const TRANSFER_FEE: u128 = 10_000;
 
 pub struct Wallets;
 

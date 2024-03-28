@@ -9,43 +9,10 @@ import {
     principalToSubAccount
 } from "./icp";
 
-const errorToText = (
-    err: any
-): string => {
+export const MAIN_SUB_ACCOUNT: number = 0;
+export const RESERVED_SUB_ACCOUNT: number = 1;
 
-    if('TooOld' in err) {
-        return 'Transaction too old';
-    }
-    else if('CreatedInFuture' in err) {
-        return 'Bad date';
-    }
-    else if('BadFee' in err) {
-        return `Bad fee: expected ${err.BadFee.expected_fee.toString()}`;
-    }
-    else if('Duplicate' in err) {
-        return `Transaction duplicated at block ${err.Duplicate.duplicate_of.toString()}`;
-    }
-    else if('InsufficientFunds' in err) {
-        return `Insufficient funds: ${err.InsufficientFunds.balance.toString()}`
-    }
-    else if('InsufficientAllowance' in err) {
-        return `Insufficient allowance: ${err.InsufficientAllowance.allowance.toString()}`
-    }
-    else if('Expired' in err) {
-        return `Expired: ${err.Expired.ledger_time.toString()}`
-    }
-    else if('TemporarilyUnavailable' in err) {
-        return 'Temporarily unavailable';
-    }
-    else if('AllowanceChanged' in err) {
-        return `Allowance changed: ${err.AllowanceChanged.current_allowance.toString()}`;
-    }
-    else if('GenericError' in err) {
-        return `Generic error: ${err.GenericError.message}`;
-    }
-
-    return 'Unknown';
-};
+export const TRANSFER_FEE: bigint = 10_000n;
 
 export const icrc1GetDefaultAccount = (
     owner: Principal|undefined
@@ -58,11 +25,12 @@ export const icrc1GetDefaultAccount = (
 
 export const icrc1GetAccount = (
     owner: Principal|undefined,
-    subaccount: Uint8Array|Principal
+    subaccount: Uint8Array|Principal,
+    subsubaccount?: number
 ): Account => {
     const sub = Array.isArray(subaccount)? 
         subaccount:
-        principalToSubAccount(subaccount as Principal);
+        principalToSubAccount(subaccount as Principal, subsubaccount);
     
     return {
         owner: owner ?? Principal.anonymous(),
@@ -114,4 +82,42 @@ export const icrc1Transfer = async (
     }
     
     return res.Ok;
+};
+
+const errorToText = (
+    err: any
+): string => {
+
+    if('TooOld' in err) {
+        return 'Transaction too old';
+    }
+    else if('CreatedInFuture' in err) {
+        return 'Bad date';
+    }
+    else if('BadFee' in err) {
+        return `Bad fee: expected ${err.BadFee.expected_fee.toString()}`;
+    }
+    else if('Duplicate' in err) {
+        return `Transaction duplicated at block ${err.Duplicate.duplicate_of.toString()}`;
+    }
+    else if('InsufficientFunds' in err) {
+        return `Insufficient funds: ${err.InsufficientFunds.balance.toString()}`
+    }
+    else if('InsufficientAllowance' in err) {
+        return `Insufficient allowance: ${err.InsufficientAllowance.allowance.toString()}`
+    }
+    else if('Expired' in err) {
+        return `Expired: ${err.Expired.ledger_time.toString()}`
+    }
+    else if('TemporarilyUnavailable' in err) {
+        return 'Temporarily unavailable';
+    }
+    else if('AllowanceChanged' in err) {
+        return `Allowance changed: ${err.AllowanceChanged.current_allowance.toString()}`;
+    }
+    else if('GenericError' in err) {
+        return `Generic error: ${err.GenericError.message}`;
+    }
+
+    return 'Unknown';
 };

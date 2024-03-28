@@ -164,12 +164,16 @@ export const principalToAccountDefaultId = (
 };
 
 export const principalToSubAccount = (
-    principal: Principal|undefined
+    principal: Principal|undefined,
+    subsubaccount?: number
 ): Uint8Array => {
     const bytes = (principal ?? Principal.anonymous()).toUint8Array();
     const subAccount = new Uint8Array(32);
     subAccount[0] = bytes.length;
     subAccount.set(bytes, 1);
+    if(subsubaccount !== undefined) {
+        subAccount.set([subsubaccount & 0xff], 30);
+    }
     return subAccount;
 };
 

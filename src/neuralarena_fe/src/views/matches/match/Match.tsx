@@ -181,6 +181,7 @@ export const Match = (props: Props) => {
             >
                 <MatchJoin
                     match={match.data}
+                    game={game.data}
                     onClose={close}
                 />
             </DrawerPanel>

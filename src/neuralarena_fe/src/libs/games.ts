@@ -8,8 +8,15 @@ import { Principal } from "@dfinity/principal";
 export type GameId = string;
 
 export const gameCostToPlay = (
-    game: GameResponse
+    game: GameResponse|undefined
 ): {value: bigint; currency: string} => {
+    if(!game) {
+        return {
+            value: 0n,
+            currency: 'UNK',
+        }
+    }
+    
     const {to_play} = game.info.costs;
     
     if('ICP' in to_play) {

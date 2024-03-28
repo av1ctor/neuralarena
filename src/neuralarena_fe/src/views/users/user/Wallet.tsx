@@ -9,7 +9,10 @@ import {
     principalToAccountId, 
     principalToSubAccount 
 } from "@libs/icp";
-import { icrc1GetAccountId, icrc1GetDefaultAccountId } from "@libs/icrc1";
+import { 
+    MAIN_SUB_ACCOUNT, RESERVED_SUB_ACCOUNT, 
+    icrc1GetAccountId, icrc1GetDefaultAccountId 
+} from "@libs/icrc1";
 import { Button, Grid, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconCoin, IconCopy, IconWallet } from "@tabler/icons-react";
@@ -30,15 +33,22 @@ export const UserWallet = (props: Props) => {
         principalToSubAccount(user?.id)
     );
 
-    const icpLedgerBalance = useIcrc1GetBallance(
+    const icpLedgerAccBalance = useIcrc1GetBallance(
         icpLedger, 
         principalToAccountDefaultId(user?.id)
     );
-    const neuralarenaBalance = useIcrc1GetBallance(
+    const mainAccBalance = useIcrc1GetBallance(
         icpLedger, 
         principalToAccountId(
             ids.main,
-            principalToSubAccount(user?.id)
+            principalToSubAccount(user?.id, MAIN_SUB_ACCOUNT)
+        )
+    );
+    const reservedAccBalance = useIcrc1GetBallance(
+        icpLedger, 
+        principalToAccountId(
+            ids.main,
+            principalToSubAccount(user?.id, RESERVED_SUB_ACCOUNT)
         )
     );
 
@@ -73,7 +83,7 @@ export const UserWallet = (props: Props) => {
                 <Grid.Col md={6}>
                     <TextInput
                         label="ICP Ledger balance"
-                        value={e8sToDecimal(icpLedgerBalance.data || 0n)}
+                        value={e8sToDecimal(icpLedgerAccBalance.data || 0n)}
                         readOnly
                         icon={<IconCoin size="1rem" />}
                     />
@@ -81,7 +91,7 @@ export const UserWallet = (props: Props) => {
 
                 <Grid.Col md={6}>
                     <TextInput
-                        label="Neural arena account id"
+                        label="Neural Arena account id"
                         value={neuralArenaAccountId}
                         readOnly
                         rightSection={<IconCopy size="1rem" />}
@@ -90,8 +100,8 @@ export const UserWallet = (props: Props) => {
 
                 <Grid.Col md={6}>
                     <TextInput
-                        label="Neural arena balance"
-                        value={e8sToDecimal(neuralarenaBalance.data || 0n)}
+                        label="Neural Arena balance (reserved/main)"
+                        value={`${e8sToDecimal(reservedAccBalance.data || 0n)}/${e8sToDecimal(mainAccBalance.data || 0n)}`}
                         readOnly
                         icon={<IconCoin size="1rem" />}
                     />
