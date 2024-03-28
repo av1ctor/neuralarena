@@ -360,12 +360,6 @@ impl MatchesService {
 
         Self::start(m4tch, game).await?;
 
-        Self::transfer_balances(
-            icp_ledger_canister_id,
-            &m4tch.state.players,
-            game
-        ).await?;
-
         m4tch.state.initial_seed = Some(initial_seed);
 
         let mut slice = 0;
@@ -412,6 +406,12 @@ impl MatchesService {
 
         match res {
             Ok(result) => {
+                Self::transfer_balances(
+                    icp_ledger_canister_id,
+                    &m4tch.state.players,
+                    game
+                ).await?;
+        
                 m4tch.won_by = result.won_by;
                 m4tch.won_at = result.won_at;
                 Ok(())
