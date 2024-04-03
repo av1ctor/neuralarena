@@ -1,7 +1,7 @@
 import { 
     _SERVICE as Main, 
     GameRequest, GameResponse, 
-    Pagination, Asset, GameEndCredits 
+    Pagination, Asset, GameEndCredits, AssetValue 
 } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { Principal } from "@dfinity/principal";
 
@@ -59,6 +59,58 @@ export const gameAssetDataU32Value = (
     }
     else {
         return (field[1] as any).U32;
+    }
+};
+
+export const gameAssetDataMapValue = (
+    asset: Asset,
+    key: string
+): [string, AssetValue][] => {
+    const field = asset.data.find(f => f[0] === key);
+    if(!field || !('Map' in field[1])) {
+        return [];
+    }
+    else {
+        return (field[1] as any).Map;
+    }
+};
+
+export const gameAssetMapTextValue = (
+    map: [string, AssetValue][],
+    key: string
+): string|undefined => {
+    const field = map.find(f => f[0] === key);
+    if(!field || !('Text' in field[1])) {
+        return undefined;
+    }
+    else {
+        return (field[1] as any).Text;
+    }
+};
+
+export const gameAssetMapBoolValue = (
+    map: [string, AssetValue][],
+    key: string
+): boolean => {
+    const field = map.find(f => f[0] === key);
+    if(!field || !('Bool' in field[1])) {
+        return false;
+    }
+    else {
+        return (field[1] as any).Bool? true: false;
+    }
+};
+
+export const gameAssetValue = (
+    asset: Asset,
+    key: string
+): [string, AssetValue][] => {
+    const field = asset.data.find(f => f[0] === key);
+    if(!field || !('Map' in field[1])) {
+        return [];
+    }
+    else {
+        return (field[1] as any).Map;
     }
 };
 

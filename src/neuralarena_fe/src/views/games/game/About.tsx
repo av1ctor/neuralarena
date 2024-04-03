@@ -127,12 +127,12 @@ export const GameAbout = (props: Props) => {
                     </Grid.Col>
 
                     <Grid.Col md={12}>
-                        <Input.Wrapper label="Animations required">
+                        <Input.Wrapper label="States required">
                             <Chip.Group>
                                 <Group>
-                                    {game?.info.animations.map((anim, index) => 
+                                    {game?.info.states.map((state, index) => 
                                         <Chip key={index} readOnly>
-                                            {anim}
+                                            {state}
                                         </Chip>
                                     )}
                                 </Group>

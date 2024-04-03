@@ -87,8 +87,8 @@ const UserEdit = (props: Props) => {
 
         form.setValues({
             nick: user.nick,
-            name: user.name,
-            email: user.email,
+            name: user.name.length > 0? user.name[0]: '',
+            email: user.email.length > 0? user.email[0]: '',
             ...(kind === UserKind.Player? 
                     {
                     }

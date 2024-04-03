@@ -2,7 +2,9 @@ type Asset = record { typ : AssetType; data : vec record { text; AssetValue } };
 type AssetType = variant { Map; Npc; Object; Player };
 type AssetValue = variant {
   F32 : float32;
+  Map : HashMap_1;
   U32 : nat32;
+  Vec : vec AssetValue;
   Bool : bool;
   None;
   Text : text;
@@ -17,7 +19,9 @@ type GameEndCredits = record {
 };
 type GameInfo = record {
   fps : nat32;
+  states : vec text;
   min_players : nat64;
+  sfx_sets : vec vec record { text; GameSfx };
   maps : vec GameMap;
   name : text;
   costs : GameCosts;
@@ -25,7 +29,6 @@ type GameInfo = record {
   description : text;
   max_players : nat64;
   version : float32;
-  animations : vec text;
   category : text;
   skills : vec text;
 };
@@ -35,12 +38,19 @@ type GameMap = record {
   name : text;
   description : text;
   version : float32;
+  music_url : text;
 };
 type GameRequest = record { canister_id : principal };
 type GameResponse = record {
   id : text;
   info : GameInfo;
   canister_id : principal;
+};
+type GameSfx = record {
+  url : text;
+  repeat : bool;
+  rate : opt float32;
+  detune : opt float32;
 };
 type GameURLs = record {
   engine_wasm : text;
@@ -59,6 +69,18 @@ type HashMap = vec record {
     Double : float64;
     Float : float32;
     Array : vec Nas1Value;
+  };
+};
+type HashMap_1 = vec record {
+  text;
+  variant {
+    F32 : float32;
+    Map : HashMap_1;
+    U32 : nat32;
+    Vec : vec AssetValue;
+    Bool : bool;
+    None;
+    Text : text;
   };
 };
 type InitArg = record { icp_ledger_canister_id : principal };
@@ -107,9 +129,10 @@ type MatchStateResponse = record {
 };
 type MatchStatus = variant { CANCELLED; OPEN; RUNNING; EXPIRED; FINISHED };
 type Nas1Collection = record {
+  states : vec text;
+  sfx_sets : vec vec record { text; GameSfx };
   assets_canister_id : principal;
   version : float32;
-  animations : vec text;
   assets_url : text;
   skills : vec text;
 };
@@ -126,6 +149,7 @@ type Nas1Token = record {
   epsilon : float32;
   radius : float32;
   hidden_layers_weights_size : vec nat64;
+  sfx_set : nat64;
   steps_per_thought : nat64;
 };
 type Nas1Value = variant {

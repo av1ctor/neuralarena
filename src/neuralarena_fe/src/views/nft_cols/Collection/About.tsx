@@ -106,12 +106,12 @@ export const NftCollectionAbout = (props: Props) => {
             </Grid.Col>
 
             <Grid.Col md={12}>
-                <Input.Wrapper label="Supported animations">
+                <Input.Wrapper label="Supported states">
                     <Chip.Group>
                         <Group>
-                            {col?.meta.nas1.animations.map((anim, index) => 
+                            {col?.meta.nas1.states.map((state, index) => 
                                 <Chip key={index} readOnly>
-                                    {anim}
+                                    {state[0]}
                                 </Chip>
                             )}
                         </Group>

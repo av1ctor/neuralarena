@@ -221,9 +221,9 @@ impl MatchesService {
                 }
             }
 
-            for anim in &game.info.animations {
-                if !nft_col.meta.nas1.animations.contains(anim) {
-                    return Err(format!("NFT doesn't have the animation {} needed to play this game", anim));
+            for state in &game.info.states {
+                if !nft_col.meta.nas1.states.contains(state) {
+                    return Err(format!("NFT doesn't have the state {} needed to play this game", state));
                 }
             }
 

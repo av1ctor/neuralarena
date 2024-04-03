@@ -3,8 +3,13 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Font } from 'three/addons/loaders/FontLoader.js';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
-import { Asset, GameInfo, MatchPlayerResponse } from '@declarations/neuralarena_be/neuralarena_be.did';
-import { gameAssetDataTextValue, gameAssetDataU32Value } from '@libs/games';
+import { 
+    Asset, AssetValue, GameInfo, MatchPlayerResponse 
+} from '@declarations/neuralarena_be/neuralarena_be.did';
+import { 
+    gameAssetDataMapValue, gameAssetDataTextValue, 
+    gameAssetDataU32Value, gameAssetMapBoolValue, gameAssetMapTextValue 
+} from '@libs/games';
 import { GameAssetsLoadingManager, NftAssetsLoadingManager } from '@libs/loadingmanager';
 import { InstanceNpcEntity, InstancePlayerEntity } from '@game-engine/game-engine';
 import { AnimScene } from './utils/AnimScene';
@@ -14,12 +19,20 @@ import { LoadingBar } from './utils/LoadingBar';
 const HEALTH_BAR_WIDTH = 100.0;
 const HEALTH_BAR_HEIGHT = 10.0;
 
+interface AudioBuffer {
+    buffer: any;
+    repeat: boolean;
+}
+
 export class ThreeGameRenderer {
-    gameAssetLoader: GLTFLoader;
-    nftAssetLoader: GLTFLoader;
+    game: GameInfo;
+    gameModelLoader: GLTFLoader;
+    nftModelLoader: GLTFLoader;
+    audioLoader: THREE.AudioLoader;
     renderer: THREE.WebGLRenderer;
     scene: THREE.Scene;
     camera: THREE.PerspectiveCamera;
+    listener: THREE.AudioListener;
     start: AnimScene;
     raycaster: THREE.Raycaster;
     controls?: OrbitControls;
@@ -50,6 +63,8 @@ export class ThreeGameRenderer {
         players: MatchPlayerResponse[],
         font: Font
     ) {
+        this.game = game;
+        
         this.width = canvas.width;
         this.height = canvas.height;
         this.players = players;
@@ -61,23 +76,26 @@ export class ThreeGameRenderer {
         this.loading = true;
         this.loadingBar = new LoadingBar(font);
 
-        this.gameAssetLoader = new GLTFLoader(
+        this.gameModelLoader = new GLTFLoader(
             new GameAssetsLoadingManager(
                 game.urls.assets,
                 (url, loaded, total) => this.loadingBar.onProgress(url, loaded, total)
             )
         );
 
+        this.audioLoader = new THREE.AudioLoader();
+
         const main = ThreeGameRenderer.#setup(this.width, this.height);
         this.scene = main[0];
         this.camera = main[1];
+        this.listener = main[2];
 
         const scenes_urls = new Map(game.urls.scenes)
         this.start = new AnimScene(
             this.width, 
             this.height, 
             scenes_urls.get("start") ?? "/scenes/start.glb",
-            this.gameAssetLoader
+            this.gameModelLoader
         );
         
         this.renderer = new THREE.WebGLRenderer(
@@ -107,7 +125,7 @@ export class ThreeGameRenderer {
 
         this.skipping = false;
 
-        this.nftAssetLoader = new GLTFLoader(
+        this.nftModelLoader = new GLTFLoader(
             new NftAssetsLoadingManager(
                 (url, loaded, total) => this.loadingBar.onProgress(url, loaded, total)
             )
@@ -124,7 +142,7 @@ export class ThreeGameRenderer {
     static #setup(
         width: number,
         height: number
-    ): [THREE.Scene, THREE.PerspectiveCamera] {
+    ): [THREE.Scene, THREE.PerspectiveCamera, THREE.AudioListener] {
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x88ccee);
         scene.fog = new THREE.Fog(0x88ccee, 0, 100)
@@ -132,6 +150,9 @@ export class ThreeGameRenderer {
         //FIXME: this should be defined at the GLTF
         const camera = new THREE.PerspectiveCamera(75.0, width / height, 0.1, 1000.0);
         camera.position.set(15.0, 10.0, 15.0);
+
+        const listener = new THREE.AudioListener();
+        camera.add(listener);
 
         //FIXME: this should be defined at the GLTF
         const fillLight1 = new THREE.HemisphereLight(0xffffff, 0x444444, 2.0);
@@ -154,7 +175,7 @@ export class ThreeGameRenderer {
         directionalLight.shadow.bias = -0.00006;
         scene.add(directionalLight);
 
-        return [scene, camera];
+        return [scene, camera, listener];
     }
 
     toggleLoading(
@@ -240,13 +261,37 @@ export class ThreeGameRenderer {
         }
     }
 
+    async #setupAudioBufferSet(
+        asset: Asset
+    ): Promise<Map<string, AudioBuffer>> {
+        const sfxSet = gameAssetDataMapValue(asset, 'sfx_set');
+        const res = new Map<string, AudioBuffer>();
+        for(const e of sfxSet) {
+            const sfx = 'Map' in e[1]? e[1].Map as [string, AssetValue][]: [];
+            
+            const buffer = await this.audioLoader.loadAsync(
+                gameAssetMapTextValue(sfx, 'url')!
+            );
+
+            res.set(
+                e[0], 
+                {
+                    buffer,
+                    repeat: gameAssetMapBoolValue(sfx, 'repeat')
+                }
+            );
+        }
+
+        return res;
+    }
+
     async load_asset(
         asset_ref: number,
         asset: Asset
     ): Promise<void> {
         if('Map' in asset.typ) {
-            const gltf = await this.gameAssetLoader.loadAsync(
-                gameAssetDataTextValue(asset, 'path')!);
+            const gltf = await this.gameModelLoader.loadAsync(
+                gameAssetDataTextValue(asset, 'model_url')!);
             const obj = gltf.scene;
             obj.traverse(child => {
                 if((child as any).isMesh) {
@@ -265,17 +310,21 @@ export class ThreeGameRenderer {
                         (material as any).map.anisotropy = 4;
                     }
                     mesh.material = material;
-                    mesh.userData.isContainer = isContainer;
+                    mesh.userData = {
+                        isContainer,
+                    };
                 }
             });
 
-            obj.userData.isMap = true;
+            obj.userData = {
+                isMap: true,
+            };
 
             this.assets.set(asset_ref, obj);
         }
         else if('Player' in asset.typ) {
-            const gltf = await this.nftAssetLoader.loadAsync(
-                gameAssetDataTextValue(asset, 'path')!);
+            const gltf = await this.nftModelLoader.loadAsync(
+                gameAssetDataTextValue(asset, 'model_url')!);
             const obj = gltf.scene;
             obj.traverse(child => {
                 if((child as any).isMesh) {
@@ -285,17 +334,20 @@ export class ThreeGameRenderer {
             });
             obj.visible = false;
 
-            obj.userData.isPlayer = true;
-            obj.userData.num = gameAssetDataU32Value(asset, 'num')!;
-            obj.userData.animations = gltf.animations;
+            obj.userData = {
+                isPlayer: true,
+                num: gameAssetDataU32Value(asset, 'num')!,
+                animations: gltf.animations,
+                audioBufferSet: await this.#setupAudioBufferSet(asset),
+            };
 
             obj.scale.multiplyScalar(0.01);
 
             this.assets.set(asset_ref, obj);
         }
         else if('Npc' in asset.typ) {
-            const gltf = await this.gameAssetLoader.loadAsync(
-                gameAssetDataTextValue(asset, 'path')!);
+            const gltf = await this.gameModelLoader.loadAsync(
+                gameAssetDataTextValue(asset, 'model_url')!);
             const obj = gltf.scene;
             obj.traverse(child => {
                 if((child as any).isMesh) {
@@ -305,9 +357,12 @@ export class ThreeGameRenderer {
             });
             obj.visible = false;
 
-            obj.userData.isNpc = true;
-            obj.userData.num = gameAssetDataU32Value(asset, 'num')!;
-            obj.userData.animations = gltf.animations;
+            obj.userData = {
+                isNpc: true,
+                num: gameAssetDataU32Value(asset, 'num')!,
+                animations: gltf.animations,
+                audioBufferSet: await this.#setupAudioBufferSet(asset),
+            };
 
             obj.scale.multiplyScalar(0.011);
 
@@ -334,33 +389,46 @@ export class ThreeGameRenderer {
         asset_ref: number,
         model_ref: number
     ): number {
-        const obj = this.assets.get(asset_ref);
-        if(!obj) {
+        const asset = this.assets.get(asset_ref);
+        if(!asset) {
             console.error("Unknown asset:" + asset_ref);
             throw new Error("Unknown asset: " + asset_ref);
         }
         
-        const cloned = cloneSkeleton(obj);
-        if(cloned.userData.isPlayer || cloned.userData.isNpc) {
-            const anim = new THREE.AnimationMixer(cloned);
-            cloned.userData.anim = anim;
+        const model = cloneSkeleton(asset);
+        if(model.userData.isPlayer || model.userData.isNpc) {
+            const anim = new THREE.AnimationMixer(model);
+            model.userData.anim = anim;
 
             let actions = Object.assign({});
-            for(const clip of obj.userData.animations) {
+            for(const clip of asset.userData.animations) {
                 const action = anim.clipAction(clip);
                 actions[clip.name] = action;
             }
 
-            cloned.userData.actions = actions;
-            cloned.userData.action = 'Idle';
-            (cloned.userData.actions as any)[cloned.userData.action]?.play();
+            model.userData.actions = actions;
+            model.userData.action = 'Idle';
+            (model.userData.actions as any)[model.userData.action]?.play();
 
-            const statusBar = this.statusMng.add(cloned, this.players);
-            cloned.add(statusBar);
+            const statusBar = this.statusMng.add(model, this.players);
+            model.add(statusBar);
+
+            // sfx?
+            if(asset.userData.audioBufferSet) {
+                const audioSet = new Map<string, THREE.PositionalAudio>();
+                for(const e of asset.userData.audioBufferSet as Map<string, AudioBuffer>) {
+                    const audio = new THREE.PositionalAudio(this.listener);
+                    audio.setBuffer(e[1].buffer);
+                    audio.setLoop(e[1].repeat);
+                    model.add(audio);
+                    audioSet.set(e[0], audio);
+                }
+                model.userData.audioSet = audioSet;
+            }
         }
 
-        this.models[model_ref] = cloned;
-        this.scene.add(cloned)
+        this.models[model_ref] = model;
+        this.scene.add(model)
         return model_ref;
     }
 
@@ -412,6 +480,20 @@ export class ThreeGameRenderer {
                     toAction.reset().fadeIn(0.1).play();
                     
                     obj.userData.action = to;
+
+                    // play sound
+                    if(obj.userData.audioSet) {
+                        const audioSet = obj.userData.audioSet as Map<string, THREE.PositionalAudio>;
+                        const audio = audioSet.get(to.toLowerCase());
+                        if(audio) {
+                            if(obj.userData.audio) {
+                                obj.userData.audio.stop();
+                            }
+                            obj.userData.audio = audio;
+
+                            audio.play();
+                        }
+                    }
                 }
             }
         }
@@ -503,12 +585,6 @@ export class ThreeGameRenderer {
             this.loadingBar.render(this.renderer);
             return;
         }
-
-
-        this.statusMng.update(this.entities.players, this.entities.npcs);
-
-        
-        this.statusMng.update(this.entities.players, this.entities.npcs);
 
         let player: THREE.Object3D<THREE.Object3DEventMap>|undefined = undefined;
         if(this.pov.player_num !== undefined) {
