@@ -160,6 +160,9 @@ export const MatchWatch = (props: Props) => {
                 first = 0;
                 renderer?.reset(false, false);
             }
+            else {
+                renderer?.stopAllSounds();
+            }
 
             for(let i = first; i < stp; i++) {
                 const frame = frames[i];

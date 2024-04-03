@@ -15,6 +15,7 @@ import { InstanceNpcEntity, InstancePlayerEntity } from '@game-engine/game-engin
 import { AnimScene } from './utils/AnimScene';
 import { EntityStatusBarManager } from './utils/EntityStatusBarMng';
 import { LoadingBar } from './utils/LoadingBar';
+import { AudioRef, SoundManager } from './utils/SoundMng';
 
 const HEALTH_BAR_WIDTH = 100.0;
 const HEALTH_BAR_HEIGHT = 10.0;
@@ -32,7 +33,7 @@ export class ThreeGameRenderer {
     renderer: THREE.WebGLRenderer;
     scene: THREE.Scene;
     camera: THREE.PerspectiveCamera;
-    listener: THREE.AudioListener;
+    soundMng: SoundManager;
     start: AnimScene;
     raycaster: THREE.Raycaster;
     controls?: OrbitControls;
@@ -88,7 +89,7 @@ export class ThreeGameRenderer {
         const main = ThreeGameRenderer.#setup(this.width, this.height);
         this.scene = main[0];
         this.camera = main[1];
-        this.listener = main[2];
+        this.soundMng = new SoundManager(main[2]);
 
         const scenes_urls = new Map(game.urls.scenes)
         this.start = new AnimScene(
@@ -227,6 +228,11 @@ export class ThreeGameRenderer {
         this.skipping = skipping;
     }
 
+    stopAllSounds(
+    ) {
+        this.soundMng.reset();
+    }
+
     resizeCanvas(
         dim: {w: number, h: number}
     ) {
@@ -247,6 +253,8 @@ export class ThreeGameRenderer {
         this.models = [];
 
         this.statusMng.reset();
+
+        this.soundMng.reset();
 
         if(reset_cam) {
             this.camera.position.set(15.0, 10.0, 15.0);
@@ -415,13 +423,11 @@ export class ThreeGameRenderer {
 
             // sfx?
             if(asset.userData.audioBufferSet) {
-                const audioSet = new Map<string, THREE.PositionalAudio>();
+                const audioSet = new Map<string, AudioRef>();
                 for(const e of asset.userData.audioBufferSet as Map<string, AudioBuffer>) {
-                    const audio = new THREE.PositionalAudio(this.listener);
-                    audio.setBuffer(e[1].buffer);
-                    audio.setLoop(e[1].repeat);
-                    model.add(audio);
-                    audioSet.set(e[0], audio);
+                    const audioRef = this.soundMng.create(e[1].buffer, e[1].repeat);
+                    audioSet.set(e[0], audioRef);
+                    model.add(this.soundMng.get(audioRef)!);
                 }
                 model.userData.audioSet = audioSet;
             }
@@ -483,15 +489,15 @@ export class ThreeGameRenderer {
 
                     // play sound
                     if(obj.userData.audioSet) {
-                        const audioSet = obj.userData.audioSet as Map<string, THREE.PositionalAudio>;
-                        const audio = audioSet.get(to.toLowerCase());
-                        if(audio) {
-                            if(obj.userData.audio) {
-                                obj.userData.audio.stop();
+                        const audioSet = obj.userData.audioSet as Map<string, AudioRef>;
+                        const audioRef = audioSet.get(to.toLowerCase());
+                        if(audioRef) {
+                            if(obj.userData.audioRef) {
+                                this.soundMng.stop(obj.userData.audioRef);
                             }
-                            obj.userData.audio = audio;
+                            obj.userData.audioRef = audioRef;
 
-                            audio.play();
+                            this.soundMng.play(audioRef);
                         }
                     }
                 }
