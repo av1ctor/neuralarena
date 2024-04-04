@@ -84,6 +84,7 @@ export const MatchIntro = (props: Props) => {
     const secondsCounter = useRef(0);
     const timerId = useRef(0);
     const font = useFont('gentilis');
+    const rendererLoading = useRef(false);
 
     const changeCanvasDim = (dim: {w: number, h: number}) => {
         if(canvas.current) {
@@ -103,15 +104,24 @@ export const MatchIntro = (props: Props) => {
     }, [width, renderer]);
 
     useEffect(() => {
-        if(canvas.current && !renderer) {
-            const renderer = new ThreeSceneRenderer(
-                canvas.current, 
-                props.game.info,
-                font
-            );
-            setRenderer(renderer);
-        }
-    }, [canvas.current, renderer, props.game.info, font]);
+        (async () => {
+            if(canvas.current && !renderer && !rendererLoading.current) {
+                rendererLoading.current = true;
+                try {
+                    const renderer = new ThreeSceneRenderer(
+                        canvas.current, 
+                        props.game.info,
+                        font
+                    );
+                    setRenderer(renderer);
+                    await renderer.loadAssets(props.game.info);
+                }
+                finally {
+                    rendererLoading.current = false;
+                }
+            }
+        })();
+    }, [canvas.current, renderer, props.game.info, font, rendererLoading]);
 
     const then = useRef(performance.now());
 
@@ -121,7 +131,12 @@ export const MatchIntro = (props: Props) => {
                 secondsCounter.current += timeStamp;
                 if(secondsCounter.current >= 1000.0) {
                     secondsCounter.current = 0;
-                    const timeLeft = new Date(Number((props.match.created_at / 1_000_000n) + props.match.deadline * 1_000n) - Date.now());
+                    const timeLeft = new Date(
+                        Number(
+                            (props.match.created_at / 1_000_000n) + 
+                            props.match.deadline * 1_000n
+                        ) - Date.now()
+                    );
                     setTimeLeft(timeLeft);
                 }
 
@@ -147,6 +162,12 @@ export const MatchIntro = (props: Props) => {
             return () => {};
         };
     }, [renderer, props.match, props.game]);
+
+    useEffect(() => {
+        return () => {
+            renderer?.stopAudio();
+        }
+    }, [renderer]);
 
     const {match} = props;
 

@@ -102,6 +102,7 @@ export const MatchWatch = (props: Props) => {
     const font = useFont('gentilis');
     const assetsLoading = useRef(false);
     const engineLoading = useRef(false);
+    const rendererLoading = useRef(false);
 
     const steps = useMatchGetSteps(props.match.id, SECONDS_PER_CALL * props.game.info.fps)
     const credits = useGameGetEndCredits(props.game.id);
@@ -229,16 +230,22 @@ export const MatchWatch = (props: Props) => {
     }, [width, renderer]);
 
     useEffect(() => {
-        if(canvas.current && !renderer) {
-            const renderer = new ThreeGameRenderer(
-                canvas.current, 
-                props.game.info,
-                props.match.players,
-                font
-            );
-            setRenderer(renderer);
+        if(canvas.current && !renderer && !rendererLoading.current) {
+            rendererLoading.current = true;
+            try {
+                const renderer = new ThreeGameRenderer(
+                    canvas.current, 
+                    props.game.info,
+                    props.match.players,
+                    font
+                );
+                setRenderer(renderer);
+            }
+            finally {
+                rendererLoading.current = false;
+            }
         }
-    }, [canvas.current, renderer, props.game.info, props.match.players, font]);
+    }, [canvas.current, renderer, props.game.info, props.match.players, font, rendererLoading]);
 
     const loadAssets = useCallback(async () => {
         if(renderer && !assetsLoading.current) {

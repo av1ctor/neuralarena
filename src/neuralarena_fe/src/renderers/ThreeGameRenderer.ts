@@ -96,10 +96,13 @@ export class ThreeGameRenderer {
         this.fixAudioMng = new FixedAudioManager(main[2]);
 
         const scenes_urls = new Map(game.urls.scenes)
+        const startScene = scenes_urls.get("start");
         this.start = new AnimScene(
             this.width, 
             this.height, 
-            scenes_urls.get("start") ?? "/scenes/start.glb",
+            startScene && startScene.music.length > 0? 
+                startScene.music[0] as any: 
+                "/scenes/start.glb",
             this.gameModelLoader
         );
         
