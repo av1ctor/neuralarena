@@ -531,7 +531,7 @@ export class ThreeGameRenderer {
                     obj.userData.action = to;
 
                     // play sound
-                    if(obj.userData.audioSet) {
+                    if(!this.skipping && obj.userData.audioSet) {
                         const audioSet = obj.userData.audioSet as Map<string, PosAudioRef>;
                         const audioRef = audioSet.get(to.toLowerCase());
                         if(audioRef) {
