@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 
-export type AudioRef = number;
+export type FixAudioRef = number;
 
-export class SoundManager {
+export class FixedAudioManager {
     #listener: THREE.AudioListener;
-    #audios: THREE.PositionalAudio[];
+    #audios: THREE.Audio[];
     
     constructor (
         listener: THREE.AudioListener
@@ -15,25 +15,27 @@ export class SoundManager {
 
     create(
         buffer: any,
-        repeat: boolean
-    ): AudioRef {
-        const audio = new THREE.PositionalAudio(this.#listener);
+        repeat: boolean,
+        volume: number
+    ): FixAudioRef {
+        const audio = new THREE.Audio(this.#listener);
         audio.setBuffer(buffer);
         audio.setLoop(repeat);
+        audio.setVolume(volume);
         const ref = this.#audios.length;
         this.#audios.push(audio);
 
         return ref;
     }
-
+    
     get(
-        ref: AudioRef
-    ): THREE.PositionalAudio|undefined {
+        ref: FixAudioRef
+    ): THREE.Audio|undefined {
         return this.#audios[ref];
     }
 
     play(
-        ref: AudioRef
+        ref: FixAudioRef
     ) {
         const audio = this.#audios[ref];
         if(audio) {
@@ -44,7 +46,7 @@ export class SoundManager {
     }
 
     stop(
-        ref: AudioRef
+        ref: FixAudioRef
     ) {
         const audio = this.#audios[ref];
         if(audio) {

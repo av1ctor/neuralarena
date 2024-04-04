@@ -31,7 +31,7 @@ export const GameMap_ = (props: Props) => {
 
     return (
         <CoverCard
-            cover={map.image_url}
+            cover={map.urls.image}
             height={440}
         >
             <Container

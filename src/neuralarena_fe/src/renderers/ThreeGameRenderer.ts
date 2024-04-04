@@ -15,7 +15,8 @@ import { InstanceNpcEntity, InstancePlayerEntity } from '@game-engine/game-engin
 import { AnimScene } from './utils/AnimScene';
 import { EntityStatusBarManager } from './utils/EntityStatusBarMng';
 import { LoadingBar } from './utils/LoadingBar';
-import { AudioRef, SoundManager } from './utils/SoundMng';
+import { PosAudioRef, PositionalAudioManager } from './utils/PosAudioMng';
+import { FixAudioRef, FixedAudioManager } from './utils/FixAudioMng';
 
 const HEALTH_BAR_WIDTH = 100.0;
 const HEALTH_BAR_HEIGHT = 10.0;
@@ -33,7 +34,8 @@ export class ThreeGameRenderer {
     renderer: THREE.WebGLRenderer;
     scene: THREE.Scene;
     camera: THREE.PerspectiveCamera;
-    soundMng: SoundManager;
+    posAudioMng: PositionalAudioManager;
+    fixAudioMng: FixedAudioManager;
     start: AnimScene;
     raycaster: THREE.Raycaster;
     controls?: OrbitControls;
@@ -57,6 +59,7 @@ export class ThreeGameRenderer {
     statusMng: EntityStatusBarManager;
     loading: boolean;
     loadingBar: LoadingBar;
+    musicRef: FixAudioRef;
 
     constructor(
         canvas: HTMLCanvasElement,
@@ -89,7 +92,8 @@ export class ThreeGameRenderer {
         const main = ThreeGameRenderer.#setup(this.width, this.height);
         this.scene = main[0];
         this.camera = main[1];
-        this.soundMng = new SoundManager(main[2]);
+        this.posAudioMng = new PositionalAudioManager(main[2]);
+        this.fixAudioMng = new FixedAudioManager(main[2]);
 
         const scenes_urls = new Map(game.urls.scenes)
         this.start = new AnimScene(
@@ -138,6 +142,8 @@ export class ThreeGameRenderer {
             HEALTH_BAR_HEIGHT, 
             this.font
         );
+
+        this.musicRef = -1;
     }
 
     static #setup(
@@ -230,7 +236,12 @@ export class ThreeGameRenderer {
 
     stopAllSounds(
     ) {
-        this.soundMng.reset();
+        this.posAudioMng.reset();
+    }
+
+    playMusic(
+    ) {
+        this.fixAudioMng.play(this.musicRef);
     }
 
     resizeCanvas(
@@ -254,7 +265,7 @@ export class ThreeGameRenderer {
 
         this.statusMng.reset();
 
-        this.soundMng.reset();
+        this.posAudioMng.reset();
 
         if(reset_cam) {
             this.camera.position.set(15.0, 10.0, 15.0);
@@ -275,7 +286,9 @@ export class ThreeGameRenderer {
         const sfxSet = gameAssetDataMapValue(asset, 'sfx_set');
         const res = new Map<string, AudioBuffer>();
         for(const e of sfxSet) {
-            const sfx = 'Map' in e[1]? e[1].Map as [string, AssetValue][]: [];
+            const sfx = 'Map' in e[1]? 
+                e[1].Map as [string, AssetValue][]: 
+                [];
             
             const buffer = await this.audioLoader.loadAsync(
                 gameAssetMapTextValue(sfx, 'url')!
@@ -323,6 +336,11 @@ export class ThreeGameRenderer {
                     };
                 }
             });
+
+            const songBuffer = await this.audioLoader.loadAsync(
+                gameAssetDataTextValue(asset, 'music_url')!);
+
+            this.musicRef = this.fixAudioMng.create(songBuffer, true, 0.25);
 
             obj.userData = {
                 isMap: true,
@@ -423,11 +441,11 @@ export class ThreeGameRenderer {
 
             // sfx?
             if(asset.userData.audioBufferSet) {
-                const audioSet = new Map<string, AudioRef>();
+                const audioSet = new Map<string, PosAudioRef>();
                 for(const e of asset.userData.audioBufferSet as Map<string, AudioBuffer>) {
-                    const audioRef = this.soundMng.create(e[1].buffer, e[1].repeat);
+                    const audioRef = this.posAudioMng.create(e[1].buffer, e[1].repeat, 1.0);
                     audioSet.set(e[0], audioRef);
-                    model.add(this.soundMng.get(audioRef)!);
+                    model.add(this.posAudioMng.get(audioRef)!);
                 }
                 model.userData.audioSet = audioSet;
             }
@@ -489,15 +507,15 @@ export class ThreeGameRenderer {
 
                     // play sound
                     if(obj.userData.audioSet) {
-                        const audioSet = obj.userData.audioSet as Map<string, AudioRef>;
+                        const audioSet = obj.userData.audioSet as Map<string, PosAudioRef>;
                         const audioRef = audioSet.get(to.toLowerCase());
                         if(audioRef) {
                             if(obj.userData.audioRef) {
-                                this.soundMng.stop(obj.userData.audioRef);
+                                this.posAudioMng.stop(obj.userData.audioRef);
                             }
                             obj.userData.audioRef = audioRef;
 
-                            this.soundMng.play(audioRef);
+                            this.posAudioMng.play(audioRef);
                         }
                     }
                 }

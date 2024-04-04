@@ -34,12 +34,12 @@ type GameInfo = record {
 };
 type GameMap = record {
   id : nat64;
-  image_url : text;
   name : text;
+  urls : GameMapUrls;
   description : text;
   version : float32;
-  music_url : text;
 };
+type GameMapUrls = record { model : text; music : text; image : text };
 type GameRequest = record { canister_id : principal };
 type GameResponse = record {
   id : text;

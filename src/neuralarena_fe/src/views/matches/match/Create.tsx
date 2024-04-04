@@ -111,7 +111,7 @@ export const MatchCreate = (props: Props) => {
                 label: m.name,
                 value: m.id.toString(),
                 description: m.description,
-                image: m.image_url,
+                image: m.urls.image,
             }));
     }, [gamesQuery, form.values.game_id]);
 

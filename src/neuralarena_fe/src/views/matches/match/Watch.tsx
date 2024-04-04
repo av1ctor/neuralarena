@@ -327,6 +327,7 @@ export const MatchWatch = (props: Props) => {
                         case WatchState.PLAYING:
                             if(step.current === 0) {
                                 renderer?.showStart();
+                                renderer?.playMusic();
                             }
 
                             if(step.current < frames.length) {
