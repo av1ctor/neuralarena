@@ -234,11 +234,16 @@ export class ThreeGameRenderer {
         this.skipping = skipping;
     }
 
-    stopAllSounds(
+    stopPositionalAudio(
     ) {
         this.posAudioMng.reset();
     }
 
+    stopFixedAudio(
+    ) {
+        this.fixAudioMng.reset();
+    }
+    
     playMusic(
     ) {
         this.fixAudioMng.play(this.musicRef);
@@ -340,7 +345,7 @@ export class ThreeGameRenderer {
             const songBuffer = await this.audioLoader.loadAsync(
                 gameAssetDataTextValue(asset, 'music_url')!);
 
-            this.musicRef = this.fixAudioMng.create(songBuffer, true, 0.25);
+            this.musicRef = this.fixAudioMng.create(songBuffer, true, 0.1);
 
             obj.userData = {
                 isMap: true,

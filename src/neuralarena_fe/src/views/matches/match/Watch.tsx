@@ -161,7 +161,7 @@ export const MatchWatch = (props: Props) => {
                 renderer?.reset(false, false);
             }
             else {
-                renderer?.stopAllSounds();
+                renderer?.stopPositionalAudio();
             }
 
             for(let i = first; i < stp; i++) {
@@ -385,8 +385,17 @@ export const MatchWatch = (props: Props) => {
 
         then.current = performance.now();
         timerId.current = requestAnimationFrame(animate);
-        return () => cancelAnimationFrame(timerId.current)
+        return () => {
+            cancelAnimationFrame(timerId.current);
+        }
     }, [engine, frames.length, state, renderer, props.match, props.game]);
+
+    useEffect(() => {
+        return () => {
+            renderer?.stopFixedAudio();
+            renderer?.stopPositionalAudio();
+        }
+    }, [renderer]);
 
     return (
         <Center                 
