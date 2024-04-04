@@ -229,7 +229,7 @@ export const MatchWatch = (props: Props) => {
         }
     }, [width, renderer]);
 
-    useEffect(() => {
+    const buildRenderer = useCallback(async () => {
         if(canvas.current && !renderer && !rendererLoading.current) {
             rendererLoading.current = true;
             try {
@@ -239,6 +239,7 @@ export const MatchWatch = (props: Props) => {
                     props.match.players,
                     font
                 );
+                await renderer.loadStartScene();
                 setRenderer(renderer);
             }
             finally {
@@ -246,6 +247,10 @@ export const MatchWatch = (props: Props) => {
             }
         }
     }, [canvas.current, renderer, props.game.info, props.match.players, font, rendererLoading]);
+
+    useEffect(() => {
+        buildRenderer();
+    }, [buildRenderer]);
 
     const loadAssets = useCallback(async () => {
         if(renderer && !assetsLoading.current) {
@@ -309,10 +314,10 @@ export const MatchWatch = (props: Props) => {
     }, [load_engine]);
 
     useEffect(() => {
-        if(engine && assets && frames.length > 0) {
+        if(renderer && engine && assets && frames.length > 0) {
             setState(WatchState.PLAYING);
         }
-    }, [engine, assets, frames.length]);
+    }, [renderer, engine, assets, frames]);
 
     const then = useRef(performance.now());
     

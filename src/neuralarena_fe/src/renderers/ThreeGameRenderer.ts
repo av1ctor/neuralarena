@@ -36,7 +36,7 @@ export class ThreeGameRenderer {
     camera: THREE.PerspectiveCamera;
     posAudioMng: PositionalAudioManager;
     fixAudioMng: FixedAudioManager;
-    start: AnimScene;
+    start?: AnimScene;
     raycaster: THREE.Raycaster;
     controls?: OrbitControls;
     clock: THREE.Clock;
@@ -89,21 +89,12 @@ export class ThreeGameRenderer {
 
         this.audioLoader = new THREE.AudioLoader();
 
-        const main = ThreeGameRenderer.#setup(this.width, this.height);
-        this.scene = main[0];
-        this.camera = main[1];
-        this.posAudioMng = new PositionalAudioManager(main[2]);
-        this.fixAudioMng = new FixedAudioManager(main[2]);
+        const res = ThreeGameRenderer.#setup(this.width, this.height);
+        this.scene = res[0];
+        this.camera = res[1];
+        this.posAudioMng = new PositionalAudioManager(res[2]);
+        this.fixAudioMng = new FixedAudioManager(res[2]);
 
-        const scenes_urls = new Map(game.urls.scenes)
-        const startScene = scenes_urls.get("start");
-        this.start = new AnimScene(
-            this.width, 
-            this.height, 
-            startScene? startScene.model: "/scenes/start.glb",
-            this.gameModelLoader
-        );
-        
         this.renderer = new THREE.WebGLRenderer(
             {canvas, antialias: true});
         this.renderer.autoClear = false;
@@ -147,10 +138,36 @@ export class ThreeGameRenderer {
         this.musicRef = -1;
     }
 
+    async loadStartScene(
+    ) {
+        const scenes_urls = new Map(this.game.urls.scenes)
+        const startScene = scenes_urls.get("start");
+        this.start = new AnimScene(this.width, this.height);
+
+        await this.start.loadAssets(
+            startScene?
+                startScene.model:
+                "/scenes/start/start.gltf",
+            startScene? 
+                startScene.music.length > 0? 
+                    startScene.music[0]: 
+                    undefined: 
+                "/scenes/start/countdown.ogg",
+            startScene? 
+                this.gameModelLoader: 
+                new GLTFLoader(),
+            this.audioLoader
+        );
+    }
+
     static #setup(
         width: number,
         height: number
-    ): [THREE.Scene, THREE.PerspectiveCamera, THREE.AudioListener] {
+    ): [
+        THREE.Scene, 
+        THREE.PerspectiveCamera, 
+        THREE.AudioListener
+    ] {
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x88ccee);
         scene.fog = new THREE.Fog(0x88ccee, 0, 100)
@@ -194,7 +211,7 @@ export class ThreeGameRenderer {
 
     showStart(
     ) {
-        this.start.show();
+        this.start?.show();
     }
 
     changePOV(
@@ -258,6 +275,8 @@ export class ThreeGameRenderer {
         this.renderer.setSize(dim.w, dim.h);
         this.camera.aspect = dim.w / dim.h;
         this.camera.updateProjectionMatrix();
+
+        this.start?.resizeCanvas(dim);
     }
 
     reset(
@@ -602,7 +621,7 @@ export class ThreeGameRenderer {
             }
         }
 
-        this.start.update(deltaTime);
+        this.start?.update(deltaTime);
     }
 
     render(
@@ -679,7 +698,7 @@ export class ThreeGameRenderer {
 
         this.renderer.clear();
         this.renderer.render(this.scene, this.camera);
-        this.start.render(this.renderer);
+        this.start?.render(this.renderer);
 
         if(intersections) {
             for(const intersection of intersections) {
