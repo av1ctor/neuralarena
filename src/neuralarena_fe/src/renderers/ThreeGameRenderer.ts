@@ -100,9 +100,7 @@ export class ThreeGameRenderer {
         this.start = new AnimScene(
             this.width, 
             this.height, 
-            startScene && startScene.music.length > 0? 
-                startScene.music[0] as any: 
-                "/scenes/start.glb",
+            startScene? startScene.model: "/scenes/start.glb",
             this.gameModelLoader
         );
         
