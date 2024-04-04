@@ -111,7 +111,7 @@ export const NftCollectionAbout = (props: Props) => {
                         <Group>
                             {col?.meta.nas1.states.map((state, index) => 
                                 <Chip key={index} readOnly>
-                                    {state[0]}
+                                    {state}
                                 </Chip>
                             )}
                         </Group>
