@@ -181,7 +181,7 @@ export class ThreeGameRenderer {
         camera.add(listener);
 
         //FIXME: this should be defined at the GLTF
-        const fillLight1 = new THREE.HemisphereLight(0xffffff, 0x444444, 2.0);
+        const fillLight1 = new THREE.HemisphereLight(0xffffff, 0x888888, 2.0);
         fillLight1.position.set(0.0, 300.0, 0.0);
         scene.add(fillLight1);
 
@@ -453,15 +453,19 @@ export class ThreeGameRenderer {
             this.assets.set(asset_ref, obj);
         }
         else if('Object' in asset.typ) {
-            const geometry = new THREE.BoxGeometry(2.0, 2.0, 2.0);
-            const material = new THREE.MeshBasicMaterial({
-                color: 0x0000ff
+            const gltf = await this.gameModelLoader.loadAsync(
+                gameAssetDataTextValue(asset, 'model_url')!);
+            const obj = gltf.scene;
+            obj.traverse(child => {
+                if((child as any).isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
+                }
             });
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.visible = false;
+            obj.visible = false;
             
-            this.scene.add(mesh);
-            this.assets.set(asset_ref, mesh);
+            this.scene.add(obj);
+            this.assets.set(asset_ref, obj);
         }
         else {
             console.error("Unknown asset:" + asset_ref);
@@ -588,20 +592,12 @@ export class ThreeGameRenderer {
         const obj = this.models[model_ref];
         if(obj.position.lengthSq() !== 0.0) {
             obj.position.lerp(
-                new THREE.Vector3(
-                    pos[0], 
-                    pos[1] + (obj.userData.height||0.0) * 0.5, 
-                    pos[2]
-                ), 
+                new THREE.Vector3(pos[0], pos[1], pos[2]), 
                 0.5
             );
         }
         else {
-            obj.position.set(
-                pos[0], 
-                pos[1] + (obj.userData.height||0.0) * 0.5, 
-                pos[2]
-            );
+            obj.position.set(pos[0], pos[1], pos[2]);
         }
     }
 
