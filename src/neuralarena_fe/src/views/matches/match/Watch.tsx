@@ -74,6 +74,7 @@ enum WatchState {
     LOADING,
     PAUSED,
     PLAYING,
+    CELEBRATING,
     FINISHED,
 }
 
@@ -339,7 +340,7 @@ export const MatchWatch = (props: Props) => {
                         case WatchState.PLAYING:
                             if(step.current === 0) {
                                 renderer?.showStart();
-                                renderer?.playMusic();
+                                renderer?.playMusic("main");
                             }
 
                             if(step.current < frames.length) {
@@ -355,7 +356,7 @@ export const MatchWatch = (props: Props) => {
                                 ++step.current;
                                 if(step.current >= frames.length) {
                                     if('FINISHED' in props.match.state.status) {
-                                        setState(WatchState.FINISHED);
+                                        setState(WatchState.CELEBRATING);
                                     }
                                 }
                             }
@@ -370,14 +371,20 @@ export const MatchWatch = (props: Props) => {
                             );
                             break;
 
-                        case WatchState.FINISHED:
+                        case WatchState.CELEBRATING:
                             if(props.match.won_by.length > 0) {
                                 const winnerPrincipal = props.match.won_by[0]?.toString();
                                 const winner = props.match.players
                                     .findIndex(p => p.id.toString() === winnerPrincipal);
                                 renderer?.changePOV(winner, true);
+                                renderer?.playMusic('victory')
                             }
+                            else {
+                                renderer?.playMusic('over')
+                            }
+                            setState(WatchState.FINISHED);
 
+                        case WatchState.FINISHED:
                             engine?.render(
                                 Uint8Array.from([]), 
                                 Uint8Array.from([]), 

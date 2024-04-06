@@ -50,7 +50,7 @@ export class FixedAudioManager {
     ) {
         const audio = this.#audios[ref];
         if(audio) {
-            if(!audio.isPlaying) {
+            if(audio.isPlaying) {
                 audio.stop();
             }
         }

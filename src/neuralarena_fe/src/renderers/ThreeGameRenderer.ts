@@ -59,7 +59,8 @@ export class ThreeGameRenderer {
     statusMng: EntityStatusBarManager;
     loading: boolean;
     loadingBar: LoadingBar;
-    musicRef: FixAudioRef;
+    songRefs: Map<string, FixAudioRef>;
+    curSong?: FixAudioRef;
 
     constructor(
         canvas: HTMLCanvasElement,
@@ -135,7 +136,7 @@ export class ThreeGameRenderer {
             this.font
         );
 
-        this.musicRef = -1;
+        this.songRefs = new Map();
     }
 
     async loadStartScene(
@@ -263,8 +264,18 @@ export class ThreeGameRenderer {
     }
     
     playMusic(
+        song: string
     ) {
-        this.fixAudioMng.play(this.musicRef);
+        const newSong = this.songRefs.get(song);
+        if(newSong !== this.curSong) {
+            if(this.curSong !== undefined) {
+                this.fixAudioMng.stop(this.curSong);
+            }
+            if(newSong !== undefined) {
+                this.fixAudioMng.play(newSong);
+            }
+            this.curSong = newSong;
+        }
     }
 
     resizeCanvas(
@@ -305,12 +316,12 @@ export class ThreeGameRenderer {
         }
     }
 
-    async #setupAudioBufferSet(
+    async #setupSfxsBufferSet(
         asset: Asset
     ): Promise<Map<string, AudioBuffer>> {
-        const sfxSet = gameAssetDataMapValue(asset, 'sfx_set');
+        const map = gameAssetDataMapValue(asset, 'sfx_set');
         const res = new Map<string, AudioBuffer>();
-        for(const e of sfxSet) {
+        for(const e of map) {
             const sfx = 'Map' in e[1]? 
                 e[1].Map as [string, AssetValue][]: 
                 [];
@@ -328,6 +339,25 @@ export class ThreeGameRenderer {
             );
         }
 
+        return res;
+    }
+
+    async #setupSongsBufferSet(
+        asset: Asset
+    ): Promise<Map<string, any>> {
+        const map = new Map(gameAssetDataMapValue(asset, 'music_urls'));
+        const songs = await Promise.all([
+            this.audioLoader.loadAsync((map.get("main") as any)['Text']),
+            this.audioLoader.loadAsync((map.get("over") as any)['Text']),
+            this.audioLoader.loadAsync((map.get("victory") as any)['Text']),
+        ]);
+        
+        const res = new Map([
+            ["main"     , songs[0]],
+            ["over"     , songs[1]],
+            ["victory"  , songs[2]],
+        ]);
+        
         return res;
     }
 
@@ -362,10 +392,13 @@ export class ThreeGameRenderer {
                 }
             });
 
-            const songBuffer = await this.audioLoader.loadAsync(
-                gameAssetDataTextValue(asset, 'music_url')!);
+            const songs = await this.#setupSongsBufferSet(asset);
 
-            this.musicRef = this.fixAudioMng.create(songBuffer, true, 0.1);
+            this.songRefs = new Map([
+                ["main", this.fixAudioMng.create(songs.get("main")!, true, 0.1)],
+                ["over", this.fixAudioMng.create(songs.get("over")!, true, 0.1)],
+                ["victory", this.fixAudioMng.create(songs.get("victory")!, true, 0.1)],
+            ]);
 
             obj.userData = {
                 isMap: true,
@@ -389,7 +422,7 @@ export class ThreeGameRenderer {
                 isPlayer: true,
                 num: gameAssetDataU32Value(asset, 'num')!,
                 animations: gltf.animations,
-                audioBufferSet: await this.#setupAudioBufferSet(asset),
+                audioBufferSet: await this.#setupSfxsBufferSet(asset),
             };
 
             obj.scale.multiplyScalar(0.01);
@@ -412,7 +445,7 @@ export class ThreeGameRenderer {
                 isNpc: true,
                 num: gameAssetDataU32Value(asset, 'num')!,
                 animations: gltf.animations,
-                audioBufferSet: await this.#setupAudioBufferSet(asset),
+                audioBufferSet: await this.#setupSfxsBufferSet(asset),
             };
 
             obj.scale.multiplyScalar(0.011);

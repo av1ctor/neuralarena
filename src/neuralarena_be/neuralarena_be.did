@@ -39,7 +39,12 @@ type GameMap = record {
   description : text;
   version : float32;
 };
-type GameMapUrls = record { model : text; music : text; image : text };
+type GameMapMusicUrls = record { main : text; over : text; victory : text };
+type GameMapUrls = record {
+  model : text;
+  music : GameMapMusicUrls;
+  image : text;
+};
 type GameRequest = record { canister_id : principal };
 type GameResponse = record {
   id : text;
