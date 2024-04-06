@@ -181,7 +181,7 @@ export class ThreeGameRenderer {
         camera.add(listener);
 
         //FIXME: this should be defined at the GLTF
-        const fillLight1 = new THREE.HemisphereLight(0xffffff, 0x888888, 2.0);
+        const fillLight1 = new THREE.HemisphereLight(0x88ccee, 0xffffff, 2.0);
         fillLight1.position.set(0.0, 300.0, 0.0);
         scene.add(fillLight1);
 
@@ -361,6 +361,22 @@ export class ThreeGameRenderer {
         return res;
     }
 
+    #shadowish(
+        obj: THREE.Group<THREE.Object3DEventMap>
+    ) {
+        if((obj as any).isMesh) {
+            obj.castShadow = true;
+            obj.receiveShadow = true;
+        }
+
+        obj.traverse(child => {
+            if((child as any).isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+    }
+
     async load_asset(
         asset_ref: number,
         asset: Asset
@@ -410,12 +426,7 @@ export class ThreeGameRenderer {
             const gltf = await this.nftModelLoader.loadAsync(
                 gameAssetDataTextValue(asset, 'model_url')!);
             const obj = gltf.scene;
-            obj.traverse(child => {
-                if((child as any).isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                }
-            });
+            this.#shadowish(obj);
             obj.visible = false;
 
             obj.userData = {
@@ -433,12 +444,7 @@ export class ThreeGameRenderer {
             const gltf = await this.gameModelLoader.loadAsync(
                 gameAssetDataTextValue(asset, 'model_url')!);
             const obj = gltf.scene;
-            obj.traverse(child => {
-                if((child as any).isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                }
-            });
+            this.#shadowish(obj);
             obj.visible = false;
 
             obj.userData = {
@@ -456,12 +462,7 @@ export class ThreeGameRenderer {
             const gltf = await this.gameModelLoader.loadAsync(
                 gameAssetDataTextValue(asset, 'model_url')!);
             const obj = gltf.scene;
-            obj.traverse(child => {
-                if((child as any).isMesh) {
-                    child.castShadow = true;
-                    child.receiveShadow = true;
-                }
-            });
+            this.#shadowish(obj);
             obj.visible = false;
             
             this.scene.add(obj);
