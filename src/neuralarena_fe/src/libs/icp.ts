@@ -226,7 +226,10 @@ export const createActor = <T>(
     idlFactory: IDL.InterfaceFactory, 
     options: any
 ): T => {
-    const agent = options.agent || new HttpAgent({ ...options.agentOptions });
+    const agent = options.agent || new HttpAgent({ 
+        host: config.isProduction? 'https://icp-api.io': undefined,
+        ...options.agentOptions,
+    });
   
     if (process.env.DFX_NETWORK !== "ic") {
         agent.fetchRootKey().catch((err: any) => {

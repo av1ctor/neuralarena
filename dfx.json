@@ -24,6 +24,20 @@
         "env_override": ""
       }
     },
+    "neuralarena_docs": {
+      "build": [
+        "./scripts/prod/31-docs-build.sh"
+      ],
+      "source": [
+        "dist/neuralarena-docs/"
+      ],
+      "type": "assets",
+      "gzip": true,
+      "declarations": {
+        "bindings": null,
+        "env_override": ""
+      }
+    },
     "internet_identity": {
       "type": "custom",
       "candid": "https://github.com/dfinity/internet-identity/releases/latest/download/internet_identity.did",
