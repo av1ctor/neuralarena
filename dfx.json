@@ -5,7 +5,10 @@
       "package": "neuralarena_be",
       "type": "rust",
       "optimize": "O4",
-      "gzip": true
+      "gzip": true,
+      "declarations": {
+        "bindings": ["js", "ts"]
+      }
     },
     "neuralarena_fe": {
       "site": {
@@ -15,7 +18,11 @@
         "dist/neuralarena_fe/"
       ],
       "type": "assets",
-      "gzip": true
+      "gzip": true,
+      "declarations": {
+        "bindings": null,
+        "env_override": ""
+      }
     },
     "internet_identity": {
       "type": "custom",
@@ -25,6 +32,9 @@
         "id": {
           "ic": "rdmx6-jaaaa-aaaaa-aaadq-cai"
         }
+      },
+      "declarations": {
+        "bindings": ["js", "ts"]
       }
     },
     "icp_ledger_canister": {
@@ -35,6 +45,9 @@
         "id": {
           "ic": "ryjl3-tyaaa-aaaaa-aaaba-cai"
         }
+      },
+      "declarations": {
+        "bindings": ["js", "ts"]
       }
     }
   },

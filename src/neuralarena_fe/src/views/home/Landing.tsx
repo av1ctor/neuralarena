@@ -1,10 +1,11 @@
 import React, { useCallback } from "react";
 import { createStyles, Image, Container, Title, Button, Group, Text, List, ThemeIcon, rem, Space } from '@mantine/core';
-import { IconBook, IconBrandGithub, IconCheck, IconUser, IconUserPlus } from '@tabler/icons-react';
+import { IconBook, IconCheck, IconUser, IconUserPlus } from '@tabler/icons-react';
 import { useBrowser } from "@hooks/browser";
 import { TopGames } from "@views/games/Top";
 import logo from "@assets/logo-vert.svg";
 import { useAuth } from "@hooks/auth";
+import { config } from "../../config";
   
 const useStyles = createStyles((theme) => ({
     inner: {
@@ -74,7 +75,7 @@ const Landing = () => {
     const {user} = useAuth();
 
     const handleReadWhitepaper = useCallback(() => {
-        window.open("https://docs.neuralrena.ai/whitepaper/intro", "blank");
+        window.open(config.WHITEPAPER_URL, "blank");
     }, []);
 
     const handleSignup = useCallback(() => {

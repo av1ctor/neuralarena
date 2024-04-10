@@ -16,6 +16,12 @@ export const config = {
     APP_URL: isProduction?
         process.env.VITE_APP_URL:
         process.env.VITE_APP_URL_LOCAL,
+    DEVDOCS_URL: isProduction?
+        process.env.VITE_DEVDOCS_URL:
+        process.env.VITE_DEVDOCS_URL_LOCAL,
+    WHITEPAPER_URL: isProduction?
+        process.env.VITE_WHITEPAPER_URL:
+        process.env.VITE_WHITEPAPER_URL_LOCAL,
     ICP_LEDGER_CANISTER_ID: 
         process.env.VITE_ICP_LEDGER_CANISTER_ID?
             Principal.fromText(process.env.VITE_ICP_LEDGER_CANISTER_ID):

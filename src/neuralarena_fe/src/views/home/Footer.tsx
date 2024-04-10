@@ -2,6 +2,7 @@ import React from 'react';
 import { Anchor, Center, Container, Divider, Grid, Space, Stack, Text } from '@mantine/core';
 import { IconBrandGithubFilled, IconBrandTwitterFilled } from '@tabler/icons-react';
 import poweredBy from "@assets/powered-by.svg";
+import { config } from '../../config';
 
 interface Props {
 }
@@ -25,10 +26,16 @@ const AppFooter = (props: Props) => {
             <Grid pt="md">
                 <Grid.Col span={4}>
                     <Stack>
-                        <Anchor href="http://docs.neuralarena.ai/whitepaper/intro">
+                        <Anchor 
+                            href={config.WHITEPAPER_URL} 
+                            target="_blank"
+                        >
                             Whitepaper
                         </Anchor>
-                        <Anchor href="http://docs.neuralarena.ai/docs/main">
+                        <Anchor 
+                            href={config.DEVDOCS_URL} 
+                            target="_blank"
+                        >
                             Dev docs
                         </Anchor>
                     </Stack>
