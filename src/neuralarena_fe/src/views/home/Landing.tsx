@@ -1,9 +1,10 @@
 import React, { useCallback } from "react";
 import { createStyles, Image, Container, Title, Button, Group, Text, List, ThemeIcon, rem, Space } from '@mantine/core';
-import { IconBrandGithub, IconCheck, IconUserPlus } from '@tabler/icons-react';
+import { IconBook, IconBrandGithub, IconCheck, IconUser, IconUserPlus } from '@tabler/icons-react';
 import { useBrowser } from "@hooks/browser";
 import { TopGames } from "@views/games/Top";
 import logo from "@assets/logo-vert.svg";
+import { useAuth } from "@hooks/auth";
   
 const useStyles = createStyles((theme) => ({
     inner: {
@@ -69,14 +70,19 @@ const useStyles = createStyles((theme) => ({
 
 const Landing = () => {
     const { classes } = useStyles();
-    const {redirectToSignup} = useBrowser();
+    const {redirectToSignup, navigateToUserPage} = useBrowser();
+    const {user} = useAuth();
 
-    const handleViewSourceCode = useCallback(() => {
-        window.open("https://github.com/av1ctor/neuralarena", "blank");
+    const handleReadWhitepaper = useCallback(() => {
+        window.open("https://docs.neuralrena.ai/whitepaper/intro", "blank");
     }, []);
 
     const handleSignup = useCallback(() => {
         redirectToSignup();
+    }, []);
+
+    const handleShowUserPage = useCallback(() => {
+        navigateToUserPage();
     }, []);
 
     return (
@@ -87,7 +93,7 @@ const Landing = () => {
                         Play <span className={classes.highlight}>games</span> with your AI bot and win incredible prizes!
                     </Title>
                     <Text color="dimmed" mt="md" className={classes.subtitle}>
-                        Neural Arena is a decentralized game platform where users play against each other using their AI bots
+                        <b>Neural Arena</b> is a decentralized web3 game platform, pioneering a world-first approach where users deploy their <b>AI-enhanced NFT characters (AI players)</b> to compete against each other in matches to <b>improve their NFT's experience</b> (XP) and to <b>win prizes</b> in crypto
                     </Text>
 
                     <List
@@ -101,31 +107,49 @@ const Landing = () => {
                         }
                     >
                         <List.Item className={classes.item}>
-                            <b>On-chain</b> – Neural Arena is a decentralized web3 app, running 100% on-chain on the Internet Computer. The app under control of its DAO owners.
+                            Each <b>NFT</b> contains the visual features (the 3d model with animations) and the skills (the weights and bias of its <b>artificial neural network</b>) trained using <b>deep reinforcement learning</b>(RL). All the contents (the NN data, the 3d model and the sound effects) are <b>stored on-chain</b>.
                         </List.Item>
                         <List.Item className={classes.item}>
-                            <b>Open-source</b> – released under GPL license, anyone can verify the source code and contribute to the app.
+                            All games <b>run 100% on-chain</b> to ensure no match can be manipulated as there are no external interferences, making hacking impossible.
+                        </List.Item>
+                        <List.Item className={classes.item}>
+                            The platform is <b>independent</b> of the games and NFT's hosted. Developers will soon be able to <b>publish their own games and NFT collections</b> using our Canister Development Kit (CDK) and our NFT generator.
+                        </List.Item>
+                        <List.Item className={classes.item}>
+                            Neural Arena will be fully <b>open-source</b> upon the launch of its SNS Decentralized Autonomous Organization (DAO). 
                         </List.Item>
                     </List>
 
                     <Group mt={30}>
-                        <Button 
-                            variant="gradient"
-                            radius="xl" 
-                            size="md" 
-                            className={classes.control}
-                            onClick={handleSignup}
-                        >
-                            <IconUserPlus size="1rem" />&nbsp;Create an account
-                        </Button>
+                        {!user?
+                            <Button 
+                                variant="gradient"
+                                radius="xl" 
+                                size="md" 
+                                className={classes.control}
+                                onClick={handleSignup}
+                            >
+                                <IconUserPlus size="1rem" />&nbsp;Create an account
+                            </Button>
+                        :
+                            <Button 
+                                variant="gradient"
+                                radius="xl" 
+                                size="md" 
+                                className={classes.control}
+                                onClick={handleShowUserPage}
+                            >
+                                <IconUser size="1rem" />&nbsp;See your page
+                            </Button>
+                        }
                         <Button 
                             variant="default" 
                             radius="xl" 
                             size="md" 
                             className={classes.control}
-                            onClick={handleViewSourceCode}
+                            onClick={handleReadWhitepaper}
                         >
-                            <IconBrandGithub size="1rem" />&nbsp;View source code
+                            <IconBook size="1rem" />&nbsp;Read our whitepaper
                         </Button>
                     </Group>
                 </div>

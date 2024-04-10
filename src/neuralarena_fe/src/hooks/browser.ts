@@ -8,7 +8,8 @@ interface BrowserProps {
     navigateTo: (page: string) => void;
     redirectToLogin: () => void;
     redirectToSignup: () => void;
-    redirectToHome: () => void;
+    navigateToHome: () => void;
+    navigateToUserPage: () => void;
 };
 
 export const useBrowser = (): BrowserProps => {
@@ -35,8 +36,12 @@ export const useBrowser = (): BrowserProps => {
         navigate(`/users/signup?return=${window.location.hash.replace('#', '')}`);
     }, []);
 
-    const redirectToHome = useCallback(() => {
+    const navigateToHome = useCallback(() => {
         navigate("/");
+    }, []);
+
+    const navigateToUserPage = useCallback(() => {
+        navigate("/users");
     }, []);
     
     return {
@@ -45,6 +50,7 @@ export const useBrowser = (): BrowserProps => {
         navigateTo,
         redirectToLogin,
         redirectToSignup,
-        redirectToHome,
+        navigateToHome,
+        navigateToUserPage,
     };
 };

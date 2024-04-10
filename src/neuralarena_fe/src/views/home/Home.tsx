@@ -20,8 +20,6 @@ import bgBlack from "@assets/bg-black.svg";
 import bgWhite from "@assets/bg-white.svg";
 import { NftCollection } from "@views/nft_cols/Collection/Collection";
 import { UserPage } from "@views/users/user/Page";
-import { AboutUs } from "./AboutUs";
-import { Whitepaper } from "./Whitepaper";
 import { Policies } from "./Policies";
 import { Privacy } from "./Privacy";
 import { UserWallet } from "@views/users/user/Wallet";
@@ -75,8 +73,6 @@ const Home = (props: Props) => {
                         <Route path="/users/matches" element={<UserMatches />} />
                         <Route path="/users/profile" element={<Profile />} />
                         <Route path="/users/wallet" element={<UserWallet />} />
-                        <Route path="/about" element={<AboutUs />} />
-                        <Route path="/whitepaper" element={<Whitepaper />} />
                         <Route path="/policies" element={<Policies />} />
                         <Route path="/privacy" element={<Privacy />} />
                         <Route path="/" element={<Front />} />

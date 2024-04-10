@@ -25,11 +25,11 @@ const AppFooter = (props: Props) => {
             <Grid pt="md">
                 <Grid.Col span={4}>
                     <Stack>
-                        <Anchor href="#/about">
-                            About us
-                        </Anchor>
-                        <Anchor href="#/whitepaper">
+                        <Anchor href="http://docs.neuralarena.ai/whitepaper/intro">
                             Whitepaper
+                        </Anchor>
+                        <Anchor href="http://docs.neuralarena.ai/docs/main">
+                            Dev docs
                         </Anchor>
                     </Stack>
                 </Grid.Col>

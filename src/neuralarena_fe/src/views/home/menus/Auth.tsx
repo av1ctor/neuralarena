@@ -13,7 +13,7 @@ interface Props {
 export const AuthMenu = (props: Props) => {
     const {isLogged, logout} = useAuth();
     const {showSuccess} = useUI();
-    const {redirectToLogin, redirectToSignup, redirectToHome} = useBrowser();
+    const {redirectToLogin, redirectToSignup, navigateToHome: redirectToHome} = useBrowser();
     
     const handleLogout = useCallback(async () => {
         if(props.onClick) {
