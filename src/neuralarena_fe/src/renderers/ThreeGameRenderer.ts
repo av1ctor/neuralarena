@@ -20,6 +20,10 @@ import { FixAudioRef, FixedAudioManager } from './utils/FixAudioMng';
 const HEALTH_BAR_WIDTH = 100.0;
 const HEALTH_BAR_HEIGHT = 10.0;
 
+const DEFAULT_CAM_ZOOM = 8.0;
+const CAM_MIN_ZOOM = 4.0;
+const CAM_MAX_ZOOM = 30.0;
+
 interface AudioBuffer {
     buffer: any;
     repeat: boolean;
@@ -47,6 +51,7 @@ export class ThreeGameRenderer {
         follow: boolean,
         auto_rotate: boolean,
         camera_angle: number;
+        camera_zoom: number;
     };
     skipping: boolean;
     font: Font;
@@ -117,6 +122,7 @@ export class ThreeGameRenderer {
             follow: pov !== undefined,
             auto_rotate: false,
             camera_angle: 0.0,
+            camera_zoom: DEFAULT_CAM_ZOOM,
         };
 
         this.skipping = false;
@@ -218,26 +224,39 @@ export class ThreeGameRenderer {
         rotate_cam?: boolean
     ) {
         if(player_num !== undefined) {
-            const players = this.models.filter(o => o.userData.isPlayer);
-            if(player_num >= 0 && player_num < players.length) {
-                if(player_num !== this.pov.player_num || rotate_cam !== this.pov.auto_rotate) {
-                    this.pov = {
-                        player_num,
-                        follow: true,
-                        auto_rotate: rotate_cam? true: false,
-                        camera_angle: 0.0,
-                    };
-                }
+            if(player_num !== this.pov.player_num || rotate_cam !== this.pov.auto_rotate) {
+                this.pov = {
+                    ...this.pov,
+                    player_num,
+                    follow: true,
+                    auto_rotate: rotate_cam? true: false,
+                    camera_angle: 0.0,
+                };
             }
         }
         else {
             this.pov = {
-                player_num: this.pov.player_num,
-                follow: this.pov.follow,
+                ...this.pov,
                 auto_rotate: false,
                 camera_angle: 0.0,
             };
         }
+    }
+
+    decZoom(
+    ) {
+        this.pov.camera_zoom = Math.max(
+            this.pov.camera_zoom - 1.0, 
+            CAM_MIN_ZOOM
+        );
+    }
+
+    incZoom(
+    ) {
+        this.pov.camera_zoom = Math.min(
+            this.pov.camera_zoom + 1.0, 
+            CAM_MAX_ZOOM
+        );
     }
 
     setSkipping(
@@ -307,6 +326,7 @@ export class ThreeGameRenderer {
                 follow: pov !== undefined,
                 auto_rotate: false,
                 camera_angle: 0.0,
+                camera_zoom: DEFAULT_CAM_ZOOM,
             };
         }
     }
@@ -668,7 +688,7 @@ export class ThreeGameRenderer {
             }
 
             if(this.pov.auto_rotate || this.pov.follow) {
-                this.camera.position.setFromSphericalCoords(8.0, 1.0, this.pov.camera_angle);
+                this.camera.position.setFromSphericalCoords(this.pov.camera_zoom, 1.0, this.pov.camera_angle);
                 this.camera.position.add(player.position);
                 this.camera.lookAt(player.position);
             }

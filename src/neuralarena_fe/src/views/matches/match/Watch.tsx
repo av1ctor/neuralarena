@@ -11,6 +11,8 @@ import { useActors } from "@hooks/actors";
 import { useUI } from "@hooks/ui";
 import gameEngineInit, {GameEngine} from "@game-engine/game-engine";
 import { 
+    IconCameraMinus,
+    IconCameraPlus,
     IconCameraRotate,
     IconPlayerPause, IconPlayerPlay, 
     IconReload, 
@@ -102,6 +104,14 @@ export const MatchWatch = (props: Props) => {
         let pov = props.pov === undefined? 0: props.pov;
         props.onChangePov((pov + 1) % props.match.players.length);
     }, [props.onChangePov, props.pov, props.match]);
+
+    const handleDecZoom = useCallback(() => {
+        renderer?.decZoom();
+    }, [renderer]);
+
+    const handleIncZoom = useCallback(() => {
+        renderer?.incZoom();
+    }, [renderer]);
 
     const handleTogglePlay = useCallback(() => {
         setState(state => {
@@ -432,6 +442,16 @@ export const MatchWatch = (props: Props) => {
                                 onClick={handleChangePov}
                             >
                                 <IconCameraRotate />
+                            </ActionIcon>
+                            <ActionIcon
+                                onClick={handleDecZoom}
+                            >
+                                <IconCameraMinus />
+                            </ActionIcon>
+                            <ActionIcon
+                                onMouseDown={handleIncZoom}
+                            >
+                                <IconCameraPlus />
                             </ActionIcon>
                         </Group>
                     </Grid.Col>
