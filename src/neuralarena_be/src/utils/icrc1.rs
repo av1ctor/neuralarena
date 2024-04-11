@@ -67,4 +67,17 @@ impl ICRC1Utils {
 
         res.map_err(|e| e.to_string())
     }
+
+    pub async fn icrc1_minting_account(
+        canister_id: &Principal
+    ) -> Result<Option<Account>, String> {
+
+        let (res, ): (Option<Account>, ) = ic_cdk::call(
+            canister_id.clone(), 
+            "icrc1_minting_account",
+            ()
+        ).await.map_err(|e| e.1)?;
+
+        Ok(res)
+    }
 }

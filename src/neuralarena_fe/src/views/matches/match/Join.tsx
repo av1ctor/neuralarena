@@ -62,7 +62,7 @@ export const MatchJoin = (props: Props) => {
     );
 
     const nfts = user?.nfts || [];
-    const cost = gameCostToPlay(props.game).value + (TRANSFER_FEE*(3n+1n));
+    const cost = gameCostToPlay(props.match?.instance.costs).value + (TRANSFER_FEE*(3n+1n));
     const okToJoin = cost <= (mainAccBalance.data || 0n)
     
     return (

@@ -1,23 +1,24 @@
 import { 
     _SERVICE as Main, 
     GameRequest, GameResponse, 
-    Pagination, Asset, GameEndCredits, AssetValue 
+    Pagination, Asset, GameEndCredits, AssetValue, 
+    GameCosts
 } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { Principal } from "@dfinity/principal";
 
 export type GameId = string;
 
 export const gameCostToPlay = (
-    game: GameResponse|undefined
+    costs: GameCosts|undefined
 ): {value: bigint; currency: string} => {
-    if(!game) {
+    if(!costs) {
         return {
             value: 0n,
             currency: 'UNK',
         }
     }
     
-    const {to_play} = game.info.costs;
+    const {to_play} = costs;
     
     if('ICP' in to_play) {
         return {

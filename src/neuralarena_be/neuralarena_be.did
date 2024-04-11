@@ -29,8 +29,10 @@ type GameInfo = record {
   description : text;
   max_players : nat64;
   version : float32;
+  rewards : GameRewards;
   category : text;
   skills : vec text;
+  subtitle : text;
 };
 type GameMap = record {
   id : nat64;
@@ -51,6 +53,7 @@ type GameResponse = record {
   info : GameInfo;
   canister_id : principal;
 };
+type GameRewards = record { winner : nat };
 type GameSceneURLs = record { model : text; music : opt text };
 type GameSfx = record {
   url : text;
@@ -102,6 +105,10 @@ type MatchGame = record {
   map_id : nat64;
   options : vec record { text; text };
 };
+type MatchGameInstanceResponse = record {
+  costs : GameCosts;
+  rewards : GameRewards;
+};
 type MatchJoinRequest = record { id : text; nft : UserNftRequest };
 type MatchPlayerNftResponse = record {
   token_id : nat;
@@ -118,6 +125,7 @@ type MatchRequest = record { game : MatchGame; deadline : nat64 };
 type MatchResponse = record {
   id : text;
   game : MatchGame;
+  instance : MatchGameInstanceResponse;
   deadline : nat64;
   created_at : nat64;
   created_by : principal;
@@ -141,6 +149,7 @@ type Nas1Collection = record {
   version : float32;
   assets_url : text;
   skills : vec text;
+  subtitle : text;
 };
 type Nas1Token = record {
   xp : nat64;

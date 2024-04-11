@@ -10,7 +10,7 @@ pub const TRANSFER_FEE: u128 = 10_000;
 pub struct Wallets;
 
 impl Wallets {
-    pub async fn from_main_to_reserved(
+    pub async fn transfer_from_main_to_reserved(
         owner: &Principal,
         amount: u128,
         icp_ledger_canister_id: &Principal
@@ -35,7 +35,7 @@ impl Wallets {
         }).await
     }
 
-    pub async fn from_reserved_to_main(
+    pub async fn transfer_from_reserved_to_main(
         from: &Principal,
         to: Option<&Principal>,
         amount: u128,
@@ -64,5 +64,32 @@ impl Wallets {
             fee: None, 
             memo: None, 
         }).await
+    }
+
+    pub async fn burn_from_reserved(
+        from: &Principal,
+        amount: u128,
+        icp_ledger_canister_id: &Principal
+    ) -> Result<Option<u128>, String> {
+        let from_subaccount = Some(
+            ICRC1Utils::get_subaccount(from, RESERVED_SUBSUB_ACCOUNT)
+        );
+        
+        let burn_account = ICRC1Utils::icrc1_minting_account(icp_ledger_canister_id).await?;
+
+        if let Some(to) = burn_account {
+            let tx = ICRC1Utils::transfer(icp_ledger_canister_id, TransferArg { 
+                from_subaccount, 
+                to, 
+                amount: Nat::from(amount),
+                created_at_time: Some(ic_cdk::api::time()), 
+                fee: None, 
+                memo: None, 
+            }).await?;
+            Ok(Some(tx))
+        }
+        else {
+            Ok(None)
+        }
     }
 }

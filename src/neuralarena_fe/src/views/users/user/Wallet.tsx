@@ -44,13 +44,6 @@ export const UserWallet = (props: Props) => {
             principalToSubAccount(user?.id, MAIN_SUB_ACCOUNT)
         )
     );
-    const reservedAccBalance = useIcrc1GetBallance(
-        icpLedger, 
-        principalToAccountId(
-            ids.main,
-            principalToSubAccount(user?.id, RESERVED_SUB_ACCOUNT)
-        )
-    );
 
     if(!user) {
         return null;
@@ -100,8 +93,8 @@ export const UserWallet = (props: Props) => {
 
                 <Grid.Col md={6}>
                     <TextInput
-                        label="Neural Arena balance (reserved/main)"
-                        value={`${e8sToDecimal(reservedAccBalance.data || 0n)}/${e8sToDecimal(mainAccBalance.data || 0n)}`}
+                        label="Neural Arena balance"
+                        value={e8sToDecimal(mainAccBalance.data || 0n)}
                         readOnly
                         icon={<IconCoin size="1rem" />}
                     />

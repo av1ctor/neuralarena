@@ -1,9 +1,9 @@
 use std::collections::HashMap;
 use candid::{CandidType, Principal};
 use neuralarena_cdk::models::{
-    nas1_types::Nas1Token,
-    instance::{InstanceRunSlice, InstancePlayer},
-    game::GameMapId
+    game::{GameCost, GameCosts, GameMapId, GameRewards}, 
+    instance::{InstancePlayer, InstanceRunSlice}, 
+    nas1_types::Nas1Token
 };
 use serde::{Serialize, Deserialize};
 use super::{game::GameId, timer::TimerId};
@@ -35,6 +35,8 @@ pub enum MatchStatus {
 pub struct MatchGameInstance {
     pub id: String,
     pub map_id: usize,
+    pub costs: GameCosts,
+    pub rewards: GameRewards,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -91,10 +93,17 @@ pub struct MatchStateResponse {
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
+pub struct MatchGameInstanceResponse {
+    pub costs: GameCosts,
+    pub rewards: GameRewards,
+}
+
+#[derive(Clone, Serialize, Deserialize, CandidType)]
 pub struct MatchResponse {
     pub id: String,
     pub state: MatchStateResponse,
     pub game: MatchGame,
+    pub instance: MatchGameInstanceResponse,
     pub players: Vec<MatchPlayerResponse>,
     pub created_at: u64,
     pub created_by: UserId,
@@ -129,6 +138,12 @@ impl Match {
             instance: MatchGameInstance {
                 id: "".to_string(),
                 map_id: 0,
+                costs: GameCosts{
+                    to_play: GameCost::ICP(0),
+                },
+                rewards: GameRewards{
+                    winner: 0,
+                },
             },
             timer_id: None,
             deadline: req.deadline,
@@ -154,6 +169,10 @@ impl From<Match> for MatchResponse {
                 run_slices: e.state.run_slices,
             },
             game: e.game,
+            instance: MatchGameInstanceResponse {
+                costs: e.instance.costs,
+                rewards: e.instance.rewards,
+            },
             players: e.state.players.iter().map(|p| MatchPlayerResponse {
                 id: p.id,
                 score: p.state.score,
@@ -170,7 +189,6 @@ impl From<Match> for MatchResponse {
             started_at: e.started_at,
             won_at: e.won_at,
             won_by: e.won_by,
-            
         }
     }
 }

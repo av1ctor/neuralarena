@@ -93,7 +93,7 @@ export const MatchCreate = (props: Props) => {
             .map(g => ({
                 label: g.info.name,
                 value: g.id,
-                description: g.info.description,
+                description: g.info.subtitle,
                 image: g.info.urls.cover,
             }));
     }, [gamesQuery.data]);

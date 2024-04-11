@@ -1,7 +1,7 @@
 use candid::Principal;
 use neuralarena_cdk::{
     models::game::{
-        GameCost, GameEndCredits, GameInfo, GameInfoResponse
+        GameEndCredits, GameInfo, GameInfoResponse
     },
     db::traits::crud::{Crud, CrudSubscribable, Pagination},
     utils::uniqueid
@@ -12,6 +12,8 @@ use crate::models::{
     staff::StaffRole,
     user::{User, UserKind}
 };
+
+use super::matches::MAX_GAME_DIST;
 
 pub struct GamesService {}
 
@@ -38,6 +40,10 @@ impl GamesService {
         Self::authorize(user)?;
 
         let info = Self::get_info(req.canister_id).await?;
+
+        if info.rewards.winner > MAX_GAME_DIST {
+            return Err(format!("Winner reward higher than max game distribution: {} > {}", info.rewards.winner, MAX_GAME_DIST));
+        }
 
         let id = uniqueid::generate();
         Ok(Game::new(&id, &req, &info, &user.id))
@@ -138,15 +144,6 @@ impl GamesService {
         ).await.map_err(|e| e.1)?;
 
         res
-    }
-
-    pub fn get_cost_to_play(
-        game: &Game
-    ) -> Result<u128, String> {
-        match game.info.costs.to_play {
-            GameCost::USD(_) => Err("Currency USD is not supported yet".to_string()),
-            GameCost::ICP(value) => Ok(value),
-        }
     }
 
     fn authorize(

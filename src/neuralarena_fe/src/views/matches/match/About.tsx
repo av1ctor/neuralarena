@@ -1,9 +1,10 @@
 import React from "react";
 import { GameResponse, MatchResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { Grid, TextInput } from "@mantine/core";
-import { principalToString } from "@libs/icp";
+import { e8sToDecimal, principalToString } from "@libs/icp";
 import { timeToNow } from "@libs/time";
 import { matchStatusToString } from "@libs/matches";
+import { gameCostToPlay } from "@libs/games";
 
 interface Props {
     match: MatchResponse|undefined;
@@ -12,6 +13,10 @@ interface Props {
 
 export const MatchAbout = (props: Props) => {
     const {match, game} = props;
+
+    const costToPlay = match? 
+        gameCostToPlay(match.instance.costs): 
+        {value: 0n, currency: ''};
 
     return (
         <Grid>
@@ -35,6 +40,22 @@ export const MatchAbout = (props: Props) => {
                 <TextInput
                     label="Game id"
                     value={match?.game.id || ''}
+                    readOnly
+                />
+            </Grid.Col>
+
+            <Grid.Col md={6}>
+                <TextInput
+                    label="Cost to play"
+                    value={`${e8sToDecimal(costToPlay.value)} ${costToPlay.currency}`}
+                    readOnly
+                />
+            </Grid.Col>
+
+            <Grid.Col md={6}>
+                <TextInput
+                    label="Winner reward"
+                    value={`${match?.instance.rewards.winner.toString() || '0'}%`}
                     readOnly
                 />
             </Grid.Col>

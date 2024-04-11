@@ -3,6 +3,7 @@ use candid::Principal;
 use neuralarena_cdk::{
     db::traits::crud::{Crud, CrudSubscribable, Pagination},
     models::{
+        game::GameCost, 
         ic_asset_types::{GetRequest, GetResponse}, 
         instance::{
             InstanceAssetsResponse, InstanceId, InstancePlayer, 
@@ -15,7 +16,7 @@ use neuralarena_cdk::{
 use crate::{
     models::{
         game::{Game, GameId}, 
-        m4tch::{Match, MatchId, MatchRequest, MatchStatus}, 
+        m4tch::{Match, MatchGameInstance, MatchId, MatchRequest, MatchStatus}, 
         nftcol::NftCollection, 
         user::{User, UserNftRequest}
     }, 
@@ -24,13 +25,16 @@ use crate::{
 };
 use crate::db::DB;
 use crate::models::user::UserKind;
-use super::{games::GamesService, wallets::TRANSFER_FEE};
+use super::wallets::TRANSFER_FEE;
 
 const MIN_PLAYERS: usize = 2;
 const MAX_STEPS: usize = (60 * 10) * 60;    // 10 minutes at 60 FPS, 20 minutes at 30 FPS, etc
 const MIN_OPENED: u64 = 60 * 60 * 01;       // one hour
 const MAX_OPENED: u64 = 60 * 60 * 24 * 7;   // one week
-const FEE: u128 = 30;                       // %
+
+pub const MAX_GAME_DIST: u128 = 85;         // * 100
+const PLATFORM_FEE: u128 = 10;              // * 100
+const BURNING_FEE: u128 = 05;               // * 100
 
 pub struct MatchesService {}
 
@@ -86,8 +90,12 @@ impl MatchesService {
         match res {
             Err(msg) => Err(msg),
             Ok(id) => {
-                m4tch.instance.id = id;
-                m4tch.instance.map_id = m4tch.game.map_id;
+                m4tch.instance = MatchGameInstance{
+                    id,
+                    map_id: m4tch.game.map_id,
+                    costs: game.info.costs.clone(),
+                    rewards: game.info.rewards.clone(),
+                };
                 Ok(m4tch)
             }
         } 
@@ -247,9 +255,9 @@ impl MatchesService {
             }
             
             // reserve the amount needed to play
-            let amount = GamesService::get_cost_to_play(game)?;
+            let amount = Self::get_cost_to_play(&m4tch)?;
             
-            Wallets::from_main_to_reserved(
+            Wallets::transfer_from_main_to_reserved(
                 &user.id, amount, &icp_ledger_canister_id
             ).await?;
             
@@ -306,28 +314,69 @@ impl MatchesService {
         Ok(())
     }
 
+    fn get_cost_to_play(
+        m4tch: &Match,
+    ) -> Result<u128, String> {
+        match m4tch.instance.costs.to_play {
+            GameCost::USD(_) => Err("Currency USD is not supported yet".to_string()),
+            GameCost::ICP(value) => Ok(value),
+        }
+    }
+
     async fn transfer_balances(
         icp_ledger_canister_id: &Principal,
-        players: &Vec<InstancePlayer>,
-        game: &Game
+        m4tch: &Match,
+        game_canister_id: &Principal,
+        winner: &Option<Principal>
     ) -> Result<(), String> {
-        let amount = GamesService::get_cost_to_play(game)?;
+        let amount = Self::get_cost_to_play(m4tch)?;
         
-        // transfer from players' reserved accounts to game's main account and the fee to treasury's main account
-        for player in players {
-            Wallets::from_reserved_to_main(
-                &player.id, 
-                Some(&game.canister_id), 
-                (amount * (100 - FEE)) / 100,
-                icp_ledger_canister_id
-            ).await?;
+        let game_cut = (amount * (MAX_GAME_DIST - if winner.is_some() {m4tch.instance.rewards.winner} else {0})) / 100;
+        let winner_reward = if winner.is_some() && m4tch.instance.rewards.winner > 0 {Some((amount * m4tch.instance.rewards.winner) / 100)} else {None};
+        let platform_fee = (amount * PLATFORM_FEE) / 100;
+        let to_burn = (amount * BURNING_FEE) / 100;
+
+        for player in &m4tch.state.players {
+            // give game its cut
+            if game_cut > TRANSFER_FEE {
+                Wallets::transfer_from_reserved_to_main(
+                    &player.id, 
+                    Some(game_canister_id), 
+                    game_cut,
+                    icp_ledger_canister_id
+                ).await?;
+            }
             
-            Wallets::from_reserved_to_main(
-                &player.id, 
-                None, 
-                (amount * FEE) / 100,
-                icp_ledger_canister_id
-            ).await?;
+            // collect platform fee
+            if platform_fee > TRANSFER_FEE {
+                Wallets::transfer_from_reserved_to_main(
+                    &player.id, 
+                    None, 
+                    platform_fee,
+                    icp_ledger_canister_id
+                ).await?;
+            }
+
+            // reward winner
+            if let Some(winner_cut) = winner_reward {
+                if winner_cut > TRANSFER_FEE {
+                    Wallets::transfer_from_reserved_to_main(
+                        &player.id, 
+                        winner.as_ref(), 
+                        winner_cut,
+                        icp_ledger_canister_id
+                    ).await?;
+                }
+            }
+
+            // burn
+            if to_burn > TRANSFER_FEE {
+                Wallets::burn_from_reserved(
+                    &player.id,
+                    to_burn,
+                    icp_ledger_canister_id
+                ).await?;
+            }
         }
 
         Ok(())
@@ -408,8 +457,9 @@ impl MatchesService {
             Ok(result) => {
                 Self::transfer_balances(
                     icp_ledger_canister_id,
-                    &m4tch.state.players,
-                    game
+                    m4tch,
+                    &game.canister_id,
+                    &result.won_by
                 ).await?;
         
                 m4tch.won_by = result.won_by;
@@ -479,18 +529,19 @@ impl MatchesService {
 
     pub async fn reimburse(
         m4tch: &Match,
-        game: &Game,
         icp_ledger_canister_id: &Principal
     ) -> Result<(), String> {
-        let amount = GamesService::get_cost_to_play(game)?;
+        let amount = Self::get_cost_to_play(m4tch)?;
         
         for player in &m4tch.state.players {
-            Wallets::from_reserved_to_main(
-                &player.id, 
-                Some(&player.id), 
-                amount - (TRANSFER_FEE*2),
-                icp_ledger_canister_id
-            ).await?;
+            if amount > TRANSFER_FEE {
+                Wallets::transfer_from_reserved_to_main(
+                    &player.id, 
+                    Some(&player.id), 
+                    amount - (TRANSFER_FEE*2),
+                    icp_ledger_canister_id
+                ).await?;
+            }
         }
 
         Ok(())

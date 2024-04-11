@@ -27,7 +27,7 @@ export const GameAbout = (props: Props) => {
     const credits = useGameGetEndCredits(game?.id);
 
     const costToPlay = game? 
-        gameCostToPlay(game): 
+        gameCostToPlay(game.info.costs): 
         {value: 0n, currency: ''};
 
     return (
@@ -71,18 +71,26 @@ export const GameAbout = (props: Props) => {
                         />
                     </Grid.Col>
 
-                    <Grid.Col md={6}>
+                    <Grid.Col md={12}>
                         <TextInput
-                            label="Min/Max players"
-                            value={`${game?.info.min_players||0}/${game?.info.max_players||0}`}
+                            label="Subtitle"
+                            value={game?.info.subtitle || ''}
                             readOnly
                         />
                     </Grid.Col>
 
                     <Grid.Col md={6}>
                         <TextInput
-                            label="FPS"
-                            value={game?.info.fps||60}
+                            label="Min players"
+                            value={game?.info.min_players.toString()||'0'}
+                            readOnly
+                        />
+                    </Grid.Col>
+
+                    <Grid.Col md={6}>
+                        <TextInput
+                            label="Max players"
+                            value={game?.info.max_players.toString()||'0'}
                             readOnly
                         />
                     </Grid.Col>
@@ -97,8 +105,24 @@ export const GameAbout = (props: Props) => {
 
                     <Grid.Col md={6}>
                         <TextInput
+                            label="FPS"
+                            value={game?.info.fps||60}
+                            readOnly
+                        />
+                    </Grid.Col>
+
+                    <Grid.Col md={6}>
+                        <TextInput
                             label="Cost to play"
                             value={`${e8sToDecimal(costToPlay.value)} ${costToPlay.currency}`}
+                            readOnly
+                        />
+                    </Grid.Col>
+
+                    <Grid.Col md={6}>
+                        <TextInput
+                            label="Winner reward"
+                            value={`${game?.info.rewards.winner.toString() || '0'}%`}
                             readOnly
                         />
                     </Grid.Col>

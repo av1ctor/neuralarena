@@ -747,7 +747,7 @@ async fn _run_match_after_time_expired(
         );
 
         MatchesService::reimburse(
-            &m4tch, &game, &icp_ledger_canister_id
+            &m4tch, &icp_ledger_canister_id
         ).await.unwrap();
     }
     else {

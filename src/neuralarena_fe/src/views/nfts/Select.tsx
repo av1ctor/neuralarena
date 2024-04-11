@@ -59,7 +59,7 @@ export const SelectNft = (props: Props) => {
             .map(c => ({
                 label: c.meta.name,
                 value: c.id.toString(),
-                description: c.meta.desc,
+                description: c.meta.nas1.subtitle,
                 image: c.meta.logo,
             }));
     }, [nft_cols.data]);

@@ -22,7 +22,7 @@ const useStyles = createStyles((theme) => ({
         textTransform: 'uppercase',
     },
 
-    description: {
+    subtitle: {
         color: theme.white,
         backgroundColor: theme.primaryColor,
         padding: '0 1rem',
@@ -66,8 +66,8 @@ export const GameCard = (props: Props) => {
                 </Center>
                 <Center>
                     <Text
-                        className={classes.description}>
-                        {info.description}
+                        className={classes.subtitle}>
+                        {info.subtitle}
                     </Text>
                 </Center>
             </Container>

@@ -10,7 +10,7 @@ export const useStyles = createStyles((theme) => ({
         fontSize: rem(64),
     },
 
-    description: {
+    subtitle: {
         color: theme.white,
         backgroundColor: theme.primaryColor,
         padding: '0 1rem',
@@ -42,8 +42,8 @@ export const NftCollectionCard = (props: Props) => {
                     {col.meta.name}
                 </Text>
                 <Text
-                    className={classes.description}>
-                    {col.meta.desc}
+                    className={classes.subtitle}>
+                    {col.meta.nas1.subtitle}
                 </Text>
             </Container>
         </CoverCard>

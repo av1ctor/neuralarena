@@ -83,6 +83,14 @@ export const NftCollectionAbout = (props: Props) => {
             </Grid.Col>
 
             <Grid.Col md={12}>
+                <TextInput
+                    label="Subtitle"
+                    value={col?.meta.nas1.subtitle || ''}
+                    readOnly
+                />
+            </Grid.Col>
+
+            <Grid.Col md={12}>
                 <Textarea
                     label="Description"
                     value={col?.meta.desc || ''}
