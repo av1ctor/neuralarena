@@ -140,7 +140,7 @@ const Landing = () => {
                                 className={classes.control}
                                 onClick={handleShowUserPage}
                             >
-                                <IconUser size="1rem" />&nbsp;See your page
+                                <IconUser size="1rem" />&nbsp;Go to your page
                             </Button>
                         }
                         <Button 
