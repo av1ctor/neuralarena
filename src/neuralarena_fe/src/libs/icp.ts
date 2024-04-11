@@ -224,14 +224,14 @@ export const decimalToE8s = (
 export const createActor = <T>(
     canisterId: string,
     idlFactory: IDL.InterfaceFactory, 
-    options: any
+    options?: any
 ): T => {
-    const agent = options.agent || new HttpAgent({ 
-        host: config.isProduction? 'https://icp-api.io': undefined,
-        ...options.agentOptions,
+    const agent = options?.agent || new HttpAgent({ 
+        host: config.IC_GATEWAY,
+        ...options?.agentOptions,
     });
   
-    if (process.env.DFX_NETWORK !== "ic") {
+    if(!config.isProduction) {
         agent.fetchRootKey().catch((err: any) => {
             console.warn(
             "Unable to fetch root key. Check to ensure that your local replica is running"
@@ -245,7 +245,7 @@ export const createActor = <T>(
         {
             agent,
             canisterId,
-            ...options.actorOptions,
+            ...options?.actorOptions,
         }
     );
   };

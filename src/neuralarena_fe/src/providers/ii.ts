@@ -1,7 +1,5 @@
-import { ActorSubclass, Identity } from "@dfinity/agent";
+import { Identity } from "@dfinity/agent";
 import { AuthClient } from "@dfinity/auth-client";
-import { canisterId as mainCanisterId, idlFactory as mainIdlFactory } from "@declarations/neuralarena_be";
-import { canisterId as siteCanisterId } from "@declarations/neuralarena_fe";
 import { ICProvider } from "@interfaces/icprovider";
 import { Result } from "@interfaces/result";
 import { config } from "../config";
@@ -69,7 +67,7 @@ class InternetIdentityProvider implements ICProvider {
             this.client?.login({
                 identityProvider: config.II_URL,
                 derivationOrigin: config.isProduction?
-                     `https://${siteCanisterId}.icp0.io`: 
+                     config.APP_URL: 
                      undefined,
                 maxTimeToLive: BigInt(7 * 24) * BigInt(3_600_000_000_000), // 1 week
                 windowOpenerFeatures: `toolbar=0,location=0,menubar=0,width=${width},height=${height},top=${top},left=${left}`,

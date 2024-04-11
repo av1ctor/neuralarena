@@ -12,10 +12,10 @@
     "generate": "dfx generate neuralarena_be"
   },
   "dependencies": {
-    "@dfinity/agent": "^0.19.3",
-    "@dfinity/auth-client": "^0.19.3",
-    "@dfinity/candid": "^0.19.3",
-    "@dfinity/principal": "^0.19.3",
+    "@dfinity/agent": "^1.2.0",
+    "@dfinity/auth-client": "^1.2.0",
+    "@dfinity/candid": "^1.2.0",
+    "@dfinity/principal": "^1.2.0",
     "@emotion/react": "^11.11.1",
     "@mantine/carousel": "^6.0.18",
     "@mantine/core": "^6.0.18",

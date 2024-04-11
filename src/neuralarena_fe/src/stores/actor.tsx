@@ -27,18 +27,14 @@ export interface ActorAction {
     payload: any;
 };
 
-const options = {agentOptions: {host: config.IC_GATEWAY}};
-
 const initialState: ActorState = {
     main: createActor(
         mainCanisterId, 
-        mainIdlFactory,
-        options
+        mainIdlFactory
     ),
     icpLedger: createActor(
         config.ICP_LEDGER_CANISTER_ID!.toText(), 
-        icpLedgerIdlFactory,
-        options
+        icpLedgerIdlFactory
     ),
     ids: {
         main: Principal.fromText(mainCanisterId),
@@ -63,8 +59,7 @@ const reducer = (state: ActorState, action: ActorAction): ActorState => {
                 ...state,
                 main: createActor(
                     mainCanisterId, 
-                    mainIdlFactory,
-                    options
+                    mainIdlFactory
                 )
             };
     
@@ -79,8 +74,7 @@ const reducer = (state: ActorState, action: ActorAction): ActorState => {
                 ...state,
                 icpLedger: createActor(
                     config.ICP_LEDGER_CANISTER_ID!.toText(), 
-                    icpLedgerIdlFactory,
-                    options
+                    icpLedgerIdlFactory
                 )
             };
     
