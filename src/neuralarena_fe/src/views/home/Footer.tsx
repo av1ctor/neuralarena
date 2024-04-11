@@ -1,5 +1,5 @@
 import React from 'react';
-import { Anchor, Center, Container, Divider, Grid, Space, Stack, Text } from '@mantine/core';
+import { Anchor, Box, Center, Container, Divider, Grid, Space, Stack, Text } from '@mantine/core';
 import { IconBrandGithubFilled, IconBrandTwitterFilled } from '@tabler/icons-react';
 import poweredBy from "@assets/powered-by.svg";
 import { config } from '../../config';
@@ -72,12 +72,16 @@ const AppFooter = (props: Props) => {
                 </Grid.Col>
             </Grid>
             <Space />
-            <Center>
-                © {year} neuralarena
+            <Center mt="xl">
+                <small>
+                    © {year} neuralarena
+                </small>
             </Center>
-            <Center>
-                <Text color='pink' size="xs">Notice: this is a demo site</Text>
-            </Center>
+            <Box bg="pink" p="xs" mt="xl">
+                <Center>
+                    <Text color='white' size="xs">Notice: this site is under development and should be used for testing and demonstration only.</Text>
+                </Center>
+            </Box>
         </Container>
     );
 }

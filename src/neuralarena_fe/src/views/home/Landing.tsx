@@ -54,6 +54,10 @@ const useStyles = createStyles((theme) => ({
         flex: 1,
         display: 'flex',
         justifyContent: 'center',
+
+        [theme.fn.smallerThan('md')]: {
+            marginTop: '2rem'
+        },
     },
 
     image: {
@@ -154,6 +158,7 @@ const Landing = () => {
                         </Button>
                     </Group>
                 </div>
+
                 <div className={classes.imageContainer}>
                     <Image src={logo} className={classes.image} />
                 </div>
