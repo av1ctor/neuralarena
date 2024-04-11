@@ -38,7 +38,6 @@ export class ThreeGameRenderer {
     fixAudioMng: FixedAudioManager;
     start?: AnimScene;
     raycaster: THREE.Raycaster;
-    controls?: OrbitControls;
     clock: THREE.Clock;
     width: number;
     height: number;
@@ -48,6 +47,7 @@ export class ThreeGameRenderer {
         player_num?: number,
         follow: boolean,
         auto_rotate: boolean,
+        camera_angle: number;
     };
     skipping: boolean;
     font: Font;
@@ -66,6 +66,7 @@ export class ThreeGameRenderer {
         canvas: HTMLCanvasElement,
         game: GameInfo,
         players: MatchPlayerResponse[],
+        pov: number|undefined,
         font: Font
     ) {
         this.game = game;
@@ -105,9 +106,6 @@ export class ThreeGameRenderer {
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(this.width, this.height);
 
-        this.controls = this.renderer.domElement?
-            new OrbitControls(this.camera, this.renderer.domElement):
-            undefined;
         this.raycaster = new THREE.Raycaster();
 
         this.clock = new THREE.Clock();
@@ -116,9 +114,10 @@ export class ThreeGameRenderer {
         this.models = [];
 
         this.pov = {
-            player_num: undefined,
-            follow: false,
+            player_num: pov,
+            follow: pov !== undefined,
             auto_rotate: false,
+            camera_angle: 0.0,
         };
 
         this.skipping = false;
@@ -223,17 +222,11 @@ export class ThreeGameRenderer {
             const players = this.models.filter(o => o.userData.isPlayer);
             if(player_num >= 0 && player_num < players.length) {
                 if(player_num !== this.pov.player_num || rotate_cam !== this.pov.auto_rotate) {
-                    const player = players[player_num];
-                    this.camera.position.set(
-                        player.position.x + 0.0, 
-                        player.position.y + 5.0, 
-                        player.position.z + 5.0
-                    );
-
                     this.pov = {
                         player_num,
                         follow: true,
-                        auto_rotate: rotate_cam? true: false
+                        auto_rotate: rotate_cam? true: false,
+                        camera_angle: 0.0,
                     };
                 }
             }
@@ -242,7 +235,8 @@ export class ThreeGameRenderer {
             this.pov = {
                 player_num: this.pov.player_num,
                 follow: this.pov.follow,
-                auto_rotate: false
+                auto_rotate: false,
+                camera_angle: 0.0,
             };
         }
     }
@@ -291,8 +285,9 @@ export class ThreeGameRenderer {
     }
 
     reset(
-        reset_cam: boolean = true,
-        reset_pov: boolean = true
+        reset_cam: boolean,
+        reset_pov: boolean,
+        pov: number|undefined
     ) {
         for(const obj of this.models) {
             obj.removeFromParent();
@@ -309,9 +304,10 @@ export class ThreeGameRenderer {
 
         if(reset_pov) {
             this.pov = {
-                player_num: undefined,
-                follow: false,
-                auto_rotate: false
+                player_num: pov,
+                follow: pov !== undefined,
+                auto_rotate: false,
+                camera_angle: 0.0,
             };
         }
     }
@@ -638,11 +634,6 @@ export class ThreeGameRenderer {
     update(
         deltaTime: number
     ) {
-        if(this.controls) {
-            this.controls.autoRotate = this.pov.auto_rotate;
-            this.controls.update(deltaTime / 1000.0);
-        }
-
         this.statusMng.update(this.entities.players, this.entities.npcs);
 
         for(const obj of this.models) {
@@ -670,25 +661,18 @@ export class ThreeGameRenderer {
             const players = this.models.filter(o => o.userData.isPlayer);
             player = players[this.pov.player_num];
 
-            if(!this.pov.auto_rotate && this.pov.follow) {
-                this.camera.position.lerp(
-                    new THREE.Vector3(
-                        player.position.x + 0.0, 
-                        player.position.y + 3.0, 
-                        player.position.z - 2.5
-                    ),
-                    0.5
-                );
+            if(this.pov.auto_rotate) {
+                this.pov.camera_angle = (this.pov.camera_angle + 0.02) % (Math.PI * 2.0);
             }
-            
-            this.controls?.target.lerp(
-                new THREE.Vector3(
-                    player.position.x, 
-                    player.position.y, 
-                    player.position.z
-                ),
-                0.5
-            );
+            else if(this.pov.follow) {
+                this.pov.camera_angle = THREE.MathUtils.lerp(this.pov.camera_angle, player.rotation.y, 0.05);
+            }
+
+            if(this.pov.auto_rotate || this.pov.follow) {
+                this.camera.position.setFromSphericalCoords(8.0, 1.0, this.pov.camera_angle);
+                this.camera.position.add(player.position);
+                this.camera.lookAt(player.position);
+            }
         }
 
         let intersections: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[]|undefined = undefined;

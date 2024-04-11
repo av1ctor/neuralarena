@@ -27,7 +27,7 @@ export const Match = (props: Props) => {
     const {classes} = useUI();
     const {showError} = useUI();
     const [opened, {open, close}] = useDisclosure(false);
-    const [pov, setPov] = useState<number|undefined>(undefined);
+    const [pov, setPov] = useState<number>(0);
     const [section, setSection] = useState('watch');
 
     const match = useMatchFindById(id);
@@ -135,6 +135,7 @@ export const Match = (props: Props) => {
                                 game={game.data}
                                 match={match.data}
                                 pov={pov}
+                                onChangePov={handleChangePov}
                             />
                         :
                             <MatchIntro

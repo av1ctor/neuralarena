@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 import { ActionIcon, Center, Grid, Group, createStyles } from "@mantine/core";
 import { 
     Asset, MatchResponse, InstanceStep, 
-    GameResponse, GameEndCredits 
+    GameResponse
 } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { useMatchGetSteps } from "@hooks/matches";
 import { ThreeGameRenderer } from "@renderers/ThreeGameRenderer";
@@ -11,14 +11,13 @@ import { useActors } from "@hooks/actors";
 import { useUI } from "@hooks/ui";
 import gameEngineInit, {GameEngine} from "@game-engine/game-engine";
 import { 
-    IconPlayerPause, IconPlayerPlay, IconQuestionMark, 
+    IconCameraRotate,
+    IconPlayerPause, IconPlayerPlay, 
     IconReload, 
     IconWindowMaximize, IconWindowMinimize, 
 } from "@tabler/icons-react";
-import { EndCredits } from "@views/games/game/EndCredits";
 import { useElementSize } from "@mantine/hooks";
 import { useFont } from "@hooks/font";
-import { useGameGetEndCredits } from "@hooks/games";
 
 const useStyles = createStyles((theme) => ({
     container: {
@@ -54,20 +53,6 @@ const useStyles = createStyles((theme) => ({
         margin: 'auto',
         borderRadius: '8px',
     },
-    credits_ctn: {
-        position: 'absolute',
-        top: '12px',
-        left: '12px',
-        bottom: '64px',
-        right: '12px',
-        overflowY: 'auto',
-        backgroundColor: '#0009',
-    },
-    credits: {
-        display: 'block',
-        position: 'relative',
-        width: '100%',
-    }
 }));
 
 enum WatchState {
@@ -79,9 +64,10 @@ enum WatchState {
 }
 
 interface Props {
-    game: GameResponse,
-    match: MatchResponse,
-    pov: number|undefined,
+    game: GameResponse;
+    match: MatchResponse;
+    pov: number|undefined;
+    onChangePov: (index: number) => void;
 }
 
 const SECONDS_PER_CALL = 10;
@@ -90,13 +76,12 @@ const CANVAS_DEFAULT_DIM = {w: 450, h: 253};
 export const MatchWatch = (props: Props) => {
     const {showError} = useUI();
     const { main } = useActors();
-    const { classes, cx } = useStyles();
+    const { classes } = useStyles();
     const canvas = useRef<HTMLCanvasElement|null>(null);
     const [assets, setAssets] = useState<Map<number, Asset>|undefined>();
     const [engine, setEngine] = useState<GameEngine>();
     const [renderer, setRenderer] = useState<ThreeGameRenderer>();
     const [state, setState] = useState<WatchState>(WatchState.LOADING);
-    const [endCreditsVisible, setEndCreditsVisible] = useState(false);
     const [matchProgress, setMatchProgress] = useState(0.0);
     const { ref, width } = useElementSize();
     const [dim, setDim] = useState(CANVAS_DEFAULT_DIM);
@@ -106,13 +91,17 @@ export const MatchWatch = (props: Props) => {
     const rendererLoading = useRef(false);
 
     const steps = useMatchGetSteps(props.match.id, SECONDS_PER_CALL * props.game.info.fps)
-    const credits = useGameGetEndCredits(props.game.id);
     const step = useRef(0);
     const timerId = useRef(0);
 
     const frames = useMemo((): InstanceStep[] => {
         return steps.data?.pages.flat().map(s => s.steps).flat() || [];
     }, [steps.data?.pages.length]);
+
+    const handleChangePov = useCallback(() => {
+        let pov = props.pov === undefined? 0: props.pov;
+        props.onChangePov((pov + 1) % props.match.players.length);
+    }, [props.onChangePov, props.pov, props.match]);
 
     const handleTogglePlay = useCallback(() => {
         setState(state => {
@@ -123,16 +112,12 @@ export const MatchWatch = (props: Props) => {
             if(newState === WatchState.PLAYING &&
                 step.current >= frames.length) {
                 step.current = 0;
-                renderer?.reset();
+                renderer?.reset(true, true, props.pov);
             }
 
             return newState;
         });
-    }, [step, frames, renderer]);
-
-    const handleToggleCredits = useCallback(() => {
-        setEndCreditsVisible(visible => !visible);
-    }, [])
+    }, [props.pov, step, frames, renderer]);
 
     const handleToggleFullscreen = useCallback(() => {
         if(!document.fullscreenElement) {
@@ -153,14 +138,14 @@ export const MatchWatch = (props: Props) => {
         const stp = Math.floor(t * frames.length)|0;
         if(stp === 0) {
             step.current = 0;
-            renderer?.reset(true, true);
+            renderer?.reset(true, true, props.pov);
         }
         else {
             renderer?.setSkipping(true);
             let first = step.current;
             if(stp < step.current) {
                 first = 0;
-                renderer?.reset(false, false);
+                renderer?.reset(false, false, undefined);
             }
             else {
                 renderer?.stopPositionalAudio();
@@ -190,7 +175,7 @@ export const MatchWatch = (props: Props) => {
         }
     
         setMatchProgress(t * 100.0);
-    }, [step, frames, renderer, engine, state]);
+    }, [props.pov, step, frames, renderer, engine, state]);
 
     const changeCanvasDim = (dim: {w: number, h: number}) => {
         if(canvas.current) {
@@ -238,6 +223,7 @@ export const MatchWatch = (props: Props) => {
                     canvas.current, 
                     props.game.info,
                     props.match.players,
+                    props.pov,
                     font
                 );
                 await renderer.loadStartScene();
@@ -247,7 +233,7 @@ export const MatchWatch = (props: Props) => {
                 rendererLoading.current = false;
             }
         }
-    }, [canvas.current, renderer, props.game.info, props.match.players, font, rendererLoading]);
+    }, [canvas.current, renderer, props.game.info, props.match.players, props.pov, font, rendererLoading]);
 
     useEffect(() => {
         buildRenderer();
@@ -430,16 +416,6 @@ export const MatchWatch = (props: Props) => {
                     height={dim.h}
                     >
                 </canvas>
-                {endCreditsVisible && 
-                    <div className={classes.credits_ctn}>
-                        <div className={classes.credits}>
-                            <EndCredits 
-                                credits={credits.data} 
-                                level={0} 
-                            />
-                        </div>
-                    </div>
-                }
                 <Grid className={classes.controls}>
                     <div 
                         className={classes.progress_container}
@@ -453,9 +429,9 @@ export const MatchWatch = (props: Props) => {
                     <Grid.Col span={3}>
                         <Group position="left">
                             <ActionIcon
-                                onClick={handleToggleCredits}
+                                onClick={handleChangePov}
                             >
-                                <IconQuestionMark />
+                                <IconCameraRotate />
                             </ActionIcon>
                         </Group>
                     </Grid.Col>
