@@ -436,7 +436,7 @@ export const MatchWatch = (props: Props) => {
                             style={{width:`${matchProgress}%`}}
                         />
                     </div>
-                    <Grid.Col span={3}>
+                    <Grid.Col span={5}>
                         <Group position="left">
                             <ActionIcon
                                 onClick={handleChangePov}
@@ -455,7 +455,7 @@ export const MatchWatch = (props: Props) => {
                             </ActionIcon>
                         </Group>
                     </Grid.Col>
-                    <Grid.Col span={6}>
+                    <Grid.Col span={2}>
                         <Group position="center">
                             <ActionIcon
                                 onClick={handleTogglePlay}
@@ -470,7 +470,7 @@ export const MatchWatch = (props: Props) => {
                             </ActionIcon>
                         </Group>
                     </Grid.Col>
-                    <Grid.Col span={3}>
+                    <Grid.Col span={5}>
                         <Group position="right">
                             <ActionIcon
                             >
