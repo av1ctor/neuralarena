@@ -46,6 +46,14 @@ export const MatchAbout = (props: Props) => {
 
             <Grid.Col md={6}>
                 <TextInput
+                    label="Game name"
+                    value={game?.info.name || ''}
+                    readOnly
+                />
+            </Grid.Col>
+
+            <Grid.Col md={6}>
+                <TextInput
                     label="Cost to play"
                     value={`${e8sToDecimal(costToPlay.value)} ${costToPlay.currency}`}
                     readOnly
@@ -56,14 +64,6 @@ export const MatchAbout = (props: Props) => {
                 <TextInput
                     label="Winner reward"
                     value={`${match?.instance.rewards.winner.toString() || '0'}%`}
-                    readOnly
-                />
-            </Grid.Col>
-
-            <Grid.Col md={6}>
-                <TextInput
-                    label="Game name"
-                    value={game?.info.name || ''}
                     readOnly
                 />
             </Grid.Col>
