@@ -35,7 +35,7 @@ interface Props {
 }
 
 export const ListNfts = (props: Props) => {
-    const {classes} = useStyles();
+    const {classes, cx} = useStyles();
     const {nfts} = props;
 
     const sel = props.selected;
@@ -45,11 +45,17 @@ export const ListNfts = (props: Props) => {
             {nfts?.map((nft, index) => 
                 <div 
                     key={index} 
-                    className={`${classes.nft} ${sel?.collection_id.compareTo(nft.collection_id) === 'eq' && sel?.token_id === nft.token_id? classes.selected: ''}`}
+                    className={cx(
+                        classes.nft, {
+                            [classes.selected]: 
+                                sel?.collection_id.compareTo(nft.collection_id) === 'eq' && 
+                                sel?.token_id === nft.token_id
+                        })}
                 >
                     <Nft
                         nft={nft}
-                        mini
+                        size="mini"
+                        selected={nft.token_id === props.selected?.token_id}
                         onClick={props.onClick}
                     />
                 </div>
