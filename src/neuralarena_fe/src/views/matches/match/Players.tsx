@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { MatchResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { Box, Center, Grid, Rating, Stack, Text, createStyles } from "@mantine/core";
 import { Nft } from "@views/nfts/nft/Nft";
 import { principalToString } from "@libs/icp";
+import { useDisclosure } from "@mantine/hooks";
+import { NFT } from "@libs/nas1";
+import { DrawerPanel } from "@components/DrawerPanel";
 
 const useStyles = createStyles((them) => ({
     player: {
@@ -18,7 +21,19 @@ interface Props {
 
 export const MatchPlayers = (props: Props) => {
     const {classes} = useStyles();
+    const [opened, {open, close}] = useDisclosure(false);
+    const [nft, setNft] = useState<NFT|undefined>();
     
+    const handleSelect = useCallback((nft: NFT) => {
+        setNft(nft);
+        open();
+    }, []);
+
+    const handleClose = useCallback(() => {
+        setNft(undefined);
+        close();
+    }, []);
+
     const {match} = props;
     if(!match) {
         return null;
@@ -29,51 +44,66 @@ export const MatchPlayers = (props: Props) => {
         undefined;
 
     return (
-        <Grid gutter="md">
-            {match.players.map((player, index) => 
-                <Grid.Col 
-                    key={index}
-                    span={6}
-                    md={3}
-                >
-                    <Box className={classes.player} p="sm">
-                        <Stack spacing={0}>
-                            <Center>
-                                <Text>
-                                    {winner && player.id.toString() === winner? '🏆': ''}
-                                    <b>{principalToString(player.id)}</b>
-                                    {winner && player.id.toString() === winner? '🏆': ''}
-                                </Text>
-                            </Center>
-                            <Center>
-                                <small>with</small>
-                            </Center>
-                            <Nft
-                                nft={player.nft}
-                                onClick={props.onChangePov? () => props.onChangePov!(index): undefined}
-                            />
-                            <Center>
-                                <Text>
-                                    Score: <b>{player.score.toFixed(2)}</b>
-                                </Text>
-                            </Center>
-                            <Center>
-                                <Text size={10}>
-                                    <Rating 
-                                        title={`Health: ${player.health.toFixed(2)}`}
-                                        value={player.health / 10.0} 
-                                        fractions={2} 
-                                        count={10}
-                                        emptySymbol={'🤍'} 
-                                        fullSymbol={'💖'}
-                                        readOnly 
-                                    />
-                                </Text>
-                            </Center>
-                        </Stack>
-                    </Box>
-                </Grid.Col>
-            )}
-        </Grid>
+        <>
+            <Grid gutter="md">
+                {match.players.map((player, index) => 
+                    <Grid.Col 
+                        key={index}
+                        span={6}
+                        md={3}
+                    >
+                        <Box className={classes.player} p="sm">
+                            <Stack spacing={0}>
+                                <Center>
+                                    <Text>
+                                        {winner && player.id.toString() === winner? '🏆': ''}
+                                        <b>{principalToString(player.id)}</b>
+                                        {winner && player.id.toString() === winner? '🏆': ''}
+                                    </Text>
+                                </Center>
+                                <Center>
+                                    <small>with</small>
+                                </Center>
+                                <Nft
+                                    nft={player.nft}
+                                    onClick={handleSelect}
+                                />
+                                <Center>
+                                    <Text>
+                                        Score: <b>{player.score.toFixed(2)}</b>
+                                    </Text>
+                                </Center>
+                                <Center>
+                                    <Text size={10}>
+                                        <Rating 
+                                            title={`Health: ${player.health.toFixed(2)}`}
+                                            value={player.health / 10.0} 
+                                            fractions={2} 
+                                            count={10}
+                                            emptySymbol={'🤍'} 
+                                            fullSymbol={'💖'}
+                                            readOnly 
+                                        />
+                                    </Text>
+                                </Center>
+                            </Stack>
+                        </Box>
+                    </Grid.Col>
+                )}
+            </Grid>
+
+            <DrawerPanel
+                title="Details"
+                opened={opened}
+                onClose={handleClose}
+            >
+                {nft && 
+                    <Nft 
+                        nft={nft}
+                        size="full"
+                    />
+                }
+            </DrawerPanel>
+        </>
     );
 };
