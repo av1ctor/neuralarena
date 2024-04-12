@@ -7,40 +7,28 @@ use icrc_ledger_types::icrc1::{
 pub struct ICRC1Utils;
 
 impl ICRC1Utils {
-    pub fn get_subaccount(
-        prin: &Principal,
-        subsubaccount: u8
+    pub fn subaccount_from_prin(
+        prin: &Principal
     ) -> Subaccount {
         let mut res = [0u8; 32];
         let len = prin.as_ref().len();
         res[0] = len as _;
         res[1..=len].copy_from_slice(prin.as_slice());
-        res[30] = subsubaccount;
         res
     }
 
-    pub fn get_default_account(
-        owner: &Principal
-    ) -> Account {
-        Account {
-            owner: owner.clone(),
-            subaccount: None,
-        }
+    pub fn subaccount_from_str(
+        text: &String
+    ) -> Subaccount {
+        assert!(text.len() < 32);
+        let mut res = [0u8; 32];
+        let len = text.len();
+        res[0] = len as _;
+        res[1..=len].copy_from_slice(text.as_bytes());
+        res
     }
 
-    pub fn get_account_ex(
-        owner: &Principal,
-        sub: &Principal,
-        subsubaccount: u8
-    ) -> Account {
-        Account {
-            owner: owner.clone(),
-            subaccount: Some(Self::get_subaccount(sub, subsubaccount)),
-        }
-    }
-
-    #[allow(unused)]
-    pub async fn get_balance(
+    pub async fn balance_of(
         canister_id: &Principal,
         account: Account
     ) -> Result<u128, String> {
@@ -68,7 +56,7 @@ impl ICRC1Utils {
         res.map_err(|e| e.to_string())
     }
 
-    pub async fn icrc1_minting_account(
+    pub async fn minting_account(
         canister_id: &Principal
     ) -> Result<Option<Account>, String> {
 

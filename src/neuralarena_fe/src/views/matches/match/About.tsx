@@ -1,10 +1,12 @@
 import React from "react";
 import { GameResponse, MatchResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { Grid, TextInput } from "@mantine/core";
-import { e8sToDecimal, principalToString } from "@libs/icp";
+import { 
+    e8sToDecimal, principalToString} from "@libs/icp";
 import { timeToNow } from "@libs/time";
-import { matchStatusToString } from "@libs/matches";
+import { matchStatusToString, matchOpenOrRunning } from "@libs/matches";
 import { gameCostToPlay } from "@libs/games";
+import { WalletLogs } from "./WalletLogs";
 
 interface Props {
     match: MatchResponse|undefined;
@@ -17,6 +19,8 @@ export const MatchAbout = (props: Props) => {
     const costToPlay = match? 
         gameCostToPlay(match.instance.costs): 
         {value: 0n, currency: ''};
+
+    const openOrRunning = matchOpenOrRunning(match);
 
     return (
         <Grid>
@@ -62,8 +66,30 @@ export const MatchAbout = (props: Props) => {
 
             <Grid.Col md={6}>
                 <TextInput
-                    label="Winner reward"
+                    label="Winner reward %"
                     value={`${match?.instance.rewards.winner.toString() || '0'}%`}
+                    readOnly
+                />
+            </Grid.Col>
+
+            <Grid.Col md={6}>
+                <TextInput
+                    label="Total balance"
+                    value={match? 
+                        `${e8sToDecimal(match.state.balance)} ${costToPlay.currency}`: 
+                        ''
+                    }
+                    readOnly
+                />
+            </Grid.Col>
+
+            <Grid.Col md={6}>
+                <TextInput
+                    label="Winner reward"
+                    value={openOrRunning && match? 
+                        `${e8sToDecimal(match.state.balance * (match.instance.rewards.winner || 0n) / 100n)} ${costToPlay.currency}`: 
+                        ''
+                    }
                     readOnly
                 />
             </Grid.Col>
@@ -212,6 +238,10 @@ export const MatchAbout = (props: Props) => {
                     readOnly
                 />
             </Grid.Col>
+
+            <WalletLogs
+                logs={match?.state.wallet_logs}
+            />
         </Grid>
     )
 };

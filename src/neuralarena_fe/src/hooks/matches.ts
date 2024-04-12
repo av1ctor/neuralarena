@@ -12,6 +12,7 @@ import {
     MatchId, matchFindByGame, matchGetSteps, matchFindAll 
 } from "@libs/matches";
 import { GameId } from "@libs/games";
+import { principalToAccountId, stringToSubAccount } from "@libs/icp";
 
 interface MatchMethods {
     create: (req: MatchRequest) => Promise<MatchResponse>;
@@ -21,7 +22,7 @@ interface MatchMethods {
 export const useMatch = (
 ): MatchMethods => {
     const queryClient = useQueryClient();
-    const {main} = useActors();
+    const {main, ids} = useActors();
 
     const createMut = useMutation(
         async (options: {req: MatchRequest}) => {
@@ -46,7 +47,12 @@ export const useMatch = (
         },
         {
             onSuccess: (_, vars) => {
+                const matchAcc = principalToAccountId(
+                    ids.main,
+                    stringToSubAccount(vars.req.id)
+                );
                 queryClient.invalidateQueries(['matches', vars.req.id]);
+                queryClient.invalidateQueries(['icrc1-balance', matchAcc]);
             }   
         }
     );

@@ -10,7 +10,6 @@ import {
     principalToSubAccount 
 } from "@libs/icp";
 import { 
-    MAIN_SUB_ACCOUNT, RESERVED_SUB_ACCOUNT, 
     icrc1GetAccountId, icrc1GetDefaultAccountId 
 } from "@libs/icrc1";
 import { Button, Grid, TextInput } from "@mantine/core";
@@ -37,11 +36,11 @@ export const UserWallet = (props: Props) => {
         icpLedger, 
         principalToAccountDefaultId(user?.id)
     );
-    const mainAccBalance = useIcrc1GetBallance(
+    const userAccBalance = useIcrc1GetBallance(
         icpLedger, 
         principalToAccountId(
             ids.main,
-            principalToSubAccount(user?.id, MAIN_SUB_ACCOUNT)
+            principalToSubAccount(user?.id)
         )
     );
 
@@ -94,7 +93,7 @@ export const UserWallet = (props: Props) => {
                 <Grid.Col md={6}>
                     <TextInput
                         label="Neural Arena balance"
-                        value={e8sToDecimal(mainAccBalance.data || 0n)}
+                        value={e8sToDecimal(userAccBalance.data || 0n)}
                         readOnly
                         icon={<IconCoin size="1rem" />}
                     />

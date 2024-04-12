@@ -16,7 +16,9 @@ use neuralarena_cdk::{
 use crate::{
     models::{
         game::{Game, GameId}, 
-        m4tch::{Match, MatchGameInstance, MatchId, MatchRequest, MatchStatus}, 
+        m4tch::{
+            Match, MatchGameInstance, MatchId, MatchRequest, MatchStatus, MatchWalletLog, MatchWalletLogAccount, MatchWalletLogOp, MatchWalletLogTransfer
+        }, 
         nftcol::NftCollection, 
         user::{User, UserNftRequest}
     }, 
@@ -32,9 +34,8 @@ const MAX_STEPS: usize = (60 * 10) * 60;    // 10 minutes at 60 FPS, 20 minutes 
 const MIN_OPENED: u64 = 60 * 60 * 01;       // one hour
 const MAX_OPENED: u64 = 60 * 60 * 24 * 7;   // one week
 
-pub const MAX_GAME_DIST: u128 = 85;         // * 100
-const PLATFORM_FEE: u128 = 10;              // * 100
-const BURNING_FEE: u128 = 05;               // * 100
+pub const MAX_GAME_DIST: u128 = 75;         // * 100
+const PLATFORM_FEE: u128 = 20;              // * 100
 
 pub struct MatchesService {}
 
@@ -254,12 +255,27 @@ impl MatchesService {
                 tensors.insert(skill.clone(), res.content);
             }
             
-            // reserve the amount needed to play
+            // send to match's account
             let amount = Self::get_cost_to_play(&m4tch)?;
             
-            Wallets::transfer_from_main_to_reserved(
-                &user.id, amount, &icp_ledger_canister_id
+            let tx = Wallets::transfer_from_prin_to_str(
+                &user.id, 
+                &m4tch.id, 
+                amount + (TRANSFER_FEE * 3), 
+                &icp_ledger_canister_id
             ).await?;
+
+            m4tch.state.wallet_logs.push(MatchWalletLog { 
+                op: MatchWalletLogOp::Deposit, 
+                acc: MatchWalletLogAccount::Prin(user.id.clone()), 
+                res: Ok(MatchWalletLogTransfer {
+                    value: amount,
+                    time: ic_cdk::api::time(),
+                    tx,
+                }),
+            });
+
+            m4tch.state.balance += amount;
             
             // add player
             m4tch.state.players.push(InstancePlayer {
@@ -324,60 +340,143 @@ impl MatchesService {
     }
 
     async fn transfer_balances(
-        icp_ledger_canister_id: &Principal,
-        m4tch: &Match,
-        game_canister_id: &Principal,
-        winner: &Option<Principal>
+        m4tch: &mut Match,
+        winner: &Option<Principal>,
+        icp_ledger_canister_id: &Principal
     ) -> Result<(), String> {
-        let amount = Self::get_cost_to_play(m4tch)?;
-        
+        let amount = m4tch.state.balance;
+
         let game_cut = (amount * (MAX_GAME_DIST - if winner.is_some() {m4tch.instance.rewards.winner} else {0})) / 100;
-        let winner_reward = if winner.is_some() && m4tch.instance.rewards.winner > 0 {Some((amount * m4tch.instance.rewards.winner) / 100)} else {None};
+        let winner_reward = if winner.is_some() && m4tch.instance.rewards.winner > 0 {(amount * m4tch.instance.rewards.winner) / 100} else {0};
         let platform_fee = (amount * PLATFORM_FEE) / 100;
-        let to_burn = (amount * BURNING_FEE) / 100;
+        let to_burn = amount - game_cut - winner_reward - platform_fee;
 
-        for player in &m4tch.state.players {
-            // give game its cut
-            if game_cut > TRANSFER_FEE {
-                Wallets::transfer_from_reserved_to_main(
-                    &player.id, 
-                    Some(game_canister_id), 
-                    game_cut,
-                    icp_ledger_canister_id
-                ).await?;
-            }
-            
-            // collect platform fee
-            if platform_fee > TRANSFER_FEE {
-                Wallets::transfer_from_reserved_to_main(
-                    &player.id, 
-                    None, 
-                    platform_fee,
-                    icp_ledger_canister_id
-                ).await?;
-            }
-
-            // reward winner
-            if let Some(winner_cut) = winner_reward {
-                if winner_cut > TRANSFER_FEE {
-                    Wallets::transfer_from_reserved_to_main(
-                        &player.id, 
-                        winner.as_ref(), 
-                        winner_cut,
-                        icp_ledger_canister_id
-                    ).await?;
+        // give game its cut
+        if game_cut > TRANSFER_FEE {
+            match Wallets::transfer_from_str_to_str(
+                &m4tch.id,
+                &m4tch.game.id, 
+                game_cut,
+                icp_ledger_canister_id
+            ).await {
+                Ok(tx) => {
+                    m4tch.state.wallet_logs.push(MatchWalletLog{
+                        op: MatchWalletLogOp::GameDist,
+                        acc: MatchWalletLogAccount::Str(m4tch.game.id.clone()),
+                        res: Ok(MatchWalletLogTransfer{
+                            value: game_cut,
+                            time: ic_cdk::api::time(),
+                            tx,
+                        }),
+                    });
+                },
+                Err(msg) => {
+                    m4tch.state.wallet_logs.push(MatchWalletLog{
+                        op: MatchWalletLogOp::GameDist,
+                        acc: MatchWalletLogAccount::Str(m4tch.game.id.clone()),
+                        res: Err(msg),
+                    });
                 }
-            }
-
-            // burn
-            if to_burn > TRANSFER_FEE {
-                Wallets::burn_from_reserved(
-                    &player.id,
-                    to_burn,
-                    icp_ledger_canister_id
-                ).await?;
-            }
+            };
         }
+        
+        // collect platform fee
+        if platform_fee > TRANSFER_FEE {
+            match Wallets::transfer_from_str_to_main(
+                &m4tch.id,
+                platform_fee,
+                icp_ledger_canister_id
+            ).await {
+                Ok(tx) => {
+                    m4tch.state.wallet_logs.push(MatchWalletLog{
+                        op: MatchWalletLogOp::PlatformDist,
+                        acc: MatchWalletLogAccount::Main,
+                        res: Ok(MatchWalletLogTransfer{
+                            value: platform_fee,
+                            time: ic_cdk::api::time(),
+                            tx,
+                        }),
+                    });
+                },
+                Err(msg) => {
+                    m4tch.state.wallet_logs.push(MatchWalletLog{
+                        op: MatchWalletLogOp::PlatformDist,
+                        acc: MatchWalletLogAccount::Main,
+                        res: Err(msg),
+                    });
+                }
+            };
+        }
+
+        // reward winner
+        if winner_reward > TRANSFER_FEE {
+            match Wallets::transfer_from_str_to_prin(
+                &m4tch.id,
+                &winner.unwrap(), 
+                winner_reward,
+                icp_ledger_canister_id
+            ).await {
+                Ok(tx) => {
+                    m4tch.state.wallet_logs.push(MatchWalletLog{
+                        op: MatchWalletLogOp::WinnerDist,
+                        acc: MatchWalletLogAccount::Prin(winner.unwrap().clone()),
+                        res: Ok(MatchWalletLogTransfer{
+                            value: winner_reward,
+                            time: ic_cdk::api::time(),
+                            tx,
+                        }),
+                    });
+                },
+                Err(msg) => {
+                    m4tch.state.wallet_logs.push(MatchWalletLog{
+                        op: MatchWalletLogOp::WinnerDist,
+                        acc: MatchWalletLogAccount::Prin(winner.unwrap().clone()),
+                        res: Err(msg),
+                    });
+                }
+            };
+        }
+
+        // burn the rest
+        if to_burn > TRANSFER_FEE {
+            match Wallets::burn_from_str(
+                &m4tch.id,
+                to_burn,
+                icp_ledger_canister_id
+            ).await {
+                Ok(tx) => {
+                    match tx {
+                        Some(tx) => {
+                            m4tch.state.wallet_logs.push(MatchWalletLog{
+                                op: MatchWalletLogOp::Burn,
+                                acc: MatchWalletLogAccount::Main,
+                                res: Ok(MatchWalletLogTransfer{
+                                    value: to_burn,
+                                    time: ic_cdk::api::time(),
+                                    tx,
+                                }),
+                            });
+                        },
+                        None => {
+                            m4tch.state.wallet_logs.push(MatchWalletLog{
+                                op: MatchWalletLogOp::Burn,
+                                acc: MatchWalletLogAccount::Main,
+                                res: Err("Ledger doesn't support burning tokens".to_string()),
+                            });
+                        }
+                    }
+                },
+                Err(msg) => {
+                    m4tch.state.wallet_logs.push(MatchWalletLog{
+                        op: MatchWalletLogOp::Burn,
+                        acc: MatchWalletLogAccount::Main,
+                        res: Err(msg),
+                    });
+                }
+            };
+        }
+
+        m4tch.state.balance = 0;
 
         Ok(())
     }
@@ -456,10 +555,9 @@ impl MatchesService {
         match res {
             Ok(result) => {
                 Self::transfer_balances(
-                    icp_ledger_canister_id,
                     m4tch,
-                    &game.canister_id,
-                    &result.won_by
+                    &result.won_by,
+                    icp_ledger_canister_id,
                 ).await?;
         
                 m4tch.won_by = result.won_by;
@@ -528,21 +626,43 @@ impl MatchesService {
     }
 
     pub async fn reimburse(
-        m4tch: &Match,
+        m4tch: &mut Match,
         icp_ledger_canister_id: &Principal
     ) -> Result<(), String> {
-        let amount = Self::get_cost_to_play(m4tch)?;
-        
+        let amount = Self::get_cost_to_play(m4tch)? - (TRANSFER_FEE*2);
+
+        // return money to players
         for player in &m4tch.state.players {
             if amount > TRANSFER_FEE {
-                Wallets::transfer_from_reserved_to_main(
+                match Wallets::transfer_from_str_to_prin(
+                    &m4tch.id,
                     &player.id, 
-                    Some(&player.id), 
-                    amount - (TRANSFER_FEE*2),
+                    amount,
                     icp_ledger_canister_id
-                ).await?;
+                ).await {
+                    Ok(tx) => {
+                        m4tch.state.wallet_logs.push(MatchWalletLog{
+                            op: MatchWalletLogOp::Reimburse,
+                            acc: MatchWalletLogAccount::Prin(player.id.clone()),
+                            res: Ok(MatchWalletLogTransfer{
+                                value: amount,
+                                time: ic_cdk::api::time(),
+                                tx,
+                            }),
+                        });
+                    },
+                    Err(msg) => {
+                        m4tch.state.wallet_logs.push(MatchWalletLog{
+                            op: MatchWalletLogOp::Reimburse,
+                            acc: MatchWalletLogAccount::Prin(player.id.clone()),
+                            res: Err(msg),
+                        });
+                    }
+                };
             }
         }
+
+        m4tch.state.balance = 0;
 
         Ok(())
     }

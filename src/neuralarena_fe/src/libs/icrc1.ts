@@ -9,9 +9,6 @@ import {
     principalToSubAccount
 } from "./icp";
 
-export const MAIN_SUB_ACCOUNT: number = 0;
-export const RESERVED_SUB_ACCOUNT: number = 1;
-
 export const TRANSFER_FEE: bigint = 10_000n;
 
 export const icrc1GetDefaultAccount = (
@@ -26,11 +23,10 @@ export const icrc1GetDefaultAccount = (
 export const icrc1GetAccount = (
     owner: Principal|undefined,
     subaccount: Uint8Array|Principal,
-    subsubaccount?: number
 ): Account => {
     const sub = Array.isArray(subaccount)? 
         subaccount:
-        principalToSubAccount(subaccount as Principal, subsubaccount);
+        principalToSubAccount(subaccount as Principal);
     
     return {
         owner: owner ?? Principal.anonymous(),

@@ -7,7 +7,7 @@ import { useIcrc1GetBallance } from "@hooks/icrc1";
 import { useMatch } from "@hooks/matches";
 import { useUI } from "@hooks/ui";
 import { e8sToDecimal, principalToAccountId, principalToSubAccount } from "@libs/icp";
-import { MAIN_SUB_ACCOUNT, TRANSFER_FEE } from "@libs/icrc1";
+import { TRANSFER_FEE } from "@libs/icrc1";
 import { NFT } from "@libs/nas1";
 import { ListNfts } from "@views/nfts/List";
 import { IconCoin } from "@tabler/icons-react";
@@ -53,17 +53,17 @@ export const MatchJoin = (props: Props) => {
         }
     }, [join, props.match?.id, nft, props.onClose]);
 
-    const mainAccBalance = useIcrc1GetBallance(
+    const userAccBalance = useIcrc1GetBallance(
         icpLedger, 
         principalToAccountId(
             ids.main,
-            principalToSubAccount(user?.id, MAIN_SUB_ACCOUNT)
+            principalToSubAccount(user?.id)
         )
     );
 
     const nfts = user?.nfts || [];
     const cost = gameCostToPlay(props.match?.instance.costs).value + (TRANSFER_FEE*(3n+1n));
-    const okToJoin = cost <= (mainAccBalance.data || 0n)
+    const okToJoin = cost <= (userAccBalance.data || 0n)
     
     return (
         <Grid>
@@ -88,7 +88,7 @@ export const MatchJoin = (props: Props) => {
             <Grid.Col md={6}>
                 <TextInput
                     label="Your Neural Arena balance"
-                    value={`${e8sToDecimal(mainAccBalance.data || 0n)} ICP`}
+                    value={`${e8sToDecimal(userAccBalance.data || 0n)} ICP`}
                     readOnly
                     icon={<IconCoin size="1rem" />}
                 />

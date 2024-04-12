@@ -39,13 +39,46 @@ pub struct MatchGameInstance {
     pub rewards: GameRewards,
 }
 
+#[derive(Clone, Serialize, Deserialize, CandidType)]
+pub enum MatchWalletLogAccount{
+    Main,
+    Str(String),
+    Prin(Principal),
+}
+
+#[derive(Clone, Serialize, Deserialize, CandidType)]
+pub enum MatchWalletLogOp{
+    Deposit,
+    PlatformDist,
+    GameDist,
+    WinnerDist,
+    Burn,
+    Reimburse,
+}
+
+#[derive(Clone, Serialize, Deserialize, CandidType)]
+pub struct  MatchWalletLogTransfer {
+    pub value: u128,
+    pub time: u64,
+    pub tx: u128,
+}
+
+#[derive(Clone, Serialize, Deserialize, CandidType)]
+pub struct  MatchWalletLog{
+    pub op: MatchWalletLogOp,
+    pub acc: MatchWalletLogAccount,
+    pub res: Result<MatchWalletLogTransfer, String>,
+}
+
 #[derive(Clone, Serialize, Deserialize)]
 pub struct MatchState {
     pub status: MatchStatus,
+    pub balance: u128,
     pub players: Vec<InstancePlayer>,
     pub num_steps: usize,
     pub initial_seed: Option<u64>,
     pub run_slices: Vec<InstanceRunSlice>,
+    pub wallet_logs: Vec<MatchWalletLog>,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -87,9 +120,11 @@ pub struct MatchPlayerResponse {
 #[derive(Clone, Serialize, Deserialize, CandidType)]
 pub struct MatchStateResponse {
     pub status: MatchStatus,
+    pub balance: u128,
     pub num_steps: usize,
     pub initial_seed: Option<u64>,
     pub run_slices: Vec<InstanceRunSlice>,
+    pub wallet_logs: Vec<MatchWalletLog>,
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
@@ -130,10 +165,12 @@ impl Match {
             game: req.game.clone(), 
             state: MatchState { 
                 status: MatchStatus::OPEN,
+                balance: 0,
                 players: vec![],
                 num_steps: 0,
                 initial_seed: None,
                 run_slices: vec![],
+                wallet_logs: vec![],
             },
             instance: MatchGameInstance {
                 id: "".to_string(),
@@ -164,9 +201,11 @@ impl From<Match> for MatchResponse {
             id: e.id,
             state: MatchStateResponse {
                 status: e.state.status,
+                balance: e.state.balance,
                 num_steps: e.state.num_steps,
                 initial_seed: e.state.initial_seed,
                 run_slices: e.state.run_slices,
+                wallet_logs: e.state.wallet_logs,
             },
             game: e.game,
             instance: MatchGameInstanceResponse {

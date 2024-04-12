@@ -5,9 +5,11 @@ import {
     MatchStatus, 
     InstanceStepsResponse, 
     Pagination, 
-    MatchJoinRequest
+    MatchJoinRequest,
+    MatchWalletLog
 } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { GameId } from "./games";
+import { principalToString } from "./icp";
 
 export type MatchId = string;
 
@@ -22,6 +24,15 @@ export const matchCalcTimeLeft = (
 ): Date => {
     return new Date(Number((match.created_at / 1_000_000n) + match.deadline * 1_000n) - Date.now());
 };
+
+export const matchOpenOrRunning = (
+    match: MatchResponse|undefined
+): boolean => {
+    return match? 
+        'OPEN' in match.state.status || 
+        'RUNNING' in match.state.status: 
+    false;
+}
 
 export const matchStatusToString = (
     status: MatchStatus|undefined
@@ -44,6 +55,55 @@ export const matchStatusToString = (
     }
     else if('FINISHED' in status) {
         return 'FINISHED';
+    }
+
+    return 'UNKNOWN';
+}
+
+export const matchWalletLogOpToString = (
+    log: MatchWalletLog|undefined
+): string => {
+    if(!log) {
+        return '';
+    }
+    
+    if('Deposit' in log.op) {
+        return 'Deposit';
+    }
+    else if('Reimburse' in log.op) {
+        return 'Reimburse';
+    }
+    else if('GameDist' in log.op) {
+        return 'GameDist';
+    }
+    else if('PlatformDist' in log.op) {
+        return 'PlatformDist';
+    }
+    else if('WinnerDist' in log.op) {
+        return 'WinnerDist';
+    }
+    else if('Burn' in log.op) {
+        return 'Burn';
+    }
+
+    return 'UNKNOWN';
+}
+
+export const matchWalletLogAccToString = (
+    log: MatchWalletLog|undefined
+): string => {
+    if(!log) {
+        return '';
+    }
+    
+    if('Str' in log.acc) {
+        return log.acc.Str;
+    }
+    else if('Prin' in log.acc) {
+        return principalToString(log.acc.Prin);
+    }
+    else if('Main' in log.acc) {
+        return 'Main';
     }
 
     return 'UNKNOWN';
