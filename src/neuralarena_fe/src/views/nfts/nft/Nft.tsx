@@ -41,7 +41,7 @@ export const Nft = (props: Props) => {
     }, [props.nft, props.onClick]);
 
     const hiddenLayersWeights = useMemo(() => {
-        return `[${(token.data?.hidden_layers_weights_size as bigint[]).map(s => s.toString()).join(',')}]`;
+        return `[${(token.data?.hidden_layers_weights_size as bigint[] || []).map(s => s.toString()).join(',')}]`;
     }, [token.data?.hidden_layers_weights_size]);
 
     return (

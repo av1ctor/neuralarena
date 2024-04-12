@@ -23,7 +23,9 @@ export const UserNfts = (props: Props) => {
     const {toggleLoading, showError, showSuccess} = useUI();
     const [delOpened, {open: delOpen, close: delClose}] = useDisclosure(false);
     const [addOpened, {open: addOpen, close: addClose}] = useDisclosure(false);
+    const [showOpened, {open: showOpen, close: showClose}] = useDisclosure(false);
     const [nfts, setNfts] = useState<UserNftRequest[]|undefined>();
+    const [toShow, setToShow] = useState<NFT|undefined>();
     const [toDelete, setToDelete] = useState<number|undefined>();
     const [toAdd, setToAdd] = useState<NFT|undefined>();
 
@@ -97,10 +99,21 @@ export const UserNfts = (props: Props) => {
         }
     }, [nfts, user, toDelete]);
 
-    const handleConfirm = useCallback((index: number) => {
+    const handleConfirm = useCallback((e: any, index: number) => {
+        e.stopPropagation();
         setToDelete(index);
         delOpen();
     }, [nfts]);
+
+    const handleShow = useCallback((nft: NFT) => {
+        setToShow(nft);
+        showOpen();
+    }, []);
+
+    const handleShowClosed = useCallback(() => {
+        setToShow(undefined);
+        showClose();
+    }, []);
 
     useEffect(() => {
         if(user) {
@@ -134,10 +147,13 @@ export const UserNfts = (props: Props) => {
                         sm={6}
                         md={4}
                     >
-                        <Nft nft={nft}>
+                        <Nft 
+                            nft={nft}
+                            onClick={handleShow}
+                        >
                             <Group mt="md" position="right">
                                 <ActionIcon
-                                    onClick={() => handleConfirm(index)}
+                                    onClick={(e) => handleConfirm(e, index)}
                                 >
                                     <IconTrash />
                                 </ActionIcon>
@@ -156,6 +172,19 @@ export const UserNfts = (props: Props) => {
                     Add
                 </Button>
             </Center>
+
+            <DrawerPanel
+                title="Details"
+                opened={showOpened}
+                onClose={handleShowClosed}
+            >
+                {toShow && 
+                    <Nft 
+                        nft={toShow}
+                        size="full"
+                    />
+                }
+            </DrawerPanel>
 
             <DrawerPanel
                 title="Select a NFT to add"
