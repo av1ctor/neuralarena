@@ -149,6 +149,7 @@ export const UserNfts = (props: Props) => {
                     >
                         <Nft 
                             nft={nft}
+                            selected={toShow?.token_id === nft.token_id && toShow?.collection_id === nft.collection_id}
                             onClick={handleShow}
                         >
                             <Group mt="md" position="right">
