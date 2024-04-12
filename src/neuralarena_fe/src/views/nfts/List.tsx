@@ -1,6 +1,6 @@
 import React from "react";
 import { createStyles } from "@mantine/core";
-import { Nft } from "./nft/Nft";
+import { NftCard } from "./nft/Card";
 import { NFT } from "@libs/nas1";
 
 const useStyles = createStyles((theme) => ({
@@ -52,7 +52,7 @@ export const ListNfts = (props: Props) => {
                                 sel?.token_id === nft.token_id
                         })}
                 >
-                    <Nft
+                    <NftCard
                         nft={nft}
                         size="mini"
                         selected={nft.token_id === props.selected?.token_id}

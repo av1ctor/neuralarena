@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid } from "@mantine/core";
-import { Nft } from "./nft/Nft";
+import { NftCard } from "./nft/Card";
 import { Principal } from "@dfinity/principal";
 import { NFT } from "@libs/nas1";
 
@@ -27,7 +27,7 @@ export const NftsGrid = (props: Props) => {
                     span={6}
                     md={3}
                 >
-                    <Nft
+                    <NftCard
                         nft={item}
                         selected={item.token_id === props.selected?.token_id}
                         onClick={props.onClick}

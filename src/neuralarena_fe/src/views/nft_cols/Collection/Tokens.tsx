@@ -6,7 +6,7 @@ import { Principal } from "@dfinity/principal";
 import { DrawerPanel } from "@components/DrawerPanel";
 import { useDisclosure } from "@mantine/hooks";
 import { NFT } from "@libs/nas1";
-import { Nft } from "@views/nfts/nft/Nft";
+import { NftDetails } from "@views/nfts/nft/Details";
 
 interface Props {
     collectionId: Principal;
@@ -48,9 +48,8 @@ export const NftCollectionTokens = (props: Props) => {
                 onClose={handleClose}
             >
                 {nft && 
-                    <Nft 
+                    <NftDetails
                         nft={nft}
-                        size="full"
                     />
                 }
             </DrawerPanel>

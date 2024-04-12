@@ -29,7 +29,7 @@ interface Props {
     onClick?: (nft: NFT) => void;
 }
 
-export const Nft = (props: Props) => {
+export const NftCard = (props: Props) => {
     const symbol = useIcrc7GetCollectionSymbol(props.nft.collection_id);
     const {classes, cx} = useStyles();
     const token = useNAS1FindTokenById(props.nft.collection_id, Number(props.nft.token_id));

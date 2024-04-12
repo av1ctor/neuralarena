@@ -1,11 +1,12 @@
 import React, { useCallback, useState } from "react";
 import { MatchResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { Box, Center, Grid, Rating, Stack, Text, createStyles } from "@mantine/core";
-import { Nft } from "@views/nfts/nft/Nft";
+import { NftCard } from "@views/nfts/nft/Card";
 import { principalToString } from "@libs/icp";
 import { useDisclosure } from "@mantine/hooks";
 import { NFT } from "@libs/nas1";
 import { DrawerPanel } from "@components/DrawerPanel";
+import { NftDetails } from "@views/nfts/nft/Details";
 
 const useStyles = createStyles((them) => ({
     player: {
@@ -64,7 +65,7 @@ export const MatchPlayers = (props: Props) => {
                                 <Center>
                                     <small>with</small>
                                 </Center>
-                                <Nft
+                                <NftCard
                                     nft={player.nft}
                                     onClick={handleSelect}
                                 />
@@ -98,9 +99,8 @@ export const MatchPlayers = (props: Props) => {
                 onClose={handleClose}
             >
                 {nft && 
-                    <Nft 
+                    <NftDetails
                         nft={nft}
-                        size="full"
                     />
                 }
             </DrawerPanel>

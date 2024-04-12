@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Nft } from "@views/nfts/nft/Nft";
+import { NftCard } from "@views/nfts/nft/Card";
 import { useAuth } from "@hooks/auth";
 import { ActionIcon, Button, Center, Grid, Group, Space } from "@mantine/core";
 import { IconPhoto, IconTrash } from "@tabler/icons-react";
@@ -13,6 +13,7 @@ import { useUI } from "@hooks/ui";
 import { UserNftRequest } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { AuthActionType, AuthContext } from "@stores/auth";
 import { PageTitle } from "@components/PageTitle";
+import { NftDetails } from "@views/nfts/nft/Details";
 
 interface Props {
 }
@@ -147,7 +148,7 @@ export const UserNfts = (props: Props) => {
                         sm={6}
                         md={4}
                     >
-                        <Nft 
+                        <NftCard 
                             nft={nft}
                             selected={toShow?.token_id === nft.token_id && toShow?.collection_id === nft.collection_id}
                             onClick={handleShow}
@@ -159,7 +160,7 @@ export const UserNfts = (props: Props) => {
                                     <IconTrash />
                                 </ActionIcon>
                             </Group>
-                        </Nft>
+                        </NftCard>
                     </Grid.Col>
                 )}
             </Grid>
@@ -180,9 +181,8 @@ export const UserNfts = (props: Props) => {
                 onClose={handleShowClosed}
             >
                 {toShow && 
-                    <Nft 
+                    <NftDetails 
                         nft={toShow}
-                        size="full"
                     />
                 }
             </DrawerPanel>
