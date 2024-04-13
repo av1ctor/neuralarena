@@ -662,14 +662,17 @@ export class ThreeGameRenderer {
         }
 
         if(this.pov.player_num !== undefined) {
-            const players = this.models.filter(o => o.userData.isPlayer);
-            const player = players[this.pov.player_num];
+            const player = this.models
+                .filter(o => o.userData.isPlayer)
+                .find((_, index) => index === this.pov.player_num);
 
-            if(this.pov.auto_rotate) {
-                this.pov.camera_angle = (this.pov.camera_angle + (deltaTime / 2000.0)) % (Math.PI * 2.0);
-            }
-            else if(this.pov.follow) {
-                this.pov.camera_angle = THREE.MathUtils.lerp(this.pov.camera_angle, player.rotation.y, 0.05);
+            if(player) {
+                if(this.pov.auto_rotate) {
+                    this.pov.camera_angle = (this.pov.camera_angle + (deltaTime / 2000.0)) % (Math.PI * 2.0);
+                }
+                else if(this.pov.follow) {
+                    this.pov.camera_angle = THREE.MathUtils.lerp(this.pov.camera_angle, player.rotation.y, 0.05);
+                }
             }
         }
 
@@ -689,10 +692,11 @@ export class ThreeGameRenderer {
 
         let player: THREE.Object3D<THREE.Object3DEventMap>|undefined = undefined;
         if(this.pov.player_num !== undefined) {
-            const players = this.models.filter(o => o.userData.isPlayer);
-            player = players[this.pov.player_num];
+            player = this.models
+                .filter(o => o.userData.isPlayer)
+                .find((_, index) => index === this.pov.player_num);
 
-            if(this.pov.auto_rotate || this.pov.follow) {
+            if(player && (this.pov.auto_rotate || this.pov.follow)) {
                 this.camera.position.setFromSphericalCoords(this.pov.camera_zoom, 1.0, this.pov.camera_angle);
                 this.camera.position.add(player.position);
                 this.camera.lookAt(player.position);
