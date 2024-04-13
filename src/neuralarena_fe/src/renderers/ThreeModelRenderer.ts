@@ -14,7 +14,13 @@ export class ThreeModelRenderer {
     controls?: OrbitControls;
     scene: THREE.Scene;
     camera?: THREE.Camera;
-    anim?: THREE.AnimationMixer;
+    anim?: {
+        clips: THREE.AnimationClip[],
+        mixer: THREE.AnimationMixer,
+        action?: THREE.AnimationAction,
+        index: number,
+        changedAt: number,
+    };
     width: number;
     height: number;
     loading: boolean;
@@ -54,15 +60,30 @@ export class ThreeModelRenderer {
         url: string,
         aspectRatio: number
     ) {
-        const [camera, anim, listener] = await this.#loadScene(
+        const [camera, animMixer, animClips, listener] = await this.#loadScene(
             url, 
             this.assetLoader, 
             this.scene,
             aspectRatio
         );
         this.camera = camera;
-        this.anim = anim;
         this.fixAudioMng = new FixedAudioManager(listener);
+
+        let action: THREE.AnimationAction|undefined = undefined;
+        if(animClips.length > 0) {
+            action = animMixer.clipAction(animClips[0]);
+            action.loop = THREE.LoopRepeat;
+            action.enabled = true;
+            action.play();
+        }
+
+        this.anim = {
+            clips: animClips,
+            mixer: animMixer,
+            action,
+            index: 0,
+            changedAt: Date.now(),
+        };
 
         this.loading = false;
     }
@@ -117,6 +138,7 @@ export class ThreeModelRenderer {
     ): Promise<[
         THREE.Camera, 
         THREE.AnimationMixer, 
+        THREE.AnimationClip[],
         THREE.AudioListener
     ]> {
         const gltf = await loader.loadAsync(url);
@@ -168,16 +190,10 @@ export class ThreeModelRenderer {
         this.controls!.target = obj.position.clone().add(new THREE.Vector3(0.0, 100.0, 0.0));
 
         const anim = new THREE.AnimationMixer(obj);
-        if(gltf.animations.length > 0) {
-            const action = anim.clipAction(gltf.animations[0]);
-            action.loop = THREE.LoopRepeat;
-            action.enabled = true;
-            action.play();
-        }
 
         scene.add(obj);
 
-        return [camera, anim, listener];
+        return [camera, anim, gltf.animations, listener];
     }
 
     static async #loadAudio(
@@ -205,10 +221,31 @@ export class ThreeModelRenderer {
         this.fixAudioMng?.reset();
     }
 
+    #nextAnimation(
+    ) {
+        if(this.anim) {
+            this.anim.action?.fadeOut(.2);
+            this.anim.index = (this.anim.index + 1) % this.anim.clips.length;
+            const action = this.anim.mixer.clipAction(this.anim.clips[this.anim.index]);
+            action.loop = THREE.LoopRepeat;
+            action.enabled = true;
+            action.reset().fadeIn(0.2).play();
+            this.anim.action = action;
+            this.anim.changedAt = Date.now();
+        }
+    }
+
     update(
         deltaTime: number
     ) {
-        this.anim?.update(deltaTime / 1000.0);
+        if(this.anim) {
+            if(Date.now() - this.anim.changedAt > 5_000) {
+                this.#nextAnimation();
+            }
+
+            this.anim.mixer.update(deltaTime / 1000.0);
+        }
+        
         this.loadingBar.update(deltaTime);
         this.controls?.update(deltaTime / 1000.0);
     }
