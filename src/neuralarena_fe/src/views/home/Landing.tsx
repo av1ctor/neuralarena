@@ -98,7 +98,7 @@ const Landing = () => {
                         Play <span className={classes.highlight}>games</span> with your AI bot and win incredible prizes!
                     </Title>
                     <Text color="dimmed" mt="md" className={classes.subtitle}>
-                        <b>Neural Arena</b> is a decentralized web3 game platform, pioneering a world-first approach where users deploy their <b>AI-enhanced NFT characters (AI players)</b> to compete against each other in matches to <b>improve their NFT's experience</b> (XP) and to <b>win prizes</b> in crypto
+                        <b>Neural Arena</b> is a decentralized web3 game platform, pioneering a world-first approach where users employ their <b>AI-enhanced NFT characters (AI players)</b> to compete against each other in matches to <b>improve their NFT's experience</b> (XP) and to <b>win prizes</b> in crypto
                     </Text>
 
                     <List
@@ -112,7 +112,7 @@ const Landing = () => {
                         }
                     >
                         <List.Item className={classes.item}>
-                            Each <b>NFT</b> contains the visual features (the 3d model with animations) and the skills (the weights and bias of its <b>artificial neural network</b>) trained using <b>deep reinforcement learning</b>(RL). All the contents (the NN data, the 3d model and the sound effects) are <b>stored on-chain</b>.
+                            Each <b>NFT</b> contains the visual features (the 3d model with animations) and the skills (the parameters of its <b>artificial neural network</b>) trained using <b>deep reinforcement learning</b>(RL). All the contents (the NN data, the 3d model and the sound effects) are <b>stored on-chain</b>.
                         </List.Item>
                         <List.Item className={classes.item}>
                             All games <b>run 100% on-chain</b> to ensure no match can be manipulated as there are no external interferences, making hacking impossible.
