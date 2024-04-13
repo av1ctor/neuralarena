@@ -58,7 +58,7 @@ export const NftCard = (props: Props) => {
             <Card.Section>
                 <Image
                     src={token.data?.image_url}
-                    height={props.size === 'mini'? 128: props.size === 'full'? 1024: 256}
+                    height={props.size === 'mini'? 128: props.size === 'full'? 768: 256}
                     fit="cover"
                     withPlaceholder
                 />

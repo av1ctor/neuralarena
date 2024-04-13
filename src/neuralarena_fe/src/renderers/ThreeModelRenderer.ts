@@ -93,13 +93,21 @@ export class ThreeModelRenderer {
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x88ccee);
 
+        const geometry = new THREE.PlaneGeometry(500.0, 500.0);
+        const material = new THREE.MeshLambertMaterial({color: 0x5E5A80, side: THREE.DoubleSide});
+        const plane = new THREE.Mesh(geometry, material);
+        plane.receiveShadow = true;
+        plane.castShadow = true;
+        plane.rotateX(Math.PI / 2)
+        scene.add(plane);
+
         return scene;
     }
 
     static #createDefaultCamera(
         aspectRatio: number
     ): THREE.Camera {
-        const camera = new THREE.PerspectiveCamera(75.0, aspectRatio, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(75.0, aspectRatio, 0.1, 3000.0);
         camera.position.set(0.0, 100.0, 250.0);
         return camera;
     }
@@ -116,11 +124,11 @@ export class ThreeModelRenderer {
         directionalLight.position.set(15, 30, 10);
         directionalLight.castShadow = true;
         directionalLight.shadow.camera.near = 0.01;
-        directionalLight.shadow.camera.far = 500.0;
-        directionalLight.shadow.camera.right = 60.0;
-        directionalLight.shadow.camera.left = -60.0;
-        directionalLight.shadow.camera.top = 60.0;
-        directionalLight.shadow.camera.bottom = -60.0;
+        directionalLight.shadow.camera.far = 5000.0;
+        directionalLight.shadow.camera.right = 600.0;
+        directionalLight.shadow.camera.left = -600.0;
+        directionalLight.shadow.camera.top = 600.0;
+        directionalLight.shadow.camera.bottom = -600.0;
         directionalLight.shadow.mapSize.width = 2048;
         directionalLight.shadow.mapSize.height = 2048;
         directionalLight.shadow.radius = 4;

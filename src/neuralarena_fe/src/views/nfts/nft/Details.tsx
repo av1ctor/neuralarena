@@ -2,7 +2,7 @@ import { useBrowser } from "@hooks/browser";
 import { useUI } from "@hooks/ui";
 import { NFT } from "@libs/nas1";
 import { Box, Center, SegmentedControl, Space } from "@mantine/core";
-import { Icon3dCubeSphere, IconList } from "@tabler/icons-react";
+import { IconCube, IconList } from "@tabler/icons-react";
 import React, { useState } from "react";
 import { NftCard } from "./Card";
 import { NftModel } from "./Model";
@@ -21,8 +21,8 @@ const sections = [
         value: 'model',
         label: (
           <Center>
-            <Icon3dCubeSphere size="1rem" />
-            <Box ml={10}>Model</Box>
+            <IconCube size="1rem" />
+            <Box ml={10}>3d Model</Box>
           </Center>
         ),
     },

@@ -1,7 +1,8 @@
+import { CollapseBox } from "@components/CollapseBox";
 import { MatchWalletLog } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { e8sToDecimal } from "@libs/icp";
 import { matchWalletLogAccToString, matchWalletLogOpToString } from "@libs/matches";
-import { Box, Button, Collapse, Divider, Grid, Group, Text, TextInput } from "@mantine/core";
+import { Grid, Text, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import React from "react";
 
@@ -14,19 +15,14 @@ export const WalletLogs = ({logs}: Props) => {
 
     return (
         <Grid.Col span={12}>
-            <Group position="right">
-                <Button
-                    size="xs"
-                    onClick={toggle}
-                >
-                    {opened? 'Hide logs': 'Show logs'}
-                </Button>
-            </Group>
-            <Collapse in={opened}>
+            <CollapseBox 
+                opened={opened}
+                title="Wallet logs"
+                toggle={toggle}
+            >
                 {logs && logs.map((log, index) =>
-                    <Grid key={index}>
+                    <Grid key={index} mb="md">
                         <Grid.Col md={12}>
-                            <Divider my="sm" />
                             <Text size="sm"><b>#{index+1}</b></Text>
                         </Grid.Col>
                         <Grid.Col md={6}>
@@ -65,7 +61,7 @@ export const WalletLogs = ({logs}: Props) => {
                             <>
                                 <Grid.Col md={12}>
                                     <TextInput
-                                        label="Err"
+                                        label="Error"
                                         value={log.res.Err}
                                         readOnly
                                     />
@@ -74,7 +70,7 @@ export const WalletLogs = ({logs}: Props) => {
                         }
                     </Grid>
                 )}
-            </Collapse>
+            </CollapseBox>
         </Grid.Col>
     );
 };
