@@ -3,7 +3,7 @@ use candid::{CandidType, Principal};
 use neuralarena_cdk::models::{
     game::{GameCost, GameCosts, GameMapId, GameRewards}, 
     instance::{InstancePlayer, InstanceRunSlice}, 
-    nas1_types::Nas1Token
+    nas1_types::Nas1TokenGameProps
 };
 use serde::{Serialize, Deserialize};
 use super::{game::GameId, timer::TimerId};
@@ -86,6 +86,7 @@ pub struct Match {
     pub id: String,
     pub game: MatchGame,
     pub state: MatchState,
+    pub players_game_props: Vec<Nas1TokenGameProps>,
     pub instance: MatchGameInstance,
     pub timer_id: Option<TimerId>,
     pub deadline: u64, // seconds
@@ -105,8 +106,7 @@ pub struct MatchRequest {
 #[derive(Clone, Serialize, Deserialize, CandidType)]
 pub struct MatchPlayerNftResponse {
     pub collection_id: Principal,
-    pub token_id: u128,
-    pub props: Nas1Token,
+    pub token_id: u128
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
@@ -172,6 +172,7 @@ impl Match {
                 run_slices: vec![],
                 wallet_logs: vec![],
             },
+            players_game_props: vec![],
             instance: MatchGameInstance {
                 id: "".to_string(),
                 map_id: 0,
@@ -219,7 +220,6 @@ impl From<Match> for MatchResponse {
                 nft: MatchPlayerNftResponse{
                     collection_id: p.nft.collection_id,
                     token_id: p.nft.token_id,
-                    props: p.nft.props.clone(),
                 },
             }).collect(),
             deadline: e.deadline,

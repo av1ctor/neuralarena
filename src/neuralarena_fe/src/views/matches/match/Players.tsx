@@ -67,6 +67,7 @@ export const MatchPlayers = (props: Props) => {
                                 </Center>
                                 <NftCard
                                     nft={player.nft}
+                                    game_id={match.game.id}
                                     onClick={handleSelect}
                                 />
                                 <Center>

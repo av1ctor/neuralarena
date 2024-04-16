@@ -6,7 +6,7 @@ import {
 } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { Principal } from "@dfinity/principal";
 
-export type GameId = string;
+export type GameId = Principal;
 
 export const gameCostToPlay = (
     costs: GameCosts|undefined

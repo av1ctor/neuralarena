@@ -2,6 +2,7 @@ import React from "react";
 import { createStyles } from "@mantine/core";
 import { NftCard } from "./nft/Card";
 import { NFT } from "@libs/nas1";
+import { Principal } from "@dfinity/principal";
 
 const useStyles = createStyles((theme) => ({
     container: {
@@ -31,6 +32,7 @@ const useStyles = createStyles((theme) => ({
 interface Props {
     nfts: NFT[];
     selected?: NFT;
+    game_id?: Principal,
     onClick?: (nft: NFT) => void;
 }
 
@@ -56,6 +58,7 @@ export const ListNfts = (props: Props) => {
                         nft={nft}
                         size="mini"
                         selected={nft.token_id === props.selected?.token_id}
+                        game_id={props.game_id}
                         onClick={props.onClick}
                     />
                 </div>

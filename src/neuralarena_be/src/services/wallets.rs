@@ -50,6 +50,7 @@ impl Wallets {
         ).await
     }
 
+    #[allow(unused)]
     pub async fn transfer_from_str_to_str(
         from: &String,
         to: &String,

@@ -2,10 +2,9 @@ use std::collections::{HashMap, HashSet};
 use candid::Principal;
 use icrc_ledger_types::icrc1::account::Account;
 use crate::{db::DB, models::user::UserNft};
-use neuralarena_cdk::{
-    db::traits::crud::{Crud, CrudSubscribable, Pagination},
-    models::nas1_types::Nas1Token
-};
+use neuralarena_cdk::
+    db::traits::crud::{Crud, CrudSubscribable, Pagination}
+;
 use crate::models::m4tch::Match;
 use crate::models::user::{User, UserId, UserKind, UserNftRequest};
 
@@ -163,22 +162,10 @@ impl UsersService {
             }
 
             for token_id in token_ids {
-                let (token_data, ): (Option<Nas1Token>, ) = ic_cdk::call(
-                    canister_id, 
-                    "nas1_token_data",
-                    (token_id, )
-                ).await.map_err(|e| e.1)?;
-    
-                if let Some(token_data) = token_data {
-                    nfts.push(UserNft { 
-                        collection_id: canister_id.clone(), 
-                        token_id,
-                        props: token_data,
-                    });
-                }
-                else {
-                    return Err(format!("Token not found: {}", token_id));
-                }
+                nfts.push(UserNft { 
+                    collection_id: canister_id.clone(), 
+                    token_id,
+                });
             }
         }
 

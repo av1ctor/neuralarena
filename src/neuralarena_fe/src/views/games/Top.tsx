@@ -34,7 +34,7 @@ export const TopGames = () => {
                 >
                     {games.data?.pages?.map((page) => (
                         page.map((item) => (
-                            <Carousel.Slide key={item.id}>
+                            <Carousel.Slide key={item.id.toString()}>
                                 <GameCard 
                                     game={item}
                                     navigate

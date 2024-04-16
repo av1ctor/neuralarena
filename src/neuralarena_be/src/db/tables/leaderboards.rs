@@ -1,7 +1,10 @@
 use std::collections::BTreeMap;
 use crate::{db::TableName, models::user::UserId};
 use neuralarena_cdk::db::traits::{
-    table::{TableSerializable, TableDeserializable, TableEventKind, TableEventKey, TableSubscriber, TableData, Table, TableSchema, TableVersioned, TableEvent},
+    table::{TableSerializable, TableDeserializable, TableEventKind, 
+        TableEventKey, TableSubscriber, TableData, Table, TableSchema, 
+        TableVersioned, TableEvent
+    },
     crud::Crud
 };
 use crate::models::game::GameId;
@@ -64,7 +67,7 @@ impl TableSubscriber<TableName> for LeaderboardsTable {
     ) {
         match event.table_name {
             TableName::Games => {
-                if let TableEventKey::Text(game_key) = &event.pkey {
+                if let TableEventKey::Principal(game_key) = &event.pkey {
                     match event.kind {
                         TableEventKind::Create => {
                             if !self.data.0.contains_key(game_key) {

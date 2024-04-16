@@ -1,7 +1,10 @@
 use std::collections::{BTreeSet, BTreeMap};
 use crate::db::TableName;
 use neuralarena_cdk::db::traits::{
-    table::{TableSerializable, TableDeserializable, TableEventKind, TableEventKey, TableSubscriber, TableData, Table, TableSchema, TableVersioned, TableEvent},
+    table::{TableSerializable, TableDeserializable, TableEventKind, 
+        TableEventKey, TableSubscriber, TableData, Table, TableSchema, 
+        TableVersioned, TableEvent
+    },
     crud::Crud
 };
 use crate::models::{game::GameId, m4tch::MatchId};
@@ -64,7 +67,7 @@ impl TableSubscriber<TableName> for GameMatchesRelTable {
     ) {
         match event.table_name {
             TableName::Matches => {
-                if let (TableEventKey::Text(m4tch_key), TableEventKey::Text(game_key)) = 
+                if let (TableEventKey::Text(m4tch_key), TableEventKey::Principal(game_key)) = 
                     (&event.pkey, &event.keys[0]) {
                     match event.kind {
                         TableEventKind::Create => {

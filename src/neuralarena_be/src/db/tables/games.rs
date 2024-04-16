@@ -80,7 +80,7 @@ impl TableSubscribable<TableName, GameId, Game> for GamesTable {
     fn get_pkey(
         k: &GameId
     ) -> TableEventKey {
-        TableEventKey::Text(k.clone())
+        TableEventKey::Principal(k.clone())
     }
 
     fn get_keys(

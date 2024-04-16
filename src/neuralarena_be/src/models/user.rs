@@ -1,5 +1,4 @@
 use candid::{Principal, CandidType};
-use neuralarena_cdk::models::nas1_types::Nas1Token;
 use serde::{Deserialize, Serialize};
 use super::developer::{Developer, DeveloperRequest, DeveloperResponse};
 use super::moderator::{Moderator, ModeratorRequest, ModeratorResponse};
@@ -20,7 +19,6 @@ pub enum UserKind {
 pub struct UserNft {
     pub collection_id: Principal,
     pub token_id: u128,
-    pub props: Nas1Token,
 }
 
 impl PartialEq for UserNft {
@@ -88,7 +86,6 @@ pub enum UserKindResponse {
 pub struct UserNftResponse {
     pub collection_id: Principal,
     pub token_id: u128,
-    pub data: Nas1Token,
 }
 
 #[derive(CandidType)]
@@ -155,8 +152,7 @@ impl From<User> for UserResponse {
             kind: e.kind.into(),
             nfts: e.nfts.iter().map(|n| UserNftResponse { 
                 collection_id: n.collection_id, 
-                token_id: n.token_id, 
-                data: n.props.clone(),
+                token_id: n.token_id
             }).collect(),
             created_at: e.created_at,
             updated_at: e.updated_at,

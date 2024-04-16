@@ -12,6 +12,7 @@ import {
 import { GameResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { gameFindById } from "@libs/games";
 import { useActors } from "@hooks/actors";
+import { Principal } from "@dfinity/principal";
 
 const schema = {
     game_id: yup.string().required(),
@@ -63,7 +64,7 @@ export const MatchCreate = (props: Props) => {
 
             await create({
                 game: {
-                    id: values.game_id,
+                    id: Principal.fromText(values.game_id),
                     map_id: BigInt(values.map_id),
                     min_players: values.min_players,
                     max_players: values.max_players,
@@ -92,7 +93,7 @@ export const MatchCreate = (props: Props) => {
             .flat()
             .map(g => ({
                 label: g.info.name,
-                value: g.id,
+                value: g.id.toString(),
                 description: g.info.subtitle,
                 image: g.info.urls.cover,
             }));
@@ -105,7 +106,7 @@ export const MatchCreate = (props: Props) => {
 
         return (gamesQuery.data.pages
             .flat()
-            .find(g => g.id === form.values.game_id)
+            .find(g => g.id.toString() === form.values.game_id)
             ?.info.maps || [])
             .map(m => ({
                 label: m.name,
@@ -120,7 +121,7 @@ export const MatchCreate = (props: Props) => {
         if(game_id) {
             (async () => {
                 try {
-                    const game = await gameFindById(main, game_id);
+                    const game = await gameFindById(main, Principal.fromText(game_id));
                     setGame(game);
                 }
                 catch(e) {

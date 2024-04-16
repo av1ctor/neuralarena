@@ -1,8 +1,12 @@
 import React, { ReactElement, useCallback, useMemo } from "react";
-import { Badge, Card, Group, Text, Image, Space, createStyles, rem, Grid, TextInput } from "@mantine/core";
+import { Badge, Card, Group, Text, Image, Space, createStyles, rem, Grid, TextInput, Box } from "@mantine/core";
 import { useNAS1FindTokenById } from "@hooks/nas1";
 import {  useIcrc7GetCollectionSymbol } from "@hooks/icrc7";
 import { NFT } from "@libs/nas1";
+import { Principal } from "@dfinity/principal";
+import { Nas1TokenGameProps } from "@declarations/nas1_nft/nas1_nft.did";
+import { principalToString } from "@libs/icp";
+import { useGameFindById } from "@hooks/games";
 
 const useStyles = createStyles((theme) => ({
     nft: {
@@ -25,6 +29,7 @@ interface Props {
     nft: NFT;
     size?: "mini" | "full",
     selected?: boolean;
+    game_id?: Principal,
     children?: ReactElement,
     onClick?: (nft: NFT) => void;
 }
@@ -43,6 +48,17 @@ export const NftCard = (props: Props) => {
     const hiddenLayersWeights = useMemo(() => {
         return `[${(token.data?.hidden_layers_weights_size as bigint[] || []).map(s => s.toString()).join(',')}]`;
     }, [token.data?.hidden_layers_weights_size]);
+
+    const xps = useMemo((): [Principal, Nas1TokenGameProps][] => {
+        if(!token.data) {
+            return [];
+        }
+        let res = new Array<[Principal, Nas1TokenGameProps]>();
+        for(const e of token.data?.game_props) {
+            res.push(e);
+        }
+        return res;
+    }, [token]);
 
     return (
         <Card 
@@ -78,9 +94,11 @@ export const NftCard = (props: Props) => {
             {token.data &&
                 <div>
                     <Group position="left">
-                        <Badge color="yellow" variant="light">
-                            XP {token.data.xp.toString()}
-                        </Badge>
+                        {props.game_id &&
+                            <Badge color="blue" variant="light">
+                                XP {token.data.game_props.find(e => e[0].compareTo(props.game_id!) === 'eq')?.[1].xp || 0.0}
+                            </Badge>
+                        }
                         <Badge color="red" variant="light">
                             SPT {(Number(token.data.steps_per_thought) / 1000.0).toFixed(2)}
                         </Badge>
@@ -103,27 +121,47 @@ export const NftCard = (props: Props) => {
                     </div>
                     <Space h="sm"/>
                     {props.size === 'full' &&
-                        <div>
-                            <Text size="sm" color="dimmed">
-                                Neural net
-                            </Text>
-                            <Grid>
-                                <Grid.Col md={6}>
-                                    <TextInput
-                                        label="Num hidden layers"
-                                        value={token.data.num_hidden_layers.toString()}
-                                        readOnly
-                                    />
-                                </Grid.Col>
-                                <Grid.Col md={6}>
-                                    <TextInput
-                                        label="Hidden layers weights len"
-                                        value={hiddenLayersWeights}
-                                        readOnly
-                                    />
-                                </Grid.Col>
-                            </Grid>
-                        </div>
+                        <>
+                            <Box mb="sm">
+                                <Text size="sm" color="dimmed">
+                                    XPs
+                                </Text>
+                                {xps.length > 0? 
+                                    xps.map((xp, index) => 
+                                        <Group key={index} position="left">
+                                            <Badge color="yellow" variant="light">
+                                                {`${xp[0].toString()}: ${xp[1].xp}`}
+                                            </Badge>
+                                        </Group>
+                                    )
+                                :
+                                    <Text size="sm">
+                                        Time to start earning some XP! Join a match and let the fun begin! 😆
+                                    </Text>
+                                }
+                            </Box>
+                            <div>
+                                <Text size="sm" color="dimmed">
+                                    Neural net
+                                </Text>
+                                <Grid>
+                                    <Grid.Col md={6}>
+                                        <TextInput
+                                            label="Num hidden layers"
+                                            value={token.data.num_hidden_layers.toString()}
+                                            readOnly
+                                        />
+                                    </Grid.Col>
+                                    <Grid.Col md={6}>
+                                        <TextInput
+                                            label="Hidden layers weights len"
+                                            value={hiddenLayersWeights}
+                                            readOnly
+                                        />
+                                    </Grid.Col>
+                                </Grid>
+                            </div>
+                        </>
                     }
                 </div>
             }

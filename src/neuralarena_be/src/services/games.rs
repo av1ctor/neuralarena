@@ -3,8 +3,7 @@ use neuralarena_cdk::{
     models::game::{
         GameEndCredits, GameInfo, GameInfoResponse
     },
-    db::traits::crud::{Crud, CrudSubscribable, Pagination},
-    utils::uniqueid
+    db::traits::crud::{Crud, CrudSubscribable, Pagination}
 };
 use crate::db::DB;
 use crate::models::{
@@ -42,11 +41,14 @@ impl GamesService {
         let info = Self::get_info(req.canister_id).await?;
 
         if info.rewards.winner > MAX_GAME_DIST {
-            return Err(format!("Winner reward higher than max game distribution: {} > {}", info.rewards.winner, MAX_GAME_DIST));
+            return Err(format!(
+                "Winner reward higher than max game distribution: {} > {}", 
+                info.rewards.winner, 
+                MAX_GAME_DIST
+            ));
         }
 
-        let id = uniqueid::generate();
-        Ok(Game::new(&id, &req, &info, &user.id))
+        Ok(Game::new(&req, &info, &user.id))
     }
 
     pub async fn reload(
@@ -138,7 +140,7 @@ impl GamesService {
         game: &Game
     ) -> Result<GameEndCredits, String> {
         let (res, ): (Result<GameEndCredits, String>, ) = ic_cdk::call(
-            game.canister_id, 
+            game.id, 
             "game_get_end_credits",
             ()
         ).await.map_err(|e| e.1)?;

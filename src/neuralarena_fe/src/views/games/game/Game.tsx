@@ -10,6 +10,7 @@ import { GameLeaderboard } from "./Leaderboard";
 import { GameMaps } from "./Maps";
 import { GameBanner } from "./Banner";
 import { GameAbout } from "./About";
+import { Principal } from "@dfinity/principal";
 
 const sections = [
     {
@@ -68,7 +69,7 @@ export const Game = (props: Props) => {
     const {classes} = useUI();
     const [section, setSection] = useState('matches');
     
-    const game = useGameFindById(id);
+    const game = useGameFindById(id? Principal.fromText(id): undefined);
 
     return (
         <>

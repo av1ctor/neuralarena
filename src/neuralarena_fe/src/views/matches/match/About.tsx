@@ -43,7 +43,7 @@ export const MatchAbout = (props: Props) => {
             <Grid.Col md={6}>
                 <TextInput
                     label="Game id"
-                    value={match?.game.id || ''}
+                    value={match?.game.id.toString() || ''}
                     readOnly
                 />
             </Grid.Col>

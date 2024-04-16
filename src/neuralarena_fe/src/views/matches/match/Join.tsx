@@ -81,6 +81,7 @@ export const MatchJoin = (props: Props) => {
                 <ListNfts  
                     nfts={nfts}
                     selected={nft}
+                    game_id={props.game?.id}
                     onClick={handleSelectNft}
                 />
             </Grid.Col>

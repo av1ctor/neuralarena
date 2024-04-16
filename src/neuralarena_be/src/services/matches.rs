@@ -1,4 +1,4 @@
-use std::{any::Any, collections::{BTreeSet, HashMap}};
+use std::collections::{BTreeSet, HashMap};
 use candid::Principal;
 use neuralarena_cdk::{
     db::traits::crud::{Crud, CrudSubscribable, Pagination},
@@ -7,8 +7,13 @@ use neuralarena_cdk::{
         ic_asset_types::{GetRequest, GetResponse}, 
         instance::{
             InstanceAssetsResponse, InstanceId, InstancePlayer, 
-            InstancePlayerNft, InstancePlayerState, InstanceRunRequest, 
-            InstanceRunResponse, InstanceRunSlice, InstanceStepsResponse
+            InstancePlayerNft, InstancePlayerState, 
+            InstanceRunRequest, InstanceRunResponse, InstanceRunSlice, 
+            InstanceStepsResponse
+        }, 
+        nas1_types::{
+            Nas1Token, Nas1TokenGameProps, Nas1TokenGameDeltaProps, 
+            Nas1UpdatePropsArg
         }
     },
     utils::uniqueid
@@ -17,7 +22,9 @@ use crate::{
     models::{
         game::{Game, GameId}, 
         m4tch::{
-            Match, MatchGameInstance, MatchId, MatchRequest, MatchStatus, MatchWalletLog, MatchWalletLogAccount, MatchWalletLogOp, MatchWalletLogTransfer
+            Match, MatchGameInstance, MatchId, MatchRequest, MatchStatus, 
+            MatchWalletLog, MatchWalletLogAccount, MatchWalletLogOp, 
+            MatchWalletLogTransfer
         }, 
         nftcol::NftCollection, 
         user::{User, UserNftRequest}
@@ -80,7 +87,7 @@ impl MatchesService {
         let mut m4tch = Match::new(&id, &req, &user.id);
 
         let (res, ): (Result<InstanceId, String>, ) = ic_cdk::call(
-            game.canister_id, 
+            game.id, 
             "instance_create",
             (
                 m4tch.game.map_id,
@@ -254,7 +261,7 @@ impl MatchesService {
         
                 tensors.insert(skill.clone(), res.content);
             }
-            
+
             // send to match's account
             let amount = Self::get_cost_to_play(&m4tch)?;
             
@@ -283,7 +290,7 @@ impl MatchesService {
                 nft: InstancePlayerNft {
                     collection_id: user_nft.collection_id,
                     token_id: user_nft.token_id,
-                    props: user_nft.props.clone(),
+                    props: None,
                 },
                 nft_col: nft_col.meta.clone(),
                 tensors,
@@ -292,6 +299,7 @@ impl MatchesService {
                     last_thought: 0,
                     score: 0.0,
                     health: 100.0,
+                    xp: 0,          // will be set when running
                     obs: vec![],
                 }
             });
@@ -325,9 +333,7 @@ impl MatchesService {
             }
         }
 
-        icrc7::ICRC7Utils::verify_owners(&nfts_by_canister).await?;
-
-        Ok(())
+        icrc7::ICRC7Utils::verify_owners(&nfts_by_canister).await
     }
 
     fn get_cost_to_play(
@@ -346,14 +352,22 @@ impl MatchesService {
     ) -> Result<(), String> {
         let amount = m4tch.state.balance;
 
-        let game_cut = (amount * (MAX_GAME_DIST - if winner.is_some() {m4tch.instance.rewards.winner} else {0})) / 100;
-        let winner_reward = if winner.is_some() && m4tch.instance.rewards.winner > 0 {(amount * m4tch.instance.rewards.winner) / 100} else {0};
+        let game_cut = (amount * (MAX_GAME_DIST - if winner.is_some() {
+                m4tch.instance.rewards.winner
+            } else {
+                0
+            })) / 100;
+        let winner_reward = if winner.is_some() && m4tch.instance.rewards.winner > 0 {
+                (amount * m4tch.instance.rewards.winner) / 100
+            } else {
+                0
+            };
         let platform_fee = (amount * PLATFORM_FEE) / 100;
         let to_burn = amount - game_cut - winner_reward - platform_fee;
 
         // give game its cut
         if game_cut > TRANSFER_FEE {
-            match Wallets::transfer_from_str_to_str(
+            match Wallets::transfer_from_str_to_prin(
                 &m4tch.id,
                 &m4tch.game.id, 
                 game_cut,
@@ -362,7 +376,7 @@ impl MatchesService {
                 Ok(tx) => {
                     m4tch.state.wallet_logs.push(MatchWalletLog{
                         op: MatchWalletLogOp::GameDist,
-                        acc: MatchWalletLogAccount::Str(m4tch.game.id.clone()),
+                        acc: MatchWalletLogAccount::Prin(m4tch.game.id.clone()),
                         res: Ok(MatchWalletLogTransfer{
                             value: game_cut,
                             time: ic_cdk::api::time(),
@@ -373,7 +387,7 @@ impl MatchesService {
                 Err(msg) => {
                     m4tch.state.wallet_logs.push(MatchWalletLog{
                         op: MatchWalletLogOp::GameDist,
-                        acc: MatchWalletLogAccount::Str(m4tch.game.id.clone()),
+                        acc: MatchWalletLogAccount::Prin(m4tch.game.id.clone()),
                         res: Err(msg),
                     });
                 }
@@ -481,12 +495,58 @@ impl MatchesService {
         Ok(())
     }
 
-    async fn start(
+    async fn update_players_game_props(
+        m4tch: &Match, 
+        game: &Game,
+        old_game_props: &Vec<Nas1TokenGameProps>
+    ) -> Result<(), String> {
+
+        for (i, player) in m4tch.state.players.iter().enumerate() {
+            // NOTE: all params are deltas, because some other match could have 
+            // updated the xp while this match was running
+            let old_game_props = &old_game_props[i];
+            let delta_xp = (player.state.xp - old_game_props.xp) as i32;
+            
+            let _: (Result<(), String>, ) = ic_cdk::call(
+                player.nft.collection_id, 
+                "nas1_update_props",
+                (
+                    Nas1UpdatePropsArg {
+                        token_id: player.nft.token_id,
+                        game_canister_id: game.id.clone(),
+                        game_props: Nas1TokenGameDeltaProps {
+                            delta_xp
+                        }
+                    },
+                )
+            ).await.map_err(|e| e.1)?;
+        }
+        
+        Ok(())
+    }
+
+    async fn setup_match(
         m4tch: &mut Match,
         game: &Game
     ) -> Result<(), String> {
+        // get the nas1 token for each player
+        for player in &mut m4tch.state.players {
+            let (token_data, ): (Option<Nas1Token>, ) = ic_cdk::call(
+                player.nft.collection_id, 
+                "nas1_token_data",
+                (player.nft.token_id, )
+            ).await.map_err(|e| e.1)?;
+
+            if let Some(token_data) = token_data {
+                player.nft.props = Some(token_data);
+            }
+            else {
+                return Err(format!("Token not found: {}", player.nft.token_id));
+            }
+        }
+        
         let (res, ): (Result<(), String>, ) = ic_cdk::call(
-            game.canister_id, 
+            game.id, 
             "instance_setup",
             (
                 m4tch.instance.id.clone(), 
@@ -506,9 +566,17 @@ impl MatchesService {
 
         Self::verify_players(&m4tch.state.players).await?;
 
-        Self::start(m4tch, game).await?;
+        Self::setup_match(m4tch, game).await?;
 
         m4tch.state.initial_seed = Some(initial_seed);
+
+        let old_game_props = m4tch.state.players.iter()
+            .map(|p| p.nft.props.as_ref().unwrap()
+                .game_props.get(&game.id).or(Some(&Nas1TokenGameProps{
+                    xp: 0
+                })).unwrap().clone()
+            )
+            .collect();
 
         let mut slice = 0;
         let res = loop {
@@ -520,7 +588,7 @@ impl MatchesService {
             });
 
             let (res, ): (Result<InstanceRunResponse, String>, ) = ic_cdk::call(
-                game.canister_id, 
+                game.id, 
                 "instance_run",
                 (
                     m4tch.instance.id.clone(),
@@ -535,8 +603,10 @@ impl MatchesService {
 
             if let Ok(res) = res {
                 for (i, player) in m4tch.state.players.iter_mut().enumerate() {
-                    player.state.score = res.players[i].score;
-                    player.state.health = res.players[i].health;
+                    let inst_player = &res.players[i];
+                    player.state.score = inst_player.score;
+                    player.state.health = inst_player.health;
+                    player.state.xp = inst_player.xp;
                 }
 
                 if res.terminated || res.timedout {
@@ -558,6 +628,12 @@ impl MatchesService {
                     m4tch,
                     &result.won_by,
                     icp_ledger_canister_id,
+                ).await?;
+
+                Self::update_players_game_props(
+                    m4tch,
+                    game,
+                    &old_game_props
                 ).await?;
         
                 m4tch.won_by = result.won_by;
@@ -598,7 +674,7 @@ impl MatchesService {
         game: &Game
     ) -> Result<InstanceAssetsResponse, String> {
         let (res, ): (Result<InstanceAssetsResponse, String>, ) = ic_cdk::call(
-            game.canister_id, 
+            game.id, 
             "instance_get_assets",
             (m4tch.instance.id.clone(), )
         ).await.map_err(|e| e.1)?;
@@ -617,7 +693,7 @@ impl MatchesService {
         }
         
         let (res, ): (Result<InstanceStepsResponse, String>, ) = ic_cdk::call(
-            game.canister_id, 
+            game.id, 
             "instance_get_steps",
             (m4tch.instance.id.clone(), pag, )
         ).await.map_err(|e| e.1)?;
@@ -670,20 +746,21 @@ impl MatchesService {
     fn authorize(
         user: &User
     ) -> Result<(), String> {
-        //FIXME: remove this by-pass when the UI is done
-        if false {
-            if UserKind::Player.type_id() != user.kind.type_id() {
-                return Err("Forbidden".to_string());
+        match user.kind {
+            UserKind::Player(_) => {
+                if !user.active {
+                    return Err("User inactive".to_string());
+                }
+                else if user.banned {
+                    return Err("User banned".to_string());
+                }
+        
+                Ok(())
             }
-
-            if !user.active {
-                return Err("User inactive".to_string());
-            }
-            else if user.banned {
-                return Err("User banned".to_string());
-            }
+            _ => {
+                Err("Forbidden".to_string())
+            },
         }
 
-        Ok(())
     }
 }

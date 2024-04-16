@@ -10,7 +10,7 @@ DEADLINE=86400
 dfx canister --identity default call neuralarena_be match_create "(
     record {
         game=record {
-            id=\"$GAME_ID\"; 
+            id=principal \"$GAME_ID\"; 
             map_id=$MAP_ID; 
             min_players=$MIN_PLAYERS; 
             max_players=$MAX_PLAYERS; 

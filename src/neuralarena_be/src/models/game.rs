@@ -3,7 +3,7 @@ use serde::{Serialize, Deserialize};
 use super::user::UserId;
 use neuralarena_cdk::models::game::GameInfo;
 
-pub type GameId = String;
+pub type GameId = Principal;
 
 #[derive(PartialEq, Clone, Serialize, Deserialize)]
 pub enum GameStatus {
@@ -13,8 +13,7 @@ pub enum GameStatus {
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Game {
-    pub id: GameId,
-    pub canister_id: Principal,
+    pub id: Principal,
     pub info: GameInfo,
     pub status: GameStatus,
     pub created_at: u64,
@@ -31,20 +30,17 @@ pub struct GameRequest {
 #[derive(Clone, Serialize, Deserialize, CandidType)]
 pub struct GameResponse {
     pub id: GameId,
-    pub canister_id: Principal,
     pub info: GameInfo,
 }
 
 impl Game {
     pub fn new(
-        id: &String,
         req: &GameRequest,
         info: &GameInfo,
         caller: &Principal
     ) -> Self {
         Self {
-            id: id.clone(),
-            canister_id: req.canister_id.clone(),
+            id: req.canister_id.clone(),
             info: info.clone(),
             status: GameStatus::ACTIVE,
             created_at: ic_cdk::api::time(),
@@ -61,7 +57,6 @@ impl From<Game> for GameResponse {
     ) -> Self {
         Self {
             id: e.id,
-            canister_id: e.canister_id,
             info: e.info,
         }
     }

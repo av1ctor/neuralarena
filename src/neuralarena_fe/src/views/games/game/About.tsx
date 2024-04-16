@@ -42,15 +42,7 @@ export const GameAbout = (props: Props) => {
                     <Grid.Col md={6}>
                         <TextInput
                             label="Id"
-                            value={game?.id || ''}
-                            readOnly
-                        />
-                    </Grid.Col>
-
-                    <Grid.Col md={6}>
-                        <TextInput
-                            label="Canister id"
-                            value={game?.canister_id.toString() || ''}
+                            value={game?.id.toString() || ''}
                             readOnly
                         />
                     </Grid.Col>
