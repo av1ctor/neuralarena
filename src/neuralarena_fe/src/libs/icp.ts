@@ -1,4 +1,4 @@
-import { sha224 } from "js-sha256";
+import { sha224, sha256 } from "js-sha256";
 import { Buffer } from "buffer";
 import crc from "crc";
 import { Principal } from "@dfinity/principal";
@@ -166,24 +166,29 @@ export const principalToAccountDefaultId = (
 export const principalToSubAccount = (
     principal: Principal|undefined
 ): Uint8Array => {
-    const bytes = (principal ?? Principal.anonymous()).toUint8Array();
-    const subAccount = new Uint8Array(32);
-    subAccount[0] = bytes.length;
-    subAccount.set(bytes, 1);
-    return subAccount;
+    const DOMAIN = asciiStringToByteArray("\x07prin-id");
+    
+    const hasher = sha256.create();
+    hasher.update([
+        ...DOMAIN,
+        ...(principal ?? Principal.anonymous()).toUint8Array(),
+    ]);
+
+    return new Uint8Array(hasher.array());
 };
 
 export const stringToSubAccount = (
     str: string|undefined
 ): Uint8Array => {
-    const bytes = new TextEncoder().encode(str);
-    if(bytes.length >= 32) {
-        throw new Error("String too long");
-    }
-    const subAccount = new Uint8Array(32);
-    subAccount[0] = bytes.length;
-    subAccount.set(bytes, 1);
-    return subAccount;
+    const DOMAIN = asciiStringToByteArray("\x06str-id");
+    
+    const hasher = sha256.create();
+    hasher.update([
+        ...DOMAIN,
+        ...new TextEncoder().encode(str),
+    ]);
+
+    return new Uint8Array(hasher.array());
 };
 
 // 4 bytes

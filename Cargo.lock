@@ -412,6 +412,7 @@ dependencies = [
  "icrc-ledger-types",
  "neuralarena-cdk",
  "serde",
+ "sha2",
 ]
 
 [[package]]
