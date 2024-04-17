@@ -194,11 +194,11 @@ export class ThreeGameRenderer {
         directionalLight.position.set(15.0, 30.0, 10.0);
         directionalLight.castShadow = true;
         directionalLight.shadow.camera.near = 0.01;
-        directionalLight.shadow.camera.far = 500.0;
-        directionalLight.shadow.camera.right = 60.0;
-        directionalLight.shadow.camera.left = -60.0;
-        directionalLight.shadow.camera.top = 60.0;
-        directionalLight.shadow.camera.bottom = -60.0;
+        directionalLight.shadow.camera.far = 1000.0;
+        directionalLight.shadow.camera.right = 100.0;
+        directionalLight.shadow.camera.left = -100.0;
+        directionalLight.shadow.camera.top = 100.0;
+        directionalLight.shadow.camera.bottom = -100.0;
         directionalLight.shadow.mapSize.width = 2048;
         directionalLight.shadow.mapSize.height = 2048;
         directionalLight.shadow.radius = 4;

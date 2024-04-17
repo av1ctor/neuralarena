@@ -220,7 +220,7 @@ export const MatchWatch = (props: Props) => {
 
     useEffect(() => {
         if(!document.fullscreenElement) {
-            const height = width / (16.0/9.0);
+            const height = width / (width > 720? (16.0/9.0): (9.0/16.0));
             resizeCanvas({w: width, h: height});
         }
     }, [width, renderer]);
