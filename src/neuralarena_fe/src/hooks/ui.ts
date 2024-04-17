@@ -1,16 +1,29 @@
 import { useCallback, useContext } from "react";
 import { UIActionType, UIContext } from "@stores/ui";
 import { notifications } from '@mantine/notifications';
-import { createStyles } from "@mantine/core";
+import { createStyles, keyframes } from "@mantine/core";
 
-const useStyles = createStyles((theme) => ({
-    block: {
-        display: 'block',
-    },
-    none: {
-        display: 'none',
-    }
-}));
+const useStyles = createStyles((theme) => {
+    const animOutline = keyframes({
+        'to': {
+            outline: '8px solid #ff00ff4f',
+            outlineOffset: '0.5rem',
+        }
+    });
+    
+    return {
+        block: {
+            display: 'block',
+        },
+        none: {
+            display: 'none',
+        },
+        animatedOutline: {
+            transition: 'outline 500ms cubic-bezier(0.19, 1, 0.22, 1)',
+            animation: `${animOutline} 4s infinite`,
+        },
+    };
+});
 
 interface UIProps {
     isLoading: boolean;
@@ -20,6 +33,7 @@ interface UIProps {
     classes: {
         block: string,
         none: string,
+        animatedOutline: string,
     };
 };
 

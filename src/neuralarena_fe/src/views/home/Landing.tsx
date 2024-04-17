@@ -6,6 +6,7 @@ import { TopGames } from "@views/games/Top";
 import logo from "@assets/logo-vert.svg";
 import { useAuth } from "@hooks/auth";
 import { config } from "../../config";
+import { useUI } from "@hooks/ui";
   
 const useStyles = createStyles((theme) => ({
     inner: {
@@ -74,7 +75,8 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const Landing = () => {
-    const { classes } = useStyles();
+    const { classes, cx } = useStyles();
+    const { classes: globClasses } = useUI();
     const {redirectToSignup, navigateToUserPage} = useBrowser();
     const {user} = useAuth();
 
@@ -131,7 +133,7 @@ const Landing = () => {
                                 variant="gradient"
                                 radius="xl" 
                                 size="md" 
-                                className={classes.control}
+                                className={cx(classes.control, {[globClasses.animatedOutline]: true})}
                                 onClick={handleSignup}
                             >
                                 <IconUserPlus size="1rem" />&nbsp;Create an account
@@ -141,7 +143,7 @@ const Landing = () => {
                                 variant="gradient"
                                 radius="xl" 
                                 size="md" 
-                                className={classes.control}
+                                className={cx(classes.control, {[globClasses.animatedOutline]: true})}
                                 onClick={handleShowUserPage}
                             >
                                 <IconUser size="1rem" />&nbsp;Go to your page
@@ -149,6 +151,7 @@ const Landing = () => {
                         }
                         <Button 
                             variant="default" 
+                            bg="green"
                             radius="xl" 
                             size="md" 
                             className={classes.control}

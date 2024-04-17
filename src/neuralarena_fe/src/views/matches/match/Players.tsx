@@ -8,7 +8,7 @@ import { NFT } from "@libs/nas1";
 import { DrawerPanel } from "@components/DrawerPanel";
 import { NftDetails } from "@views/nfts/nft/Details";
 
-const useStyles = createStyles((them) => ({
+const useStyles = createStyles((theme) => ({
     player: {
         border: '1px solid #333',
         borderRadius: '8px',
@@ -67,6 +67,9 @@ export const MatchPlayers = (props: Props) => {
                                 </Center>
                                 <NftCard
                                     nft={player.nft}
+                                    selected={player.nft.token_id === nft?.token_id && 
+                                        player.nft.collection_id.compareTo(nft?.collection_id) === 'eq'
+                                    }
                                     game_id={match.game.id}
                                     onClick={handleSelect}
                                 />

@@ -24,8 +24,7 @@ export const Match = (props: Props) => {
     const {id} = useParams();
     const {isMobile} = useBrowser();
     const {user, isLogged} = useAuth();
-    const {classes} = useUI();
-    const {showError} = useUI();
+    const {classes, showError} = useUI();
     const [opened, {open, close}] = useDisclosure(false);
     const [pov, setPov] = useState<number>(0);
     const [section, setSection] = useState('watch');
@@ -152,6 +151,7 @@ export const Match = (props: Props) => {
                                 <Button
                                     variant="gradient"
                                     fullWidth
+                                    className={classes.animatedOutline}
                                     onClick={open}
                                 >
                                     Join
