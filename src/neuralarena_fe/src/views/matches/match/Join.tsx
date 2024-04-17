@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button, Center, Grid, TextInput } from "@mantine/core";
 import { GameResponse, MatchResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { useActors } from "@hooks/actors";
@@ -60,6 +60,12 @@ export const MatchJoin = (props: Props) => {
             principalToSubAccount(user?.id)
         )
     );
+
+    useEffect(() => {
+        if(user?.nfts.length === 1) {
+            setNft(user!.nfts[0]);
+        }
+    }, [user]);
 
     const nfts = user?.nfts || [];
     const cost = gameCostToPlay(props.match?.instance.costs).value + (TRANSFER_FEE*(3n+1n));

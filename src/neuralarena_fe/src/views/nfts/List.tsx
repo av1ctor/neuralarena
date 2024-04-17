@@ -57,7 +57,7 @@ export const ListNfts = (props: Props) => {
                     <NftCard
                         nft={nft}
                         size="mini"
-                        selected={nft.token_id === props.selected?.token_id}
+                        selected={nft.token_id === sel?.token_id}
                         game_id={props.game_id}
                         onClick={props.onClick}
                     />
