@@ -1,5 +1,5 @@
-import React, { ReactElement, useCallback, useMemo } from "react";
-import { Badge, Card, Group, Text, Image, Space, createStyles, rem, Grid, TextInput, Box } from "@mantine/core";
+import React, { Fragment, ReactElement, useCallback, useMemo } from "react";
+import { Badge, Card, Group, Text, Image, Space, createStyles, rem, Grid, TextInput, Box, Divider } from "@mantine/core";
 import { useNAS1FindTokenById } from "@hooks/nas1";
 import {  useIcrc7GetCollectionSymbol } from "@hooks/icrc7";
 import { NFT } from "@libs/nas1";
@@ -109,7 +109,7 @@ export const NftCard = (props: Props) => {
                     <Space h="sm"/>
                     <div>
                         <Text size="sm" color="dimmed">
-                            Traits
+                            <b>Traits</b>
                         </Text>
                         <Group position="left" mt="xs">
                             {token.data.traits.map((trait, index) => 
@@ -124,31 +124,62 @@ export const NftCard = (props: Props) => {
                         <>
                             <Box mb="sm">
                                 <Text size="sm" color="dimmed">
-                                    XPs
+                                    <b>XPs</b>
                                 </Text>
-                                {xps.length > 0? 
-                                    xps.map((xp, index) => 
-                                        <Group key={index} position="left">
-                                            <Badge color="yellow" variant="light">
-                                                {`${xp[0].toString()}: ${xp[1].xp}`}
-                                            </Badge>
-                                        </Group>
-                                    )
-                                :
-                                    <Text size="sm">
-                                        Time to start earning some XP! Join a match and let the fun begin! 😆
-                                    </Text>
-                                }
+                                <Card 
+                                    radius="md" 
+                                    p="xs" 
+                                    bg="transparent"
+                                    withBorder
+                                    w="100%"
+                                >
+                                    <Grid>
+                                        {xps.length > 0? 
+                                            xps.map((xp, index) => 
+                                                <Fragment key={index}>
+                                                    <Grid.Col md={12}>
+                                                        <Grid>
+                                                            <Grid.Col md={12} m={0} pb={0}>
+                                                                <Text size="xs"><b>#{index+1}</b></Text>
+                                                            </Grid.Col>
+                                                            <Grid.Col md={6} pt={0}>
+                                                                <TextInput
+                                                                    label="Game canister id"
+                                                                    value={xp[0].toString()}
+                                                                    size="xs"
+                                                                    readOnly
+                                                                />
+                                                            </Grid.Col>
+                                                            <Grid.Col md={6} pt={0}>
+                                                                <TextInput
+                                                                    label="XP"
+                                                                    value={xp[1].xp}
+                                                                    size="xs"
+                                                                    readOnly
+                                                                />
+                                                            </Grid.Col>
+                                                        </Grid>
+                                                    </Grid.Col>
+                                                </Fragment>
+                                            )
+                                        :
+                                            <Text size="sm" p="lg">
+                                                Time to start earning some XP! Join a match and let the fun begin! 😆
+                                            </Text>
+                                        }
+                                    </Grid>
+                                </Card>
                             </Box>
                             <div>
                                 <Text size="sm" color="dimmed">
-                                    Neural net
+                                    <b>Neural net</b>
                                 </Text>
                                 <Grid>
                                     <Grid.Col md={6}>
                                         <TextInput
                                             label="Num hidden layers"
                                             value={token.data.num_hidden_layers.toString()}
+                                            size="xs"
                                             readOnly
                                         />
                                     </Grid.Col>
@@ -156,6 +187,7 @@ export const NftCard = (props: Props) => {
                                         <TextInput
                                             label="Hidden layers weights len"
                                             value={hiddenLayersWeights}
+                                            size="xs"
                                             readOnly
                                         />
                                     </Grid.Col>
