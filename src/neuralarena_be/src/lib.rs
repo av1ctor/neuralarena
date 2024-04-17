@@ -341,8 +341,7 @@ async fn game_create(
 
 #[ic_cdk::update]
 async fn game_update(
-    id: GameId,
-    req: GameRequest
+    id: GameId
 ) -> Result<GameResponse, String> {
     let caller = &caller();
 
@@ -358,7 +357,7 @@ async fn game_update(
         Ok((user, game))
     })?;
 
-    GamesService::reload(&req, &mut game, &user).await?;
+    GamesService::reload(&id, &mut game, &user).await?;
 
     DB.with(|db| {
         GamesService::update(
@@ -419,12 +418,12 @@ fn game_find_active(
 
 #[ic_cdk::query]
 fn game_get_leaderboard(
-    game_id: GameId,
+    id: GameId,
     limit: u32
 ) -> Result<Vec<(UserId, f32)>, String> {
 
     DB.with(|db| {
-        LeaderboardsService::find_top(&game_id, limit.max(100) as _, &db.borrow())
+        LeaderboardsService::find_top(&id, limit.max(100) as _, &db.borrow())
     })
 }
 

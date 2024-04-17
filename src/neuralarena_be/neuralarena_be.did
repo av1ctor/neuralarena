@@ -217,7 +217,7 @@ service : (InitArg) -> {
   game_find_by_id : (principal) -> (Result) query;
   game_get_end_credits : (principal) -> (Result_2) composite_query;
   game_get_leaderboard : (principal, nat32) -> (Result_3) query;
-  game_update : (principal, GameRequest) -> (Result);
+  game_update : (principal) -> (Result);
   match_create : (MatchRequest) -> (Result_5);
   match_find_all : (Pagination) -> (Result_6) query;
   match_find_by_game : (principal, Pagination) -> (Result_6) query;

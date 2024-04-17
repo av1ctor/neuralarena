@@ -1,4 +1,3 @@
-use candid::Principal;
 use neuralarena_cdk::{
     models::game::{
         GameEndCredits, GameInfo, GameInfoResponse
@@ -18,10 +17,10 @@ pub struct GamesService {}
 
 impl GamesService {
     async fn get_info(
-        canister_id: Principal
+        id: &GameId
     ) -> Result<GameInfo, String> {
         let (res, ): (Result<GameInfoResponse, String>, ) = ic_cdk::call(
-            canister_id, 
+            id.clone(), 
             "game_get_info",
             ()
         ).await.map_err(|e| e.1)?;
@@ -38,7 +37,7 @@ impl GamesService {
     ) -> Result<Game, String> {
         Self::authorize(user)?;
 
-        let info = Self::get_info(req.canister_id).await?;
+        let info = Self::get_info(&req.canister_id).await?;
 
         if info.rewards.winner > MAX_GAME_DIST {
             return Err(format!(
@@ -52,13 +51,13 @@ impl GamesService {
     }
 
     pub async fn reload(
-        req: &GameRequest,
+        id: &GameId,
         game: &mut Game,
         user: &User
     ) -> Result<(), String> {
         Self::authorize(user)?;
 
-        let info = Self::get_info(req.canister_id).await?;
+        let info = Self::get_info(id).await?;
 
         game.info = info;
 
