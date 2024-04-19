@@ -58,6 +58,22 @@ export const MatchAbout = (props: Props) => {
 
             <Grid.Col md={6}>
                 <TextInput
+                    label="Map id"
+                    value={match?.game.map_id.toString() || ''}
+                    readOnly
+                />
+            </Grid.Col>
+
+            <Grid.Col md={6}>
+                <TextInput
+                    label="Map name"
+                    value={(match && game?.info.maps[Number(match.game.map_id)].name) || ''}
+                    readOnly
+                />
+            </Grid.Col>
+
+            <Grid.Col md={6}>
+                <TextInput
                     label="Cost to play"
                     value={`${e8sToDecimal(costToPlay.value)} ${costToPlay.currency}`}
                     readOnly
@@ -90,22 +106,6 @@ export const MatchAbout = (props: Props) => {
                         `${e8sToDecimal(match.state.balance * (match.instance.rewards.winner || 0n) / 100n)} ${costToPlay.currency}`: 
                         ''
                     }
-                    readOnly
-                />
-            </Grid.Col>
-
-            <Grid.Col md={6}>
-                <TextInput
-                    label="Map id"
-                    value={match?.game.map_id.toString() || ''}
-                    readOnly
-                />
-            </Grid.Col>
-
-            <Grid.Col md={6}>
-                <TextInput
-                    label="Map name"
-                    value={(match && game?.info.maps[Number(match.game.map_id)].name) || ''}
                     readOnly
                 />
             </Grid.Col>

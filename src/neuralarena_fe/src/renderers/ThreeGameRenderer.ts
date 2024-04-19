@@ -16,13 +16,14 @@ import { EntityStatusBarManager } from './utils/EntityStatusBarMng';
 import { LoadingBar } from './utils/LoadingBar';
 import { PosAudioRef, PositionalAudioManager } from './utils/PosAudioMng';
 import { FixAudioRef, FixedAudioManager } from './utils/FixAudioMng';
+import { ThirdPersonCamera } from './utils/ThirdPersonCam';
 
 const HEALTH_BAR_WIDTH = 100.0;
 const HEALTH_BAR_HEIGHT = 10.0;
 
-const DEFAULT_CAM_ZOOM = 8.0;
-const CAM_MIN_ZOOM = 4.0;
-const CAM_MAX_ZOOM = 30.0;
+const DEFAULT_CAM_ZOOM = 1.0;
+const CAM_MIN_ZOOM = 0.1;
+const CAM_MAX_ZOOM = 5.0;
 
 interface AudioBuffer {
     buffer: any;
@@ -36,7 +37,7 @@ export class ThreeGameRenderer {
     audioLoader: THREE.AudioLoader;
     renderer: THREE.WebGLRenderer;
     scene: THREE.Scene;
-    camera: THREE.PerspectiveCamera;
+    camera: ThirdPersonCamera;
     posAudioMng: PositionalAudioManager;
     fixAudioMng: FixedAudioManager;
     start?: AnimScene;
@@ -47,10 +48,7 @@ export class ThreeGameRenderer {
     assets: Map<number, THREE.Object3D>;
     models: THREE.Object3D[];
     pov: {
-        player_num?: number,
-        follow: boolean,
-        auto_rotate: boolean,
-        camera_angle: number;
+        player_num: number,
         camera_zoom: number;
     };
     skipping: boolean;
@@ -70,7 +68,7 @@ export class ThreeGameRenderer {
         canvas: HTMLCanvasElement,
         game: GameInfo,
         players: MatchPlayerResponse[],
-        pov: number|undefined,
+        pov: number,
         font: Font
     ) {
         this.game = game;
@@ -97,7 +95,7 @@ export class ThreeGameRenderer {
 
         const res = ThreeGameRenderer.#setup(this.width, this.height);
         this.scene = res[0];
-        this.camera = res[1];
+        this.camera = new ThirdPersonCamera(res[1]);
         this.posAudioMng = new PositionalAudioManager(res[2]);
         this.fixAudioMng = new FixedAudioManager(res[2]);
 
@@ -119,9 +117,6 @@ export class ThreeGameRenderer {
 
         this.pov = {
             player_num: pov,
-            follow: pov !== undefined,
-            auto_rotate: false,
-            camera_angle: 0.0,
             camera_zoom: DEFAULT_CAM_ZOOM,
         };
 
@@ -219,44 +214,37 @@ export class ThreeGameRenderer {
         this.start?.show();
     }
 
-    changePOV(
-        player_num?: number,
-        rotate_cam?: boolean
+    setPOV(
+        player_num: number
     ) {
-        if(player_num !== undefined) {
-            if(player_num !== this.pov.player_num || rotate_cam !== this.pov.auto_rotate) {
-                this.pov = {
-                    ...this.pov,
-                    player_num,
-                    follow: true,
-                    auto_rotate: rotate_cam? true: false,
-                    camera_angle: 0.0,
-                };
-            }
-        }
-        else {
-            this.pov = {
-                ...this.pov,
-                auto_rotate: false,
-                camera_angle: 0.0,
-            };
-        }
+        this.pov = {
+            ...this.pov,
+            player_num,
+        };
+    }
+
+    setAutoRot(
+        to: boolean
+    ) {
+        this.camera.setAutoRot(to);
     }
 
     decZoom(
     ) {
         this.pov.camera_zoom = Math.max(
-            this.pov.camera_zoom - 1.0, 
+            this.pov.camera_zoom - 0.1, 
             CAM_MIN_ZOOM
         );
+        this.camera.setZoom(this.pov.camera_zoom);
     }
 
     incZoom(
     ) {
         this.pov.camera_zoom = Math.min(
-            this.pov.camera_zoom + 1.0, 
+            this.pov.camera_zoom + 0.1, 
             CAM_MAX_ZOOM
         );
+        this.camera.setZoom(this.pov.camera_zoom);
     }
 
     setSkipping(
@@ -296,16 +284,14 @@ export class ThreeGameRenderer {
         this.width = dim.w;
         this.height = dim.h;
         this.renderer.setSize(dim.w, dim.h);
-        this.camera.aspect = dim.w / dim.h;
-        this.camera.updateProjectionMatrix();
+        this.camera.getCamera().aspect = dim.w / dim.h;
+        this.camera.getCamera().updateProjectionMatrix();
 
         this.start?.resizeCanvas(dim);
     }
 
     reset(
-        reset_cam: boolean,
-        reset_pov: boolean,
-        pov: number|undefined
+        pov: number
     ) {
         for(const obj of this.models) {
             obj.removeFromParent();
@@ -316,19 +302,8 @@ export class ThreeGameRenderer {
 
         this.posAudioMng.reset();
 
-        if(reset_cam) {
-            this.camera.position.set(15.0, 10.0, 15.0);
-        }
-
-        if(reset_pov) {
-            this.pov = {
-                player_num: pov,
-                follow: pov !== undefined,
-                auto_rotate: false,
-                camera_angle: 0.0,
-                camera_zoom: DEFAULT_CAM_ZOOM,
-            };
-        }
+        this.setPOV(pov);
+        this.setAutoRot(false);
     }
 
     async #setupSfxsBufferSet(
@@ -653,29 +628,26 @@ export class ThreeGameRenderer {
     update(
         deltaTime: number
     ) {
+        //
         this.statusMng.update(this.entities.players, this.entities.npcs);
 
+        //
         for(const obj of this.models) {
             if(obj.userData.anim){
                 obj.userData.anim.update(deltaTime / 1000.0);
             }
         }
 
-        if(this.pov.player_num !== undefined) {
-            const player = this.models
-                .filter(o => o.userData.isPlayer)
-                .find((_, index) => index === this.pov.player_num);
+        //
+        const player = this.models
+            .filter(o => o.userData.isPlayer)
+            .find((_, index) => index === this.pov.player_num);
 
-            if(player) {
-                if(this.pov.auto_rotate) {
-                    this.pov.camera_angle = (this.pov.camera_angle + (deltaTime / 2000.0)) % (Math.PI * 2.0);
-                }
-                else if(this.pov.follow) {
-                    this.pov.camera_angle = THREE.MathUtils.lerp(this.pov.camera_angle, player.rotation.y, 0.05);
-                }
-            }
-        }
+        this.camera.setTarget(player);
+        
+        this.camera.update(deltaTime);
 
+        //
         this.start?.update(deltaTime);
     }
 
@@ -690,32 +662,24 @@ export class ThreeGameRenderer {
             return;
         }
 
-        let player: THREE.Object3D<THREE.Object3DEventMap>|undefined = undefined;
-        if(this.pov.player_num !== undefined) {
-            player = this.models
-                .filter(o => o.userData.isPlayer)
-                .find((_, index) => index === this.pov.player_num);
-
-            if(player && (this.pov.auto_rotate || this.pov.follow)) {
-                this.camera.position.setFromSphericalCoords(this.pov.camera_zoom, 1.0, this.pov.camera_angle);
-                this.camera.position.add(player.position);
-                this.camera.lookAt(player.position);
-            }
-        }
-
         let intersections: THREE.Intersection<THREE.Object3D<THREE.Object3DEventMap>>[]|undefined = undefined;
 
+        const player = this.models
+            .filter(o => o.userData.isPlayer)
+            .find((_, index) => index === this.pov.player_num);
         if(player !== undefined) {
             const map = this.models.find(o => o.userData.isMap);
             if(map) {
+                const perspCam = this.camera.getCamera();
+
                 const dir = player.position
                     .clone()
-                    .sub(this.camera.position)
+                    .sub(perspCam.position)
                     .normalize()
 
-                this.raycaster.set(this.camera.position.clone(), dir);
+                this.raycaster.set(perspCam.position.clone(), dir);
 
-                const maxDistance = this.camera.position.distanceTo(player.position);
+                const maxDistance = perspCam.position.distanceTo(player.position);
 
                 intersections = this.raycaster.intersectObject(map);
                 for(const intersection of intersections) {
@@ -739,7 +703,7 @@ export class ThreeGameRenderer {
         }
 
         this.renderer.clear();
-        this.renderer.render(this.scene, this.camera);
+        this.renderer.render(this.scene, this.camera.getCamera());
         this.start?.render(this.renderer);
 
         if(intersections) {

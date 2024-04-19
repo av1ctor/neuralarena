@@ -68,7 +68,7 @@ enum WatchState {
 interface Props {
     game: GameResponse;
     match: MatchResponse;
-    pov: number|undefined;
+    pov: number;
     onChangePov: (index: number) => void;
 }
 
@@ -122,7 +122,7 @@ export const MatchWatch = (props: Props) => {
             if(newState === WatchState.PLAYING &&
                 step.current >= frames.length) {
                 step.current = 0;
-                renderer?.reset(true, true, props.pov);
+                renderer?.reset(props.pov);
             }
 
             return newState;
@@ -148,14 +148,14 @@ export const MatchWatch = (props: Props) => {
         const stp = Math.floor(t * frames.length)|0;
         if(stp === 0) {
             step.current = 0;
-            renderer?.reset(true, true, props.pov);
+            renderer?.reset(props.pov);
         }
         else {
             renderer?.setSkipping(true);
             let first = step.current;
             if(stp < step.current) {
                 first = 0;
-                renderer?.reset(false, false, undefined);
+                renderer?.reset(props.pov);
             }
             else {
                 renderer?.stopPositionalAudio();
@@ -180,7 +180,7 @@ export const MatchWatch = (props: Props) => {
         }
 
         if(state !== WatchState.PLAYING) {
-            renderer?.changePOV();
+            renderer?.setPOV(props.pov);
             setState(WatchState.PLAYING);
         }
     
@@ -276,9 +276,7 @@ export const MatchWatch = (props: Props) => {
     }, [loadAssets]);
 
     useEffect(() => {
-        if(props.pov !== undefined) {
-            renderer?.changePOV(props.pov);
-        }
+        renderer?.setPOV(props.pov);
     }, [props.pov, renderer]);
 
     useEffect(() => {
@@ -363,7 +361,7 @@ export const MatchWatch = (props: Props) => {
                                 Uint8Array.from([]), 
                                 Uint8Array.from([]), 
                                 renderer,
-                                deltaTime
+                                deltaTime   
                             );
                             break;
 
@@ -372,7 +370,8 @@ export const MatchWatch = (props: Props) => {
                                 const winnerPrincipal = props.match.won_by[0]?.toString();
                                 const winner = props.match.players
                                     .findIndex(p => p.id.toString() === winnerPrincipal);
-                                renderer?.changePOV(winner, true);
+                                renderer?.setPOV(winner);
+                                renderer?.setAutoRot(true);
                                 renderer?.playMusic('victory')
                             }
                             else {
@@ -432,7 +431,7 @@ export const MatchWatch = (props: Props) => {
                         onClick={handleSkip}
                     >
                         <div 
-                            className={classes.progress} 
+                            className={classes.progress}
                             style={{width:`${matchProgress}%`}}
                         />
                     </div>
