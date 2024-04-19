@@ -9,6 +9,7 @@ import { MatchCreate } from "./match/Create";
 import { MatchesGrid } from "./Grid";
 import { InfinitePaging } from "@components/InfinitePaging";
 import { useAuth } from "@hooks/auth";
+import { useUI } from "@hooks/ui";
 
 interface Props {
 }
@@ -17,6 +18,7 @@ const ITEMS_PER_PAGE = 6;
 
 export const AllMatches = (props: Props) => {
     const {user} = useAuth();
+    const {classes} = useUI();
     const [opened, {open, close}] = useDisclosure(false);
 
     const matches = useMatchFindAll(ITEMS_PER_PAGE);
@@ -29,6 +31,7 @@ export const AllMatches = (props: Props) => {
             >
                 <Button
                     disabled={!user}
+                    className={classes.animatedOutline}
                     onClick={open}
                 >
                     New

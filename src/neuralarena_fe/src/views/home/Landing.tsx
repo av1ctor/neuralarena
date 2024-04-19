@@ -143,7 +143,7 @@ const Landing = () => {
                                 variant="gradient"
                                 radius="xl" 
                                 size="md" 
-                                className={cx(classes.control, {[globClasses.animatedOutline]: true})}
+                                className={classes.control}
                                 onClick={handleShowUserPage}
                             >
                                 <IconUser size="1rem" />&nbsp;Go to your page
@@ -154,7 +154,7 @@ const Landing = () => {
                             bg="green"
                             radius="xl" 
                             size="md" 
-                            className={classes.control}
+                            className={cx(classes.control, {[globClasses.animatedOutline]: !!user})}
                             onClick={handleReadWhitepaper}
                         >
                             <IconBook size="1rem" />&nbsp;Read our whitepaper

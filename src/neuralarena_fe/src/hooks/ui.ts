@@ -5,8 +5,12 @@ import { createStyles, keyframes } from "@mantine/core";
 
 const useStyles = createStyles((theme) => {
     const animOutline = keyframes({
+        'from': {
+            outline: '4px solid #ff00ff00',
+            outlineOffset: '0rem',
+        },
         'to': {
-            outline: '8px solid #ff00ff4f',
+            outline: '4px solid #ff00ff8f',
             outlineOffset: '0.5rem',
         }
     });
@@ -19,8 +23,8 @@ const useStyles = createStyles((theme) => {
             display: 'none',
         },
         animatedOutline: {
-            transition: 'outline 500ms cubic-bezier(0.19, 1, 0.22, 1)',
-            animation: `${animOutline} 4s infinite`,
+            transition: 'outline 2s ease',
+            animation: `${animOutline} 4s infinite ease`,
         },
     };
 });
