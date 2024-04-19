@@ -7,6 +7,7 @@ import { GamesGrid } from "./Grid";
 import { InfinitePaging } from "@components/InfinitePaging";
 import { DrawerPanel } from "@components/DrawerPanel";
 import { useDisclosure } from "@mantine/hooks";
+import { useUI } from "@hooks/ui";
 
 const useStyles = createStyles((theme) => ({
     soon: {
@@ -20,7 +21,8 @@ interface Props {
 const ITEMS_PER_PAGE = 12;
 
 export const Games = (props: Props) => {
-    const {classes} = useStyles();
+    const {classes} = useUI();
+    const {classes: local} = useStyles();
     const [opened, {open, close}] = useDisclosure(false);
     
     const games = useGameFindAll(ITEMS_PER_PAGE);
@@ -35,6 +37,7 @@ export const Games = (props: Props) => {
                     icon={IconGoGame}
                 >
                     <Button
+                        className={classes.animatedOutline}
                         onClick={open}
                     >
                         Publish
@@ -51,7 +54,7 @@ export const Games = (props: Props) => {
                 title="Publish your game"
                 onClose={close}
             >
-                <Center className={classes.soon} mt="6rem">
+                <Center className={local.soon} mt="6rem">
                     Soon...
                 </Center>
             </DrawerPanel>    

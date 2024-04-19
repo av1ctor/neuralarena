@@ -17,12 +17,14 @@ import { useDisclosure } from "@mantine/hooks";
 import { IconCoin, IconCopy, IconWallet } from "@tabler/icons-react";
 import React from "react";
 import { WalletDeposit } from "./Deposit";
+import { useUI } from "@hooks/ui";
 
 interface Props {
 }
 
 export const UserWallet = (props: Props) => {
     const {user} = useAuth();
+    const {classes} = useUI();
     const {icpLedger, ids} = useActors();
     const [opened, {open, close}] = useDisclosure(false);
 
@@ -56,6 +58,7 @@ export const UserWallet = (props: Props) => {
             >
                 <Button
                     disabled={!user}
+                    className={classes.animatedOutline}
                     onClick={open}
                 >
                     Deposit
