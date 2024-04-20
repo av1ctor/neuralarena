@@ -64,7 +64,7 @@ const statusToColor = (status: MatchStatus) => {
         case 'FINISHED':
             return 'blue';
         case 'CANCELLED':
-            return 'gray';
+            return 'red';
         default:
             return 'yellow';
     }
@@ -88,6 +88,7 @@ export const MatchItem = (props: Props) => {
     const status = matchStatusToString(match.state.status);
 
     const game = useGameFindById(match.game.id);
+    const map = game.data?.info.maps[Number(match.game.map_id)];
 
     return (
         <Card
@@ -104,13 +105,14 @@ export const MatchItem = (props: Props) => {
                         height={128}
                         fit="cover"
                         withPlaceholder
-                        radius="md"                        
+                        radius="md"
+                        title="Cover"
                         src={game.data?.info.urls.cover}
                     />
                 </Grid.Col>
                 <Grid.Col span={8}>
                     <Grid w="100%">
-                        <Grid.Col span={6}>
+                        <Grid.Col span={6} title="Name">
                             <Badge 
                                 className={classes.name} 
                                 size="xl"
@@ -119,32 +121,36 @@ export const MatchItem = (props: Props) => {
                                 {game.data?.info.name}
                             </Badge>
                         </Grid.Col>
-                        <Grid.Col span={6}>
+                        <Grid.Col span={6} title="Status">
                             <Badge 
                                 className={classes.status} 
                                 color={statusToColor(match.state.status)} 
-                                variant="filled"
+                                variant={'OPEN' in match.state.status? "filled": 'light'}
                                 size="xl"
                             >
-                                {matchStatusToString(match.state.status)}
+                              {matchStatusToString(match.state.status)}
                             </Badge>
                         </Grid.Col>
                     </Grid>
                     <Space h='xl' />
                     <Container w='100%'>
                         <div>
-                            🕹 {match.players.length}/{match.game.max_players.toString()}
+                            <span title="Map">🗺 {map?.name}</span>
                         </div>
                         <div>
-                            ⏰ {status === 'OPEN'? timeLeftToString(matchCalcTimeLeft(match)): '00:00:00'}
+                            <span title="Number of players">🕹 {match.players.length}/{match.game.max_players.toString()}</span>
                         </div>
                         <div>
-                            🏆 {match.won_by.length > 0? 
+                            <span title="Deadline">⏰ {status === 'OPEN'? timeLeftToString(matchCalcTimeLeft(match)): '00:00:00'}</span>
+                        </div>
+                        <div>
+                            <span title="Winner">🏆 {match.won_by.length > 0? 
                                     principalToString(match.won_by[0]): 
                                     status === 'OPEN'?
                                         'how about you?':
                                         'nobody 😥'
                                 }
+                            </span>
                         </div>
                     </Container>
                 </Grid.Col>
