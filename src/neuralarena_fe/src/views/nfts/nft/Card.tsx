@@ -76,7 +76,7 @@ export const NftCard = (props: Props) => {
                 [classes.selected]: props.selected
             })}
             onClick={handleClick}
-            bg={props.size === 'nano'? 'transparent': undefined}
+            style={props.size === 'nano'? {opacity: 0.75}: undefined}
         >
             <Card.Section>
                 <Image
@@ -84,7 +84,6 @@ export const NftCard = (props: Props) => {
                     height={height}
                     fit="cover"
                     withPlaceholder
-                    style={props.size === 'nano'? {opacity: 0.5}: undefined}
                 />
             </Card.Section>
 
