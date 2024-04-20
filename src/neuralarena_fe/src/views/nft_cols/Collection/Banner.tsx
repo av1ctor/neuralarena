@@ -2,12 +2,12 @@ import React from "react";
 import { createStyles, rem, Container, Text, Center } from "@mantine/core";
 import { CoverCard } from "@components/CoverCard";
 import { NftCollectionResponse } from "@declarations/neuralarena_be/neuralarena_be.did";
+import { useBrowser } from "@hooks/browser";
 
 const useStyles = createStyles((theme) => ({
     title: {
         fontWeight: 900,
         color: theme.white,
-        fontSize: rem(64),
     },
 }));
 
@@ -17,6 +17,7 @@ interface Props {
 }
   
 export const NftCollectionBanner = (props: Props) => {
+    const {isMobile} = useBrowser();
     const { classes } = useStyles();
     
     return (
@@ -29,7 +30,7 @@ export const NftCollectionBanner = (props: Props) => {
                     <Text 
                         className={classes.title}
                         variant="gradient"
-                        size="xl" 
+                        size={isMobile? 42: 64}
                     >
                         {props.col.meta.name}
                     </Text>

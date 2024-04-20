@@ -7,6 +7,7 @@ import { useGameFindById } from "@hooks/games";
 import { useBrowser } from "@hooks/browser";
 import { timeLeftToString } from "@libs/time";
 import { principalToString } from "@libs/icp";
+import { useUI } from "@hooks/ui";
 
 const useStyles = createStyles((theme) => ({
     card: {
@@ -76,7 +77,8 @@ interface Props {
 }
   
 export const MatchItem = (props: Props) => {
-    const {classes} = useStyles();
+    const {classes} = useUI();
+    const {classes: local, cx} = useStyles();
     const {isMobile} = useBrowser();
     const navigate = useNavigate();
 
@@ -95,7 +97,7 @@ export const MatchItem = (props: Props) => {
             shadow="md"
             p={isMobile? "xs": 'xl'}
             radius="md"
-            className={classes.card}
+            className={cx(local.card, {[classes.animatedOutline]: status === 'OPEN'})}
             onClick={handleView}
         >
             <Grid w="100%">
@@ -114,7 +116,7 @@ export const MatchItem = (props: Props) => {
                     <Grid w="100%">
                         <Grid.Col span={6} title="Name">
                             <Badge 
-                                className={classes.name} 
+                                className={local.name} 
                                 size="xl"
                                 variant="light"
                             >
@@ -123,9 +125,9 @@ export const MatchItem = (props: Props) => {
                         </Grid.Col>
                         <Grid.Col span={6} title="Status">
                             <Badge 
-                                className={classes.status} 
+                                className={local.status} 
                                 color={statusToColor(match.state.status)} 
-                                variant={'OPEN' in match.state.status? "filled": 'light'}
+                                variant={status === 'OPEN'? "filled": 'light'}
                                 size="xl"
                             >
                               {matchStatusToString(match.state.status)}

@@ -341,7 +341,7 @@ export const MatchWatch = (props: Props) => {
 
                         case WatchState.PLAYING:
                             if(step.current === 0) {
-                                renderer?.showStart();
+                                renderer?.showStartScene();
                                 renderer?.playMusic("main");
                             }
 
@@ -437,7 +437,9 @@ export const MatchWatch = (props: Props) => {
                     height={dim.h}
                     >
                 </canvas>
-                {state === WatchState.PLAYING &&
+                {state === WatchState.PLAYING && 
+                    step.current > 0 && 
+                        !renderer?.isStartScenePlaying() &&
                     <div 
                         className={classes.player_state}
                     >

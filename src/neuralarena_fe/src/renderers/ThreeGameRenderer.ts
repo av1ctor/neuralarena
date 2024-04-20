@@ -209,9 +209,14 @@ export class ThreeGameRenderer {
         this.loading = to;
     }
 
-    showStart(
+    showStartScene(
     ) {
         this.start?.show();
+    }
+
+    isStartScenePlaying(
+    ): boolean {
+        return this.start? this.start.visible: false;
     }
 
     setPOV(
