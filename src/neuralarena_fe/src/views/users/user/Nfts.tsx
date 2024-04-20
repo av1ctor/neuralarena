@@ -21,7 +21,7 @@ interface Props {
 export const UserNfts = (props: Props) => {
     const {user} = useAuth();
     const [, dispatch] = useContext(AuthContext);
-    const {toggleLoading, showError, showSuccess} = useUI();
+    const {toggleLoading, showError, showSuccess, classes} = useUI();
     const [delOpened, {open: delOpen, close: delClose}] = useDisclosure(false);
     const [addOpened, {open: addOpen, close: addClose}] = useDisclosure(false);
     const [showOpened, {open: showOpen, close: showClose}] = useDisclosure(false);
@@ -139,6 +139,12 @@ export const UserNfts = (props: Props) => {
                 title="Your NFT's"
                 icon={IconPhoto}
             >
+                <Button 
+                    className={classes.animatedOutline}
+                    onClick={addOpen}
+                >
+                    Add
+                </Button>
             </PageTitle>
 
             <Grid>
@@ -164,16 +170,6 @@ export const UserNfts = (props: Props) => {
                     </Grid.Col>
                 )}
             </Grid>
-
-            <Space h="lg" />
-
-            <Center>
-                <Button 
-                    onClick={addOpen}
-                >
-                    Add
-                </Button>
-            </Center>
 
             <DrawerPanel
                 title="Details"
