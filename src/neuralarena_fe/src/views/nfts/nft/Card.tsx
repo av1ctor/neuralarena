@@ -84,7 +84,7 @@ export const NftCard = (props: Props) => {
                     height={height}
                     fit="cover"
                     withPlaceholder
-                    style={{opacity: 0.5}}
+                    style={props.size === 'nano'? {opacity: 0.5}: undefined}
                 />
             </Card.Section>
 
