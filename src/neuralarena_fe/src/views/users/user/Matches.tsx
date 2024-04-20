@@ -9,6 +9,7 @@ import { MatchCreate } from "@views/matches/match/Create";
 import { useDisclosure } from "@mantine/hooks";
 import { MatchesGrid } from "@views/matches/Grid";
 import { InfinitePaging } from "@components/InfinitePaging";
+import { useUI } from "@hooks/ui";
 
 interface Props {
 }
@@ -17,6 +18,7 @@ const ITEMS_PER_PAGE = 6;
 
 export const UserMatches = (props: Props) => {
     const {user} = useAuth();
+    const {classes} = useUI();
     const [opened, {open, close}] = useDisclosure(false);
 
     const matches = useUserFindMatches(user?.id, ITEMS_PER_PAGE);
@@ -28,6 +30,7 @@ export const UserMatches = (props: Props) => {
                 icon={IconDeviceGamepad}
             >
                 <Button
+                    className={classes.animatedOutline}
                     disabled={!user}
                     onClick={open}
                 >
