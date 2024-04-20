@@ -1,7 +1,8 @@
 import React from 'react';
 import { Anchor, Box, Center, Container, Divider, Grid, Space, Stack, Text } from '@mantine/core';
-import { IconBrandGithubFilled, IconBrandTwitterFilled } from '@tabler/icons-react';
+import { IconBrandCSharp, IconBrandGithubFilled, IconBrandTwitterFilled } from '@tabler/icons-react';
 import poweredBy from "@assets/powered-by.svg";
+import openchat from "@assets/openchat.svg";
 import { config } from '../../config';
 
 interface Props {
@@ -52,18 +53,32 @@ const AppFooter = (props: Props) => {
                 </Grid.Col>
                 <Grid.Col span={4}>
                     <Grid>
-                        <Grid.Col span={6}>
+                        <Grid.Col span={4}>
                             <Anchor 
                                 href="https://twitter.com/neuralarena"
                                 target="_blank"
+                                title='twitter'
                             >
                                 <IconBrandTwitterFilled size="2rem" />
                             </Anchor>
                         </Grid.Col>
-                        <Grid.Col span={6}>
+                        <Grid.Col span={4}>
+                            <Anchor 
+                                href="https://oc.app/community/av5g3-4iaaa-aaaar-bck2q-cai/?ref=7qarg-ziaaa-aaaar-afqpq-cai"
+                                target="_blank"
+                                title='openchat'
+                            >
+                                <img 
+                                    width="32"
+                                    src={openchat} 
+                                />
+                            </Anchor>
+                        </Grid.Col>
+                        <Grid.Col span={4}>
                             <Anchor
                                 href="https://github.com/av1ctor/neuralarena"
                                 target="_blank"
+                                title='github'
                             >
                                 <IconBrandGithubFilled size="2rem" />
                             </Anchor>
