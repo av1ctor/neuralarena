@@ -9,7 +9,7 @@ import { ThreeGameRenderer } from "@renderers/ThreeGameRenderer";
 import { matchGetAssets } from "@libs/matches";
 import { useActors } from "@hooks/actors";
 import { useUI } from "@hooks/ui";
-import gameEngineInit, {GameEngine} from "@game-engine/game-engine";
+import gameEngineInit, {GameEngine, InstancePlayerEntity} from "@game-engine/game-engine";
 import { 
     IconCameraMinus,
     IconCameraPlus,
@@ -20,6 +20,7 @@ import {
 } from "@tabler/icons-react";
 import { useElementSize } from "@mantine/hooks";
 import { useFont } from "@hooks/font";
+import { PlayerState } from "@views/users/player/PlayerState";
 
 const useStyles = createStyles((theme) => ({
     container: {
@@ -49,6 +50,11 @@ const useStyles = createStyles((theme) => ({
         width: '1%',
         height: '100%',
         backgroundColor: '#f00',
+    },
+    player_state: {
+        position: 'absolute',
+        top: '4px',
+        right: '4px',
     },
     canvas: {
         display: 'block',
@@ -315,6 +321,8 @@ export const MatchWatch = (props: Props) => {
     }, [renderer, engine, assets, frames]);
 
     const then = useRef(performance.now());
+
+    const player = props.match.players[props.pov];
     
     useLayoutEffect(() => {
         const animate = () => {
@@ -411,6 +419,10 @@ export const MatchWatch = (props: Props) => {
         }
     }, [renderer]);
 
+    const povPlayer = useMemo((): InstancePlayerEntity|undefined => {
+        return renderer?.getPlayer(props.pov);
+    }, [props.pov, renderer?.entities.players]);
+
     return (
         <Center                 
             ref={ref} 
@@ -425,6 +437,18 @@ export const MatchWatch = (props: Props) => {
                     height={dim.h}
                     >
                 </canvas>
+                {state === WatchState.PLAYING &&
+                    <div 
+                        className={classes.player_state}
+                    >
+                        <PlayerState
+                            player={player}
+                            gameId={props.match.game.id}
+                            health={povPlayer?.health || 0.0}
+                            score={povPlayer?.score || 0.0}
+                        />
+                    </div>
+                }
                 <Grid className={classes.controls}>
                     <div 
                         className={classes.progress_container}

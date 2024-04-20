@@ -223,6 +223,12 @@ export class ThreeGameRenderer {
         };
     }
 
+    getPlayer(
+        num: number
+    ): InstancePlayerEntity {
+        return this.entities.players[num];
+    }
+
     setAutoRot(
         to: boolean
     ) {

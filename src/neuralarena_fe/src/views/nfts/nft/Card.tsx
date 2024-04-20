@@ -25,10 +25,10 @@ const useStyles = createStyles((theme) => ({
 
 interface Props {
     nft: NFT;
-    size?: "mini" | "full",
+    size?: "nano" | "mini" | "full",
     selected?: boolean;
     gameId?: Principal,
-    children?: ReactElement,
+    children?: ReactElement | ReactElement[] | undefined,
     onClick?: (nft: NFT) => void;
 }
 
@@ -58,31 +58,49 @@ export const NftCard = (props: Props) => {
         return res;
     }, [token]);
 
+    const height = useMemo((): number => {
+        return props.size === 'nano' || props.size === 'mini'? 
+            128: 
+            props.size === 'full'? 
+                768: 
+                256
+    }, [props.size]);
+
     return (
         <Card 
             shadow="sm" 
-            padding="lg" 
+            padding={props.size === 'nano'? 'xs': 'lg'} 
             radius="md" 
             className={cx(classes.nft, {
                 [classes.highlight]: props.onClick,
                 [classes.selected]: props.selected
             })}
             onClick={handleClick}
+            bg={props.size === 'nano'? 'transparent': undefined}
         >
             <Card.Section>
                 <Image
                     src={token.data?.image_url}
-                    height={props.size === 'mini'? 128: props.size === 'full'? 768: 256}
+                    height={height}
                     fit="cover"
                     withPlaceholder
+                    style={{opacity: 0.5}}
                 />
             </Card.Section>
 
-            <Group position="apart" mt="md" mb="xs">
+            <Group 
+                position="apart" 
+                mt={props.size === 'nano'? 'xs': 'md'} 
+                mb="xs">
                 {token.data &&
-                    <Text weight={500}>{token.data.name}</Text>
+                    <Text 
+                        size={props.size === 'nano'? 'sm': 'md'}
+                        weight={500}
+                    >
+                        {token.data.name}
+                    </Text>
                 }
-                {symbol.data &&
+                {props.size !== 'nano' && symbol.data &&
                     <Badge color="pink" variant="light">
                         {symbol.data}
                     </Badge>
@@ -91,35 +109,43 @@ export const NftCard = (props: Props) => {
 
             {token.data &&
                 <div>
-                    <Group position="left">
-                        {props.gameId &&
+                    {props.gameId && 
+                        <Group position="left">
                             <Badge color="blue" variant="light">
                                 XP {token.data.game_props.find(e => e[0].compareTo(props.gameId!) === 'eq')?.[1].xp || 0.0}
                             </Badge>
-                        }
-                        <Badge color="red" variant="light">
-                            SPT {(Number(token.data.steps_per_thought) / 1000.0).toFixed(2)}
-                        </Badge>
-                        <Badge color="blue" variant="light">
-                            EPS {token.data.epsilon.toFixed(2)}
-                        </Badge>
-                    </Group>
-                    <Space h="sm"/>
-                    <div>
-                        <Text size="sm" color="dimmed">
-                            <b>Traits</b>
-                        </Text>
-                        <Group position="left" mt="xs">
-                            {token.data.traits.map((trait, index) => 
-                                <Badge key={index} color="green" variant="light" size="xs">
-                                    {trait}
-                                </Badge>
-                            )}
-                        </Group>
-                    </div>
-                    <Space h="sm"/>
+                        </Group>                    
+                    }
+                    {props.size !== 'nano' &&
+                        <Group position="left" mt="md">
+                            <Badge color="red" variant="light" size="sm">
+                                SPT {(Number(token.data.steps_per_thought) / 1000.0).toFixed(2)}
+                            </Badge>
+                            <Badge color="blue" variant="light" size="sm">
+                                EPS {token.data.epsilon.toFixed(2)}
+                            </Badge>
+                        </Group>                    
+                    }
+                    {props.size !== 'nano' && 
+                        <>
+                            <Space h="sm"/>
+                            <div>
+                                <Text size="sm" color="dimmed">
+                                    <b>Traits</b>
+                                </Text>
+                                <Group position="left" mt="xs">
+                                    {token.data.traits.map((trait, index) => 
+                                        <Badge key={index} color="green" variant="light" size="xs">
+                                            {trait}
+                                        </Badge>
+                                    )}
+                                </Group>
+                            </div>
+                        </>
+                    }
                     {props.size === 'full' &&
                         <>
+                            <Space h="sm"/>
                             <Box mb="sm">
                                 <Text size="sm" color="dimmed">
                                     <b>XPs</b>
@@ -195,7 +221,6 @@ export const NftCard = (props: Props) => {
                     }
                 </div>
             }
-
             {props.children}
         </Card>
     );
