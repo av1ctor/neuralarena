@@ -1,12 +1,10 @@
 import React, { Fragment, ReactElement, useCallback, useMemo } from "react";
-import { Badge, Card, Group, Text, Image, Space, createStyles, rem, Grid, TextInput, Box, Divider } from "@mantine/core";
+import { Badge, Card, Group, Text, Image, Space, createStyles, Grid, TextInput, Box } from "@mantine/core";
 import { useNAS1FindTokenById } from "@hooks/nas1";
 import {  useIcrc7GetCollectionSymbol } from "@hooks/icrc7";
 import { NFT } from "@libs/nas1";
 import { Principal } from "@dfinity/principal";
 import { Nas1TokenGameProps } from "@declarations/nas1_nft/nas1_nft.did";
-import { principalToString } from "@libs/icp";
-import { useGameFindById } from "@hooks/games";
 
 const useStyles = createStyles((theme) => ({
     nft: {
@@ -29,7 +27,7 @@ interface Props {
     nft: NFT;
     size?: "mini" | "full",
     selected?: boolean;
-    game_id?: Principal,
+    gameId?: Principal,
     children?: ReactElement,
     onClick?: (nft: NFT) => void;
 }
@@ -94,9 +92,9 @@ export const NftCard = (props: Props) => {
             {token.data &&
                 <div>
                     <Group position="left">
-                        {props.game_id &&
+                        {props.gameId &&
                             <Badge color="blue" variant="light">
-                                XP {token.data.game_props.find(e => e[0].compareTo(props.game_id!) === 'eq')?.[1].xp || 0.0}
+                                XP {token.data.game_props.find(e => e[0].compareTo(props.gameId!) === 'eq')?.[1].xp || 0.0}
                             </Badge>
                         }
                         <Badge color="red" variant="light">
