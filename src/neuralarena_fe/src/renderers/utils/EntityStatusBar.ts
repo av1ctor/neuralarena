@@ -75,11 +75,14 @@ export class EntityStatusBar {
     }
 
     update(
-        health: number
+        health: number,
+        visible: boolean
     ) {
         if(!this.bar) {
             return;
         }
+
+        this.bar.visible = visible;
         
         const healthBar = this.bar.children[0].children[0] as THREE.Mesh;
         if(health > 0.0) {

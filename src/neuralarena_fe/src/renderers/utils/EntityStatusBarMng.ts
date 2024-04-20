@@ -68,19 +68,20 @@ export class EntityStatusBarManager {
     }
 
     update(
+        pov: number,        
         players: InstancePlayerEntity[],
         npcs: InstanceNpcEntity[],
     ) {
         for(let i = 0; i < players.length; i++) {
             const player = players[i];
             const bar = this.bars.players[i];
-            bar.update(player.health / 100.0);
+            bar.update(player.health / 100.0, player.health > 0.0 && i !== pov);
         }
 
         for(let i = 0; i < npcs.length; i++) {
             const npc = npcs[i];
             const bar = this.bars.npcs[i];
-            bar.update(npc.health / 100.0);
+            bar.update(npc.health / 100.0, npc.health > 0.0);
         }
     }
 }

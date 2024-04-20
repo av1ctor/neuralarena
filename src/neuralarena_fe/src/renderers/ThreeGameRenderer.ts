@@ -629,7 +629,11 @@ export class ThreeGameRenderer {
         deltaTime: number
     ) {
         //
-        this.statusMng.update(this.entities.players, this.entities.npcs);
+        this.statusMng.update(
+            this.pov.player_num,
+            this.entities.players, 
+            this.entities.npcs
+        );
 
         //
         for(const obj of this.models) {
