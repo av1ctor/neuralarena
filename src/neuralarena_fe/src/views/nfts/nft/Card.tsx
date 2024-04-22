@@ -1,5 +1,5 @@
 import React, { Fragment, ReactElement, useCallback, useMemo } from "react";
-import { Badge, Card, Group, Text, Image, Space, createStyles, Grid, TextInput, Box } from "@mantine/core";
+import { Badge, Card, Group, Text, Image, Space, createStyles, Grid, TextInput, Box, Center } from "@mantine/core";
 import { useNAS1FindTokenById } from "@hooks/nas1";
 import {  useIcrc7GetCollectionSymbol } from "@hooks/icrc7";
 import { NFT } from "@libs/nas1";
@@ -21,6 +21,15 @@ const useStyles = createStyles((theme) => ({
             borderColor: theme.colorScheme === "dark"? theme.colors.grape: '#dad',
         },
     },
+    collection: {
+        position: 'absolute',
+        top: '4px',
+        right: '4px',
+    },
+    title: {
+        fontVariant: 'all-small-caps',
+        color: theme.colorScheme === "dark"? theme.colors.grape[3]: theme.colors.grape[8],
+    },
 }));
 
 interface Props {
@@ -33,8 +42,8 @@ interface Props {
 }
 
 export const NftCard = (props: Props) => {
-    const symbol = useIcrc7GetCollectionSymbol(props.nft.collection_id);
     const {classes, cx} = useStyles();
+    const symbol = useIcrc7GetCollectionSymbol(props.nft.collection_id);
     const token = useNAS1FindTokenById(props.nft.collection_id, Number(props.nft.token_id));
 
     const handleClick = useCallback(() => {
@@ -85,38 +94,46 @@ export const NftCard = (props: Props) => {
                     fit="cover"
                     withPlaceholder
                 />
-            </Card.Section>
-
-            <Group 
-                position="apart" 
-                mt={props.size === 'nano'? 'xs': 'md'} 
-                mb="xs">
-                {token.data &&
-                    <Text 
-                        size={props.size === 'nano'? 'sm': 'md'}
-                        weight={500}
+                {symbol.data &&
+                    <Badge 
+                        className={classes.collection}
+                        color="pink" 
+                        variant="light"
+                        size={props.size === 'full'? "xl": props.size === 'nano'? "xs": "sm"}
                     >
-                        {token.data.name}
-                    </Text>
-                }
-                {props.size !== 'nano' && symbol.data &&
-                    <Badge color="pink" variant="light">
                         {symbol.data}
                     </Badge>
                 }
-            </Group>
+            </Card.Section>
+
+            <Box 
+                mt={2}
+                mb="sm"
+            >
+                {token.data &&
+                    <Center>
+                        <Text 
+                            className={classes.title}
+                            size={props.size === 'nano'? 'sm': 'md'}
+                            weight={500}
+                        >
+                            {token.data.name}
+                        </Text>
+                    </Center>
+                }
+            </Box>
 
             {token.data &&
                 <div>
                     {props.gameId && 
-                        <Group position="left">
-                            <Badge color="blue" variant="light">
+                        <Group position="left" mb={props.size === 'nano'? "xs": "md"}>
+                            <Badge color="blue" variant="light" size={props.size === 'nano'? "sm": "md"}>
                                 XP {token.data.game_props.find(e => e[0].compareTo(props.gameId!) === 'eq')?.[1].xp || 0.0}
                             </Badge>
                         </Group>                    
                     }
                     {props.size !== 'nano' &&
-                        <Group position="left" mt="md">
+                        <Group position="left">
                             <Badge color="red" variant="light" size="sm">
                                 SPT {(Number(token.data.steps_per_thought) / 1000.0).toFixed(2)}
                             </Badge>
