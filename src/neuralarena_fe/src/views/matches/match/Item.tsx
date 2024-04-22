@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { createStyles, rem, Badge, Container, Space, Grid, Card, Image } from "@mantine/core";
+import { createStyles, rem, Badge, Container, Space, Grid, Card, Image, Center, Stack } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { MatchResponse, MatchStatus } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { matchCalcTimeLeft, matchStatusToString } from "@libs/matches";
@@ -23,20 +23,9 @@ const useStyles = createStyles((theme) => ({
     },
 
     name: {
-        position: 'relative',
         color: theme.colorScheme === "dark"? theme.white: theme.black,
-        fontSize: '.8rem',
+        fontSize: '.6rem',
         textTransform: 'uppercase',
-        overflow: 'visible',
-        ":before": {
-            content: '"Game"',
-            position: 'absolute',
-            top: '-1.0rem',
-            left: '1.0rem',
-            fontSize: '0.66rem',
-            fontWeight: 'normal',
-            textTransform: 'none'
-        }
     },
 
     status: {
@@ -45,16 +34,6 @@ const useStyles = createStyles((theme) => ({
         float: 'right',
         fontSize: '.8rem',
         textTransform: 'uppercase',
-        overflow: 'visible',
-        ":before": {
-            content: '"Status"',
-            position: 'absolute',
-            top: '-1.0rem',
-            left: '1.0rem',
-            fontSize: '0.66rem',
-            fontWeight: 'normal',
-            textTransform: 'none'
-        }
     },
 }));
 
@@ -102,38 +81,37 @@ export const MatchItem = (props: Props) => {
         >
             <Grid w="100%">
                 <Grid.Col span={4}>
-                    <Image
-                        width={96}
-                        height={128}
-                        fit="cover"
-                        withPlaceholder
-                        radius="md"
-                        title="Cover"
-                        src={game.data?.info.urls.cover}
-                    />
+                    <Stack>
+                        <Center>
+                            <Image
+                                height={128}
+                                fit="cover"
+                                withPlaceholder
+                                radius="md"
+                                title="Cover"
+                                src={game.data?.info.urls.cover}
+                            />
+                        </Center>
+                        <Badge 
+                            className={local.name} 
+                            size="sm"
+                            color="grape"
+                            variant="filled"
+                        >
+                            {game.data?.info.name}
+                        </Badge>
+                    </Stack>
                 </Grid.Col>
                 <Grid.Col span={8}>
-                    <Grid w="100%">
-                        <Grid.Col span={6} title="Name">
-                            <Badge 
-                                className={local.name} 
-                                size="xl"
-                                variant="light"
-                            >
-                                {game.data?.info.name}
-                            </Badge>
-                        </Grid.Col>
-                        <Grid.Col span={6} title="Status">
-                            <Badge 
-                                className={local.status} 
-                                color={statusToColor(match.state.status)} 
-                                variant={status === 'OPEN'? "filled": 'light'}
-                                size="xl"
-                            >
-                              {matchStatusToString(match.state.status)}
-                            </Badge>
-                        </Grid.Col>
-                    </Grid>
+                    <Badge 
+                        className={local.status} 
+                        color={statusToColor(match.state.status)} 
+                        variant={status === 'OPEN'? "filled": 'light'}
+                        size="xl"
+                    >
+                        {matchStatusToString(match.state.status)}
+                    </Badge>
+
                     <Space h='xl' />
                     <Container w='100%'>
                         <div>
