@@ -52,10 +52,11 @@ const items = [
 ];
 
 interface Props {
+    size?: 'xl';
     onClick?: () => void;
 }
 
-export const UserMenu = (props: Props) => {
+export const UserMenu = ({size, onClick}: Props) => {
     const { classes, theme } = useStyles();
 
     return (
@@ -65,10 +66,21 @@ export const UserMenu = (props: Props) => {
                     <UnstyledButton 
                         className={classes.subLink} 
                     >
-                        <Link to={item.to} className={classes.url} onClick={props.onClick}>
-                            <Group noWrap align="flex-start">
-                                <ThemeIcon size={34} variant="default" radius="md">
-                                    <item.icon size={rem(22)} color={theme.fn.primaryColor()} />
+                        <Link 
+                            className={classes.url} 
+                            to={item.to} 
+                            onClick={onClick}
+                        >
+                            <Group noWrap align="center">
+                                <ThemeIcon 
+                                    size={size === 'xl'? 34*4: 34} 
+                                    variant="default" 
+                                    radius="md"
+                                >
+                                    <item.icon 
+                                        size={rem(size === 'xl'? 22*4: 22)} 
+                                        color={theme.fn.primaryColor()} 
+                                    />
                                 </ThemeIcon>
                                 <div>
                                     <Text size="sm" fw={500}>

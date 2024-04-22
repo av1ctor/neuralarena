@@ -16,7 +16,7 @@ export const UserPage = () => {
             </PageTitle>
 
             <div>
-                <UserMenu />
+                <UserMenu size="xl" />
             </div>
         </>
     );
