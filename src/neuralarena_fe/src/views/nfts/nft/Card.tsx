@@ -6,31 +6,39 @@ import { NFT } from "@libs/nas1";
 import { Principal } from "@dfinity/principal";
 import { Nas1TokenGameProps } from "@declarations/nas1_nft/nas1_nft.did";
 
-const useStyles = createStyles((theme) => ({
-    nft: {
-        border: '1px solid transparent;',
-    },
-    selected: {
-        backgroundColor: theme.colorScheme === "dark"? theme.colors.grape: '#dad',
-        borderColor: theme.colorScheme === "dark"? theme.colors.grape: '#dad',
-    }, 
-    highlight: {
-        ':hover': {
-            backgroundColor: theme.colorScheme === "dark"? theme.colors.grape: '#dad',
-            cursor: 'pointer',
-            borderColor: theme.colorScheme === "dark"? theme.colors.grape: '#dad',
+const useStyles = createStyles((theme) => {
+    const color = theme.colorScheme === "dark"? 
+        theme.colors.grape: 
+        '#dad';
+    
+    return {
+        nft: {
+            border: '1px solid transparent;',
         },
-    },
-    collection: {
-        position: 'absolute',
-        top: '4px',
-        right: '4px',
-    },
-    title: {
-        fontVariant: 'all-small-caps',
-        color: theme.colorScheme === "dark"? theme.colors.grape[3]: theme.colors.grape[8],
-    },
-}));
+        selected: {
+            backgroundColor: color,
+            borderColor: color,
+        }, 
+        highlight: {
+            ':hover': {
+                backgroundColor: color,
+                borderColor: color,
+                cursor: 'pointer',
+            },
+        },
+        collection: {
+            position: 'absolute',
+            top: '4px',
+            right: '4px',
+        },
+        title: {
+            fontVariant: 'all-small-caps',
+            color: theme.colorScheme === "dark"? 
+                theme.colors.grape[3]: 
+                theme.colors.grape[8],
+        },
+    };
+});
 
 interface Props {
     nft: NFT;
@@ -173,41 +181,41 @@ export const NftCard = (props: Props) => {
                                     withBorder
                                     w="100%"
                                 >
-                                    <Grid>
+                                    <Box>
                                         {xps.length > 0? 
                                             xps.map((xp, index) => 
-                                                <Fragment key={index}>
-                                                    <Grid.Col md={12}>
-                                                        <Grid>
-                                                            <Grid.Col md={12} m={0} pb={0}>
-                                                                <Text size="xs"><b>#{index+1}</b></Text>
-                                                            </Grid.Col>
-                                                            <Grid.Col md={6} pt={0}>
-                                                                <TextInput
-                                                                    label="Game canister id"
-                                                                    value={xp[0].toString()}
-                                                                    size="xs"
-                                                                    readOnly
-                                                                />
-                                                            </Grid.Col>
-                                                            <Grid.Col md={6} pt={0}>
-                                                                <TextInput
-                                                                    label="XP"
-                                                                    value={xp[1].xp}
-                                                                    size="xs"
-                                                                    readOnly
-                                                                />
-                                                            </Grid.Col>
-                                                        </Grid>
-                                                    </Grid.Col>
-                                                </Fragment>
+                                                <Box key={index}>
+                                                    <Grid>
+                                                        <Grid.Col md={12} m={0} pb={0}>
+                                                            <Text size="xs"><b>#{index+1}</b></Text>
+                                                        </Grid.Col>
+                                                        <Grid.Col md={6} pt={0}>
+                                                            <TextInput
+                                                                label="Game canister id"
+                                                                value={xp[0].toString()}
+                                                                size="xs"
+                                                                readOnly
+                                                            />
+                                                        </Grid.Col>
+                                                        <Grid.Col md={6} pt={0}>
+                                                            <TextInput
+                                                                label="XP"
+                                                                value={xp[1].xp}
+                                                                size="xs"
+                                                                readOnly
+                                                            />
+                                                        </Grid.Col>
+                                                    </Grid>
+                                                </Box>
                                             )
                                         :
-                                            <Text size="sm" p="lg">
-                                                Time to start earning some XP! Join a match and let the fun begin! 😆
-                                            </Text>
+                                            <Center>
+                                                <Text size="xs">
+                                                    Time to start earning some XP! Join a match and let the fun begin! 😆
+                                                </Text>
+                                            </Center>
                                         }
-                                    </Grid>
+                                    </Box>
                                 </Card>
                             </Box>
                             <div>
