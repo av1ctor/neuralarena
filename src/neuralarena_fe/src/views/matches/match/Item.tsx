@@ -8,6 +8,7 @@ import { useBrowser } from "@hooks/browser";
 import { timeLeftToString } from "@libs/time";
 import { principalToString } from "@libs/icp";
 import { useUI } from "@hooks/ui";
+import { useAuth } from "@hooks/auth";
 
 const useStyles = createStyles((theme) => ({
     card: {
@@ -56,6 +57,7 @@ interface Props {
 }
   
 export const MatchItem = (props: Props) => {
+    const {user} = useAuth();
     const {classes} = useUI();
     const {classes: local, cx} = useStyles();
     const {isMobile} = useBrowser();
@@ -124,10 +126,18 @@ export const MatchItem = (props: Props) => {
                             <span title="Deadline">⏰ {status === 'OPEN'? timeLeftToString(matchCalcTimeLeft(match)): '00:00:00'}</span>
                         </div>
                         <div>
-                            <span title="Winner">🏆 {match.won_by.length > 0? 
-                                    principalToString(match.won_by[0]): 
+                            <span title="Winner">🏆 {
+                                match.won_by.length > 0? 
+                                    user? 
+                                        match.won_by[0]!.compareTo(user.id) === 'eq'?
+                                            "You won!✨":
+                                            principalToString(match.won_by[0])
+                                    : 
+                                        principalToString(match.won_by[0])
+                                :
                                     status === 'OPEN'?
-                                        'how about you?':
+                                        'how about you?'
+                                    :
                                         'nobody 😥'
                                 }
                             </span>
