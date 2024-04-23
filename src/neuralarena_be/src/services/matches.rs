@@ -296,11 +296,12 @@ impl MatchesService {
                 tensors,
                 state: InstancePlayerState {
                     active: true,
+                    skill: "".to_string(),
                     last_thought: 0,
                     score: 0.0,
                     health: 100.0,
                     xp: 0.0,          // will be set when running
-                    obs: vec![],
+                    obs: HashMap::new(),
                 }
             });
 

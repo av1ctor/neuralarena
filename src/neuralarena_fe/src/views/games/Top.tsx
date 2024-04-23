@@ -27,10 +27,11 @@ export const TopGames = () => {
                 </Container>
                 <Space h="xl"/>
                 <Carousel
-                    slideSize={isMobile? '100%': '100%'}
+                    slideSize='100%'
                     slideGap='xl'
                     align="start"
-                    slidesToScroll={isMobile? 1 : 1}
+                    slidesToScroll={1}
+                    loop
                 >
                     {games.data?.pages?.map((page) => (
                         page.map((item) => (

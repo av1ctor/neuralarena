@@ -114,7 +114,7 @@ const Landing = () => {
                         }
                     >
                         <List.Item className={classes.item}>
-                            Each <b>NFT</b> contains the visual features (the 3d model with animations) and the skills (the parameters of its <b>artificial neural network</b>) trained using <b>deep reinforcement learning</b>(RL). All the contents (the NN data, the 3d model and the sound effects) are <b>stored on-chain</b>.
+                            Each <b>NFT</b> contains the visual features (the 3d model with animations) and the skills (the parameters of its <b>artificial neural network</b>) trained using <b>deep reinforcement learning</b> (RL). All the contents (the NN parameters, the 3d model, animations and the sound effects) are <b>stored on-chain</b>.
                         </List.Item>
                         <List.Item className={classes.item}>
                             All games <b>run 100% on-chain</b> to ensure no match can be manipulated as there are no external interferences, making hacking impossible.
