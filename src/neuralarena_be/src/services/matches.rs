@@ -12,8 +12,8 @@ use neuralarena_cdk::{
             InstanceStepsResponse
         }, 
         nas1_types::{
-            Nas1Token, Nas1TokenGameProps, Nas1TokenGameDeltaProps, 
-            Nas1UpdatePropsArg
+            Nas1Token, Nas1TokenGameDeltaProps, Nas1TokenGameProps, 
+            Nas1UpdatePropsArg, MIN_GAME_PROPS_DELTA
         }
     },
     utils::uniqueid
@@ -299,7 +299,7 @@ impl MatchesService {
                     last_thought: 0,
                     score: 0.0,
                     health: 100.0,
-                    xp: 0,          // will be set when running
+                    xp: 0.0,          // will be set when running
                     obs: vec![],
                 }
             });
@@ -505,21 +505,22 @@ impl MatchesService {
             // NOTE: all params are deltas, because some other match could have 
             // updated the xp while this match was running
             let old_game_props = &old_game_props[i];
-            let delta_xp = (player.state.xp - old_game_props.xp) as i32;
-            
-            let _: (Result<(), String>, ) = ic_cdk::call(
-                player.nft.collection_id, 
-                "nas1_update_props",
-                (
-                    Nas1UpdatePropsArg {
-                        token_id: player.nft.token_id,
-                        game_canister_id: game.id.clone(),
-                        game_props: Nas1TokenGameDeltaProps {
-                            delta_xp
-                        }
-                    },
-                )
-            ).await.map_err(|e| e.1)?;
+            let delta_xp = player.state.xp - old_game_props.xp;
+            if delta_xp.abs() > MIN_GAME_PROPS_DELTA {
+                let _: (Result<(), String>, ) = ic_cdk::call(
+                    player.nft.collection_id, 
+                    "nas1_update_props",
+                    (
+                        Nas1UpdatePropsArg {
+                            token_id: player.nft.token_id,
+                            game_canister_id: game.id.clone(),
+                            game_props: Nas1TokenGameDeltaProps {
+                                delta_xp
+                            }
+                        },
+                    )
+                ).await.map_err(|e| e.1)?;
+            }
         }
         
         Ok(())
@@ -573,7 +574,7 @@ impl MatchesService {
         let old_game_props = m4tch.state.players.iter()
             .map(|p| p.nft.props.as_ref().unwrap()
                 .game_props.get(&game.id).or(Some(&Nas1TokenGameProps{
-                    xp: 0
+                    xp: 0.0
                 })).unwrap().clone()
             )
             .collect();
