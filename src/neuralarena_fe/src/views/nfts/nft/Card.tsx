@@ -136,7 +136,7 @@ export const NftCard = (props: Props) => {
                     {props.gameId && 
                         <Group position="left" mb={props.size === 'nano'? "xs": "md"}>
                             <Badge color="blue" variant="light" size={props.size === 'nano'? "sm": "md"}>
-                                XP {token.data.game_props.find(e => e[0].compareTo(props.gameId!) === 'eq')?.[1].xp || 0.0}
+                                XP {token.data.game_props.find(e => e[0].compareTo(props.gameId!) === 'eq')?.[1].xp.toFixed(2) || 0.0}
                             </Badge>
                         </Group>                    
                     }
@@ -200,7 +200,7 @@ export const NftCard = (props: Props) => {
                                                         <Grid.Col md={6} pt={0}>
                                                             <TextInput
                                                                 label="XP"
-                                                                value={xp[1].xp}
+                                                                value={xp[1].xp.toFixed(2)}
                                                                 size="xs"
                                                                 readOnly
                                                             />
