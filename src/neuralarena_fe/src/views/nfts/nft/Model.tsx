@@ -14,7 +14,7 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-const CANVAS_DEFAULT_DIM = {w: 450, h: 450*1};
+const CANVAS_DEFAULT_DIM = {w: 450, h: 450*(15.0/16.0)};
 
 interface Props {
     nft: NFT;
@@ -41,7 +41,7 @@ export const NftModel = ({nft}: Props) => {
     };
 
     useEffect(() => {
-        const height = width * 1;
+        const height = width / (width > 640? (15.0/16.0): (10.0/16.0));
         const dim ={w: width, h: height};
         changeCanvasDim(dim);
         renderer?.resizeCanvas(dim);

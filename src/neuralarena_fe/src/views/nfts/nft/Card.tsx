@@ -1,6 +1,6 @@
 import React, { Fragment, ReactElement, useCallback, useMemo } from "react";
 import { Badge, Card, Group, Text, Image, Space, createStyles, Grid, TextInput, Box, Center } from "@mantine/core";
-import { useNAS1FindTokenById } from "@hooks/nas1";
+import { useNAS1FindTokenById, useNAS1GetCollectionData } from "@hooks/nas1";
 import {  useIcrc7GetCollectionSymbol } from "@hooks/icrc7";
 import { NFT } from "@libs/nas1";
 import { Principal } from "@dfinity/principal";
@@ -51,6 +51,7 @@ interface Props {
 
 export const NftCard = (props: Props) => {
     const {classes, cx} = useStyles();
+    const collection = useNAS1GetCollectionData(props.nft.collection_id);
     const symbol = useIcrc7GetCollectionSymbol(props.nft.collection_id);
     const token = useNAS1FindTokenById(props.nft.collection_id, Number(props.nft.token_id));
 
@@ -107,6 +108,7 @@ export const NftCard = (props: Props) => {
                         className={classes.collection}
                         color="pink" 
                         variant="light"
+                        m={props.size === 'full'? 10: 0}
                         size={props.size === 'full'? "xl": props.size === 'nano'? "xs": "sm"}
                     >
                         {symbol.data}
@@ -187,7 +189,9 @@ export const NftCard = (props: Props) => {
                                                 <Box key={index}>
                                                     <Grid>
                                                         <Grid.Col md={12} m={0} pb={0}>
-                                                            <Text size="xs"><b>#{index+1}</b></Text>
+                                                            <Text size="xs" color="lime">
+                                                                <b>#{index+1}</b>
+                                                            </Text>
                                                         </Grid.Col>
                                                         <Grid.Col md={6} pt={0}>
                                                             <TextInput
@@ -218,29 +222,46 @@ export const NftCard = (props: Props) => {
                                     </Box>
                                 </Card>
                             </Box>
-                            <div>
+                            <Box mb="sm">
                                 <Text size="sm" color="dimmed">
                                     <b>Neural net</b>
                                 </Text>
-                                <Grid>
-                                    <Grid.Col md={6}>
-                                        <TextInput
-                                            label="Num hidden layers"
-                                            value={token.data.num_hidden_layers.toString()}
-                                            size="xs"
-                                            readOnly
-                                        />
-                                    </Grid.Col>
-                                    <Grid.Col md={6}>
-                                        <TextInput
-                                            label="Hidden layers weights len"
-                                            value={hiddenLayersWeights}
-                                            size="xs"
-                                            readOnly
-                                        />
-                                    </Grid.Col>
-                                </Grid>
-                            </div>
+                                <Card 
+                                    radius="md" 
+                                    p="xs" 
+                                    bg="transparent"
+                                    withBorder
+                                    w="100%"
+                                >
+                                    {collection.data?.skills.map((skill) => 
+                                        <Box key={skill}>
+                                            <Grid>
+                                                <Grid.Col md={12} m={0} pb={0}>
+                                                    <Text size="xs" color="lime">
+                                                        <b>#{skill}</b>
+                                                    </Text>
+                                                </Grid.Col>
+                                                <Grid.Col md={6} pt={0}>
+                                                    <TextInput
+                                                        label="Num hidden layers"
+                                                        value={token.data.num_hidden_layers.toString()}
+                                                        size="xs"
+                                                        readOnly
+                                                    />
+                                                </Grid.Col>
+                                                <Grid.Col md={6} pt={0}>
+                                                    <TextInput
+                                                        label="Hidden layers weights len"
+                                                        value={hiddenLayersWeights}
+                                                        size="xs"
+                                                        readOnly
+                                                    />
+                                                </Grid.Col>
+                                            </Grid>
+                                        </Box>
+                                    )}  
+                                </Card>
+                            </Box>
                         </>
                     }
                 </div>
