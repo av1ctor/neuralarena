@@ -36,6 +36,7 @@ const useStyles = createStyles((theme) => {
             color: theme.colorScheme === "dark"? 
                 theme.colors.grape[3]: 
                 theme.colors.grape[8],
+            overflow: "hidden",
         },
     };
 });
@@ -124,8 +125,9 @@ export const NftCard = (props: Props) => {
                     <Center>
                         <Text 
                             className={classes.title}
-                            size={props.size === 'nano'? 'sm': 'md'}
+                            size={props.size === 'nano'? 'xs': 'md'}
                             weight={500}
+                            style={{maxWidth: height/1.5}}
                         >
                             {token.data.name}
                         </Text>

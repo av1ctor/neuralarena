@@ -448,6 +448,7 @@ export const MatchWatch = (props: Props) => {
                             gameId={props.match.game.id}
                             health={povPlayer?.health || 0.0}
                             score={povPlayer?.score || 0.0}
+                            size="nano"
                         />
                     </div>
                 }

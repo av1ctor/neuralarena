@@ -10,23 +10,24 @@ interface Props {
     score: number;
     health: number;
     gameId: GameId;
+    size?: 'nano';
 }
 
-export const PlayerState = ({player, score, health, gameId}: Props) => {
+export const PlayerState = ({player, score, health, gameId, size}: Props) => {
     return (
         player.nft &&
             <NftCard
                 nft={player.nft}
                 gameId={gameId}
-                size="nano"
+                size={size}
             >
                 <Center>
-                    <Text size="sm">
+                    <Text size={size === 'nano'? 'xs': "sm"}>
                         <b>{principalToString(player.id)}</b>
                     </Text>
                 </Center>
                 <Center>
-                    <Text size="sm">
+                    <Text size={size === 'nano'? 'xs': "sm"}>
                         Score: <b>{score.toFixed(2)}</b>
                     </Text>
                 </Center>
@@ -34,9 +35,9 @@ export const PlayerState = ({player, score, health, gameId}: Props) => {
                     <Text size={10}>
                         <Rating 
                             title={`Health: ${health.toFixed(2)}`}
-                            value={health / 10.0} 
+                            value={health / (size === 'nano'? 20: 10)} 
                             fractions={2} 
-                            count={10}
+                            count={size === 'nano'? 5: 10}
                             emptySymbol={'🤍'} 
                             fullSymbol={'💖'}
                             readOnly 
