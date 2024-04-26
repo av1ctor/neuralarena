@@ -6,6 +6,7 @@ import { EndCredits } from "./EndCredits";
 import { IconList, IconUsersGroup } from "@tabler/icons-react";
 import { gameCostToPlay } from "@libs/games";
 import { e8sToDecimal } from "@libs/icp";
+import { NeuralNetSkill } from "@components/NeuralNetSkill";
 
 const useStyles = createStyles((theme) => ({
     inputbox: {
@@ -134,7 +135,7 @@ export const GameAbout = (props: Props) => {
                                 <Group>
                                     {game?.info.skills.map((skill, index) => 
                                         <Chip key={index} readOnly>
-                                            {skill}
+                                            <NeuralNetSkill skill={skill} />
                                         </Chip>
                                     )}
                                 </Group>

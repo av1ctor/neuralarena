@@ -6,6 +6,7 @@ import {
     useIcrc7GetCollectionSupportedStandards, 
     useIcrc7GetCollectionTotalSupply 
 } from "@hooks/icrc7";
+import { NeuralNetSkill } from "@components/NeuralNetSkill";
 
 interface Props {
     col: NftCollectionResponse|undefined;
@@ -105,7 +106,7 @@ export const NftCollectionAbout = (props: Props) => {
                         <Group>
                             {col?.meta.nas1.skills.map((skill, index) => 
                                 <Chip key={index} readOnly>
-                                    {skill}
+                                    <NeuralNetSkill skill={skill} />
                                 </Chip>
                             )}
                         </Group>

@@ -5,6 +5,8 @@ import {  useIcrc7GetCollectionSymbol } from "@hooks/icrc7";
 import { NFT } from "@libs/nas1";
 import { Principal } from "@dfinity/principal";
 import { Nas1TokenGameProps } from "@declarations/nas1_nft/nas1_nft.did";
+import { NftSkill } from "./Skill";
+import { TokenXp } from "./XP";
 
 const useStyles = createStyles((theme) => {
     const color = theme.colorScheme === "dark"? 
@@ -61,10 +63,6 @@ export const NftCard = (props: Props) => {
             props.onClick(props.nft);
         }
     }, [props.nft, props.onClick]);
-
-    const hiddenLayersWeights = useMemo(() => {
-        return `[${(token.data?.hidden_layers_weights_size as bigint[] || []).map(s => s.toString()).join(',')}]`;
-    }, [token.data?.hidden_layers_weights_size]);
 
     const xps = useMemo((): [Principal, Nas1TokenGameProps][] => {
         if(!token.data) {
@@ -188,31 +186,12 @@ export const NftCard = (props: Props) => {
                                     <Box>
                                         {xps.length > 0? 
                                             xps.map((xp, index) => 
-                                                <Box key={index}>
-                                                    <Grid>
-                                                        <Grid.Col md={12} m={0} pb={0}>
-                                                            <Text size="xs" color="lime">
-                                                                <b>#{index+1}</b>
-                                                            </Text>
-                                                        </Grid.Col>
-                                                        <Grid.Col md={6} pt={0}>
-                                                            <TextInput
-                                                                label="Game canister id"
-                                                                value={xp[0].toString()}
-                                                                size="xs"
-                                                                readOnly
-                                                            />
-                                                        </Grid.Col>
-                                                        <Grid.Col md={6} pt={0}>
-                                                            <TextInput
-                                                                label="XP"
-                                                                value={xp[1].xp.toFixed(2)}
-                                                                size="xs"
-                                                                readOnly
-                                                            />
-                                                        </Grid.Col>
-                                                    </Grid>
-                                                </Box>
+                                                <TokenXp
+                                                    key={index}
+                                                    index={index}
+                                                    canisterId={xp[0]}
+                                                    xp={xp[1].xp}
+                                                />
                                             )
                                         :
                                             <Center>
@@ -236,31 +215,11 @@ export const NftCard = (props: Props) => {
                                     w="100%"
                                 >
                                     {collection.data?.skills.map((skill) => 
-                                        <Box key={skill}>
-                                            <Grid>
-                                                <Grid.Col md={12} m={0} pb={0}>
-                                                    <Text size="xs" color="lime">
-                                                        <b>#{skill}</b>
-                                                    </Text>
-                                                </Grid.Col>
-                                                <Grid.Col md={6} pt={0}>
-                                                    <TextInput
-                                                        label="Num hidden layers"
-                                                        value={token.data.num_hidden_layers.toString()}
-                                                        size="xs"
-                                                        readOnly
-                                                    />
-                                                </Grid.Col>
-                                                <Grid.Col md={6} pt={0}>
-                                                    <TextInput
-                                                        label="Hidden layers weights len"
-                                                        value={hiddenLayersWeights}
-                                                        size="xs"
-                                                        readOnly
-                                                    />
-                                                </Grid.Col>
-                                            </Grid>
-                                        </Box>
+                                        <NftSkill 
+                                            key={skill}
+                                            skill={skill}
+                                            token={token.data}
+                                        />
                                     )}  
                                 </Card>
                             </Box>
