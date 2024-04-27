@@ -10,8 +10,8 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const CANVAS_DEFAULT_DIM = {w: 450, h: 253};
-const NEURONS_GAP = 20;
-const NEURONS_RADIUS = 3;
+const NEURONS_GAP = 10;
+const NEURONS_RADIUS = 1;
 
 interface Props {
     inp: number;
@@ -35,7 +35,7 @@ export const NeuralNetArch = ({inp, hidden, out}: Props) => {
     };
 
     useEffect(() => {
-        const height = width;
+        const height = width * (width > 640? 0.5: 1.0);
         const dim = {w: width, h: height};
         changeCanvasDim(dim);
         setDim(dim);

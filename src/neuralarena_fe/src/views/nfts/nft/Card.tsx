@@ -205,7 +205,7 @@ export const NftCard = (props: Props) => {
                             </Box>
                             <Box mb="sm">
                                 <Text size="sm" color="dimmed">
-                                    <b>Neural net</b>
+                                    <b>Learned skills <small>(Neural Networks)</small></b>
                                 </Text>
                                 <Card 
                                     radius="md" 

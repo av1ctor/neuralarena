@@ -44,7 +44,7 @@ export const NftSkill = ({skill, token}: Props) => {
                 </Grid.Col>
                 <Grid.Col md={12} pt={0}>
                     <TextInput
-                        label="Number of input neurons"
+                        label="Input neurons"
                         value={numInputLayerNeurons}
                         size="xs"
                         readOnly
@@ -52,7 +52,7 @@ export const NftSkill = ({skill, token}: Props) => {
                 </Grid.Col>
                 <Grid.Col md={6} pt={0}>
                     <TextInput
-                        label="Number of hidden layers"
+                        label="Hidden layers"
                         value={token.num_hidden_layers.toString()}
                         size="xs"
                         readOnly
@@ -60,7 +60,7 @@ export const NftSkill = ({skill, token}: Props) => {
                 </Grid.Col>
                 <Grid.Col md={6} pt={0}>
                     <TextInput
-                        label="Number of neurons on each hidden layer"
+                        label="Neurons on each hidden layer"
                         value={hiddenLayersWeights}
                         size="xs"
                         readOnly
@@ -68,7 +68,7 @@ export const NftSkill = ({skill, token}: Props) => {
                 </Grid.Col>
                 <Grid.Col md={12} pt={0}>
                     <TextInput
-                        label="Number of output neurons"
+                        label="Output neurons"
                         value={numOutputLayerNeurons}
                         size="xs"
                         readOnly
