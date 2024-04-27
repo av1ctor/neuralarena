@@ -435,7 +435,7 @@ export const MatchWatch = (props: Props) => {
                     className={classes.canvas}
                     width={dim.w}
                     height={dim.h}
-                    >
+                >
                 </canvas>
                 {state === WatchState.PLAYING && 
                     step.current > 0 && 
