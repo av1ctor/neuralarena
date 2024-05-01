@@ -70,6 +70,7 @@ export const App = () => {
                                     <MantineProvider 
                                         theme={{ 
                                             colorScheme, 
+                                            white: colorScheme === 'dark'? '#fff': '#cde',
                                             primaryColor: 'magenta',
                                             colors: colors as any, 
                                             defaultGradient: {from: '#ff6600', to: '#ff00ff', deg: 135.0}

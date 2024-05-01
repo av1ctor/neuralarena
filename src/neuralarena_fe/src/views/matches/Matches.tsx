@@ -10,6 +10,7 @@ import { MatchesGrid } from "./Grid";
 import { InfinitePaging } from "@components/InfinitePaging";
 import { useAuth } from "@hooks/auth";
 import { useUI } from "@hooks/ui";
+import { useBrowser } from "@hooks/browser";
 
 interface Props {
 }
@@ -19,6 +20,7 @@ const ITEMS_PER_PAGE = 6;
 export const AllMatches = (props: Props) => {
     const {user} = useAuth();
     const {classes, showError} = useUI();
+    const {redirectToLogin} = useBrowser();
     const [opened, {open, close}] = useDisclosure(false);
 
     const matches = useMatchFindAll(ITEMS_PER_PAGE);
@@ -49,9 +51,8 @@ export const AllMatches = (props: Props) => {
                 icon={IconDeviceGamepad}
             >
                 <Button
-                    disabled={!user}
                     className={classes.animatedOutline}
-                    onClick={open}
+                    onClick={!user? redirectToLogin: open}
                 >
                     New
                 </Button>

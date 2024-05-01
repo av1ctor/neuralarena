@@ -33,8 +33,8 @@ export const PageTitle = (props: Props) => {
             <Group noWrap spacing="xl" position="apart">
                 <Stack>
                     <Center>
-                        <ThemeIcon size="3rem" variant='light' radius="md">
-                            <props.icon size="3rem" color={theme.fn.primaryColor()} />
+                        <ThemeIcon size="3rem" variant='' radius="md">
+                            <props.icon size="3rem" color={theme.primaryColor} />
                         </ThemeIcon>
                     </Center>
                     <Center>
