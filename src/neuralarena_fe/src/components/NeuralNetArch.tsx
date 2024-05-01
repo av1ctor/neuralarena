@@ -4,14 +4,14 @@ import React, { useEffect, useMemo, useRef, useState } from "react"
 
 const useStyles = createStyles((theme) => ({
     box: {
-        border: `1px solid ${theme.colors.gray[8]}`,
+        border: `1px solid ${theme.colorScheme === 'dark'? theme.colors.gray[8]: theme.colors.gray[4]}`,
         borderRadius: '8px',
     }
 }));
 
 const CANVAS_DEFAULT_DIM = {w: 450, h: 253};
 const NEURONS_GAP = 10;
-const NEURONS_RADIUS = 1;
+const NEURONS_RADIUS = 2;
 
 interface Props {
     inp: number;
@@ -23,7 +23,7 @@ export const NeuralNetArch = ({inp, hidden, out}: Props) => {
     const canvas = useRef<HTMLCanvasElement | null>(null);
     const [dim, setDim] = useState(CANVAS_DEFAULT_DIM);
     const { ref, width } = useElementSize();
-    const {classes} = useStyles();
+    const {classes, theme} = useStyles();
 
     const changeCanvasDim = (dim: {w: number, h: number}) => {
         if(canvas.current) {
@@ -86,7 +86,7 @@ export const NeuralNetArch = ({inp, hidden, out}: Props) => {
         if(ctx) {
             ctx.clearRect(0, 0, dim.w, dim.h);
             
-            ctx.strokeStyle = "#80808020";
+            ctx.strokeStyle = theme.colorScheme === 'dark'? "#80808020": "#a0a0a020";
             for(const sn of inpn) {
                 for(const nodes of hidn) {
                     for(const tn of nodes) {
@@ -109,14 +109,14 @@ export const NeuralNetArch = ({inp, hidden, out}: Props) => {
                 }
             }
             
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle = theme.colorScheme === 'dark'? "#fff": '#000';
             for(const n of inpn) {
                 ctx.beginPath();
                 ctx.arc(n.x, n.y, NEURONS_RADIUS, 0.0, Math.PI * 2.0);
                 ctx.fill();
             }
 
-            ctx.fillStyle = "#0f0";
+            ctx.fillStyle = theme.colorScheme === 'dark'? "#0f0": '#0a0';
             for(const nodes of hidn) {
                 for(const n of nodes) {
                     ctx.beginPath();
@@ -125,7 +125,7 @@ export const NeuralNetArch = ({inp, hidden, out}: Props) => {
                 }
             }
 
-            ctx.fillStyle = "#f00";
+            ctx.fillStyle = theme.colorScheme === 'dark'? "#f00": '#a00';
             for(const n of outn) {
                 ctx.beginPath();
                 ctx.arc(n.x, n.y, NEURONS_RADIUS, 0.0, Math.PI * 2.0);
