@@ -8,6 +8,8 @@ import { InfinitePaging } from "@components/InfinitePaging";
 import { DrawerPanel } from "@components/DrawerPanel";
 import { useDisclosure } from "@mantine/hooks";
 import { useUI } from "@hooks/ui";
+import { useBrowser } from "@hooks/browser";
+import { useAuth } from "@hooks/auth";
 
 const useStyles = createStyles((theme) => ({
     soon: {
@@ -22,6 +24,8 @@ const ITEMS_PER_PAGE = 12;
 
 export const Games = (props: Props) => {
     const {classes} = useUI();
+    const {user} = useAuth();
+    const {redirectToLogin} = useBrowser();
     const {classes: local} = useStyles();
     const [opened, {open, close}] = useDisclosure(false);
     
@@ -38,7 +42,7 @@ export const Games = (props: Props) => {
                 >
                     <Button
                         className={classes.animatedOutline}
-                        onClick={open}
+                        onClick={!user? redirectToLogin: open}
                     >
                         Publish
                     </Button>

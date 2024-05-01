@@ -8,6 +8,8 @@ import { InfinitePaging } from "@components/InfinitePaging";
 import { DrawerPanel } from "@components/DrawerPanel";
 import { useDisclosure } from "@mantine/hooks";
 import { useUI } from "@hooks/ui";
+import { useBrowser } from "@hooks/browser";
+import { useAuth } from "@hooks/auth";
 
 const useStyles = createStyles((theme) => ({
     soon: {
@@ -23,6 +25,8 @@ const ITEMS_PER_PAGE = 6;
 export const NftCollections = (props: Props) => {
     const [opened, {open, close}] = useDisclosure(false);
     const {classes} = useUI();
+    const {user} = useAuth();
+    const {redirectToLogin} = useBrowser();
     const {classes: local} = useStyles();
 
     const cols = useNftCollectionFindAll(ITEMS_PER_PAGE);
@@ -34,8 +38,8 @@ export const NftCollections = (props: Props) => {
                 icon={IconPhoto}
             >
                 <Button
-                className={classes.animatedOutline}
-                    onClick={open}
+                    className={classes.animatedOutline}
+                    onClick={!user? redirectToLogin: open}
                 >
                     Publish
                 </Button>

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState, useCallback } from "react";
 import * as yup from 'yup';
 import { Box, Button, Center, SegmentedControl, Space, Stepper, TextInput } from "@mantine/core";
 import { useForm, yupResolver } from "@mantine/form";
-import { IconUserCog, IconUserShield } from "@tabler/icons-react";
+import { IconUserCog, IconUserPlus, IconUserShield } from "@tabler/icons-react";
 import { useAuth } from "@hooks/auth";
 import { useUI } from "@hooks/ui";
 import { useBrowser } from "@hooks/browser";
@@ -10,6 +10,7 @@ import { useUser } from "@hooks/users";
 import { useActors } from "@hooks/actors";
 import { UserKind, userStringToKind } from "@libs/users";
 import Login from "./Login";
+import { PageTitle } from "@components/PageTitle";
 
 const schema = {
     nick: yup.string().min(3).max(64),
@@ -132,75 +133,83 @@ const Signup = (props: Props) => {
     }, []);
 
     return (
-        <Stepper 
-            active={active} 
-            breakpoint="sm"
-            color="green"
-            onStepClick={setActive}
-        >
-            <Stepper.Step 
-                label="Authentication" 
-                description="Authenticate with your provider"
-                allowStepSelect={false}
+        <>
+            <PageTitle
+                title="Sign up"
+                icon={IconUserPlus}
             >
-                <Login 
-                    authenticateOnly={true}
-                    onAuthenticated={handleAuthenticated} 
-                />
-            </Stepper.Step>
-            <Stepper.Step 
-                label="Registration" 
-                description="Create a new account"
-                allowStepSelect={false}
+            </PageTitle>
+
+            <Stepper 
+                active={active} 
+                breakpoint="sm"
+                color="green"
+                onStepClick={setActive}
             >
-                <Space h="md" />
-                <SegmentedControl
-                    size="md"
-                    orientation={isMobile? "vertical": "horizontal"}
-                    fullWidth
-                    color="magenta"
-                    value={UserKind[kind]}
-                    data={kinds}
-                    onChange={handleChangeKind}
-                />
-                <Space h="md" />
-
-                <form onSubmit={form.onSubmit(handleCreate)}>
-                    <TextInput
-                        label="Nick"
-                        placeholder="Your nick"
-                        {...form.getInputProps('nick')}
+                <Stepper.Step 
+                    label="Authentication" 
+                    description="Authenticate with your provider"
+                    allowStepSelect={false}
+                >
+                    <Login 
+                        authenticateOnly={true}
+                        onAuthenticated={handleAuthenticated} 
                     />
-                    <TextInput
-                        label="Name (optional)"
-                        placeholder="Your name"
-                        {...form.getInputProps('name')}
-                    />
-                    <TextInput
-                        label="Email (optional)"
-                        placeholder="Your e-mail"
-                        {...form.getInputProps('email')}
-                    />
-
-                    {kind === UserKind.Player && 
-                        <>
-                        </>
-                    }
-                    {kind === UserKind.Staff && 
-                        <>
-                        </>
-                    }
-                    <Space h="lg"/>
-                    <Button
+                </Stepper.Step>
+                <Stepper.Step 
+                    label="Registration" 
+                    description="Create a new account"
+                    allowStepSelect={false}
+                >
+                    <Space h="md" />
+                    <SegmentedControl
+                        size="md"
+                        orientation={isMobile? "vertical": "horizontal"}
                         fullWidth
-                        variant="gradient"
-                        type="submit"
-                    >
-                        Submit
-                    </Button>
-                </form>                
-            </Stepper.Step>
-        </Stepper>
+                        color="magenta"
+                        value={UserKind[kind]}
+                        data={kinds}
+                        onChange={handleChangeKind}
+                    />
+                    <Space h="md" />
+
+                    <form onSubmit={form.onSubmit(handleCreate)}>
+                        <TextInput
+                            label="Nick"
+                            placeholder="Your nick"
+                            {...form.getInputProps('nick')}
+                        />
+                        <TextInput
+                            label="Name (optional)"
+                            placeholder="Your name"
+                            {...form.getInputProps('name')}
+                        />
+                        <TextInput
+                            label="Email (optional)"
+                            placeholder="Your e-mail"
+                            {...form.getInputProps('email')}
+                        />
+
+                        {kind === UserKind.Player && 
+                            <>
+                            </>
+                        }
+                        {kind === UserKind.Staff && 
+                            <>
+                            </>
+                        }
+                        <Space h="lg"/>
+                        <Button
+                            fullWidth
+                            variant="gradient"
+                            type="submit"
+                        >
+                            Submit
+                        </Button>
+                    </form>                
+                </Stepper.Step>
+            </Stepper>
+        </>
    );
 };
 

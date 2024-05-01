@@ -4,6 +4,8 @@ import { useAuth } from "@hooks/auth";
 import { useUI } from "@hooks/ui";
 import { ICProviderType } from "@interfaces/icprovider";
 import { useBrowser } from "@hooks/browser";
+import { PageTitle } from "@components/PageTitle";
+import { IconUserBolt } from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
     subLink: {
@@ -93,37 +95,47 @@ const Login = (props: Props) => {
     ];
 
     return (
-        <Stack mih="20rem">
-            <Center>
-                <Title order={4}>
-                    Please choose a provider
-                </Title>
-            </Center>
-            <Grid>
-                {data.map((item) => 
-                    <Grid.Col md={6} key={item.title}>
-                        <UnstyledButton 
-                            className={classes.subLink} 
-                            onClick={item.onClick}
-                        >
-                            <Group noWrap align="flex-start">
-                                <ThemeIcon size={64} variant="filled" color={item.color}  radius="md">
-                                    <img src={`/providers/${item.logo}`} height={item.h} width={item.w} />
-                                </ThemeIcon>
-                                <div>
-                                    <Text size="sm" fw={500}>
-                                        {item.title}
-                                    </Text>
-                                    <Text size="xs" color="dimmed">
-                                        {item.description}
-                                    </Text>
-                                </div>
-                            </Group>
-                        </UnstyledButton>
-                    </Grid.Col>
-                )}                
-            </Grid>
-        </Stack>
+        <>
+            {!props.authenticateOnly && 
+                <PageTitle
+                    title="Log in"
+                    icon={IconUserBolt}
+                >
+                </PageTitle>
+            }
+
+            <Stack mih="20rem">
+                <Center>
+                    <Title order={4}>
+                        Please choose a provider
+                    </Title>
+                </Center>
+                <Grid>
+                    {data.map((item) => 
+                        <Grid.Col md={6} key={item.title}>
+                            <UnstyledButton 
+                                className={classes.subLink} 
+                                onClick={item.onClick}
+                            >
+                                <Group noWrap align="flex-start">
+                                    <ThemeIcon size={64} variant="filled" color={item.color}  radius="md">
+                                        <img src={`/providers/${item.logo}`} height={item.h} width={item.w} />
+                                    </ThemeIcon>
+                                    <div>
+                                        <Text size="sm" fw={500}>
+                                            {item.title}
+                                        </Text>
+                                        <Text size="xs" color="dimmed">
+                                            {item.description}
+                                        </Text>
+                                    </div>
+                                </Group>
+                            </UnstyledButton>
+                        </Grid.Col>
+                    )}                
+                </Grid>
+            </Stack>
+        </>
     );
 };
 
