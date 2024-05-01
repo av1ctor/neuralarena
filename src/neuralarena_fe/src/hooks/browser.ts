@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useMediaQuery } from "@mantine/hooks";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface BrowserProps {
     isMobile: boolean;
@@ -14,15 +14,16 @@ interface BrowserProps {
 
 export const useBrowser = (): BrowserProps => {
     const navigate = useNavigate();
+    const location = useLocation();
     
     const getReturnUrl = (): string => {
-        let returnTo = location.search.match(/return=([^&]+)/);
+        const returnTo = location.search.match(/return=([^&]+)/);
         return (returnTo && returnTo[1]) || '/';
     }
 
     const returnToLastPage = useCallback(() => {
         navigate(getReturnUrl());
-    }, []);
+    }, [getReturnUrl]);
     
     const navigateTo = useCallback((page: string) => {
         navigate(page);
