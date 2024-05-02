@@ -9,8 +9,7 @@ interface Props {
     xp: number;
 }
 
-export const TokenXp = ({index, canisterId, xp}: Props) => {
-    
+export const NftXp = ({index, canisterId, xp}: Props) => {
     const game = useGameFindById(canisterId);
     
     return (

@@ -2,10 +2,12 @@ import { useBrowser } from "@hooks/browser";
 import { useUI } from "@hooks/ui";
 import { NFT } from "@libs/nas1";
 import { Box, Center, SegmentedControl, Space } from "@mantine/core";
-import { IconCube, IconList } from "@tabler/icons-react";
+import { IconBrain, IconCube, IconHourglassHigh, IconList } from "@tabler/icons-react";
 import React, { useState } from "react";
 import { NftCard } from "./Card";
 import { NftModel } from "./Model";
+import { NftXps } from "./XPs";
+import { NftSkills } from "./Skills";
 
 const sections = [
     {
@@ -14,6 +16,24 @@ const sections = [
           <Center>
             <IconList size="1rem" />
             <Box ml={10}>Data</Box>
+          </Center>
+        ),
+    },
+    {
+        value: 'xps',
+        label: (
+          <Center>
+            <IconHourglassHigh size="1rem" />
+            <Box ml={10}>eXPerience</Box>
+          </Center>
+        ),
+    },
+    {
+        value: 'skills',
+        label: (
+          <Center>
+            <IconBrain size="1rem" />
+            <Box ml={10}>Skills</Box>
           </Center>
         ),
     },
@@ -54,6 +74,18 @@ export const NftDetails = ({nft}: Props) => {
                 <NftCard 
                     nft={nft}
                     size="full"
+                />
+            </Box>
+
+            <Box className={section === 'xps'? classes.block: classes.none}>
+                <NftXps	
+                    nft={nft}
+                />
+            </Box>
+
+            <Box className={section === 'skills'? classes.block: classes.none}>
+                <NftSkills
+                    nft={nft}
                 />
             </Box>
 

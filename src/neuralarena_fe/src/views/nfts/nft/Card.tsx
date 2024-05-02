@@ -1,12 +1,9 @@
-import React, { Fragment, ReactElement, useCallback, useMemo } from "react";
-import { Badge, Card, Group, Text, Image, Space, createStyles, Grid, TextInput, Box, Center } from "@mantine/core";
-import { useNAS1FindTokenById, useNAS1GetCollectionData } from "@hooks/nas1";
+import React, { ReactElement, useCallback, useMemo } from "react";
+import { Badge, Card, Group, Text, Image, Space, createStyles, Box, Center } from "@mantine/core";
+import { useNAS1FindTokenById } from "@hooks/nas1";
 import {  useIcrc7GetCollectionSymbol } from "@hooks/icrc7";
 import { NFT } from "@libs/nas1";
 import { Principal } from "@dfinity/principal";
-import { Nas1TokenGameProps } from "@declarations/nas1_nft/nas1_nft.did";
-import { NftSkill } from "./Skill";
-import { TokenXp } from "./XP";
 
 const useStyles = createStyles((theme) => {
     const color = theme.colorScheme === "dark"? 
@@ -54,7 +51,6 @@ interface Props {
 
 export const NftCard = (props: Props) => {
     const {classes, cx} = useStyles();
-    const collection = useNAS1GetCollectionData(props.nft.collection_id);
     const symbol = useIcrc7GetCollectionSymbol(props.nft.collection_id);
     const token = useNAS1FindTokenById(props.nft.collection_id, Number(props.nft.token_id));
 
@@ -63,17 +59,6 @@ export const NftCard = (props: Props) => {
             props.onClick(props.nft);
         }
     }, [props.nft, props.onClick]);
-
-    const xps = useMemo((): [Principal, Nas1TokenGameProps][] => {
-        if(!token.data) {
-            return [];
-        }
-        let res = new Array<[Principal, Nas1TokenGameProps]>();
-        for(const e of token.data?.game_props) {
-            res.push(e);
-        }
-        return res;
-    }, [token]);
 
     const height = useMemo((): number => {
         return props.size === 'nano' || props.size === 'mini'? 
@@ -167,62 +152,6 @@ export const NftCard = (props: Props) => {
                                     )}
                                 </Group>
                             </div>
-                        </>
-                    }
-                    {props.size === 'full' &&
-                        <>
-                            <Space h="sm"/>
-                            <Box mb="sm">
-                                <Text size="sm" color="dimmed">
-                                    <b>XPs</b>
-                                </Text>
-                                <Card 
-                                    radius="md" 
-                                    p="xs" 
-                                    bg="transparent"
-                                    withBorder
-                                    w="100%"
-                                >
-                                    <Box>
-                                        {xps.length > 0? 
-                                            xps.map((xp, index) => 
-                                                <TokenXp
-                                                    key={index}
-                                                    index={index}
-                                                    canisterId={xp[0]}
-                                                    xp={xp[1].xp}
-                                                />
-                                            )
-                                        :
-                                            <Center>
-                                                <Text size="xs">
-                                                    Time to start earning some XP! Join a match and let the fun begin! 😆
-                                                </Text>
-                                            </Center>
-                                        }
-                                    </Box>
-                                </Card>
-                            </Box>
-                            <Box mb="sm">
-                                <Text size="sm" color="dimmed">
-                                    <b>Learned skills <small>(Neural Networks)</small></b>
-                                </Text>
-                                <Card 
-                                    radius="md" 
-                                    p="xs" 
-                                    bg="transparent"
-                                    withBorder
-                                    w="100%"
-                                >
-                                    {collection.data?.skills.map((skill) => 
-                                        <NftSkill 
-                                            key={skill}
-                                            skill={skill}
-                                            token={token.data}
-                                        />
-                                    )}  
-                                </Card>
-                            </Box>
                         </>
                     }
                 </div>
