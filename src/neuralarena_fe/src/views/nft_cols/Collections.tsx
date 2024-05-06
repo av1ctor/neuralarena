@@ -39,6 +39,7 @@ export const NftCollections = (props: Props) => {
             >
                 <Button
                     className={classes.animatedOutline}
+                    variant="gradient"
                     onClick={!user? redirectToLogin: open}
                 >
                     Publish

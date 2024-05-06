@@ -1,10 +1,11 @@
 import { useUI } from "@hooks/ui";
-import { Button, Center } from "@mantine/core";
+import { Button, Center, Group } from "@mantine/core";
 import React, { ReactElement, useCallback } from "react"
 import { UseInfiniteQueryResult } from "react-query"
 
 interface Props<T> {
     query: UseInfiniteQueryResult<T, Error>;
+    actions?: ReactElement | ReactElement[];
     children: ReactElement | ReactElement[] | undefined;
 }
 
@@ -26,12 +27,15 @@ export const InfinitePaging = <T extends any>(
         <>
             {props.children}
             <Center mt="lg">
-                <Button
-                    disabled={!query.hasNextPage || query.isFetchingNextPage}
-                    onClick={handleNextPage}
-                >
-                    More
-                </Button>
+                <Group>
+                    <Button
+                        disabled={!query.hasNextPage || query.isFetchingNextPage}
+                        onClick={handleNextPage}
+                    >
+                        More
+                    </Button>
+                    {props.actions}
+                </Group>
             </Center>
         </>
     )

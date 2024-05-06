@@ -24,6 +24,7 @@ const schema = {
 };
 
 interface Props {
+    gameId?: Principal;
     onClose: () => void;
 }
 
@@ -37,7 +38,7 @@ export const MatchCreate = (props: Props) => {
 
     const form = useForm({
         initialValues: {
-            game_id: '',
+            game_id: props.gameId?.toText() ?? '',
             map_id: '',
             min_players: MIN_PLAYERS,
             max_players: MAX_PLAYERS,
@@ -139,6 +140,7 @@ export const MatchCreate = (props: Props) => {
                 {...form.getInputProps('game_id')}
                 itemComponent={SelectItem}
                 data={games}
+                disabled={!!props.gameId}
             />
 
             <Select

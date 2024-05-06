@@ -52,6 +52,7 @@ export const AllMatches = (props: Props) => {
             >
                 <Button
                     className={classes.animatedOutline}
+                    variant="gradient"
                     onClick={!user? redirectToLogin: open}
                 >
                     New

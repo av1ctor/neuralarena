@@ -50,6 +50,7 @@ export const UserMatches = (props: Props) => {
             >
                 <Button
                     className={classes.animatedOutline}
+                    variant="gradient"
                     disabled={!user}
                     onClick={open}
                 >
