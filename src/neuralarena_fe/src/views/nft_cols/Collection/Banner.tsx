@@ -8,6 +8,7 @@ const useStyles = createStyles((theme) => ({
     title: {
         fontWeight: 900,
         color: theme.white,
+        filter: 'drop-shadow(2px 4px 4px #000a)',
     },
 }));
 

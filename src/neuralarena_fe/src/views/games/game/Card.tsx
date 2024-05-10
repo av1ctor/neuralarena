@@ -8,6 +8,7 @@ const useStyles = createStyles((theme) => ({
         fontWeight: 900,
         color: theme.white,
         fontSize: rem(64),
+        filter: 'drop-shadow(2px 4px 4px #000a)',
     },
 
     categoryBox: {
