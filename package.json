@@ -7,7 +7,7 @@
     "dev": "vite --host",
     "build": "tsc && vite build",
     "prebuild": "dfx generate",
-    "deploy:backend:dev": "./scripts/dev/00-be-deploy.sh && npm run extract && npm run generate",
+    "deploy:backend:dev": "./scripts/dev/be/00-deploy.sh && npm run extract && npm run generate",
     "extract": "candid-extractor target/wasm32-unknown-unknown/release/neuralarena_be.wasm >./src/neuralarena_be/neuralarena_be.did",
     "generate": "dfx generate neuralarena_be"
   },

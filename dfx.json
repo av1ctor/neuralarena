@@ -26,7 +26,7 @@
     },
     "neuralarena_docs": {
       "build": [
-        "./scripts/prod/31-docs-build.sh"
+        "./scripts/prod/docs/01-build.sh"
       ],
       "source": [
         "dist/neuralarena-docs/"
