@@ -21,6 +21,8 @@ interface Props {
 export const PageTitle = (props: Props) => {
     const theme = useMantineTheme();
     const {classes} = useStyles();
+
+    const color = theme.colors.magenta[theme.colorScheme === 'dark'? 4: 9];
     
     return (
         <Card 
@@ -34,11 +36,11 @@ export const PageTitle = (props: Props) => {
                 <Stack>
                     <Center>
                         <ThemeIcon size="3rem" variant='' radius="md">
-                            <props.icon size="3rem" color={theme.primaryColor} />
+                            <props.icon size="3rem" color={color} />
                         </ThemeIcon>
                     </Center>
                     <Center>
-                        <Text fz="md" fw={500} color={theme.primaryColor}>
+                        <Text fz="md" fw={500} color={color}>
                             {props.title}
                         </Text>
                     </Center>

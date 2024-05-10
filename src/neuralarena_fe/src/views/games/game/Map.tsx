@@ -7,7 +7,8 @@ const useStyles = createStyles((theme) => ({
     title: {
         fontWeight: 900,
         color: theme.white,
-        fontSize: rem(24),
+        fontSize: rem(32),
+        filter: 'drop-shadow(1px 2px 2px #000a)',
     },
     description: {
         color: theme.white,

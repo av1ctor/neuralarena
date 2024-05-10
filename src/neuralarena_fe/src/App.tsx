@@ -30,8 +30,8 @@ const authProvider = new IcProviderBuider()
 
 const colors = {
     'magenta': [
-        "#ffe9f6", "#ffd1e6", "#faa1c9", "#f66eab", "#f24391", 
-        "#f02881", "#f01879", "#d60867", "#c0005c", "#a9004f"
+        "#ffe9ff", "#ffd1ff", "#faa1fa", "#f66ef6", "#f243f2", 
+        "#f028f0", "#f018f0", "#d608d6", "#c000c0", "#a900a9"
     ],
 };
 
