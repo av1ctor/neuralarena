@@ -1,10 +1,11 @@
 import React, { useMemo } from "react";
-import { Card, Text, Box, Center } from "@mantine/core";
+import { Text, Box, Center } from "@mantine/core";
 import { useNAS1FindTokenById } from "@hooks/nas1";
 import { NFT } from "@libs/nas1";
 import { Principal } from "@dfinity/principal";
 import { Nas1TokenGameProps } from "@declarations/nas1_nft/nas1_nft.did";
 import { NftXp } from "./XP";
+import { ContainerBox } from "@components/ContainerBox";
 
 interface Props {
     nft: NFT;
@@ -25,36 +26,25 @@ export const NftXps = (props: Props) => {
     }, [token]);
 
     return (
-        <Box mb="sm">
-            <Text size="sm" color="dimmed">
-                <b>XPs</b>
-            </Text>
-            <Card 
-                radius="md" 
-                p="xs" 
-                bg="transparent"
-                withBorder
-                w="100%"
-            >
-                <Box>
-                    {xps.length > 0? 
-                        xps.map((xp, index) => 
-                            <NftXp
-                                key={index}
-                                index={index}
-                                canisterId={xp[0]}
-                                xp={xp[1].xp}
-                            />
-                        )
-                    :
-                        <Center>
-                            <Text size="xs">
-                                Time to start earning some XP! Join a match and let the fun begin! 😆
-                            </Text>
-                        </Center>
-                    }
-                </Box>
-            </Card>
-        </Box>
+        <ContainerBox>
+            <Box>
+                {xps.length > 0? 
+                    xps.map((xp, index) => 
+                        <NftXp
+                            key={index}
+                            index={index}
+                            canisterId={xp[0]}
+                            xp={xp[1].xp}
+                        />
+                    )
+                :
+                    <Center>
+                        <Text size="xs">
+                            Time to start earning some XP! Join a match and let the fun begin! 😆
+                        </Text>
+                    </Center>
+                }
+            </Box>
+        </ContainerBox>
     );
 }
