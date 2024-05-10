@@ -359,6 +359,7 @@ export const MatchWatch = (props: Props) => {
     const winnerPrincipal = props.match.won_by[0]?.toString();
     const winner = props.match.players
         .findIndex(p => p.id.toString() === winnerPrincipal);
+    const winnerInstance = renderer?.getPlayer(winner);
 
     useLayoutEffect(() => {
         const animate = () => {
@@ -487,7 +488,7 @@ export const MatchWatch = (props: Props) => {
                     </div>
                 }
                 {state === WatchState.FINISHED && 
-                    winner !== -1 &&
+                    winner !== -1 && winnerInstance && 
                     <div 
                         className={classes.absContainer}
                     >
@@ -495,10 +496,10 @@ export const MatchWatch = (props: Props) => {
                             className={classes.playerWinner}
                         >
                             <PlayerState
-                                player={player}
+                                player={props.match.players[winner]}
                                 gameId={props.match.game.id}
-                                health={povPlayer?.health || 0.0}
-                                score={povPlayer?.score || 0.0}
+                                health={winnerInstance?.health || 0.0}
+                                score={winnerInstance?.score || 0.0}
                                 transparent
                             />
                         </div>

@@ -230,7 +230,10 @@ export class ThreeGameRenderer {
 
     getPlayer(
         num: number
-    ): InstancePlayerEntity {
+    ): InstancePlayerEntity|undefined {
+        if(num < 0 || num >= this.entities.players.length) {
+            return undefined;
+        }
         return this.entities.players[num];
     }
 
