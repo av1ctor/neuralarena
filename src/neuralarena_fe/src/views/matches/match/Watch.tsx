@@ -51,10 +51,43 @@ const useStyles = createStyles((theme) => ({
         height: '100%',
         backgroundColor: '#f00',
     },
-    player_state: {
+    playerHud: {
         position: 'absolute',
         top: '4px',
         right: '4px',
+    },
+    absContainer: {
+        position: 'absolute',
+        display: 'flex',
+        justifyContent: 'center',
+        alignContent: 'center',
+        overflow: 'hidden',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        margin: 0,
+    },
+    playerWinner: {
+        position: 'relative',
+        margin: 'auto',
+        width: '200px',
+        ':before': {
+            position: 'absolute',
+            top: 'calc(100px - 1.5rem)',
+            right: '12rem',
+            content: '"🏆"',
+            fontSize: '10rem',
+            opacity: 0.75,
+        },
+        ':after': {
+            position: 'absolute',
+            top: 'calc(100px - 1.5rem)',
+            left: '12rem',
+            content: '"🏆"',
+            fontSize: '10rem',
+            opacity: 0.75,
+        },
     },
     canvas: {
         display: 'block',
@@ -323,7 +356,10 @@ export const MatchWatch = (props: Props) => {
     const then = useRef(performance.now());
 
     const player = props.match.players[props.pov];
-    
+    const winnerPrincipal = props.match.won_by[0]?.toString();
+    const winner = props.match.players
+        .findIndex(p => p.id.toString() === winnerPrincipal);
+
     useLayoutEffect(() => {
         const animate = () => {
             const interval = 1000.0 / props.game.info.fps;
@@ -375,9 +411,6 @@ export const MatchWatch = (props: Props) => {
 
                         case WatchState.CELEBRATING:
                             if(props.match.won_by.length > 0) {
-                                const winnerPrincipal = props.match.won_by[0]?.toString();
-                                const winner = props.match.players
-                                    .findIndex(p => p.id.toString() === winnerPrincipal);
                                 renderer?.setPOV(winner);
                                 renderer?.setAutoRot(true);
                                 renderer?.playMusic('victory')
@@ -441,7 +474,7 @@ export const MatchWatch = (props: Props) => {
                     step.current > 0 && 
                         !renderer?.isStartScenePlaying() &&
                     <div 
-                        className={classes.player_state}
+                        className={classes.playerHud}
                     >
                         <PlayerState
                             player={player}
@@ -449,8 +482,28 @@ export const MatchWatch = (props: Props) => {
                             health={povPlayer?.health || 0.0}
                             score={povPlayer?.score || 0.0}
                             size="nano"
+                            transparent
                         />
                     </div>
+                }
+                {state === WatchState.FINISHED && 
+                    winner !== -1 &&
+                    <div 
+                        className={classes.absContainer}
+                    >
+                        <div 
+                            className={classes.playerWinner}
+                        >
+                            <PlayerState
+                                player={player}
+                                gameId={props.match.game.id}
+                                health={povPlayer?.health || 0.0}
+                                score={povPlayer?.score || 0.0}
+                                transparent
+                            />
+                        </div>
+                    </div>
+
                 }
                 <Grid className={classes.controls}>
                     <div 

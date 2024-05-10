@@ -44,6 +44,7 @@ interface Props {
     nft: NFT;
     size?: "nano" | "mini" | "full",
     selected?: boolean;
+    transparent?: boolean;
     gameId?: Principal,
     children?: ReactElement | ReactElement[] | undefined,
     onClick?: (nft: NFT) => void;
@@ -78,7 +79,7 @@ export const NftCard = (props: Props) => {
                 [classes.selected]: props.selected
             })}
             onClick={handleClick}
-            style={props.size === 'nano'? {opacity: 0.75}: undefined}
+            style={props.transparent? {opacity: 0.75}: undefined}
         >
             <Card.Section>
                 <Image

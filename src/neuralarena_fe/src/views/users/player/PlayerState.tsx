@@ -11,15 +11,17 @@ interface Props {
     health: number;
     gameId: GameId;
     size?: 'nano';
+    transparent?: boolean;
 }
 
-export const PlayerState = ({player, score, health, gameId, size}: Props) => {
+export const PlayerState = ({player, score, health, gameId, size, transparent}: Props) => {
     return (
         player.nft &&
             <NftCard
                 nft={player.nft}
                 gameId={gameId}
                 size={size}
+                transparent={transparent}
             >
                 <Center>
                     <Text size={size === 'nano'? 'xs': "sm"}>
