@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Center, Rating, Text, createStyles } from "@mantine/core";
+import { Box, Center, Divider, Rating, Text, createStyles } from "@mantine/core";
 import { NftCard } from "@views/nfts/nft/Card";
 import { GameId } from "@libs/games";
 import { principalToString } from "@libs/icp";
@@ -23,6 +23,7 @@ export const PlayerState = ({player, score, health, gameId, size, transparent}: 
                 size={size}
                 transparent={transparent}
             >
+                <Divider m="sm" />
                 <Center>
                     <Text size={size === 'nano'? 'xs': "sm"}>
                         <b>{principalToString(player.id)}</b>
