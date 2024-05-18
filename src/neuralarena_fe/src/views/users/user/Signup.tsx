@@ -120,7 +120,7 @@ const Signup = (props: Props) => {
                     </Center>
                 ),
             },
-            {
+            /*{
                 value: UserKind[UserKind.Staff],
                 label: (
                     <Center>
@@ -128,7 +128,7 @@ const Signup = (props: Props) => {
                         <Box ml={10}>Staff</Box>
                     </Center>
                 ),
-            },
+            },*/
         ];
     }, []);
 
