@@ -5,11 +5,11 @@ import { useUserFindMatches } from "@hooks/users";
 import { IconDeviceGamepad } from "@tabler/icons-react";
 import { PageTitle } from "@components/PageTitle";
 import { DrawerPanel } from "@components/DrawerPanel";
-import { MatchCreate } from "@views/matches/match/Create";
 import { useDisclosure } from "@mantine/hooks";
 import { MatchesGrid } from "@views/matches/Grid";
 import { InfinitePaging } from "@components/InfinitePaging";
 import { useUI } from "@hooks/ui";
+import { MatchCreateAndJoin } from "@views/matches/match/CreateAndJoin";
 
 interface Props {
 }
@@ -67,11 +67,11 @@ export const UserMatches = (props: Props) => {
             </InfinitePaging>
 
             <DrawerPanel
-                title="Create a new match"
+                title="Create and join a new match"
                 opened={opened}
                 onClose={close}
             >
-                <MatchCreate
+                <MatchCreateAndJoin
                     onClose={close}
                 />
             </DrawerPanel>
