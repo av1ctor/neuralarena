@@ -4,12 +4,14 @@ import {
 } from "react-query";
 import { 
     InstanceStepsResponse, MatchJoinRequest, 
-    MatchRequest, MatchResponse 
+    MatchRequest, MatchResponse, 
+    UserNftRequest
 } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { useActors } from "./actors";
 import { 
     matchCreate, matchFindOpen, matchFindById, matchJoin, 
-    MatchId, matchFindByGame, matchGetSteps, matchFindAll 
+    MatchId, matchFindByGame, matchGetSteps, matchFindAll, 
+    matchCreateAndJoin
 } from "@libs/matches";
 import { GameId } from "@libs/games";
 import { principalToAccountId, stringToSubAccount } from "@libs/icp";
@@ -17,6 +19,7 @@ import { principalToAccountId, stringToSubAccount } from "@libs/icp";
 interface MatchMethods {
     create: (req: MatchRequest) => Promise<MatchResponse>;
     join: (req: MatchJoinRequest) => Promise<void>;
+    createAndJoin: (req: MatchRequest, nft: UserNftRequest) => Promise<MatchResponse>;
 }
 
 export const useMatch = (
@@ -63,9 +66,33 @@ export const useMatch = (
         return joinMut.mutateAsync({req});
     };
 
+    const createAndJoinMut = useMutation(
+        async (options: {req: MatchRequest, nft: UserNftRequest}) => {
+            return matchCreateAndJoin(main, options.req, options.nft);
+        },
+        {
+            onSuccess: (res) => {
+                const matchAcc = principalToAccountId(
+                    ids.main,
+                    stringToSubAccount(res.id)
+                );
+                queryClient.invalidateQueries(['matches']);
+                queryClient.invalidateQueries(['icrc1-balance', matchAcc]);
+            }   
+        }
+    );
+
+    const createAndJoin = (
+        req: MatchRequest,
+        nft: UserNftRequest
+    ): Promise<MatchResponse> => {
+        return createAndJoinMut.mutateAsync({req, nft});
+    };
+
     return {
         create,
         join,
+        createAndJoin,
     }
 };
 

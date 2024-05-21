@@ -57,14 +57,14 @@ pub enum MatchWalletLogOp{
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
-pub struct  MatchWalletLogTransfer {
+pub struct MatchWalletLogTransfer {
     pub value: u128,
     pub time: u64,
     pub tx: u128,
 }
 
 #[derive(Clone, Serialize, Deserialize, CandidType)]
-pub struct  MatchWalletLog{
+pub struct MatchWalletLog{
     pub op: MatchWalletLogOp,
     pub acc: MatchWalletLogAccount,
     pub res: Result<MatchWalletLogTransfer, String>,

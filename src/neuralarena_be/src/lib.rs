@@ -15,7 +15,8 @@ use models::nftcol::{
 };
 use models::timer::{Timer, TimerTarget};
 use models::user::{
-    User, UserId, UserNftsRequest, UserRequest, UserResponse
+    User, UserId, UserNftRequest, 
+    UserNftsRequest, UserRequest, UserResponse
 };
 use neuralarena_cdk::{
     db::traits::crud::Pagination,
@@ -673,6 +674,19 @@ pub async fn match_join(
         },
         Err(msg) => Err(msg),
     }
+}
+
+#[ic_cdk::update]
+pub async fn match_create_and_join(
+    req: MatchRequest,
+    nft_req: UserNftRequest
+) -> Result<MatchResponse, String> {
+    let res = match_create(req).await?;
+    match_join(MatchJoinRequest { 
+        id: res.id.clone(), 
+        nft: nft_req
+    }).await?;
+    Ok(res)
 }
 
 async fn _run_match(

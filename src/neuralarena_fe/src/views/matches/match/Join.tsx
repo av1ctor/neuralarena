@@ -74,12 +74,12 @@ export const MatchJoin = (props: Props) => {
     return (
         <Grid>
             <Grid.Col>
-            <Center>
-                {nfts.length > 0?
-                    <span>Please select a NFT to be your player in this match</span>
-                :
-                    <span>You have no NFT's in your account. Please add at least one!</span>
-                }
+                <Center>
+                    {nfts.length > 0?
+                        <span>Please select a NFT to be your player in this match</span>
+                    :
+                        <span>You have no NFT's in your account. Please add at least one!</span>
+                    }
                 </Center>
             </Grid.Col>
 

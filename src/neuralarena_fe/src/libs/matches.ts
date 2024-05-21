@@ -6,7 +6,8 @@ import {
     InstanceStepsResponse, 
     Pagination, 
     MatchJoinRequest,
-    MatchWalletLog
+    MatchWalletLog,
+    UserNftRequest
 } from "@declarations/neuralarena_be/neuralarena_be.did";
 import { GameId } from "./games";
 import { principalToString } from "./icp";
@@ -130,6 +131,19 @@ export const matchJoin = async (
     }
     return; 
 };
+
+export const matchCreateAndJoin = async (
+    main: Main,
+    req: MatchRequest,
+    nft: UserNftRequest
+): Promise<MatchResponse> => {
+    const res = await main.match_create_and_join(req, nft);
+    if('Err' in res) {
+        throw new Error(res.Err);
+    }
+    return res.Ok; 
+};
+
 
 export const matchFindById = async (
     main: Main,
