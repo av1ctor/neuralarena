@@ -76,7 +76,7 @@ const AppFooter = (props: Props) => {
                         </Grid.Col>
                         <Grid.Col span={4}>
                             <Anchor
-                                href="https://github.com/av1ctor/neuralarena"
+                                href="https://github.com/Neural-Arena-DAO"
                                 target="_blank"
                                 title='github'
                             >
