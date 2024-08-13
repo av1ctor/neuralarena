@@ -16,8 +16,6 @@ import { UserMatches } from "@views/users/user/Matches";
 import { AllMatches } from "@views/matches/Matches";
 import { Games } from "@views/games/Games";
 import { NftCollections } from "@views/nft_cols/Collections";
-import bgBlack from "@assets/bg-black.svg";
-import bgWhite from "@assets/bg-white.svg";
 import { NftCollection } from "@views/nft_cols/Collection/Collection";
 import { UserPage } from "@views/users/user/Page";
 import { Policies } from "./Policies";
@@ -41,9 +39,9 @@ const Home = (props: Props) => {
                         : 
                             theme.white,
                         backgroundImage: theme.colorScheme === 'dark'?
-                            `url(${bgBlack})`
+                            'url("/images/bg-black.svg")'
                         :
-                            `url(${bgWhite})`,
+                            'url("/images/bg-white.svg")',
                         minHeight: '40rem',
                     },
                 }}
