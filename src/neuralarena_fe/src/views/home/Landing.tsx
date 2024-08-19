@@ -100,7 +100,7 @@ const Landing = () => {
                         Play <span className={classes.highlight}>games</span> with your AI bot and win incredible prizes!
                     </Title>
                     <Text color="dimmed" mt="md" className={classes.subtitle}>
-                        <b>Neural Arena</b> is a decentralized web3 game platform, pioneering a world-first approach where users employ their <b>AI-enhanced NFT characters (AI players)</b> to compete against each other in matches to <b>improve their NFT's experience</b> (XP) and to <b>win prizes</b> in crypto
+                        <b>Neural Arena</b> is a decentralized web3 game platform, implementing a world-first approach where users employ their <b>AI-enhanced NFT characters (AI players)</b> to compete against each other in matches to <b>improve their NFT's experience</b> (XP) and to <b>win prizes</b> in crypto
                     </Text>
 
                     <List
